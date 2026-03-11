@@ -1,0 +1,81 @@
+# hn-critique.toml — Configuration file for the HN Critique crawler
+#
+# Copy this file to hn-critique.toml in the project root (or specify a path
+# with the -config flag) and customise the settings below.
+#
+# Command-line flags override values in this file:
+#   -provider openai|ollama|github   select AI provider
+#   -config   <path>                 path to this TOML file
+#   -skip-ai                         disable AI analysis entirely
+#
+# Credentials may be provided here OR via environment variables:
+#   OPENAI_API_KEY   (for [openai] api_key)
+#   GITHUB_TOKEN     (for [github] token)
+
+# ──────────────────────────────────────────────────────────────
+# Global: choose which AI provider to use
+# Allowed values: "openai", "ollama", "github"
+# ──────────────────────────────────────────────────────────────
+provider = "openai"
+
+# ──────────────────────────────────────────────────────────────
+# OpenAI provider
+# Requires an OpenAI account and an API key.
+# https://platform.openai.com/
+# ──────────────────────────────────────────────────────────────
+[openai]
+# API key — leave empty to use the OPENAI_API_KEY environment variable.
+api_key = ""
+
+# Model used for standard chat completions (article and comment analysis).
+chat_model = "gpt-4o-mini"
+
+# Model used when the Responses API (web search) is requested.
+search_model = "gpt-4o-mini"
+
+# When true, the Responses API with the web_search_preview tool is tried first
+# for article analysis so the model can verify claims against live web content.
+# Falls back to Chat Completions if the Responses API is unavailable.
+use_responses_api = true
+
+# ──────────────────────────────────────────────────────────────
+# Ollama provider
+# Requires a running Ollama instance.  https://ollama.com/
+# Pull a model first:  ollama pull llama3.2
+# ──────────────────────────────────────────────────────────────
+[ollama]
+# Base URL of the Ollama server.
+base_url = "http://localhost:11434"
+
+# Ollama model name.  See https://ollama.com/library for available models.
+model = "llama3.2"
+
+# ──────────────────────────────────────────────────────────────
+# GitHub Models provider
+# Uses the GitHub Models inference API — no external account needed when
+# running inside a GitHub Actions workflow.
+#
+# In your workflow job, add:
+#   permissions:
+#     models: read
+#
+# The GITHUB_TOKEN is then automatically available and grants access to
+# the GitHub Models API without any additional setup.
+#
+# Outside of Actions, use a personal access token with the models:read scope.
+# https://docs.github.com/en/github-models
+# ──────────────────────────────────────────────────────────────
+[github]
+# GitHub token — leave empty to use the GITHUB_TOKEN environment variable.
+token = ""
+
+# GitHub Models inference endpoint (do not change unless you know why).
+endpoint = "https://models.github.ai/inference"
+
+# Model identifier in "provider/model-name" format.
+# Available models: https://github.com/marketplace/models
+# Examples:
+#   openai/gpt-4.1
+#   openai/gpt-4o-mini
+#   ai21-labs/AI21-Jamba-1.6-Mini
+model = "openai/gpt-4o-mini"

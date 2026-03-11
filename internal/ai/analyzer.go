@@ -1,4 +1,5 @@
-// Package ai provides an OpenAI-backed analyzer for HN articles and comments.
+// Package ai provides AI-backed analyzers for HN articles and comments.
+// See provider.go for the Provider interface and NewProvider factory.
 package ai
 
 import (
@@ -14,36 +15,17 @@ import (
 )
 
 const (
-	responsesEndpoint   = "https://api.openai.com/v1/responses"
-	chatEndpoint        = "https://api.openai.com/v1/chat/completions"
-	defaultModel        = "gpt-4o-mini"
-	searchModel         = "gpt-4o-mini"
-	maxCommentChars     = 6000
-	maxArticleChars     = 6000
+	maxCommentChars = 6000
+	maxArticleChars = 6000
+	httpTimeout     = 120 * time.Second
 )
 
-// Analyzer uses the OpenAI API to generate critiques.
-type Analyzer struct {
-	apiKey string
-	http   *http.Client
-}
-
-// NewAnalyzer creates a new Analyzer with the given OpenAI API key.
-func NewAnalyzer(apiKey string) *Analyzer {
-	return &Analyzer{
-		apiKey: apiKey,
-		http:   &http.Client{Timeout: 120 * time.Second},
-	}
-}
-
-// AnalyzeArticle generates an ArticleCritique for the given article using web search.
-func (a *Analyzer) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
-	// Trim content to keep request cost reasonable.
+// articlePrompt builds the fact-checking prompt for an article.
+func articlePrompt(title, articleURL, content string) string {
 	if len(content) > maxArticleChars {
 		content = content[:maxArticleChars] + "…"
 	}
-
-	prompt := fmt.Sprintf(`You are a critical fact-checker. Analyze the following article and respond with ONLY a valid JSON object — no markdown, no code fences, just raw JSON.
+	return fmt.Sprintf(`You are a critical fact-checker. Analyze the following article and respond with ONLY a valid JSON object — no markdown, no code fences, just raw JSON.
 
 The JSON must have exactly these keys:
 {
@@ -60,38 +42,14 @@ Article title: %s
 Article URL: %s
 Article content:
 %s`, title, articleURL, content)
-
-	// Try Responses API with web search first.
-	text, err := a.callResponsesAPI(prompt)
-	if err != nil {
-		// Fall back to standard Chat Completions.
-		text, err = a.callChatCompletions(prompt, true)
-		if err != nil {
-			return nil, fmt.Errorf("article analysis failed: %w", err)
-		}
-	}
-
-	var critique generator.ArticleCritique
-	if err := parseJSON(text, &critique); err != nil {
-		return nil, fmt.Errorf("parsing article critique: %w", err)
-	}
-	// Sanitize rating value.
-	switch critique.Rating {
-	case "reliable", "questionable", "misleading":
-	default:
-		critique.Rating = "questionable"
-	}
-	return &critique, nil
 }
 
-// AnalyzeComments generates a CommentsCritique for the story's comment section.
-func (a *Analyzer) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
-	commentLines := buildCommentText(comments)
+// commentsPrompt builds the analysis prompt for a comment section.
+func commentsPrompt(title, articleURL, commentLines string) string {
 	if len(commentLines) > maxCommentChars {
 		commentLines = commentLines[:maxCommentChars] + "…"
 	}
-
-	prompt := fmt.Sprintf(`You are a critical analyst. Analyze the following Hacker News comment section and respond with ONLY a valid JSON object — no markdown, no code fences, just raw JSON.
+	return fmt.Sprintf(`You are a critical analyst. Analyze the following Hacker News comment section and respond with ONLY a valid JSON object — no markdown, no code fences, just raw JSON.
 
 The JSON must have exactly this shape:
 {
@@ -113,131 +71,16 @@ Include ALL top-level comments provided. Rank them from most accurate (1) to lea
 Article: %s (%s)
 Comments:
 %s`, title, articleURL, commentLines)
-
-	text, err := a.callChatCompletions(prompt, true)
-	if err != nil {
-		return nil, fmt.Errorf("comments analysis failed: %w", err)
-	}
-
-	var critique generator.CommentsCritique
-	if err := parseJSON(text, &critique); err != nil {
-		return nil, fmt.Errorf("parsing comments critique: %w", err)
-	}
-	return &critique, nil
 }
 
-// callResponsesAPI calls the OpenAI Responses API with the web_search_preview tool.
-func (a *Analyzer) callResponsesAPI(input string) (string, error) {
-	payload := map[string]any{
-		"model": searchModel,
-		"tools": []map[string]string{{"type": "web_search_preview"}},
-		"input": input,
+// sanitizeRating ensures the rating field has a valid value.
+func sanitizeRating(r string) string {
+	switch r {
+	case "reliable", "questionable", "misleading":
+		return r
+	default:
+		return "questionable"
 	}
-	body, err := json.Marshal(payload)
-	if err != nil {
-		return "", err
-	}
-
-	req, err := http.NewRequest("POST", responsesEndpoint, bytes.NewReader(body))
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("Authorization", "Bearer "+a.apiKey)
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := a.http.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	respBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("responses API HTTP %d: %s", resp.StatusCode, string(respBody))
-	}
-
-	// Parse the Responses API output format.
-	var result struct {
-		Output []struct {
-			Type    string `json:"type"`
-			Content []struct {
-				Type string `json:"type"`
-				Text string `json:"text"`
-			} `json:"content"`
-		} `json:"output"`
-	}
-	if err := json.Unmarshal(respBody, &result); err != nil {
-		return "", fmt.Errorf("decoding responses API: %w", err)
-	}
-	for _, out := range result.Output {
-		if out.Type == "message" {
-			for _, c := range out.Content {
-				if c.Type == "output_text" && c.Text != "" {
-					return c.Text, nil
-				}
-			}
-		}
-	}
-	return "", fmt.Errorf("no text output from responses API")
-}
-
-// callChatCompletions calls the OpenAI Chat Completions endpoint.
-// If jsonMode is true, the response_format is set to json_object.
-func (a *Analyzer) callChatCompletions(prompt string, jsonMode bool) (string, error) {
-	reqBody := map[string]any{
-		"model": defaultModel,
-		"messages": []map[string]string{
-			{"role": "user", "content": prompt},
-		},
-		"temperature": 0.3,
-	}
-	if jsonMode {
-		reqBody["response_format"] = map[string]string{"type": "json_object"}
-	}
-
-	body, err := json.Marshal(reqBody)
-	if err != nil {
-		return "", err
-	}
-
-	req, err := http.NewRequest("POST", chatEndpoint, bytes.NewReader(body))
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("Authorization", "Bearer "+a.apiKey)
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := a.http.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	respBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("chat API HTTP %d: %s", resp.StatusCode, string(respBody))
-	}
-
-	var result struct {
-		Choices []struct {
-			Message struct {
-				Content string `json:"content"`
-			} `json:"message"`
-		} `json:"choices"`
-	}
-	if err := json.Unmarshal(respBody, &result); err != nil {
-		return "", fmt.Errorf("decoding chat response: %w", err)
-	}
-	if len(result.Choices) == 0 {
-		return "", fmt.Errorf("no choices in chat response")
-	}
-	return result.Choices[0].Message.Content, nil
 }
 
 // buildCommentText formats comments for the AI prompt.
@@ -278,3 +121,96 @@ func parseJSON(text string, v any) error {
 
 // ParseJSON is the exported variant of parseJSON for use in tests.
 var ParseJSON = parseJSON
+
+// chatRequest is the standard OpenAI-compatible chat completions request body.
+type chatRequest struct {
+	Model          string              `json:"model"`
+	Messages       []map[string]string `json:"messages"`
+	Temperature    float64             `json:"temperature"`
+	ResponseFormat *responseFormat     `json:"response_format,omitempty"`
+}
+
+type responseFormat struct {
+	Type string `json:"type"`
+}
+
+// callChatCompletions sends a POST to an OpenAI-compatible chat completions
+// endpoint and returns the first choice's content text.
+// endpoint must be the full URL including path (e.g. ".../v1/chat/completions").
+func callChatCompletions(httpClient *http.Client, endpoint, authHeader, model, prompt string, jsonMode bool) (string, error) {
+	req := chatRequest{
+		Model: model,
+		Messages: []map[string]string{
+			{"role": "user", "content": prompt},
+		},
+		Temperature: 0.3,
+	}
+	if jsonMode {
+		req.ResponseFormat = &responseFormat{Type: "json_object"}
+	}
+
+	body, err := json.Marshal(req)
+	if err != nil {
+		return "", err
+	}
+
+	httpReq, err := http.NewRequest("POST", endpoint, bytes.NewReader(body))
+	if err != nil {
+		return "", err
+	}
+	httpReq.Header.Set("Authorization", authHeader)
+	httpReq.Header.Set("Content-Type", "application/json")
+
+	resp, err := httpClient.Do(httpReq)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("chat API HTTP %d at %s: %s", resp.StatusCode, endpoint, string(respBody))
+	}
+
+	var result struct {
+		Choices []struct {
+			Message struct {
+				Content string `json:"content"`
+			} `json:"message"`
+		} `json:"choices"`
+	}
+	if err := json.Unmarshal(respBody, &result); err != nil {
+		return "", fmt.Errorf("decoding chat response: %w", err)
+	}
+	if len(result.Choices) == 0 {
+		return "", fmt.Errorf("no choices in chat response from %s", endpoint)
+	}
+	return result.Choices[0].Message.Content, nil
+}
+
+// Analyzer is retained for backward compatibility. New code should use NewProvider.
+// It wraps the OpenAI provider.
+type Analyzer struct {
+	p Provider
+}
+
+// NewAnalyzer creates an Analyzer backed by the OpenAI provider.
+// Deprecated: use NewProvider with a config.Config instead.
+func NewAnalyzer(apiKey string) *Analyzer {
+	p := newOpenAIProvider(openAIConfig(apiKey))
+	return &Analyzer{p: p}
+}
+
+// AnalyzeArticle delegates to the underlying Provider.
+func (a *Analyzer) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
+	return a.p.AnalyzeArticle(title, articleURL, content)
+}
+
+// AnalyzeComments delegates to the underlying Provider.
+func (a *Analyzer) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
+	return a.p.AnalyzeComments(title, articleURL, comments)
+}
+

@@ -1,0 +1,147 @@
+package ai
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+
+	"github.com/peterwwillis/hn-critique/internal/config"
+	"github.com/peterwwillis/hn-critique/internal/generator"
+)
+
+const (
+	openaiChatEndpoint      = "https://api.openai.com/v1/chat/completions"
+	openaiResponsesEndpoint = "https://api.openai.com/v1/responses"
+)
+
+type openAIProvider struct {
+	apiKey          string
+	chatModel       string
+	searchModel     string
+	useResponsesAPI bool
+	http            *http.Client
+}
+
+// openAIConfig builds an OpenAIConfig from just an API key, using defaults for
+// other fields. Used by the backward-compat NewAnalyzer function.
+func openAIConfig(apiKey string) config.OpenAIConfig {
+	return config.OpenAIConfig{
+		APIKey:          apiKey,
+		ChatModel:       "gpt-4o-mini",
+		SearchModel:     "gpt-4o-mini",
+		UseResponsesAPI: true,
+	}
+}
+
+func newOpenAIProvider(cfg config.OpenAIConfig) *openAIProvider {
+	return &openAIProvider{
+		apiKey:          cfg.APIKey,
+		chatModel:       cfg.ChatModel,
+		searchModel:     cfg.SearchModel,
+		useResponsesAPI: cfg.UseResponsesAPI,
+		http:            &http.Client{Timeout: httpTimeout},
+	}
+}
+
+func (p *openAIProvider) Name() string { return "openai" }
+
+func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
+	prompt := articlePrompt(title, articleURL, content)
+
+	var text string
+	var err error
+
+	if p.useResponsesAPI {
+		text, err = p.callResponsesAPI(prompt)
+		if err != nil {
+			// Fall back to Chat Completions when the Responses API is unavailable.
+			text, err = callChatCompletions(p.http, openaiChatEndpoint, "Bearer "+p.apiKey, p.chatModel, prompt, true)
+		}
+	} else {
+		text, err = callChatCompletions(p.http, openaiChatEndpoint, "Bearer "+p.apiKey, p.chatModel, prompt, true)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("openai article analysis: %w", err)
+	}
+
+	var critique generator.ArticleCritique
+	if err := parseJSON(text, &critique); err != nil {
+		return nil, fmt.Errorf("openai: parsing article critique: %w", err)
+	}
+	critique.Rating = sanitizeRating(critique.Rating)
+	return &critique, nil
+}
+
+func (p *openAIProvider) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
+	prompt := commentsPrompt(title, articleURL, buildCommentText(comments))
+
+	text, err := callChatCompletions(p.http, openaiChatEndpoint, "Bearer "+p.apiKey, p.chatModel, prompt, true)
+	if err != nil {
+		return nil, fmt.Errorf("openai comments analysis: %w", err)
+	}
+
+	var critique generator.CommentsCritique
+	if err := parseJSON(text, &critique); err != nil {
+		return nil, fmt.Errorf("openai: parsing comments critique: %w", err)
+	}
+	return &critique, nil
+}
+
+// callResponsesAPI calls the OpenAI Responses API with the web_search_preview tool.
+func (p *openAIProvider) callResponsesAPI(input string) (string, error) {
+	payload := map[string]any{
+		"model": p.searchModel,
+		"tools": []map[string]string{{"type": "web_search_preview"}},
+		"input": input,
+	}
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequest("POST", openaiResponsesEndpoint, bytes.NewReader(body))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Authorization", "Bearer "+p.apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := p.http.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("responses API HTTP %d: %s", resp.StatusCode, string(respBody))
+	}
+
+	var result struct {
+		Output []struct {
+			Type    string `json:"type"`
+			Content []struct {
+				Type string `json:"type"`
+				Text string `json:"text"`
+			} `json:"content"`
+		} `json:"output"`
+	}
+	if err := json.Unmarshal(respBody, &result); err != nil {
+		return "", fmt.Errorf("decoding responses API: %w", err)
+	}
+	for _, out := range result.Output {
+		if out.Type == "message" {
+			for _, c := range out.Content {
+				if c.Type == "output_text" && c.Text != "" {
+					return c.Text, nil
+				}
+			}
+		}
+	}
+	return "", fmt.Errorf("no text output from responses API")
+}

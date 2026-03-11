@@ -13,6 +13,7 @@ import (
 
 	"github.com/peterwwillis/hn-critique/internal/ai"
 	"github.com/peterwwillis/hn-critique/internal/article"
+	"github.com/peterwwillis/hn-critique/internal/config"
 	"github.com/peterwwillis/hn-critique/internal/generator"
 	"github.com/peterwwillis/hn-critique/internal/hn"
 )
@@ -30,24 +31,49 @@ const (
 
 func main() {
 	var (
-		storyCount = flag.Int("stories", defaultStoryCount, "number of top stories to fetch")
-		outputDir  = flag.String("out", "docs", "output directory for the generated site")
-		skipAI     = flag.Bool("skip-ai", false, "skip AI analysis (useful for testing)")
+		storyCount   = flag.Int("stories", defaultStoryCount, "number of top stories to fetch")
+		outputDir    = flag.String("out", "docs", "output directory for the generated site")
+		skipAI       = flag.Bool("skip-ai", false, "skip AI analysis (useful for testing)")
+		configPath   = flag.String("config", "", "path to TOML config file (default: hn-critique.toml if present)")
+		providerFlag = flag.String("provider", "", "AI provider to use: openai, ollama, github (overrides config file)")
 	)
 	flag.Parse()
 
-	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" && !*skipAI {
-		log.Println("OPENAI_API_KEY not set — AI analysis will be skipped")
-		*skipAI = true
+	// Auto-detect config file if not specified.
+	if *configPath == "" {
+		if _, err := os.Stat("hn-critique.toml"); err == nil {
+			*configPath = "hn-critique.toml"
+		}
+	}
+
+	cfg, err := config.Load(*configPath)
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Allow -provider flag to override config file setting.
+	if *providerFlag != "" {
+		cfg.Provider = config.ProviderName(*providerFlag)
 	}
 
 	hnClient := hn.NewClient()
 	articleFetcher := article.NewFetcher()
 
-	var aiAnalyzer *ai.Analyzer
+	var aiProvider ai.Provider
 	if !*skipAI {
-		aiAnalyzer = ai.NewAnalyzer(apiKey)
+		if err := cfg.Validate(); err != nil {
+			log.Printf("AI analysis disabled: %v", err)
+			*skipAI = true
+		} else {
+			p, err := ai.NewProvider(cfg)
+			if err != nil {
+				log.Printf("AI analysis disabled: %v", err)
+				*skipAI = true
+			} else {
+				aiProvider = p
+				log.Printf("Using AI provider: %s", aiProvider.Name())
+			}
+		}
 	}
 
 	gen := generator.New(*outputDir)
@@ -102,11 +128,11 @@ func main() {
 			}
 		}
 
-		if aiAnalyzer != nil {
+		if aiProvider != nil {
 			// Article critique.
 			if story.ArticleText != "" || story.URL != "" {
 				log.Printf("  Analyzing article…")
-				crit, err := aiAnalyzer.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
+				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
 				if err != nil {
 					log.Printf("  ⚠  article analysis failed: %v", err)
 				} else {
@@ -117,7 +143,7 @@ func main() {
 			// Comments critique.
 			if len(story.Comments) > 0 {
 				log.Printf("  Analyzing comments…")
-				cc, err := aiAnalyzer.AnalyzeComments(story.Title, story.URL, story.Comments)
+				cc, err := aiProvider.AnalyzeComments(story.Title, story.URL, story.Comments)
 				if err != nil {
 					log.Printf("  ⚠  comments analysis failed: %v", err)
 				} else {
