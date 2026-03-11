@@ -1,0 +1,105 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # ────────────────────────────────────────────────────────────
+  # Unit tests — fast, no external services required.
+  # ────────────────────────────────────────────────────────────
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build
+        run: make build
+
+      - name: Static analysis (go vet)
+        run: make vet
+
+      - name: Unit tests
+        run: make test-unit
+
+  # ────────────────────────────────────────────────────────────
+  # Integration tests — requires network access.
+  # Tests the HN API client, article fetcher, and the full
+  # HN -> article -> site-generator pipeline (no AI).
+  # ────────────────────────────────────────────────────────────
+  integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Integration tests
+        run: make test-integration
+
+  # ────────────────────────────────────────────────────────────
+  # AI integration tests — tries the GitHub Models API using the
+  # automatically-provided GITHUB_TOKEN.  The job requires the
+  # `models: read` permission so the token is granted access to
+  # the GitHub Models inference endpoint.
+  #
+  # The tests skip gracefully when:
+  #   - GITHUB_TOKEN is absent
+  #   - The token lacks models:read permission
+  #   - The API is temporarily unavailable
+  #
+  # continue-on-error: true prevents a transient or permission
+  # failure from blocking the overall workflow.
+  # ────────────────────────────────────────────────────────────
+  ai:
+    name: AI integration tests (GitHub Models)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+      models: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: AI integration tests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make test-ai
