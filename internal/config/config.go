@@ -47,6 +47,7 @@ type OpenAIConfig struct {
 	//   http://192.168.1.50:1234 (LM Studio on another machine)
 	BaseURL string `toml:"base_url"`
 	// ChatModel is the model used for chat completions.
+	// Falls back to the OPENAI_CHAT_MODEL environment variable when empty.
 	ChatModel string `toml:"chat_model"`
 	// SearchModel is the model used when web search is requested via the Responses API.
 	SearchModel string `toml:"search_model"`
@@ -115,12 +116,18 @@ func Load(path string) (*Config, error) {
 		}
 	}
 
-	// Resolve credentials from environment variables if not set in file.
+	// Resolve credentials and settings from environment variables if not set in file.
 	if cfg.OpenAI.APIKey == "" {
 		cfg.OpenAI.APIKey = os.Getenv("OPENAI_API_KEY")
 	}
 	if cfg.OpenAI.BaseURL == "" {
 		cfg.OpenAI.BaseURL = os.Getenv("OPENAI_BASE_URL")
+	}
+	// OPENAI_CHAT_MODEL overrides the default and config-file value so that
+	// the model can be configured purely via an environment variable (e.g. in
+	// GitHub Actions without committing a config file).
+	if v := os.Getenv("OPENAI_CHAT_MODEL"); v != "" {
+		cfg.OpenAI.ChatModel = v
 	}
 	if cfg.GitHub.Token == "" {
 		cfg.GitHub.Token = os.Getenv("GITHUB_TOKEN")

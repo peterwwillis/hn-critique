@@ -103,6 +103,46 @@ func TestLoadEnvFallback(t *testing.T) {
 	}
 }
 
+// TestLoadEnvChatModel verifies that OPENAI_CHAT_MODEL overrides the default
+// and any config-file value, so the model can be set purely via env var.
+func TestLoadEnvChatModel(t *testing.T) {
+	t.Setenv("OPENAI_CHAT_MODEL", "llama3.2")
+
+	cfg, err := config.Load("")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg.OpenAI.ChatModel != "llama3.2" {
+		t.Errorf("OpenAI.ChatModel = %q, want %q from OPENAI_CHAT_MODEL", cfg.OpenAI.ChatModel, "llama3.2")
+	}
+}
+
+// TestLoadEnvChatModelOverridesConfigFile verifies that OPENAI_CHAT_MODEL takes
+// precedence over a value set in the config file.
+func TestLoadEnvChatModelOverridesConfigFile(t *testing.T) {
+	t.Setenv("OPENAI_CHAT_MODEL", "mistral")
+
+	tomlContent := `
+provider = "openai"
+[openai]
+api_key = "sk-test"
+chat_model = "gpt-4o"
+`
+	path := filepath.Join(t.TempDir(), "override.toml")
+	if err := os.WriteFile(path, []byte(tomlContent), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := config.Load(path)
+	if err != nil {
+		t.Fatalf("Load error: %v", err)
+	}
+	if cfg.OpenAI.ChatModel != "mistral" {
+		t.Errorf("OpenAI.ChatModel = %q, want %q (env should override config file)", cfg.OpenAI.ChatModel, "mistral")
+	}
+}
+
+
 func TestValidateOpenAI(t *testing.T) {
 	cfg := config.Defaults()
 	cfg.Provider = config.ProviderOpenAI

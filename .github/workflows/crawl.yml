@@ -38,12 +38,15 @@ jobs:
 
       - name: Run crawler
         env:
-          # OpenAI provider credentials.
+          # OpenAI provider credentials and configuration.
           # Set OPENAI_API_KEY secret to use api.openai.com.
           # Set OPENAI_BASE_URL variable to target a different OpenAI-compatible
           # server (e.g. a self-hosted Ollama instance on a private runner).
+          # Set OPENAI_CHAT_MODEL variable to override the default model name
+          # (required when using a local backend such as Ollama or llama-server).
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
+          OPENAI_CHAT_MODEL: ${{ vars.OPENAI_CHAT_MODEL }}
           # GitHub Models provider: GITHUB_TOKEN is automatically available in
           # Actions and granted models:read by the permissions block above.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -52,6 +52,7 @@ env:
 |---|---|---|
 | `OPENAI_API_KEY` | API key for api.openai.com | *(required unless `OPENAI_BASE_URL` is set)* |
 | `OPENAI_BASE_URL` | Root URL of any OpenAI-compatible server | `https://api.openai.com` |
+| `OPENAI_CHAT_MODEL` | Model name for article and comment analysis | `gpt-4o-mini` |
 
 ### OpenAI-compatible local/private backends (Ollama, llama-server, …)
 
@@ -105,43 +106,40 @@ First enable GitHub Models in your repository: *Settings → Copilot → Use Git
 
 ## Using a self-hosted runner with a local AI server
 
-If you run a self-hosted GitHub Actions runner on a machine that has access to a private network (e.g. an internal Ollama or llama-server instance), the crawler can reach it using the `OPENAI_BASE_URL` environment variable — no API key required.
+If you run a self-hosted GitHub Actions runner on a machine that has access to
+a private network (e.g. an internal Ollama or llama-server instance), the
+crawler can reach it using environment variables — no API key or config file
+required.
 
-### 1 — Register a self-hosted runner
+**Quick overview:**
 
-Follow the [GitHub docs](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners) to register a runner on your server. Give it a label (e.g. `self-hosted-ai`) so the workflow can target it.
+1. Install and start your inference server on the runner machine (or on a LAN
+   machine the runner can reach).
+2. Register a [self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
+   and give it a label (e.g. `self-hosted-ai`).
+3. Set repository (or [GitHub Environment](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment))
+   variables:
 
-### 2 — Start your local AI server on the runner machine
+   | Variable | Example value |
+   |---|---|
+   | `OPENAI_BASE_URL` | `http://localhost:11434` (or `http://192.168.1.50:11434` for a LAN server) |
+   | `OPENAI_CHAT_MODEL` | `llama3.2` (or whichever model your server loads) |
 
-```bash
-# Example: Ollama
-ollama serve           # listens on http://localhost:11434 by default
-ollama pull llama3.2   # pull the model you want to use
-```
+4. In `.github/workflows/crawl.yml`, set `runs-on` to your runner label:
 
-### 3 — Add `OPENAI_BASE_URL` as a repository variable
+   ```yaml
+   jobs:
+     crawl-and-deploy:
+       runs-on: self-hosted-ai
+   ```
 
-Go to *Settings → Secrets and variables → Actions → Variables → New repository variable*:
+   The workflow already passes `OPENAI_BASE_URL` and `OPENAI_CHAT_MODEL` from
+   repository/environment variables to the crawler — no further changes needed.
 
-| Name | Value |
-|---|---|
-| `OPENAI_BASE_URL` | `http://localhost:11434` |
-
-### 4 — Point the workflow at the self-hosted runner
-
-In `.github/workflows/crawl.yml`, change `runs-on` to your runner label:
-
-```yaml
-jobs:
-  crawl-and-deploy:
-    runs-on: self-hosted-ai   # ← your runner label
-    steps:
-      - run: go run ./cmd/crawler/ -provider openai
-        env:
-          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
-```
-
-Because the crawler reads `OPENAI_BASE_URL` at runtime, no config file change is needed — the same workflow works with `ubuntu-latest` (cloud) or a self-hosted runner just by toggling the `OPENAI_BASE_URL` variable.
+For a complete step-by-step guide covering both topologies (AI on the runner
+machine vs. AI on a separate LAN machine), GitHub Environments scoping, a
+copy-paste workflow file, and troubleshooting tips, see
+**[docs/self-hosted-runner.md](docs/self-hosted-runner.md)**.
 
 ## Local development
 
