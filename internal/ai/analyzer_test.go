@@ -31,8 +31,9 @@ func TestNewProvider_OpenAI(t *testing.T) {
 	}
 }
 
-// TestNewProvider_Ollama verifies that NewProvider returns an Ollama provider
-// when the config specifies the ollama backend.
+// TestNewProvider_Ollama verifies that NewProvider accepts the ollama provider
+// name for backward compatibility and returns a working openai-compatible
+// provider (Ollama implements the OpenAI-compatible /v1/chat/completions API).
 func TestNewProvider_Ollama(t *testing.T) {
 	cfg := config.Defaults()
 	cfg.Provider = config.ProviderOllama
@@ -42,8 +43,9 @@ func TestNewProvider_Ollama(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewProvider error: %v", err)
 	}
-	if p.Name() != "ollama" {
-		t.Errorf("Name() = %q, want %q", p.Name(), "ollama")
+	// Ollama routes through the unified OpenAI-compatible provider.
+	if p.Name() != "openai" {
+		t.Errorf("Name() = %q, want %q", p.Name(), "openai")
 	}
 }
 

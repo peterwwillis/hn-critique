@@ -1,5 +1,6 @@
 // Package ai provides AI-backed analyzers for HN articles and comments.
-// Multiple backend providers are supported: OpenAI, Ollama, and GitHub Models.
+// Multiple backend providers are supported: OpenAI (and any OpenAI-compatible
+// server such as Ollama or llama-server), and GitHub Models.
 package ai
 
 import (
@@ -32,7 +33,14 @@ func NewProvider(cfg *config.Config) (Provider, error) {
 	case config.ProviderOpenAI:
 		return newOpenAIProvider(cfg.OpenAI), nil
 	case config.ProviderOllama:
-		return newOllamaProvider(cfg.Ollama), nil
+		// Ollama exposes an OpenAI-compatible /v1/chat/completions endpoint.
+		// Route through the unified openai provider using the Ollama base URL
+		// and model, without an API key (Ollama does not require authentication).
+		return newOpenAIProvider(config.OpenAIConfig{
+			BaseURL:         cfg.Ollama.BaseURL,
+			ChatModel:       cfg.Ollama.Model,
+			UseResponsesAPI: false,
+		}), nil
 	case config.ProviderGitHub:
 		return newGitHubProvider(cfg.GitHub), nil
 	default:

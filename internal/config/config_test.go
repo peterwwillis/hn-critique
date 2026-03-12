@@ -84,6 +84,7 @@ use_responses_api = false
 
 func TestLoadEnvFallback(t *testing.T) {
 	t.Setenv("OPENAI_API_KEY", "env-key")
+	t.Setenv("OPENAI_BASE_URL", "http://localhost:11434")
 	t.Setenv("GITHUB_TOKEN", "ghp_test")
 
 	cfg, err := config.Load("")
@@ -94,6 +95,9 @@ func TestLoadEnvFallback(t *testing.T) {
 	if cfg.OpenAI.APIKey != "env-key" {
 		t.Errorf("OpenAI.APIKey = %q, want %q from env", cfg.OpenAI.APIKey, "env-key")
 	}
+	if cfg.OpenAI.BaseURL != "http://localhost:11434" {
+		t.Errorf("OpenAI.BaseURL = %q, want %q from OPENAI_BASE_URL", cfg.OpenAI.BaseURL, "http://localhost:11434")
+	}
 	if cfg.GitHub.Token != "ghp_test" {
 		t.Errorf("GitHub.Token = %q, want %q from env", cfg.GitHub.Token, "ghp_test")
 	}
@@ -103,8 +107,9 @@ func TestValidateOpenAI(t *testing.T) {
 	cfg := config.Defaults()
 	cfg.Provider = config.ProviderOpenAI
 
-	// Without key — should fail.
+	// Without key and without custom base URL — should fail.
 	cfg.OpenAI.APIKey = ""
+	cfg.OpenAI.BaseURL = ""
 	if err := cfg.Validate(); err == nil {
 		t.Error("expected error for missing OpenAI API key")
 	}
@@ -113,6 +118,13 @@ func TestValidateOpenAI(t *testing.T) {
 	cfg.OpenAI.APIKey = "sk-test"
 	if err := cfg.Validate(); err != nil {
 		t.Errorf("unexpected error: %v", err)
+	}
+
+	// With a custom base URL but no key — should pass (local backend).
+	cfg.OpenAI.APIKey = ""
+	cfg.OpenAI.BaseURL = "http://localhost:11434"
+	if err := cfg.Validate(); err != nil {
+		t.Errorf("unexpected error with custom base_url and no key: %v", err)
 	}
 }
 

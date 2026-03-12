@@ -6,22 +6,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/peterwwillis/hn-critique/internal/config"
 	"github.com/peterwwillis/hn-critique/internal/generator"
 )
 
-const (
-	openaiChatEndpoint      = "https://api.openai.com/v1/chat/completions"
-	openaiResponsesEndpoint = "https://api.openai.com/v1/responses"
-)
+const defaultOpenAIBaseURL = "https://api.openai.com"
 
 type openAIProvider struct {
-	apiKey          string
-	chatModel       string
-	searchModel     string
-	useResponsesAPI bool
-	http            *http.Client
+	chatEndpoint      string
+	responsesEndpoint string
+	apiKey            string
+	chatModel         string
+	searchModel       string
+	useResponsesAPI   bool
+	http              *http.Client
 }
 
 // openAIConfig builds an OpenAIConfig from just an API key, using defaults for
@@ -36,12 +36,18 @@ func openAIConfig(apiKey string) config.OpenAIConfig {
 }
 
 func newOpenAIProvider(cfg config.OpenAIConfig) *openAIProvider {
+	base := strings.TrimRight(cfg.BaseURL, "/")
+	if base == "" {
+		base = defaultOpenAIBaseURL
+	}
 	return &openAIProvider{
-		apiKey:          cfg.APIKey,
-		chatModel:       cfg.ChatModel,
-		searchModel:     cfg.SearchModel,
-		useResponsesAPI: cfg.UseResponsesAPI,
-		http:            &http.Client{Timeout: httpTimeout},
+		chatEndpoint:      base + "/v1/chat/completions",
+		responsesEndpoint: base + "/v1/responses",
+		apiKey:            cfg.APIKey,
+		chatModel:         cfg.ChatModel,
+		searchModel:       cfg.SearchModel,
+		useResponsesAPI:   cfg.UseResponsesAPI,
+		http:              &http.Client{Timeout: httpTimeout},
 	}
 }
 
@@ -57,10 +63,10 @@ func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 		text, err = p.callResponsesAPI(prompt)
 		if err != nil {
 			// Fall back to Chat Completions when the Responses API is unavailable.
-			text, err = callChatCompletions(p.http, openaiChatEndpoint, "Bearer "+p.apiKey, p.chatModel, prompt, true)
+			text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true)
 		}
 	} else {
-		text, err = callChatCompletions(p.http, openaiChatEndpoint, "Bearer "+p.apiKey, p.chatModel, prompt, true)
+		text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("openai article analysis: %w", err)
@@ -77,7 +83,7 @@ func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 func (p *openAIProvider) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
 	prompt := commentsPrompt(title, articleURL, buildCommentText(comments))
 
-	text, err := callChatCompletions(p.http, openaiChatEndpoint, "Bearer "+p.apiKey, p.chatModel, prompt, true)
+	text, err := callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true)
 	if err != nil {
 		return nil, fmt.Errorf("openai comments analysis: %w", err)
 	}
@@ -87,6 +93,16 @@ func (p *openAIProvider) AnalyzeComments(title, articleURL string, comments []*g
 		return nil, fmt.Errorf("openai: parsing comments critique: %w", err)
 	}
 	return &critique, nil
+}
+
+// bearerHeader returns the value to use for the Authorization header.
+// When apiKey is empty (local backends that do not require auth) a placeholder
+// value is used so that the header field is always present.
+func bearerHeader(apiKey string) string {
+	if apiKey == "" {
+		return "Bearer none"
+	}
+	return "Bearer " + apiKey
 }
 
 // callResponsesAPI calls the OpenAI Responses API with the web_search_preview tool.
@@ -101,11 +117,11 @@ func (p *openAIProvider) callResponsesAPI(input string) (string, error) {
 		return "", err
 	}
 
-	req, err := http.NewRequest("POST", openaiResponsesEndpoint, bytes.NewReader(body))
+	req, err := http.NewRequest("POST", p.responsesEndpoint, bytes.NewReader(body))
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("Authorization", "Bearer "+p.apiKey)
+	req.Header.Set("Authorization", bearerHeader(p.apiKey))
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := p.http.Do(req)

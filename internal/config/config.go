@@ -30,19 +30,39 @@ type Config struct {
 }
 
 // OpenAIConfig holds settings for the OpenAI provider.
+// The same provider can target any OpenAI-compatible backend (Ollama,
+// llama-server, LM Studio, vLLM, …) by setting BaseURL.
 type OpenAIConfig struct {
 	// APIKey falls back to the OPENAI_API_KEY environment variable when empty.
+	// For local/private backends that do not require authentication, leave
+	// both APIKey and the environment variable unset; validation is relaxed
+	// when BaseURL points to a non-default host.
 	APIKey string `toml:"api_key"`
+	// BaseURL is the root URL of an OpenAI-compatible inference server.
+	// Defaults to https://api.openai.com when empty.
+	// Falls back to the OPENAI_BASE_URL environment variable when empty.
+	// Examples:
+	//   http://localhost:11434   (Ollama)
+	//   http://localhost:8080    (llama-server / llama.cpp)
+	//   http://192.168.1.50:1234 (LM Studio on another machine)
+	BaseURL string `toml:"base_url"`
 	// ChatModel is the model used for chat completions.
 	ChatModel string `toml:"chat_model"`
 	// SearchModel is the model used when web search is requested via the Responses API.
 	SearchModel string `toml:"search_model"`
 	// UseResponsesAPI enables the Responses API (with web_search_preview) for
 	// article analysis. Falls back to Chat Completions when false or unavailable.
+	// This feature is specific to api.openai.com and should be false for other backends.
 	UseResponsesAPI bool `toml:"use_responses_api"`
 }
 
 // OllamaConfig holds settings for a local Ollama instance.
+//
+// Deprecated: configure the openai provider with base_url pointing to your
+// Ollama server instead.  The ollama provider now routes through the same
+// OpenAI-compatible HTTP client used by the openai provider, so there is no
+// behavioural difference.  This section is kept for backward compatibility and
+// will be removed in a future version.
 type OllamaConfig struct {
 	// BaseURL is the Ollama server root URL. Defaults to http://localhost:11434.
 	BaseURL string `toml:"base_url"`
@@ -99,6 +119,9 @@ func Load(path string) (*Config, error) {
 	if cfg.OpenAI.APIKey == "" {
 		cfg.OpenAI.APIKey = os.Getenv("OPENAI_API_KEY")
 	}
+	if cfg.OpenAI.BaseURL == "" {
+		cfg.OpenAI.BaseURL = os.Getenv("OPENAI_BASE_URL")
+	}
 	if cfg.GitHub.Token == "" {
 		cfg.GitHub.Token = os.Getenv("GITHUB_TOKEN")
 	}
@@ -111,8 +134,12 @@ func Load(path string) (*Config, error) {
 func (c *Config) Validate() error {
 	switch c.Provider {
 	case ProviderOpenAI:
-		if c.OpenAI.APIKey == "" {
-			return errors.New("provider \"openai\" requires api_key (or OPENAI_API_KEY env var)")
+		// Require an API key only when targeting the default OpenAI endpoint.
+		// Local / private backends (Ollama, llama-server, …) typically do not
+		// need authentication.
+		if c.OpenAI.APIKey == "" && c.OpenAI.BaseURL == "" {
+			return errors.New("provider \"openai\" requires api_key (or OPENAI_API_KEY env var); " +
+				"set base_url (or OPENAI_BASE_URL) if you are targeting a local backend that does not need a key")
 		}
 	case ProviderOllama:
 		if c.Ollama.BaseURL == "" {
