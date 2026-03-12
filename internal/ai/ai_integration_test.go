@@ -4,7 +4,6 @@ package ai_test
 
 import (
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/peterwwillis/hn-critique/internal/ai"
@@ -15,8 +14,16 @@ const aiTestArticleContent = "Go is an open-source programming language created 
 	"It is statically typed, compiled, and designed for simplicity and performance."
 
 // TestAI_GitHubModels tests AI analysis using the GitHub Models API.
-// It requires a GITHUB_TOKEN environment variable and the models:read permission.
-// The test is skipped when the token is absent or when the API is inaccessible.
+//
+// The test requires GITHUB_TOKEN to be set in the environment.  In GitHub
+// Actions this token is injected automatically; the workflow job that runs
+// this test grants `permissions: models: read` so that the token is
+// authorised to call the inference endpoint.
+//
+// The test is skipped only when GITHUB_TOKEN is explicitly absent (i.e. a
+// local run where no token was provided).  When the token IS present, any
+// API failure is treated as a real test failure — never a silent skip — so
+// that the caller can see exactly what went wrong.
 func TestAI_GitHubModels(t *testing.T) {
 	token := os.Getenv("GITHUB_TOKEN")
 	if token == "" {
@@ -32,7 +39,7 @@ func TestAI_GitHubModels(t *testing.T) {
 		t.Fatalf("NewProvider: %v", err)
 	}
 
-	t.Logf("Testing GitHub Models provider (%s)...", cfg.GitHub.Model)
+	t.Logf("Testing GitHub Models provider (model: %s, endpoint: %s)...", cfg.GitHub.Model, cfg.GitHub.Endpoint)
 
 	critique, err := p.AnalyzeArticle(
 		"Introduction to Go",
@@ -40,11 +47,6 @@ func TestAI_GitHubModels(t *testing.T) {
 		aiTestArticleContent,
 	)
 	if err != nil {
-		// HTTP 4xx errors indicate the token lacks models:read permission.
-		// Skip rather than fail so that workflows without the permission still pass.
-		if strings.Contains(err.Error(), "HTTP 4") {
-			t.Skipf("GitHub Models API not accessible (models:read permission may be missing): %v", err)
-		}
 		t.Fatalf("AnalyzeArticle: %v", err)
 	}
 
@@ -61,11 +63,14 @@ func TestAI_GitHubModels(t *testing.T) {
 
 	// Also test comment analysis.
 	t.Logf("Testing comments analysis with GitHub Models...")
-	_, err = p.AnalyzeComments("Introduction to Go", "https://go.dev", nil)
+	commentsCritique, err := p.AnalyzeComments("Introduction to Go", "https://go.dev", nil)
 	if err != nil {
-		// nil comments might or might not be acceptable; log but don't fail.
-		t.Logf("AnalyzeComments (empty): %v", err)
+		t.Fatalf("AnalyzeComments: %v", err)
 	}
+	if commentsCritique == nil {
+		t.Fatal("AnalyzeComments returned nil")
+	}
+	t.Logf("Comments critique — summary: %q", commentsCritique.Summary)
 }
 
 // TestAI_OpenAI tests AI analysis using the OpenAI API.
@@ -85,7 +90,7 @@ func TestAI_OpenAI(t *testing.T) {
 		t.Fatalf("NewProvider: %v", err)
 	}
 
-	t.Logf("Testing OpenAI provider (%s)...", cfg.OpenAI.ChatModel)
+	t.Logf("Testing OpenAI provider (model: %s)...", cfg.OpenAI.ChatModel)
 
 	critique, err := p.AnalyzeArticle(
 		"Introduction to Go",

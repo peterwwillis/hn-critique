@@ -65,18 +65,19 @@ jobs:
         run: make test-integration
 
   # ────────────────────────────────────────────────────────────
-  # AI integration tests — tries the GitHub Models API using the
-  # automatically-provided GITHUB_TOKEN.  The job requires the
-  # `models: read` permission so the token is granted access to
-  # the GitHub Models inference endpoint.
+  # AI integration tests — calls the GitHub Models inference API
+  # using the automatically-provided GITHUB_TOKEN.
   #
-  # The tests skip gracefully when:
-  #   - GITHUB_TOKEN is absent
-  #   - The token lacks models:read permission
-  #   - The API is temporarily unavailable
+  # The job requires `permissions: models: read` so the token is
+  # granted access to the inference endpoint.
   #
-  # continue-on-error: true prevents a transient or permission
-  # failure from blocking the overall workflow.
+  # To enable this job in your repository:
+  #   1. Go to Settings > Copilot > "Use GitHub Models" and enable it.
+  #   2. The `permissions: models: read` block below is already set.
+  #
+  # The TestAI_GitHubModels test will FAIL (not silently skip) when
+  # GITHUB_TOKEN is present but the API call fails, so you can see
+  # exactly what went wrong in the logs.
   # ────────────────────────────────────────────────────────────
   ai:
     name: AI integration tests (GitHub Models)
