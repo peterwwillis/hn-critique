@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">279 points</span>
+        <span class="score">283 points</span>
         by <a href="https://news.ycombinator.com/user?id=u1hcw9nx">u1hcw9nx</a>
         2 days ago
         &nbsp;|&nbsp;<a href="/critique/47348275.html">critique article</a>
@@ -128,15 +128,41 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=que3216">que3216</a>
+    <a href="https://news.ycombinator.com/user?id=andy12_">andy12_</a>
   </div>
-  <div class="comment-text">For me this felt key to understanding the value vs tool calls:<p>&gt; Because the execution trace is part of the forward pass, the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.</div>
+  <div class="comment-text">This seems a really interesting path for interpretability, specially if a big chunk of a model&#x27;s behavior occurs pseudo-symbolically. This is an idea I had thought about, integrating tools into the main computation path of a model, but I never imagined that it could be done efficiently with just a vanilla transformer.<p>Truly, attention is all you need (I guess).</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ACCount37">ACCount37</a>
+  </div>
+  <div class="comment-text">This seems like it has some potential, but is pretty much useless as it is.<p>Shame there are no weights released - let alone the &quot;compiler&quot; tool they used to actually synthesize computational primitives into model weights. It seems like a &quot;small model&quot; system that&#x27;s amenable to low budget experiments, and I would love to see what this approach can be pushed towards.<p>I disagree with the core premise, it&#x27;s basically the old neurosymbolic garbage restated, but embedding predefined computational primitives into LLMs could have some uses nonetheless.</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+    <a href="https://news.ycombinator.com/user?id=yorwba">yorwba</a>
   </div>
-  <div class="comment-text">Except their process isn&#x27;t actually differentiable, as they admit near the end of the post, they just sort hand-wavily suggest that approximately differentiable methods &quot;should&quot; work. Also no mention at all of what the training data would be, where it would come from, or how a loss function could be constructed to continuously score &quot;partially correct&quot; programs (of what that would even mean, or if that idea is even coherent).<p>What <i>was</i> a good point, mentioned by @hedgehog in this thread (<a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986</a>), is that tool-calls break batching a lot, so there could be huge efficiency gains at scale if you can just pass through a computation sub-network (even if that sub-net is frozen and can&#x27;t be updated, and is programmed in manually rather than trained in).<p>Why on Earth you&#x27;d want that sub-net to be a clunky transformer rather than just an efficient, GPU-accelerated custom non-trainable layer, though, is unclear to me.</div>
+  <div class="comment-text">If you want to experiment with hardcoding small programs into transformer weights, maybe try ALTA: <a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2410.18077v2" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2410.18077v2</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ACCount37">ACCount37</a>
+  </div>
+  <div class="comment-text">I&#x27;m less interested in turning programs into transformers and more interested in turning programs into subnetworks within large language models.<p>Which the blog post brings up as a research direction, but never actually elaborates upon. And the interface between the two is a hard problem.<p>I&#x27;ll check out the link though, thanks.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
+  </div>
+  <div class="comment-text">What&#x27;s &quot;the old neurosymbolic garbage&quot;?</div>
   
 </div>
 
@@ -277,44 +303,18 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ACCount37">ACCount37</a>
+    <a href="https://news.ycombinator.com/user?id=que3216">que3216</a>
   </div>
-  <div class="comment-text">This seems like it has some potential, but is pretty much useless as it is.<p>Shame there are no weights released - let alone the &quot;compiler&quot; tool they used to actually synthesize computational primitives into model weights. It seems like a &quot;small model&quot; system that&#x27;s amenable to low budget experiments, and I would love to see what this approach can be pushed towards.<p>I disagree with the core premise, it&#x27;s basically the old neurosymbolic garbage restated, but embedding predefined computational primitives into LLMs could have some uses nonetheless.</div>
+  <div class="comment-text">For me this felt key to understanding the value vs tool calls:<p>&gt; Because the execution trace is part of the forward pass, the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=yorwba">yorwba</a>
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
   </div>
-  <div class="comment-text">If you want to experiment with hardcoding small programs into transformer weights, maybe try ALTA: <a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2410.18077v2" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2410.18077v2</a></div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ACCount37">ACCount37</a>
-  </div>
-  <div class="comment-text">I&#x27;m less interested in turning programs into transformers and more interested in turning programs into subnetworks within large language models.<p>Which the blog post brings up as a research direction, but never actually elaborates upon. And the interface between the two is a hard problem.<p>I&#x27;ll check out the link though, thanks.</div>
+  <div class="comment-text">Except their process isn&#x27;t actually differentiable, as they admit near the end of the post, they just sort hand-wavily suggest that approximately differentiable methods &quot;should&quot; work. Also no mention at all of what the training data would be, where it would come from, or how a loss function could be constructed to continuously score &quot;partially correct&quot; programs (of what that would even mean, or if that idea is even coherent).<p>What <i>was</i> a good point, mentioned by @hedgehog in this thread (<a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986</a>), is that tool-calls break batching a lot, so there could be huge efficiency gains at scale if you can just pass through a computation sub-network (even if that sub-net is frozen and can&#x27;t be updated, and is programmed in manually rather than trained in).<p>Why on Earth you&#x27;d want that sub-net to be a clunky transformer rather than just an efficient, GPU-accelerated custom non-trainable layer, though, is unclear to me.</div>
   
 </div>
 
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
-  </div>
-  <div class="comment-text">What&#x27;s &quot;the old neurosymbolic garbage&quot;?</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=andy12_">andy12_</a>
-  </div>
-  <div class="comment-text">This seems a really interesting path for interpretability, specially if a big chunk of a model&#x27;s behavior occurs pseudo-symbolically. This is an idea I had thought about, integrating tools into the main computation path of a model, but I never imagined that it could be done efficiently with just a vanilla transformer.<p>Truly, attention is all you need (I guess).</div>
-  
 </div>
 
     
@@ -325,14 +325,6 @@
   </div>
   <div class="comment-text">the paper is burying the lede here (i think?)<p>&gt; The key technical unlock is to restrict lookup heads to head dimension 2, which enables a decoding path where the dominant retrieval&#x2F;update operations can be computed in log time in the sequence length (for this structured executor regime), rather than by a full prefix-sized attention sweep.<p>edit:  i understand how hullkv works now.  very clever.<p>I dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>lastly, im not sure why wasm is a good target, iirc wasm seems to be really inefficient (not so much in code but in expressivity). i wonder if that curtails the llms ability to plan higher order stuff (since its always forced to think in the small)</div>
   
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=alexlitz">alexlitz</a>
-  </div>
-  <div class="comment-text">The buried lede is this, if you have two dimensions and use rope, and hard-max attention you could simply store addresses as a given theta. With RoPE and sufficient precision that pretty easily gets you relative addressing with just one head and absolute with three (treating BOS as a sink getting rotation relative to it with orthogonal unit queries then using the result to counter rotate your own relative position with the complex conjugate). With less precision just add a few more heads with different thetas.</div>
-  
-</div>
-
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
@@ -357,6 +349,14 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
   
 </div>
 
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=alexlitz">alexlitz</a>
+  </div>
+  <div class="comment-text">The buried lede is this, if you have two dimensions and use rope, and hard-max attention you could simply store addresses as a given theta. With RoPE and sufficient precision that pretty easily gets you relative addressing with just one head and absolute with three (treating BOS as a sink getting rotation relative to it with orthogonal unit queries then using the result to counter rotate your own relative position with the complex conjugate). With less precision just add a few more heads with different thetas.</div>
+  
 </div>
 
 </div>
@@ -393,16 +393,6 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
 
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
-  </div>
-  <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
-  
 </div>
 
     
@@ -467,6 +457,16 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
+  </div>
+  <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=koolala">koolala</a>
   </div>
   <div class="comment-text">I&#x27;d like to see this combined with reinforcement learning to optimize models to think computationally. Generating ideas with hypothetical results and then running them in the same thought. Their solution sounded like a lot of tokens though.</div>
@@ -501,28 +501,6 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
   </div>
   <div class="comment-text">&gt; the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.<p>IMHO the key point at which this technique has an unfair advantage vs a traditional interpreter is here.<p>How disruptive is it to have differentiability? To me it would mean that some tweaking-around can happen in an LLM-program at train-time; like changing a constant, or switching from a function call to another function. Can we gradient-descent effectively inside this huge space? How different is it from tool-calling from a pool of learned programs (think github but for LLM programs written in classic languages)?</div>
   
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=xpl">xpl</a>
-  </div>
-  <div class="comment-text">Is this a joke? If it&#x27;s not trainable &#x2F; differentiable when why do it in the first place? It&#x27;s just as inefficient and inflexible as it gets compared to tool calling — you have to statically bake programs in the weights, model cannot introspect it and modify, it has very limited IO capabilities, bad performance, bad everything. Its like a weird brainfuck-esque VM — cool that you can do it, but for what except some lulz?<p>But maybe it&#x27;s just too genius and I don&#x27;t understand it.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
-  </div>
-  <div class="comment-text">I&#x27;d tend to agree, the only good points I&#x27;ve seen were made by @hedgehog [1] here in this thread:<p><pre><code>    I&#x27;m not sure about the rest but a significant problem with high frequency tool calling (especially in training) is that it breaks batching.
-</code></pre>
-and then later by @ACCount37 [2]:<p><pre><code>    I&#x27;m less interested in turning programs into transformers and more interested in turning programs into subnetworks within large language models.
-</code></pre>
-In theory, if you can create a very efficient sub-net to replicate certain tool calls (even if the weights are frozen during any training steps, and manually compiled), this might help with making inference much more efficient at scale. No idea why in general you would want to do this through the clunky transformer architecture though. Just implement a non-trainable, GPU-accelerated layer to do the compute and avoid the tool-call.<p>[1] <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986</a><p>[2] <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47363909">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47363909</a></div>
-  
-</div>
-
 </div>
 
     
@@ -582,6 +560,37 @@ In theory, if you can create a very efficient sub-net to replicate certain tool 
 </div>
 
     
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
+  </div>
+  <div class="comment-text">Is their convex hull attention mechanism new and generally useable? I mean, it substantially restricts the shape of the model, so it isn’t a universal solution of course, but it does seem to overcome a pretty annoying limitation.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">If you read the section &quot;Richer attention mechanisms&quot;, you can see, no, the mechanism is not generally useable (it requires significant modification to become differentiable). They later speculate:<p><pre><code>    While we do not yet know whether exact softmax attention
+    can be maintained with the same efficiency, it is easy to
+    approximate it with k-sparse softmax attention: retrieve
+    the top-k keys and perform the softmax only over those
+</code></pre>
+but if you have played around with training models that use e.g. topk or other hard thresholding operations in e.g. PyTorch (or just think about how many gradients become zero with such an operation) you know that these tend to work only in extremely limited &#x2F; specific cases, and make training even more finicky than it already is.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
+  </div>
+  <div class="comment-text">I saw that, but the image included nearby made it look like it might be plausible to replace the 1D line around their points with a pretty narrow 2D area. This could still be a somewhat effective filter, right?</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
 
     
 
@@ -591,7 +600,7 @@ In theory, if you can create a very efficient sub-net to replicate certain tool 
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 21:45 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 22:40 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
