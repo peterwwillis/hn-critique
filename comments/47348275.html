@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Executing programs inside transformers with exponentially faster inference | HN Critique</title>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="/"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px #ffffff solid;" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="/">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr id="pagespace" style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="/">← Back to front page</a></p>
+      
+      <h2><a href="https://www.percepta.ai/blog/can-llms-be-computers" rel="noreferrer noopener">Executing programs inside transformers with exponentially faster inference</a>
+        <span class="sitebit"> (percepta.ai)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">180 points</span>
+        by <a href="https://news.ycombinator.com/user?id=u1hcw9nx">u1hcw9nx</a>
+        1 days ago
+        &nbsp;|&nbsp;<a href="/critique/47348275.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47348275" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=btown">btown</a>
+  </div>
+  <div class="comment-text">This seems way cooler than just computation (which is easy to hand off to a tool, and arguably more predictable that way). The broader point here is that you can have your model switch dynamically to&#x2F;from a kind of attention that scales with the log of the token count, by only exploring the convex hull in a 2D space. A less capable version of attention, to be sure, but one capable of tracing a program’s execution with text representations of registers and stack - which is a meaningful level of flexibility, and one many humans would find difficult to do reliably!<p>What could you do with an LLM that can go into “focus mode” and generate tokens extremely rapidly? How much more powerful would a reasoning-token-generation phase be that can explore and cull large numbers of paths&#x2F;hypotheses, so long as they are well defined? Does this have implications for multi-modal models and spatial reasoning?<p>As the paper suggests:<p>&gt; These models could be useful in several modes: as a dedicated fast path paired with a slower, more general model; as part of a fast&#x2F;slow hybrid architecture inside a single system; or as a speculative execution model that proposes tokens quickly while a regular-attention model verifies and accepts them. Regardless of their eventual capability ceiling, they already suggest a powerful systems primitive for speeding up larger models.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=BenoitP">BenoitP</a>
+  </div>
+  <div class="comment-text">&gt; the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.<p>IMHO the key point at which this technique has an unfair advantage vs a traditional interpreter is here.<p>How disruptive is it to have differentiability? To me it would mean that some tweaking-around can happen in an LLM-program at train-time; like changing a constant, or switching from a function call to another function. Can we gradient-descent effectively inside this huge space? How different is it from tool-calling from a pool of learned programs (think github but for LLM programs written in classic languages)?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bonoboTP">bonoboTP</a>
+  </div>
+  <div class="comment-text">This shows the downside of using AI to write up your project. I see the eloquent sentences, but don&#x27;t get the message.<p>&gt; This works, but the actual execution happened outside the model. The model specified the computation, then waited for an external system to carry it out.
+&gt; Our transformer also emits a program, but instead of pausing for an external tool, it executes that program itself, step by step, within the same transformer.<p>What&#x27;s the benefit? Is it speed? Where are the benchmarks? Is it that you can backprop through this computation? Do you do so?<p>Why is it good that it&#x27;s &quot;inside&quot; the model? Just making it more elegant and nice? The tool was already &quot;inside&quot; the overall hybrid system. What&#x27;s the actual problem?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=famouswaffles">famouswaffles</a>
+  </div>
+  <div class="comment-text">&gt;This shows the downside of using AI to write up your project. I see the eloquent sentences, but don&#x27;t get the message.<p>Not really sure what this obsession with calling things you don&#x27;t like AI generated is but it&#x27;s poor form. If you have something to say about the text then say it. Otherwise leave baseless accusations out of it.<p>&gt;What&#x27;s the benefit? Is it speed? Where are the benchmarks? Is it that you can backprop through this computation? Do you do so?....<p>It&#x27;s pretty clearly an ideological thing. Some people are firmly on the &#x27;some sort of symbolic logic is necessary&#x27; camp. From the article, &#x27;A system that cannot compute cannot truly internalize what computation is.&#x27;<p>Some things are just interesting for the sake of it. This is one of those things. I don&#x27;t agree with the authors on the above and I&#x27;m still glad they shared. It&#x27;s a very interesting read regardless.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bonoboTP">bonoboTP</a>
+  </div>
+  <div class="comment-text">&gt;  If you have something to say about the text then say it.<p>I could point out the individual phrases and describe the overall impression in detail, or I can just compactly communicate that by using the phrase &quot;AI&quot;. If it bothers you, read it as &quot;AI-like&quot;, so there is a pretension.<p>I have no problem with using AI for writing. I do it too, especially for documentation. But you need to read it and iterate with it and give it enough raw input context. If you don&#x27;t give it info about your actual goals, intentions, judgments etc, the AI will substitute some washed-out, averaged-out no-meat-on-the-bone fluff that may sound good at first read and give you a warm wow-effect that makes you hit publish, but you read into it all the context that you have in your head, but readers don&#x27;t have that.<p>Formatting and language is cheap now. We need a new culture around calling out sloppy work. You would not have had a problem with calling out a badly composed rambling article 5 years ago. But today you can easily slap an AI filter on it that will make it look grammatical and feel narratively engaging, now it&#x27;s all about deeper content. But if one points that out, replies can always say &quot;oh, you can&#x27;t prove that, can you?&quot;</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=furyofantares">furyofantares</a>
+  </div>
+  <div class="comment-text">I&#x27;m glad they shared too! Wish they shared without letting the LLM process it so heavily, it makes it too hard to read, it gives monotone importance to every piece of text. Mostly it does this by bringing everything up to a slight over-importance with tone and fluff language, and by turning everything into dry statements of fact.<p>As to why people call this out without going into great detail about the problems with the actual text, it&#x27;s because this is happening all over the place and it&#x27;s very disrespectful to readers, who dig into an article that looks very well written on the surface, only to discover it&#x27;s a lot of labor to decode and often (but not always) a total waste of time. Asking for a critical report of the  text is asking even more of a reader who already feels duped.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=entropi">entropi</a>
+  </div>
+  <div class="comment-text">I got the same impression as the parent post. Even if its not AI-generated, the text reads like a politician&#x27;s speech at a lot of places. Talks a lot, says little.<p>The idea itself was very cool, so I endured it. But it was not a pleasant read.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=asplake">asplake</a>
+  </div>
+  <div class="comment-text">Agreeing first that it is genuinely interesting, let me make a constructive comment on the text: Early on, there are too many small paragraphs that don&#x27;t on their own make a cogent argument. That important but easily overlooked structural work is pushed back to the reader. I felt rewarded in pushing past that though. Bravo.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=stalfie">stalfie</a>
+  </div>
+  <div class="comment-text">This is a nice case study of the downside of creating explicit policies of &quot;no AI comments&quot; without a technical method of enforcing it. I am sure the hacker news comment quality will suffer almost as much from an escalating culture of accusation and paranoia that it will from LLM comment themselves.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=radarsat1">radarsat1</a>
+  </div>
+  <div class="comment-text">&gt; Is it speed?<p>&gt; Is it that you can backprop through this computation? Do you do so?<p>With respect, I feel that you may not have read the article.<p>&gt; Because the execution trace is part of the forward pass, the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.<p>and,<p>&gt; By storing points across nested convex hulls, this yields a decoding cost of O(k+log⁡ n).<p>and,<p>&gt; Regardless of their eventual capability ceiling, they already suggest a powerful systems primitive for speeding up larger models.<p>So yes, and yes.<p>&gt; Where are the benchmarks?<p>Not clear what they should benchmark it against. They do compare speed to a normal KV Cache. As for performance.. if it&#x27;s actually executing a Sudoku solver with a 100% success rate, it seems pretty trivial to find any model doing &lt; 100% success rate. Sure, it would be nice to see the data here, agree with you there.<p>Personally I think it would be really interesting to see if this method can be combined with a normal model MoE-style. It is likely possible, the router module should pick up quite quickly that it predicts the right tokens for some subset of problems deterministically. I like the idea of embed all sorts of general solvers directly into the model, like a prolog solver for example. In fact it never would have occurred to me to just go straight for WASM, pretty interesting choice to directly embed a VM. But it makes me wonder what &quot;smaller&quot; interpreters could be useful in this context.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mike_hearn">mike_hearn</a>
+  </div>
+  <div class="comment-text">I read the article and had the same question. It&#x27;s written in such a way that it feels like it&#x27;s answering these questions without actually doing so.<p>The right thing to benchmark against isn&#x27;t a regular transformer, it&#x27;s a transformer that writes programs that are then interpreted. They have a little visual demo where it looks faster but only because they make Python absurdly slow, and it&#x27;s clearly not meant to be a real benchmark.<p>I spent the whole article thinking, wow, cool, but also ... how is this better than an LLM steering a regular computer? The closest we get is a statement about the need to &quot;internalize what computation is&quot; which doesn&#x27;t say anything to me.<p>Fundamentally, running actual instructions on a real CPU is always going to be faster than running them via a neural network. So the interesting part is where they say you can backprop through it, but, ok, backprop is for cases where we don&#x27;t know how to encode a function using strict logic. Why would you try and backprop through a Sudoku solver? It&#x27;s probably my imagination is just limited but I could have used more on that.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bsenftner">bsenftner</a>
+  </div>
+  <div class="comment-text">Well, for one, by eliminating external tool calling, the model gains an amount of security. This occurs because the tools being called by an LLM can be corrupted, and in this scenario corrupted tools would not be called.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=maytc">maytc</a>
+  </div>
+  <div class="comment-text">The key difference is that the model is able to write the program as it’s executing it.<p>Before it needs to write the code and have an external program execute it. Here it can change its mind mid execution. Kinda like what was observed in the CoT’s ah ha moment</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=armchairhacker">armchairhacker</a>
+  </div>
+  <div class="comment-text">What are the AI tells? The only one I found is redundancy, but it makes sense because this is trying to be approachable to laymen.<p>Like, you have a great point (the benefit of this approach isn&#x27;t explained), but that&#x27;s a mistake humans frequently make.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ACCount37">ACCount37</a>
+  </div>
+  <div class="comment-text">This seems like it has some potential, but is pretty much useless as it is.<p>Shame there are no weights released - let alone the &quot;compiler&quot; tool they used to actually synthesize computational primitives into model weights. It seems like a &quot;small model&quot; system that&#x27;s amenable to low budget experiments, and I would love to see what this approach can be pushed towards.<p>I disagree with the core premise, it&#x27;s basically the old neurosymbolic garbage restated, but embedding predefined computational primitives into LLMs could have some uses nonetheless.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=yorwba">yorwba</a>
+  </div>
+  <div class="comment-text">If you want to experiment with hardcoding small programs into transformer weights, maybe try ALTA: <a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2410.18077v2" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2410.18077v2</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ACCount37">ACCount37</a>
+  </div>
+  <div class="comment-text">I&#x27;m less interested in turning programs into transformers and more interested in turning programs into subnetworks within large language models.<p>Which the blog post brings up as a research direction, but never actually elaborates upon. And the interface between the two is a hard problem.<p>I&#x27;ll check out the link though, thanks.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=andy12_">andy12_</a>
+  </div>
+  <div class="comment-text">This seems a really interesting path for interpretability, specially if a big chunk of a model&#x27;s behavior occurs pseudo-symbolically. This is an idea I had thought about, integrating tools into the main computation path of a model, but I never imagined that it could be done efficiently with just a vanilla transformer.<p>Truly, attention is all you need (I guess).</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=troelsSteegin">troelsSteegin</a>
+  </div>
+  <div class="comment-text">The Percepta stuff would seem to demonstrate a mechanism for implementing &quot;thinking&quot;. I don&#x27;t understand how foundation models implement &quot;thinking&quot;, but my intuition is that models are specifically trained for matching on and following procedural patterns. A task in a given domain can be performed through an associated and encoded procedure. The model holds all the linkages, as weights, that allows a procedure to be conditionally incrementally generated and performed. Does anyone have any insights about how LLM &quot;thinking&quot; is trained and coded?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=graemefawcett">graemefawcett</a>
+  </div>
+  <div class="comment-text">Basically just madlibs - the models generate intermediate tokens that help predict a better answer based on training (RLHF &amp; otherwise).  They tend to look like &quot;reasoning&quot; because those tokens correlated with accepted answers during training.<p>Extended thinking passes are just more of the same.  The entire methodology exists merely to provide additional context for the autoregression process.  There is no traditional computation occurring</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=koolala">koolala</a>
+  </div>
+  <div class="comment-text">I&#x27;d like to see this combined with reinforcement learning to optimize models to think computationally. Generating ideas with hypothetical results and then running them in the same thought. Their solution sounded like a lot of tokens though.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ontouchstart">ontouchstart</a>
+  </div>
+  <div class="comment-text">If this works, we might be able to have a special ISA for LLM and forget about high level computer language for humans.<p>I am talking strictly about computing, not garbage in garbage out IO.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=MattPalmer1086">MattPalmer1086</a>
+  </div>
+  <div class="comment-text">Interesting... But why?  What is the benefit, other than increasing our understanding of model architectures?<p>Our brains can also simulate turing machines, slowly.  We automated that with computers that are faster and more reliable.  So why not allow a model to use external much faster and reliable tools, just as we do?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mobilejdral">mobilejdral</a>
+  </div>
+  <div class="comment-text">I spent the entire time reading it pondering the same thing.<p>1. The article presents that calling out to a tool like python is &quot;expensive&quot; because of the overhead of forking a process, loading up the python env etc, but why not just eliminate that overhead and embed WebAssembly so this &quot;tool call&quot; is near zero? This feels very similar to the discussion in the 90&#x27;s around the overhead of threads v.s. processes or kernel space v.s. user space.  Could even go further and have a running beam vm so the LLM can write elixir which is ideal for LLM&#x27;s that stream out code? Elixir programs will be a lot shorter than webassembly.<p>2. The core argument stated is &quot;A system that cannot compute cannot truly internalize what computation is.&quot;  The idea being that it could write a program, execute it and by seeing all of the steps maybe even part way through stop and change its mind or when writing new programs write them better, aka be able to debug on the fly?<p>3. Not mentioned, but there is a 3rd x factor that LLM&#x27;s will use this new found computation engine to do overall better at &quot;thinking&quot;.  Computing in very unexpected ways and to unexpected problems. Maybe it would do dramatically better at some benchmark because of this?<p>Unfortunately these are not explored and it is just an execution engine even resulting in the conclusion stating &quot;arbitrary programs can be compiled directly into the transformer weights, bypassing the need to represent them as token sequences at all.&quot; which goes to point number 1 of if we are compiling to weights why not just optimize the tool calling?</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Rastonbury">Rastonbury</a>
+  </div>
+  <div class="comment-text">Why must models be analogous to humans using tools? Or to take the analogy route further wouldn&#x27;t it be better if humans had calculators built into their brains, provided they are determisitic and reduce latency</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=MattPalmer1086">MattPalmer1086</a>
+  </div>
+  <div class="comment-text">Because it is directly analogous.  Neural nets (whether biological or artificial) are not the best way to execute lots of deterministic computations quickly and reliably.  That&#x27;s why we invented computers.<p>I&#x27;m not convinced at all that this is the best way to reduce latency; there are many other ways of doing that.<p>Having a calculator in our brains  would be handy of course, but a gigahertz multi core computer is still going to be better at anything that needs to do a lot of computation and or a lot of data.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=manas96">manas96</a>
+  </div>
+  <div class="comment-text">LLMs are not deterministic per my understanding. A program always produces the same output for the same input and instructions (ignore FP accuracy for now). How is determinism achieved here?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=armchairhacker">armchairhacker</a>
+  </div>
+  <div class="comment-text">LLMs may be deterministic for a subset of inputs, if one output (or intermediate layer) neuron-state probability is significantly higher than the rest. My understanding is, when probabilities are close they diverge.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=deviation">deviation</a>
+  </div>
+  <div class="comment-text">I really liked the article, but food for thought: is a transformer that offloads computation to python really that different from Python code being read and then executed by a compiler?<p>Both examples are of a system we created to abstract most of the hard work.<p>I think a more important concept here is that the term &quot;AI&quot; has a lot of built-in assumptions, one of which being that it is (or will be) super intelligent, and so folks like the author here think (correctly) that it&#x27;s important for the AI to be actually doing the work itself.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pennomi">pennomi</a>
+  </div>
+  <div class="comment-text">It makes sense that a next token predictor could execute assembly code. This is fascinating work, especially with the memory implementation.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mirekrusin">mirekrusin</a>
+  </div>
+  <div class="comment-text">This is brilliant, game changing level.<p>Hey, give it also access to the dump of its weights and way to propose updates so it can see and tinker its brain directly.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=galsapir">galsapir</a>
+  </div>
+  <div class="comment-text">one of the most interesting pieces I&#x27;ve read recently. Not sure I agree with all the statements there (e.g. without execution the system has no comprehension) - but extremely cool</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=moktonar">moktonar</a>
+  </div>
+  <div class="comment-text">Is it possible to do the inverse, then? (Tranforming weights back to code)</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=plaidfuji">plaidfuji</a>
+  </div>
+  <div class="comment-text">Besides being a very interesting conceptual exercise, the animated figures in this article are absolutely stunning - best I’ve ever seen.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=behehebd">behehebd</a>
+  </div>
+  <div class="comment-text">Is this genius? Or just a new binary executable format? Can&#x27;t tell.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=RagnarD">RagnarD</a>
+  </div>
+  <div class="comment-text">This is really important work.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=rebolek">rebolek</a>
+  </div>
+  <div class="comment-text">The original title is &quot;Can LLMs be computers?&quot;<p>But the right question is, should they?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=yalok">yalok</a>
+  </div>
+  <div class="comment-text">very cool idea. But, time savings are not true for every tool call, and it&#x27;s not clear to me yet whether this is batch-able; also, intuitively, for most of the models that run on GPU, you&#x27;d still want to offload tool exec part to CPU since it&#x27;s much cheaper...</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hrmtst93837">hrmtst93837</a>
+  </div>
+  <div class="comment-text">If you push tool execution into the model itself, you inherit all the I&#x2F;O unpredictability and error handling baggage, but now inside a GPU context that&#x27;s allergic to latency. Inference throughput tanks if external calls start blocking, and A100s make expensive waiters. Batching is fantasy unless you know up front exactly what gets executed, which is the opposite of dynamic tools. If you want &quot;faster&quot; here, the trade is reliable deterministic compute versus the usual Wild West of system calls and side effects.</div>
+  
+</div>
+
+</div>
+
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-13 14:05 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

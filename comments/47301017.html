@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Prefix sums at gigabytes per second with ARM NEON | HN Critique</title>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="/"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px #ffffff solid;" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="/">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr id="pagespace" style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="/">← Back to front page</a></p>
+      
+      <h2><a href="https://lemire.me/blog/2026/03/08/prefix-sums-at-tens-of-gigabytes-per-second-with-arm-neon/" rel="noreferrer noopener">Prefix sums at gigabytes per second with ARM NEON</a>
+        <span class="sitebit"> (lemire.me)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">55 points</span>
+        by <a href="https://news.ycombinator.com/user?id=mfiguiere">mfiguiere</a>
+        5 days ago
+        &nbsp;|&nbsp;<a href="/critique/47301017.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47301017" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hayley-patton">hayley-patton</a>
+  </div>
+  <div class="comment-text">As not mentioned in the article, if you want the general form of this algorithm, it is a Hillis-Steele prefix sum: &lt;<a href="https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Prefix_sum#Algorithm_1:_Shorter_span,_more_parallel" rel="nofollow">https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Prefix_sum#Algorithm_1:_Shorte...</a>&gt;</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vardump">vardump</a>
+  </div>
+  <div class="comment-text">What&#x27;s going on with SVE[2] support in the ARM land? It&#x27;s weird that even Apple&#x27;s M5 still doesn&#x27;t support it (other than SME[2]).</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=adrian_b">adrian_b</a>
+  </div>
+  <div class="comment-text">All the ARM cores designed by the Arm company and launched since 2022, which support variants of the Armv9-A ISA, support SVE2. This means that all medium price or high price smartphones that were introduced during the last 4 years have SVE2 support.<p>However, in embedded computers typically only extremely old cores are used, not newer than Cortex-A78 (2021), so these normally do not have SVE2 support. The exceptions are the new and extremely expensive NVIDIA Thor, intended for automotive applications (with Neoverse V3AE cores) and a CPU made by a Chinese company with Cortex-A720 cores, which is available in several single-board computers or Mini-ITX motherboards.<p>A few of the latest Arm-based server CPUs, for instance AWS Graviton5, support SVE2.<p>Apple seems to believe that the SVE2 ISA (derived from an extension of Aarch64 from Fujitsu) is not good, so they promote the SME&#x2F;SME2 extension, which appears to be derived from a former proprietary ISA extension implemented in older Apple CPUs.<p>For single-thread applications, where Apple CPUs are better than the competition, SME2 can provide significantly higher performance than SVE2.<p>However, the SME2 performance for multi-threaded applications is much less impressive, not because the SME2 ISA has any defect, but because SME2 is executed in a separate dedicated core, which is shared by a cluster of normal CPU cores, so SME2 performance does not scale much when more cores are used, because a CPU might have only 1 SME2 core for each 4 or 8 normal cores.<p>This might contribute to the fact that the Apple CPUs have exceptional single-thread performance, but a multi-threaded performance that is not better than that of the competitors.<p>When I first heard about SVE&#x2F;SVE2, I thought that it was great, but nowadays I am much less enthusiastic about it. I believe that the original goal, of writing programs that run on any CPU, regardless of the widths of its vector registers and of its vector execution units, is futile.<p>It is not possible to reach the maximum performance allowed by the hardware in a width-agnostic program. So now I believe that what is needed is not hardware support for ignoring the width, but better software tools that allow an easier writing of programs that are parametrized with hardware characteristics like the width of a cache line and the width of vector or matrix registers, from which a compiler should generate optimal code when the hardware parameters are given.<p>Even if I believe that SVE2 is not good enough to allow the programmer to ignore the implemented width, it still has some important improvements over the older Arm SIMD instructions, so it must be preferred on any CPU than supports it. When SME2 is available, like on Apple or on the latest generation of Arm cores launched in 2025, it is likely to be preferable to SVE2, unless latency is more important than throughput.<p>SME2 is intended to offer better throughput than SVE2 and better latency than the GPU. For maximum throughput, the GPU is preferable, if applicable. For minimum latency, SVE2 is the best.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=my123">my123</a>
+  </div>
+  <div class="comment-text">SME2 is restricted in scope to matrix multiply workloads and isn&#x27;t really designed for anything else.<p>The point of streaming SVE is to have a way to pre&#x2F;post process data on the way in or out of a matrix multiply.<p>A list that I have around of chips which support various levels of SVE:<p>For SVE(1) deployment, chips that have it:
+- Fujitsu A64fx
+- AWS Graviton3<p>SVE2:
+- Snapdragon X2, 8&#x2F;8 Elite Gen 5 and later
+- MediaTek Dimensity 9000 and later
+- NVIDIA Tegra Thor and later, NVIDIA &quot;N1&quot; or later (GB10 is an &quot;N1x&quot; SKU)
+- Samsung Exynos 2200 or later
+- AWS Graviton4, Microsoft Cobalt 100, Google Axion (and newer chips)
+- CIX P1<p>SME(1) instead of SME2:<p>- Snapdragon X2, 8&#x2F;8 Elite Gen 5<p>SME2:<p>- Apple M4, A18 and later
+- Samsung Exynos 2600 
+- MediaTek Dimensity 9500<p>Note that the Snapdragon 8&#x2F;8 Elite Gen 5 and X2 support sve2 but not svebitperm.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dzaima">dzaima</a>
+  </div>
+  <div class="comment-text">&gt; This means that all medium price or high price smartphones that were introduced during the last 4 years have SVE2 support.<p>Except Qualcomm chipsets, which disable SVE even if all ARM cores used support it. (&quot;Snapdragon 8 Elite Gen 5&quot; supposedly finally supports SVE? but that&#x27;s like only half a year old)</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=nubinetwork">nubinetwork</a>
+  </div>
+  <div class="comment-text">The radxa orion o6 apparently supports it...</div>
+  
+</div>
+
+</div>
+
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-13 14:05 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+
