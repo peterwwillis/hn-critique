@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">283 points</span>
+        <span class="score">290 points</span>
         by <a href="https://news.ycombinator.com/user?id=u1hcw9nx">u1hcw9nx</a>
         2 days ago
         &nbsp;|&nbsp;<a href="/critique/47348275.html">critique article</a>
@@ -303,24 +303,6 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=que3216">que3216</a>
-  </div>
-  <div class="comment-text">For me this felt key to understanding the value vs tool calls:<p>&gt; Because the execution trace is part of the forward pass, the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
-  </div>
-  <div class="comment-text">Except their process isn&#x27;t actually differentiable, as they admit near the end of the post, they just sort hand-wavily suggest that approximately differentiable methods &quot;should&quot; work. Also no mention at all of what the training data would be, where it would come from, or how a loss function could be constructed to continuously score &quot;partially correct&quot; programs (of what that would even mean, or if that idea is even coherent).<p>What <i>was</i> a good point, mentioned by @hedgehog in this thread (<a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986</a>), is that tool-calls break batching a lot, so there could be huge efficiency gains at scale if you can just pass through a computation sub-network (even if that sub-net is frozen and can&#x27;t be updated, and is programmed in manually rather than trained in).<p>Why on Earth you&#x27;d want that sub-net to be a clunky transformer rather than just an efficient, GPU-accelerated custom non-trainable layer, though, is unclear to me.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=dnautics">dnautics</a>
   </div>
   <div class="comment-text">the paper is burying the lede here (i think?)<p>&gt; The key technical unlock is to restrict lookup heads to head dimension 2, which enables a decoding path where the dominant retrieval&#x2F;update operations can be computed in log time in the sequence length (for this structured executor regime), rather than by a full prefix-sized attention sweep.<p>edit:  i understand how hullkv works now.  very clever.<p>I dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>lastly, im not sure why wasm is a good target, iirc wasm seems to be really inefficient (not so much in code but in expressivity). i wonder if that curtails the llms ability to plan higher order stuff (since its always forced to think in the small)</div>
@@ -357,40 +339,6 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
   </div>
   <div class="comment-text">The buried lede is this, if you have two dimensions and use rope, and hard-max attention you could simply store addresses as a given theta. With RoPE and sufficient precision that pretty easily gets you relative addressing with just one head and absolute with three (treating BOS as a sink getting rotation relative to it with orthogonal unit queries then using the result to counter rotate your own relative position with the complex conjugate). With less precision just add a few more heads with different thetas.</div>
   
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
-  </div>
-  <div class="comment-text">So, what I&#x27;m trying to understand, and I can&#x27;t find any clear information about that in the article, is how they &quot;compiled&quot; e.g. the Sudoku solver into a Transformer&#x27;s weights. Did they do it manually? Say, they took the source of a hand-coded Sudoku solver and put it through their code-to-weight compiler, and thus compiled the code to the Transformer weights? Or did they go the Good, Old-Fashioned, Deep Learning way and train their Transformer to learn a (&quot;100% correct&quot;!) Sudoku solver from examples? And, if the latter, where&#x27;s the details of the training? What did they train with? What did they train on? How did they train? etc etc.<p>Very light on details that article is.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=MadnessASAP">MadnessASAP</a>
-  </div>
-  <div class="comment-text">My interpretation is that they built a simple virtual machine directly into the weights, then compiled a WASM runtime for that machine, then compiled the solver to that runtime.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=gavinray">gavinray</a>
-  </div>
-  <div class="comment-text">The article states they trained a WASM interpreter and programs are represented as WASM bytecode</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
-  </div>
-  <div class="comment-text">Nope, they <i>encoded</i> or <i>compiled</i> in a simple VM &#x2F; WASM interpreter to the transformer weights, there is no training. You&#x27;d be forgiven for this misreading, as they deliberately mislead early on that their model is (in principle) trainable, but later admit that their actual model is not actually differentiable, but that a differentiable approximation &quot;should&quot; still work (despite no info about what loss function or training data could allow scoring partially correct &#x2F; incomplete program outputs).</div>
-  
-</div>
-
 </div>
 
 </div>
@@ -457,10 +405,62 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
+  </div>
+  <div class="comment-text">So, what I&#x27;m trying to understand, and I can&#x27;t find any clear information about that in the article, is how they &quot;compiled&quot; e.g. the Sudoku solver into a Transformer&#x27;s weights. Did they do it manually? Say, they took the source of a hand-coded Sudoku solver and put it through their code-to-weight compiler, and thus compiled the code to the Transformer weights? Or did they go the Good, Old-Fashioned, Deep Learning way and train their Transformer to learn a (&quot;100% correct&quot;!) Sudoku solver from examples? And, if the latter, where&#x27;s the details of the training? What did they train with? What did they train on? How did they train? etc etc.<p>Very light on details that article is.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=MadnessASAP">MadnessASAP</a>
+  </div>
+  <div class="comment-text">My interpretation is that they built a simple virtual machine directly into the weights, then compiled a WASM runtime for that machine, then compiled the solver to that runtime.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gavinray">gavinray</a>
+  </div>
+  <div class="comment-text">The article states they trained a WASM interpreter and programs are represented as WASM bytecode</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">Nope, they <i>encoded</i> or <i>compiled</i> in a simple VM &#x2F; WASM interpreter to the transformer weights, there is no training. You&#x27;d be forgiven for this misreading, as they deliberately mislead early on that their model is (in principle) trainable, but later admit that their actual model is not actually differentiable, but that a differentiable approximation &quot;should&quot; still work (despite no info about what loss function or training data could allow scoring partially correct &#x2F; incomplete program outputs).</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
   </div>
   <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
   
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=que3216">que3216</a>
+  </div>
+  <div class="comment-text">For me this felt key to understanding the value vs tool calls:<p>&gt; Because the execution trace is part of the forward pass, the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">Except their process isn&#x27;t actually differentiable, as they admit near the end of the post, they just sort hand-wavily suggest that approximately differentiable methods &quot;should&quot; work. Also no mention at all of what the training data would be, where it would come from, or how a loss function could be constructed to continuously score &quot;partially correct&quot; programs (of what that would even mean, or if that idea is even coherent).<p>What <i>was</i> a good point, mentioned by @hedgehog in this thread (<a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47367986</a>), is that tool-calls break batching a lot, so there could be huge efficiency gains at scale if you can just pass through a computation sub-network (even if that sub-net is frozen and can&#x27;t be updated, and is programmed in manually rather than trained in).<p>Why on Earth you&#x27;d want that sub-net to be a clunky transformer rather than just an efficient, GPU-accelerated custom non-trainable layer, though, is unclear to me.</div>
+  
+</div>
+
 </div>
 
     
@@ -600,7 +600,7 @@ but if you have played around with training models that use e.g. topk or other h
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 22:40 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 23:41 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
