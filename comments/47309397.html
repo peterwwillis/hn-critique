@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">210 points</span>
+        <span class="score">216 points</span>
         by <a href="https://news.ycombinator.com/user?id=dgroshev">dgroshev</a>
         4 days ago
         &nbsp;|&nbsp;<a href="/critique/47309397.html">critique article</a>
@@ -46,6 +46,16 @@
     
 
     <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Groxx">Groxx</a>
+  </div>
+  <div class="comment-text">I thought somewhere online there was a breakdown of how Android selects &quot;main&quot; colors (because it does a fairly good job imo), for the Palette¹ class... but I&#x27;m having no luck finding it at all.  I can (and will) just read its source code, but it doesn&#x27;t carry along any qualitative justification or comparisons or etc and it&#x27;ll take a fair bit of time to re-research that knowledge.<p>Does anyone know how this strategy differs?  I&#x27;ve been wanting to build a product-color-selection-thing for stuff like fabric, where finding something that has similar tones is important, but I&#x27;m struggling to find much with concrete details about the strategy like this article has.<p>1: <a href="https:&#x2F;&#x2F;developer.android.com&#x2F;reference&#x2F;androidx&#x2F;palette&#x2F;graphics&#x2F;Palette" rel="nofollow">https:&#x2F;&#x2F;developer.android.com&#x2F;reference&#x2F;androidx&#x2F;palette&#x2F;gra...</a> with most of the color selection logic here: <a href="https:&#x2F;&#x2F;cs.android.com&#x2F;androidx&#x2F;platform&#x2F;frameworks&#x2F;support&#x2F;+&#x2F;androidx-main:palette&#x2F;palette&#x2F;src&#x2F;main&#x2F;java&#x2F;androidx&#x2F;palette&#x2F;graphics&#x2F;ColorCutQuantizer.java" rel="nofollow">https:&#x2F;&#x2F;cs.android.com&#x2F;androidx&#x2F;platform&#x2F;frameworks&#x2F;support&#x2F;...</a></div>
+  
+</div>
+
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -97,6 +107,22 @@ then (when url refreshed) triggered a redir loop culminating in a different erro
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dgroshev">dgroshev</a>
+  </div>
+  <div class="comment-text">Author here: the library just accepts RGB8 bitmaps, probably coming either from Rust&#x27;s image crate [1] or Python&#x27;s Pillow [2], which are both mature and widely used. Dealing with codecs is way out of scope.<p>As for loading into memory at once: I suppose I could integrate with something like libvips and stream strips out of the decoded image without holding the entire bitmap, but that&#x27;d require substantially more glue and complexity. The current approach works fine for extracting dominant colours once to save in a database.<p>You&#x27;re right that pre-resizing the images makes everything faster, but keep in mind that k-means still requires a pretty nontrivial amount of computation.<p>[1]: <a href="https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;image" rel="nofollow">https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;image</a><p>[2]: <a href="https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;pillow&#x2F;" rel="nofollow">https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;pillow&#x2F;</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hedgehog">hedgehog</a>
+  </div>
+  <div class="comment-text">If you ever did want to wrap this in code processing untrusted images there&#x27;s a library called &quot;glycin&quot; designed for that purpose (it&#x27;s used by Loupe, the default Gnome image viewer).<p><a href="https:&#x2F;&#x2F;gnome.pages.gitlab.gnome.org&#x2F;glycin&#x2F;" rel="nofollow">https:&#x2F;&#x2F;gnome.pages.gitlab.gnome.org&#x2F;glycin&#x2F;</a></div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=latexr">latexr</a>
   </div>
   <div class="comment-text">&gt; I&#x27;ve built variants of this several times throughout my career.<p>Got any to share? A self-contained command-line tool to get a good palette from an image is something I’d have a use for.</div>
@@ -119,22 +145,6 @@ then (when url refreshed) triggered a redir loop culminating in a different erro
 
 </div>
 
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dgroshev">dgroshev</a>
-  </div>
-  <div class="comment-text">Author here: the library just accepts RGB8 bitmaps, probably coming either from Rust&#x27;s image crate [1] or Python&#x27;s Pillow [2], which are both mature and widely used. Dealing with codecs is way out of scope.<p>As for loading into memory at once: I suppose I could integrate with something like libvips and stream strips out of the decoded image without holding the entire bitmap, but that&#x27;d require substantially more glue and complexity. The current approach works fine for extracting dominant colours once to save in a database.<p>You&#x27;re right that pre-resizing the images makes everything faster, but keep in mind that k-means still requires a pretty nontrivial amount of computation.<p>[1]: <a href="https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;image" rel="nofollow">https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;image</a><p>[2]: <a href="https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;pillow&#x2F;" rel="nofollow">https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;pillow&#x2F;</a></div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=hedgehog">hedgehog</a>
-  </div>
-  <div class="comment-text">If you ever did want to wrap this in code processing untrusted images there&#x27;s a library called &quot;glycin&quot; designed for that purpose (it&#x27;s used by Loupe, the default Gnome image viewer).<p><a href="https:&#x2F;&#x2F;gnome.pages.gitlab.gnome.org&#x2F;glycin&#x2F;" rel="nofollow">https:&#x2F;&#x2F;gnome.pages.gitlab.gnome.org&#x2F;glycin&#x2F;</a></div>
-  
-</div>
-
-</div>
-
 </div>
 
     
@@ -151,10 +161,11 @@ then (when url refreshed) triggered a redir loop culminating in a different erro
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Animats">Animats</a>
+    <a href="https://news.ycombinator.com/user?id=kristjan">kristjan</a>
   </div>
-  <div class="comment-text">I&#x27;ve wanted something like this for level of detail processing.<p>This is a render from Second Life, in which all the texture images were shrunk down to one pixel, the lowest possible level of detail, producing a monocolor image. 
-For distant objects, or for objects where the texture is still coming in from the net, there needs to be some default color. The existing system used grey for everything. I tried using an average of all the pixels, and, as the original poster points out, the result looks murky.[1] This new approach has real promise for big-world rendering.<p>[1] <a href="https:&#x2F;&#x2F;media.invisioncic.com&#x2F;Mseclife&#x2F;monthly_2023_05&#x2F;monocolor1.jpg.002a5e610b7ac93e282a7e916dc46c38.jpg" rel="nofollow">https:&#x2F;&#x2F;media.invisioncic.com&#x2F;Mseclife&#x2F;monthly_2023_05&#x2F;monoc...</a></div>
+  <div class="comment-text">I&#x27;ve been doing something similar! I&#x27;ve got a Home Assistant dashboard on my desk and wanted the media controls to match the current album art. I need three colors: background, foreground, and something vibrant to set my desk lamp to [1].<p>The SpotifyPlus HA integration [2] was near at hand and does a reasonably good job clustering with a version of ColorThief [3] under the hood. It has the same two problems you started with though: muddying when there&#x27;s lots of gradation, even within a cluster; and no semantic understanding when the cover has something resembling a frame. A bit swapped from okmain&#x27;s goal, but I can invert with the best of them and will give it a shot next time I fiddle. Thanks for posting!<p>[1] <a href="https:&#x2F;&#x2F;gist.github.com&#x2F;kristjan&#x2F;b305b83b0eb4455ee8455be108a0f703" rel="nofollow">https:&#x2F;&#x2F;gist.github.com&#x2F;kristjan&#x2F;b305b83b0eb4455ee8455be108a...</a>
+[2] <a href="https:&#x2F;&#x2F;github.com&#x2F;thlucas1&#x2F;homeassistantcomponent_spotifyplus" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;thlucas1&#x2F;homeassistantcomponent_spotifypl...</a>
+[3] <a href="https:&#x2F;&#x2F;github.com&#x2F;thlucas1&#x2F;SpotifyWebApiPython&#x2F;blob&#x2F;master&#x2F;spotifywebapipython&#x2F;vibrant&#x2F;colorthieffast.py" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;thlucas1&#x2F;SpotifyWebApiPython&#x2F;blob&#x2F;master&#x2F;...</a></div>
   
 </div>
 
@@ -162,11 +173,10 @@ For distant objects, or for objects where the texture is still coming in from th
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=kristjan">kristjan</a>
+    <a href="https://news.ycombinator.com/user?id=Animats">Animats</a>
   </div>
-  <div class="comment-text">I&#x27;ve been doing something similar! I&#x27;ve got a Home Assistant dashboard on my desk and wanted the media controls to match the current album art. I need three colors: background, foreground, and something vibrant to set my desk lamp to [1].<p>The SpotifyPlus HA integration [2] was near at hand and does a reasonably good job clustering with a version of ColorThief [3] under the hood. It has the same two problems you started with though: muddying when there&#x27;s lots of gradation, even within a cluster; and no semantic understanding when the cover has something resembling a frame. A bit swapped from okmain&#x27;s goal, but I can invert with the best of them and will give it a shot next time I fiddle. Thanks for posting!<p>[1] <a href="https:&#x2F;&#x2F;gist.github.com&#x2F;kristjan&#x2F;b305b83b0eb4455ee8455be108a0f703" rel="nofollow">https:&#x2F;&#x2F;gist.github.com&#x2F;kristjan&#x2F;b305b83b0eb4455ee8455be108a...</a>
-[2] <a href="https:&#x2F;&#x2F;github.com&#x2F;thlucas1&#x2F;homeassistantcomponent_spotifyplus" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;thlucas1&#x2F;homeassistantcomponent_spotifypl...</a>
-[3] <a href="https:&#x2F;&#x2F;github.com&#x2F;thlucas1&#x2F;SpotifyWebApiPython&#x2F;blob&#x2F;master&#x2F;spotifywebapipython&#x2F;vibrant&#x2F;colorthieffast.py" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;thlucas1&#x2F;SpotifyWebApiPython&#x2F;blob&#x2F;master&#x2F;...</a></div>
+  <div class="comment-text">I&#x27;ve wanted something like this for level of detail processing.<p>This is a render from Second Life, in which all the texture images were shrunk down to one pixel, the lowest possible level of detail, producing a monocolor image. 
+For distant objects, or for objects where the texture is still coming in from the net, there needs to be some default color. The existing system used grey for everything. I tried using an average of all the pixels, and, as the original poster points out, the result looks murky.[1] This new approach has real promise for big-world rendering.<p>[1] <a href="https:&#x2F;&#x2F;media.invisioncic.com&#x2F;Mseclife&#x2F;monthly_2023_05&#x2F;monocolor1.jpg.002a5e610b7ac93e282a7e916dc46c38.jpg" rel="nofollow">https:&#x2F;&#x2F;media.invisioncic.com&#x2F;Mseclife&#x2F;monthly_2023_05&#x2F;monoc...</a></div>
   
 </div>
 
@@ -344,7 +354,7 @@ If needed you can easily remove colored borders first (trim subcommand with fuzz
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 20:49 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 21:45 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">84 points</span>
+        <span class="score">123 points</span>
         by <a href="https://news.ycombinator.com/user?id=tosh">tosh</a>
-        2 hours ago
+        3 hours ago
         &nbsp;|&nbsp;<a href="/critique/47367932.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47367932" rel="noopener">original on HN</a>
       </p>
@@ -50,9 +50,10 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=theshrike79">theshrike79</a>
+    <a href="https://news.ycombinator.com/user?id=iLemming">iLemming</a>
   </div>
-  <div class="comment-text">I tried to find a proper window control tool for macOS for a while, tested Rectangle and Magnet and dunno how many.<p>Then I just figured out that I have Hammerspoon, it can control windows -&gt; recreate one exactly how I like it. Been using it for a year now and it&#x27;s 99% perfect. Some specific applications (<i>cough</i>Firefox<i>cough</i>) sometimes get into a weird state that doesn&#x27;t work, but I can live with that.<p>It can also pop all windows to a specific layout with a single shortcut by combining the active wifi + monitor setup to detect if I&#x27;m at home, at work, or working at home.</div>
+  <div class="comment-text">Shameless plug&#x2F;proud self-promotion - <a href="https:&#x2F;&#x2F;github.com&#x2F;agzam&#x2F;spacehammer" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;agzam&#x2F;spacehammer</a>
+&quot;Spacemacs|Doom inspired Hammerspoon modal toolkit&quot;<p>I can&#x27;t even work on Mac without it. It let&#x27;s you do stuff like &quot;alt+cmd a b&quot; (apps -&gt; browser) or &quot;alt+cmd m j&#x2F;k&quot; (media -&gt; vol up&#x2F;down), or edit just about any text of any app in your editor (Emacs atm) - with all the tools you have there - spellchecking, thesaurus, translation, LLMs, etc.<p>You can plug it to your favorite WM (I&#x27;m currently using Yabai) and do tons of other interesting things. Because it&#x27;s all written in Fennel, one can develop things in a tight feedback loop with a connected REPL - e.g., I can ask Claude to inspect things in the running Slack app or Firefox and make interesting automations - all without ever leaving my editor.</div>
   
 </div>
 
@@ -87,9 +88,9 @@ And to throw windows to other monitors:<p><pre><code>    -- send to next screen
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jeberle">jeberle</a>
+    <a href="https://news.ycombinator.com/user?id=apazzolini">apazzolini</a>
   </div>
-  <div class="comment-text">[delayed]</div>
+  <div class="comment-text">I like the miro windows manager plugin: <a href="https:&#x2F;&#x2F;github.com&#x2F;miromannino&#x2F;miro-windows-manager" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;miromannino&#x2F;miro-windows-manager</a><p>It&#x27;s nice to be able to iterate through the halves&#x2F;thirds configurations for different cases.</div>
   
 </div>
 
@@ -101,27 +102,47 @@ And to throw windows to other monitors:<p><pre><code>    -- send to next screen
   
 </div>
 
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jeberle">jeberle</a>
+  </div>
+  <div class="comment-text">I use it similarly, but I add spots for side x side as well as left, center, right. I only use Hammerspoon for this and a couple tiny things, but it&#x27;s completely worth it for this alone. Use math to specify window sizes &amp; location. Insanity.<p><pre><code>  local mode = hs.screen.primaryScreen():currentMode()
+  local mods = {&quot;ctrl&quot;, &quot;alt&quot;, &quot;cmd&quot;}  -- mash those keys
+  
+  -- regular app windows
+  do
+    local w   = 1094  -- no clip on GitHub, HN
+    local h   = 1122  -- tallish
+    local x_1 =    0                               -- left edge
+    local x_2 = math.max(0, (mode.w - w - w) &#x2F; 2)  -- left middle
+    local x_3 =             (mode.w - w) &#x2F; 2       -- middle
+    local x_4 = math.min(mode.w - w, x_2 + w + 1)  -- right middle
+    local x_5 =          mode.w - w                -- right edge
+    local y   =   23  -- top of screen below menu bar
+  
+    hs.hotkey.bind(mods, &quot;2&quot;, function() move_win(  0, y, mode.w, mode.h) end)  -- max
+  
+    hs.hotkey.bind(mods, &quot;3&quot;, function() move_win(x_1, y, w, h) end)
+    hs.hotkey.bind(mods, &quot;4&quot;, function() move_win(x_2, y, w, h) end)
+    hs.hotkey.bind(mods, &quot;5&quot;, function() move_win(x_3, y, w, h) end)
+    hs.hotkey.bind(mods, &quot;6&quot;, function() move_win(x_4, y, w, h) end)
+    hs.hotkey.bind(mods, &quot;7&quot;, function() move_win(x_5, y, w, h) end)
+  end
+  
+  function move_win(x, y, w, h)
+    hs.window.focusedWindow():setFrame(hs.geometry.rect(x, y, w, h))
+  end</code></pre></div>
+  
 </div>
 
-    
-    
-<div class="comment-row" style="margin-left:0px">
+<div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=alexfortin">alexfortin</a>
+    <a href="https://news.ycombinator.com/user?id=piskov">piskov</a>
   </div>
-  <div class="comment-text">I use it to enable&#x2F;disable the wifi when I disconnec&#x2F;connect the macbook to a specific usb hub with ethernet connection:<p><pre><code>  local usbWatcher = hs.usb.watcher.new(function(device)
-    if device.productName == &quot;EMEET SmartCam C960&quot; then
-      if device.eventType == &quot;added&quot; then
-        hs.execute(&quot;networksetup -setairportpower en0 off&quot;)
-        hs.notify.new({title=&quot;Wi-Fi&quot;, informativeText=&quot;Disabled (USB device connected)&quot;}):send()
-      elseif device.eventType == &quot;removed&quot; then
-        hs.execute(&quot;networksetup -setairportpower en0 on&quot;)
-        hs.notify.new({title=&quot;Wi-Fi&quot;, informativeText=&quot;Re-enabled (USB device removed)&quot;}):send()
-      end
-    end
-  end)
-  usbWatcher:start()</code></pre></div>
+  <div class="comment-text">Moom is really the best</div>
   
+</div>
+
 </div>
 
     
@@ -160,6 +181,14 @@ And to throw windows to other monitors:<p><pre><code>    -- send to next screen
   - Prompting to unmount disk images if trashed
   - Binding into Skim to jump to specific sections of spec PDFs using terse Markdown URLs</code></pre></div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=piskov">piskov</a>
+  </div>
+  <div class="comment-text">Keyboard stuff is better handled with Karabiner elements</div>
+  
+</div>
+
 </div>
 
     
@@ -238,17 +267,17 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
   
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=theshrike79">theshrike79</a>
+    <a href="https://news.ycombinator.com/user?id=xyzzy_plugh">xyzzy_plugh</a>
   </div>
-  <div class="comment-text">[delayed]</div>
+  <div class="comment-text">I use EOF all the time to end terminal sessions.</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=xyzzy_plugh">xyzzy_plugh</a>
+    <a href="https://news.ycombinator.com/user?id=theshrike79">theshrike79</a>
   </div>
-  <div class="comment-text">I use EOF all the time to end terminal sessions.</div>
+  <div class="comment-text">Make caps lock a hyperkey (shift+ctrl+option+cmd) and use that for non-overlapping shortcuts</div>
   
 </div>
 
@@ -260,6 +289,53 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
   
 </div>
 
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=theshrike79">theshrike79</a>
+  </div>
+  <div class="comment-text">I tried to find a proper window control tool for macOS for a while, tested Rectangle and Magnet and dunno how many.<p>Then I just figured out that I have Hammerspoon, it can control windows -&gt; recreate one exactly how I like it. Been using it for a year now and it&#x27;s 99% perfect. Some specific applications (<i>cough</i>Firefox<i>cough</i>) sometimes get into a weird state that doesn&#x27;t work, but I can live with that.<p>It can also pop all windows to a specific layout with a single shortcut by combining the active wifi + monitor setup to detect if I&#x27;m at home, at work, or working at home.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=piskov">piskov</a>
+  </div>
+  <div class="comment-text">Moom works like a charm</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=alexfortin">alexfortin</a>
+  </div>
+  <div class="comment-text">I use it to enable&#x2F;disable the wifi when I disconnec&#x2F;connect the macbook to a specific usb hub with ethernet connection:<p><pre><code>  local usbWatcher = hs.usb.watcher.new(function(device)
+    if device.productName == &quot;EMEET SmartCam C960&quot; then
+      if device.eventType == &quot;added&quot; then
+        hs.execute(&quot;networksetup -setairportpower en0 off&quot;)
+        hs.notify.new({title=&quot;Wi-Fi&quot;, informativeText=&quot;Disabled (USB device connected)&quot;}):send()
+      elseif device.eventType == &quot;removed&quot; then
+        hs.execute(&quot;networksetup -setairportpower en0 on&quot;)
+        hs.notify.new({title=&quot;Wi-Fi&quot;, informativeText=&quot;Re-enabled (USB device removed)&quot;}):send()
+      end
+    end
+  end)
+  usbWatcher:start()</code></pre></div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jmarcher">jmarcher</a>
+  </div>
+  <div class="comment-text">That should not be required if the Ethernet adapter has a higher priority. That being said, you might different reason.<p><a href="https:&#x2F;&#x2F;support.apple.com&#x2F;en-ca&#x2F;guide&#x2F;mac-help&#x2F;mchlp2711&#x2F;mac" rel="nofollow">https:&#x2F;&#x2F;support.apple.com&#x2F;en-ca&#x2F;guide&#x2F;mac-help&#x2F;mchlp2711&#x2F;mac</a></div>
+  
 </div>
 
 </div>
@@ -306,16 +382,6 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=selectnull">selectnull</a>
-  </div>
-  <div class="comment-text">Love hammerspoon. I use it to map double CMD to swap between the terminal and the browser.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=weitzj">weitzj</a>
   </div>
   <div class="comment-text">I love hammerspoon. That&#x27;s it :D<p>It&#x27;s lua, so you can get creative with <a href="https:&#x2F;&#x2F;fennel-lang.org&#x2F;" rel="nofollow">https:&#x2F;&#x2F;fennel-lang.org&#x2F;</a></div>
@@ -330,16 +396,14 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
   </div>
   <div class="comment-text">is there a particular reason this was shared?<p>otherwise I&#x27;m slowly working on a Spoon that figures out if there is an active meeting in Zoom, Teams, Huddle, Google Meet and will allow for muting, video enable&#x2F;disable and screen sharing etc</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=al_borland">al_borland</a>
+  </div>
+  <div class="comment-text">My guess is someone just found it. When I was moving to macOS for my work laptop, I was looking for something to replace AutoHotKey. It took me a long time and a lot of digging to actually find HammerSpoon.</div>
+  
 </div>
 
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jmcguckin">jmcguckin</a>
-  </div>
-  <div class="comment-text">I use it to give me focus-follows-mouse and to have a large circle surrounding the mouse when i move it, to aid finding it.</div>
-  
 </div>
 
     
@@ -372,9 +436,9 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=swiftcoder">swiftcoder</a>
+    <a href="https://news.ycombinator.com/user?id=regus">regus</a>
   </div>
-  <div class="comment-text">I always confuse &quot;hammerspoon&quot; and &quot;rowhammer&quot;</div>
+  <div class="comment-text">How does this compare to AppleScript?</div>
   
 </div>
 
@@ -382,9 +446,9 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mwagstaff">mwagstaff</a>
+    <a href="https://news.ycombinator.com/user?id=selectnull">selectnull</a>
   </div>
-  <div class="comment-text">Can&#x27;t live without Hammerspoon on Mac.<p>Can&#x27;t live without AutoHotkey on Windows.<p>Thanks to everyone who contributed to both!</div>
+  <div class="comment-text">Love hammerspoon. I use it to map double CMD to swap between the terminal and the browser.</div>
   
 </div>
 
@@ -392,9 +456,19 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=trjordan">trjordan</a>
+    <a href="https://news.ycombinator.com/user?id=gedy">gedy</a>
   </div>
-  <div class="comment-text">I utterly love Hammerspoon.<p>It&#x27;s fun to combine with qmk [0], which gives you a bunch more options for hotkeys on your keyboard via layers. I&#x27;ve ended up with a layer where half the keyboard is Hammerspoon shortcuts directly to apps (e.g. go to Slack, to Chrome, etc.) and half of it is in-app shortcuts (like putting cmd-number on the home row, for directly addressing chrome tabs).<p>Between this and one of the tiling window manager-adjacent tools (I use Sizeup), I can do all my OS-level navigation directly. &quot;Oh I want to go to Slack and go to this DM&quot; is a few keystrokes away, and not dependent on what else I was doing.<p>[0] <a href="https:&#x2F;&#x2F;qmk.fm&#x2F;" rel="nofollow">https:&#x2F;&#x2F;qmk.fm&#x2F;</a></div>
+  <div class="comment-text">If you are on macOS but miss Paperwm or niri, etc this is a good compromise thanks to Hammerspoon: <a href="https:&#x2F;&#x2F;github.com&#x2F;mogenson&#x2F;PaperWM.spoon" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;mogenson&#x2F;PaperWM.spoon</a></div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jmcguckin">jmcguckin</a>
+  </div>
+  <div class="comment-text">I use it to give me focus-follows-mouse and to have a large circle surrounding the mouse when i move it, to aid finding it.</div>
   
 </div>
 
@@ -433,9 +507,27 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=hmokiguess">hmokiguess</a>
+    <a href="https://news.ycombinator.com/user?id=swiftcoder">swiftcoder</a>
   </div>
-  <div class="comment-text">what&#x27;s your favourite spoon?</div>
+  <div class="comment-text">I always confuse &quot;hammerspoon&quot; and &quot;rowhammer&quot;</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=iLemming">iLemming</a>
+  </div>
+  <div class="comment-text">So, the trivia behind the name is interesting. It all starts with a project called &quot;Mjolnir&quot; (Thor&#x27;s Hammer). The original idea was for a lightweight automation engine with pluggable architecture. Someone wished to have &quot;batteries included&quot; version, the author said they&#x27;re not interested in that direction, so the fork was born. What&#x27;s meant to be a hard-fork, so really not a fork, but rather a &quot;spoon&quot;, hence the name.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mwagstaff">mwagstaff</a>
+  </div>
+  <div class="comment-text">Can&#x27;t live without Hammerspoon on Mac.<p>Can&#x27;t live without AutoHotkey on Windows.<p>Thanks to everyone who contributed to both!</div>
   
 </div>
 
@@ -443,9 +535,9 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=hirvi74">hirvi74</a>
+    <a href="https://news.ycombinator.com/user?id=trjordan">trjordan</a>
   </div>
-  <div class="comment-text">I have fond memories of this app. However, after many years, I have moved on. I am in the process of writing my own replacement for some of the various use cases that Hammerspoon once provided me. Though, Hammerspoon will always be a source of great inspiration.</div>
+  <div class="comment-text">I utterly love Hammerspoon.<p>It&#x27;s fun to combine with qmk [0], which gives you a bunch more options for hotkeys on your keyboard via layers. I&#x27;ve ended up with a layer where half the keyboard is Hammerspoon shortcuts directly to apps (e.g. go to Slack, to Chrome, etc.) and half of it is in-app shortcuts (like putting cmd-number on the home row, for directly addressing chrome tabs).<p>Between this and one of the tiling window manager-adjacent tools (I use Sizeup), I can do all my OS-level navigation directly. &quot;Oh I want to go to Slack and go to this DM&quot; is a few keystrokes away, and not dependent on what else I was doing.<p>[0] <a href="https:&#x2F;&#x2F;qmk.fm&#x2F;" rel="nofollow">https:&#x2F;&#x2F;qmk.fm&#x2F;</a></div>
   
 </div>
 
@@ -453,9 +545,9 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=rolymath">rolymath</a>
+    <a href="https://news.ycombinator.com/user?id=ChrisArchitect">ChrisArchitect</a>
   </div>
-  <div class="comment-text">Is paperwm jittery for everyone?</div>
+  <div class="comment-text"><a href="https:&#x2F;&#x2F;www.hammerspoon.org&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.hammerspoon.org&#x2F;</a><p>Some previous discussion:<p>2021 <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=29533495">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=29533495</a><p>2019 <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=21801178">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=21801178</a></div>
   
 </div>
 
@@ -469,7 +561,7 @@ i&#x27;ve tried all of the other fancy window managers and for me nothing has ev
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 20:49 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 21:45 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
