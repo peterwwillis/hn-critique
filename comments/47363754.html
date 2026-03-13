@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Comments Critique: Can I Run AI locally? | HN Critique</title>
+  <title>Comments Critique: Can I run AI locally? | HN Critique</title>
   <link rel="stylesheet" href="/style.css"/>
 </head>
 <body>
@@ -30,14 +30,14 @@
     <div class="story-header">
       <p class="breadcrumb"><a href="/">← Back to front page</a></p>
       
-      <h2><a href="https://www.canirun.ai/" rel="noreferrer noopener">Can I Run AI locally?</a>
+      <h2><a href="https://www.canirun.ai/" rel="noreferrer noopener">Can I run AI locally?</a>
         <span class="sitebit"> (canirun.ai)</span>
       </h2>
       
       <p class="meta">
-        <span class="score">107 points</span>
+        <span class="score">223 points</span>
         by <a href="https://news.ycombinator.com/user?id=ricardbejarano">ricardbejarano</a>
-        4 hours ago
+        5 hours ago
         &nbsp;|&nbsp;<a href="/critique/47363754.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47363754" rel="noopener">original on HN</a>
       </p>
@@ -50,9 +50,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=uncSoft">uncSoft</a>
+    <a href="https://news.ycombinator.com/user?id=meatmanek">meatmanek</a>
   </div>
-  <div class="comment-text">I made and opensourced a comprehensive benchmarking app for Apple Silicon to fill the void here on performance testing without having to download huge models first, and the data can be submitted to a public repository with one click, so we can gather info on a large scale. The releases are signed with an apple dev cert for safety. If the repo gets a few more stars it qualifies for homebrew distribution. Feel free to integrate the data feed anywhere.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;uncSoft&#x2F;anubis-oss" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;uncSoft&#x2F;anubis-oss</a><p><a href="https:&#x2F;&#x2F;devpadapp.com&#x2F;leaderboard.html" rel="nofollow">https:&#x2F;&#x2F;devpadapp.com&#x2F;leaderboard.html</a><p><a href="https:&#x2F;&#x2F;devpadapp.com&#x2F;explorer.html" rel="nofollow">https:&#x2F;&#x2F;devpadapp.com&#x2F;explorer.html</a><p><a href="https:&#x2F;&#x2F;imgur.com&#x2F;a&#x2F;sBj2xWR" rel="nofollow">https:&#x2F;&#x2F;imgur.com&#x2F;a&#x2F;sBj2xWR</a></div>
+  <div class="comment-text">This seems to be estimating based on memory bandwidth &#x2F; size of model, which is a really good estimate for dense models, but MoE models like GPT-OSS-20b don&#x27;t involve the entire model for every token, so they can produce more tokens&#x2F;second on the same hardware. GPT-OSS-20B has 3.6B active parameters, so it should perform similarly to a 3-4B dense model, while requiring enough VRAM to fit the whole 20B model.<p>(In terms of intelligence, they tend to score similarly to a dense model that&#x27;s as big as the geometric mean of the full model size and the active parameters, i.e. for GPT-OSS-20B, it&#x27;s roughly as smart as a sqrt(20b*3.6b) ≈ 8.5b dense model, but produces tokens 2x faster.)</div>
   
 </div>
 
@@ -60,9 +60,19 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=LeifCarrotson">LeifCarrotson</a>
+    <a href="https://news.ycombinator.com/user?id=sdingi">sdingi</a>
   </div>
-  <div class="comment-text">This lacks a whole lot of mobile GPUs. It also does not understand that you can share CPU memory with the GPU, or perform various KV cache offloading strategies to work around memory limits.<p>It says I have an Arc 750 with 2 GB of shared RAM, because that&#x27;s the GPU that renders my browser...but I actually have an RTX1000 Ada with 6 GB of GDDR6. It&#x27;s kind of like an RTX 4050 (not listed in the dropdowns) with lower thermal limits. I also have 64 GB of LPDDR5 main memory.<p>It works - Qwen3 Coder Next, Devstral Small, Qwen3.5 4B, and others can run locally on my laptop in near real-time. They&#x27;re not quite as good as the latest models, and I&#x27;ve tried some bigger ones (up to 24GB, it produces tokens about half as fast as I can type...which is disappointingly slow) that are slower but smarter.<p>But I don&#x27;t run out of tokens.</div>
+  <div class="comment-text">When running models on my phone - either through the web browser or via an app - is there any chance it uses the phone&#x27;s NPU, or will these be GPU only?<p>I don&#x27;t really understand how the interface to the NPU chip looks from the perspective of a non-system caller, if it exists at all. This is a Samsung device but I am wondering about the general principle.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tcbrah">tcbrah</a>
+  </div>
+  <div class="comment-text">tbh i stopped caring about &quot;can i run X locally&quot; a while ago. for anything where quality matters (scripting, code, complex reasoning) the local models are just not there yet compared to API. where local shines is specific narrow tasks - TTS, embeddings, whisper for STT, stuff like that. trying to run a 70b model at 3 tok&#x2F;s on your gaming GPU when you could just hit an API for like $0.002&#x2F;req feels like a weird flex IMO</div>
   
 </div>
 
@@ -96,11 +106,59 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=LeifCarrotson">LeifCarrotson</a>
+  </div>
+  <div class="comment-text">This lacks a whole lot of mobile GPUs. It also does not understand that you can share CPU memory with the GPU, or perform various KV cache offloading strategies to work around memory limits.<p>It says I have an Arc 750 with 2 GB of shared RAM, because that&#x27;s the GPU that renders my browser...but I actually have an RTX1000 Ada with 6 GB of GDDR6. It&#x27;s kind of like an RTX 4050 (not listed in the dropdowns) with lower thermal limits. I also have 64 GB of LPDDR5 main memory.<p>It works - Qwen3 Coder Next, Devstral Small, Qwen3.5 4B, and others can run locally on my laptop in near real-time. They&#x27;re not quite as good as the latest models, and I&#x27;ve tried some bigger ones (up to 24GB, it produces tokens about half as fast as I can type...which is disappointingly slow) that are slower but smarter.<p>But I don&#x27;t run out of tokens.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=carra">carra</a>
+  </div>
+  <div class="comment-text">Having the rating of how well the model will run for you is cool. I miss to also have some rating of the model capabilities (even if this is tricky). There are way too many to choose. And just looking at the parameter number or the used memory is not always a good indication of actual performance.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=sxates">sxates</a>
   </div>
   <div class="comment-text">Cool thing!<p>A couple suggestions:<p>1. I have an M3 Ultra with 256GB of memory, but the options list only goes up to 192GB. The M3 Ultra supports up to 512GB.
 2. It&#x27;d be great if I could flip this around and choose a model, and then see the performance for all the different processors. Would help making buying decisions!</div>
   
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Felixbot">Felixbot</a>
+  </div>
+  <div class="comment-text">The RAM&#x2F;VRAM cutoff matters more than the parameter count alone. A 13B model in Q4_K_M quantization fits in 8GB VRAM with reasonable throughput, but the same model in fp16 needs 26GB. Most calculators treat quantization as a footnote when it is actually the primary variable. The question is not &quot;can I run 13B&quot; but &quot;what quantization level gives acceptable quality at my hardware ceiling&quot;.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=freediddy">freediddy</a>
+  </div>
+  <div class="comment-text">i think the perplexity is more important than tokens per second. tokens per second is relatively useless in my opinion. there is nothing worse than getting bad results returned to you very quickly and confidently.<p>ive been working with quite a few open weight models for the last year and especially for things like images, models from 6 months would return garbage data quickly, but these days qwen 3.5 is incredible, even the 9b model.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sroussey">sroussey</a>
+  </div>
+  <div class="comment-text">No, getting bad results slowly is much worse. Bad results quickly and you can make adjustments.<p>But yes, if there is a choice I want quality over speed. At same quality, I definitely want speed.</div>
+  
+</div>
+
 </div>
 
     
@@ -117,9 +175,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ge96">ge96</a>
+    <a href="https://news.ycombinator.com/user?id=orthoxerox">orthoxerox</a>
   </div>
-  <div class="comment-text">Raspberry pi? Say 4B with 4GB of ram.<p>I also want to run vision like Yocto and basic LLM with TTS&#x2F;STT</div>
+  <div class="comment-text">For some reason it doesn&#x27;t react to changing the RAM amount in the combo box at the top. If I open this on my Ryzen AI Max 395+ with 32 GB of unified memory, it thinks nothing will fit because I&#x27;ve set it up to reserve 512MB of RAM for the GPU.</div>
   
 </div>
 
@@ -127,45 +185,23 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=arjie">arjie</a>
+    <a href="https://news.ycombinator.com/user?id=amelius">amelius</a>
   </div>
-  <div class="comment-text">Cool website. The one that I&#x27;d really like to see there is the RTX 6000 Pro Blackwell 96 GB, though.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=vova_hn2">vova_hn2</a>
-  </div>
-  <div class="comment-text">It says &quot;RAM - unknown&quot;, but doesn&#x27;t give me an option to specify how much RAM I have. Why?</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=havaloc">havaloc</a>
-  </div>
-  <div class="comment-text">Missing the A18 Neo! :)</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mrdependable">mrdependable</a>
-  </div>
-  <div class="comment-text">This is great, I&#x27;ve been trying to figure this stuff out recently.<p>One thing I do wonder is what sort of solutions there are for running your own model, but using it from a different machine. I don&#x27;t necessarily want to run the model on the machine I&#x27;m also working from.</div>
+  <div class="comment-text">What is this S&#x2F;A&#x2F;B&#x2F;C&#x2F;etc. ranking? Is anyone else using it?</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=cortesoft">cortesoft</a>
+    <a href="https://news.ycombinator.com/user?id=vikramkr">vikramkr</a>
   </div>
-  <div class="comment-text">Ollama runs a web server that you use to interact with the models: <a href="https:&#x2F;&#x2F;docs.ollama.com&#x2F;quickstart">https:&#x2F;&#x2F;docs.ollama.com&#x2F;quickstart</a><p>You can also use the kubernetes operator to run them on a cluster: <a href="https:&#x2F;&#x2F;ollama-operator.ayaka.io&#x2F;pages&#x2F;en&#x2F;" rel="nofollow">https:&#x2F;&#x2F;ollama-operator.ayaka.io&#x2F;pages&#x2F;en&#x2F;</a></div>
+  <div class="comment-text">Just a tier list I think</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=relaxing">relaxing</a>
+  </div>
+  <div class="comment-text">Apparently S being a level above A comes from Japanese grading. I’ve been confused by that, too.</div>
   
 </div>
 
@@ -175,10 +211,56 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=debatem1">debatem1</a>
+    <a href="https://news.ycombinator.com/user?id=GrayShade">GrayShade</a>
   </div>
-  <div class="comment-text">For me the &quot;can run&quot; filter says &quot;S&#x2F;A&#x2F;B&quot; but lists S, A, B, and C and the &quot;tight fit&quot; filter says &quot;C&#x2F;D&quot; but lists F.<p>Just FYI.</div>
+  <div class="comment-text">This feels a bit pessimistic. Qwen 3.5 35B-A3B runs at 38 t&#x2F;s tg with llama.cpp (mmap enabled) on my Radeon 6800 XT.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Aurornis">Aurornis</a>
+  </div>
+  <div class="comment-text">At what quantization and with what size context window?</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=amelius">amelius</a>
+  </div>
+  <div class="comment-text">Why isn&#x27;t there some kind of benchmark score in the list?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sshagent">sshagent</a>
+  </div>
+  <div class="comment-text">I don&#x27;t see my beloved 5060ti.  looks great though</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=AstroBen">AstroBen</a>
+  </div>
+  <div class="comment-text">This doesn&#x27;t look accurate to me. I have an RX9070 and I&#x27;ve been messing around with Qwen 3.5 35B-A3B. According to this site I can&#x27;t even run it, yet I&#x27;m getting 32tok&#x2F;s ^.-</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=misnome">misnome</a>
+  </div>
+  <div class="comment-text">It seems to be missing a whole load of the quantized Qwen models, Qwen3.5:122b works fine in the 96GB GH200 (a machine that is also missing here....)</div>
+  
+</div>
+
 </div>
 
     
@@ -211,9 +293,35 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=GrayShade">GrayShade</a>
+    <a href="https://news.ycombinator.com/user?id=ge96">ge96</a>
   </div>
-  <div class="comment-text">This feels a bit pessimistic. Qwen 3.5 35B-A3B runs at 38 t&#x2F;s tg with llama.cpp (mmap enabled) on my Radeon 6800 XT.</div>
+  <div class="comment-text">Raspberry pi? Say 4B with 4GB of ram.<p>I also want to run vision like Yocto and basic LLM with TTS&#x2F;STT</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=boutell">boutell</a>
+  </div>
+  <div class="comment-text">I&#x27;ve been trying to get speech to text to work with a reasonable vocabulary on pis for a while. It&#x27;s tough. All the modern models just need more GPU than is available</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ge96">ge96</a>
+  </div>
+  <div class="comment-text">Whispr?<p>For wakewords I have used pico rhino voice<p>I want to use these I2S breakout mics</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vova_hn2">vova_hn2</a>
+  </div>
+  <div class="comment-text">It says &quot;RAM - unknown&quot;, but doesn&#x27;t give me an option to specify how much RAM I have. Why?</div>
   
 </div>
 
@@ -221,50 +329,26 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=adithyassekhar">adithyassekhar</a>
+    <a href="https://news.ycombinator.com/user?id=mrdependable">mrdependable</a>
   </div>
-  <div class="comment-text">This just reminded me of this <a href="https:&#x2F;&#x2F;www.systemrequirementslab.com&#x2F;cyri" rel="nofollow">https:&#x2F;&#x2F;www.systemrequirementslab.com&#x2F;cyri</a>.<p>Not sure if it still works.</div>
+  <div class="comment-text">This is great, I&#x27;ve been trying to figure this stuff out recently.<p>One thing I do wonder is what sort of solutions there are for running your own model, but using it from a different machine. I don&#x27;t necessarily want to run the model on the machine I&#x27;m also working from.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=cortesoft">cortesoft</a>
+  </div>
+  <div class="comment-text">Ollama runs a web server that you use to interact with the models: <a href="https:&#x2F;&#x2F;docs.ollama.com&#x2F;quickstart">https:&#x2F;&#x2F;docs.ollama.com&#x2F;quickstart</a><p>You can also use the kubernetes operator to run them on a cluster: <a href="https:&#x2F;&#x2F;ollama-operator.ayaka.io&#x2F;pages&#x2F;en&#x2F;" rel="nofollow">https:&#x2F;&#x2F;ollama-operator.ayaka.io&#x2F;pages&#x2F;en&#x2F;</a></div>
   
 </div>
 
-    
-    
-<div class="comment-row" style="margin-left:0px">
+<div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=g_br_l">g_br_l</a>
+    <a href="https://news.ycombinator.com/user?id=rebolek">rebolek</a>
   </div>
-  <div class="comment-text">could you add raspi to the list to see which ridiculously small models it can run?</div>
+  <div class="comment-text">ssh?</div>
   
 </div>
 
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=charcircuit">charcircuit</a>
-  </div>
-  <div class="comment-text">On mobile it does not show the name of the model in favor of the other stats.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=S4phyre">S4phyre</a>
-  </div>
-  <div class="comment-text">Oh how cool. Always wanted to have a tool like this.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=metalliqaz">metalliqaz</a>
-  </div>
-  <div class="comment-text">Hugging Face can already do this for you (with much more up-to-date list of available models).  Also LM Studio.  However they don&#x27;t attempt to estimate tok&#x2F;sec, so that&#x27;s a cool feature.  However I don&#x27;t really trust those numbers that much because it is not incorporating information about the CPU, etc.  True GPU offload isn&#x27;t often possible on consumer PC hardware.</div>
-  
 </div>
 
     
@@ -277,7 +361,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 16:56 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 17:45 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
