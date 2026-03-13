@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">264 points</span>
+        <span class="score">268 points</span>
         by <a href="https://news.ycombinator.com/user?id=u1hcw9nx">u1hcw9nx</a>
         1 days ago
         &nbsp;|&nbsp;<a href="/critique/47348275.html">critique article</a>
@@ -138,80 +138,6 @@
 
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dnautics">dnautics</a>
-  </div>
-  <div class="comment-text">the paper is burying the lede here (i think?)<p>&gt; The key technical unlock is to restrict lookup heads to head dimension 2, which enables a decoding path where the dominant retrieval&#x2F;update operations can be computed in log time in the sequence length (for this structured executor regime), rather than by a full prefix-sized attention sweep.<p>edit:  i understand how hullkv works now.  very clever.<p>I dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>lastly, im not sure why wasm is a good target, iirc wasm seems to be really inefficient (not so much in code but in expressivity). i wonder if that curtails the llms ability to plan higher order stuff (since its always forced to think in the small)</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
-  </div>
-  <div class="comment-text">&gt; i have a pretty good understanding of how transformers work but this did not make sense to me. also i dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>Yes, there is a monstrous lack of detail here and you should be skeptical about most of the article claims. The language is also IMO non-standard (serious people don&#x27;t talk about self-attention as lookup tables anymore, that was never a good analogy in the first place) and no good work would just use language to express this, there would also be a simple equation showing the typical scaled dot-product attention formula, and then e.g. some dimension notation&#x2F;details indicating which matrix (or inserted projection matrix) got some dimension of two somewhere, otherwise, the claims are inscrutable (EDIT: see edit below).<p>There are also no training details or loss function details, both of which would be necessary (and almost certainly highly novel) to make this kind of thing end-to-end trainable, which is another red flag.<p>EDIT: The key line seems to be around:<p><pre><code>    gate, val = ff_in(x).chunk(2, dim=-1)
-</code></pre>
-and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gives exactly 2D per head&quot; but, again, this is very unclear and non-standard.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=yorwba">yorwba</a>
-  </div>
-  <div class="comment-text">Treating attention as a lookup operation is popular among computational complexity theorists (e.g. <a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2310.03817" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2310.03817</a> ) because it&#x27;s easier to work with when you&#x27;re explicitly constructing a transformer to perform a particular computation, just to demonstrate that tranformers can, in theory, perform it. That&#x27;s also why there are no training details: the weights are computed directly and not trained.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dnautics">dnautics</a>
-  </div>
-  <div class="comment-text">&gt; lookup tables anymore, that was never a good analogy in the first place<p>good analogy otherwise, wasn&#x27;t hash tables the motivation for the kv tables?</div>
-  
-</div>
-
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
-  </div>
-  <div class="comment-text">So, what I&#x27;m trying to understand, and I can&#x27;t find any clear information about that in the article, is how they &quot;compiled&quot; e.g. the Sudoku solver into a Transformer&#x27;s weights. Did they do it manually? Say, they took the source of a hand-coded Sudoku solver and put it through their code-to-weight compiler, and thus compiled the code to the Transformer weights? Or did they go the Good, Old-Fashioned, Deep Learning way and train their Transformer to learn a (&quot;100% correct&quot;!) Sudoku solver from examples? And, if the latter, where&#x27;s the details of the training? What did they train with? What did they train on? How did they train? etc etc.<p>Very light on details that article is.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=MadnessASAP">MadnessASAP</a>
-  </div>
-  <div class="comment-text">My interpretation is that they built a simple virtual machine directly into the weights, then compiled a WASM runtime for that machine, then compiled the solver to that runtime.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=andy12_">andy12_</a>
-  </div>
-  <div class="comment-text">This seems a really interesting path for interpretability, specially if a big chunk of a model&#x27;s behavior occurs pseudo-symbolically. This is an idea I had thought about, integrating tools into the main computation path of a model, but I never imagined that it could be done efficiently with just a vanilla transformer.<p>Truly, attention is all you need (I guess).</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
-  </div>
-  <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
-  
 </div>
 
     
@@ -349,10 +275,36 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=koolala">koolala</a>
+    <a href="https://news.ycombinator.com/user?id=dnautics">dnautics</a>
   </div>
-  <div class="comment-text">I&#x27;d like to see this combined with reinforcement learning to optimize models to think computationally. Generating ideas with hypothetical results and then running them in the same thought. Their solution sounded like a lot of tokens though.</div>
+  <div class="comment-text">the paper is burying the lede here (i think?)<p>&gt; The key technical unlock is to restrict lookup heads to head dimension 2, which enables a decoding path where the dominant retrieval&#x2F;update operations can be computed in log time in the sequence length (for this structured executor regime), rather than by a full prefix-sized attention sweep.<p>edit:  i understand how hullkv works now.  very clever.<p>I dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>lastly, im not sure why wasm is a good target, iirc wasm seems to be really inefficient (not so much in code but in expressivity). i wonder if that curtails the llms ability to plan higher order stuff (since its always forced to think in the small)</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">&gt; i have a pretty good understanding of how transformers work but this did not make sense to me. also i dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>Yes, there is a monstrous lack of detail here and you should be skeptical about most of the article claims. The language is also IMO non-standard (serious people don&#x27;t talk about self-attention as lookup tables anymore, that was never a good analogy in the first place) and no good work would just use language to express this, there would also be a simple equation showing the typical scaled dot-product attention formula, and then e.g. some dimension notation&#x2F;details indicating which matrix (or inserted projection matrix) got some dimension of two somewhere, otherwise, the claims are inscrutable (EDIT: see edit below).<p>There are also no training details or loss function details, both of which would be necessary (and almost certainly highly novel) to make this kind of thing end-to-end trainable, which is another red flag.<p>EDIT: The key line seems to be around:<p><pre><code>    gate, val = ff_in(x).chunk(2, dim=-1)
+</code></pre>
+and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gives exactly 2D per head&quot; but, again, this is very unclear and non-standard.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=yorwba">yorwba</a>
+  </div>
+  <div class="comment-text">Treating attention as a lookup operation is popular among computational complexity theorists (e.g. <a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2310.03817" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2310.03817</a> ) because it&#x27;s easier to work with when you&#x27;re explicitly constructing a transformer to perform a particular computation, just to demonstrate that tranformers can, in theory, perform it. That&#x27;s also why there are no training details: the weights are computed directly and not trained.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dnautics">dnautics</a>
+  </div>
+  <div class="comment-text">&gt; lookup tables anymore, that was never a good analogy in the first place<p>good analogy otherwise, wasn&#x27;t hash tables the motivation for the kv tables?</div>
+  
+</div>
+
+</div>
+
 </div>
 
     
@@ -387,6 +339,60 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
   
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=andy12_">andy12_</a>
+  </div>
+  <div class="comment-text">This seems a really interesting path for interpretability, specially if a big chunk of a model&#x27;s behavior occurs pseudo-symbolically. This is an idea I had thought about, integrating tools into the main computation path of a model, but I never imagined that it could be done efficiently with just a vanilla transformer.<p>Truly, attention is all you need (I guess).</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
+  </div>
+  <div class="comment-text">So, what I&#x27;m trying to understand, and I can&#x27;t find any clear information about that in the article, is how they &quot;compiled&quot; e.g. the Sudoku solver into a Transformer&#x27;s weights. Did they do it manually? Say, they took the source of a hand-coded Sudoku solver and put it through their code-to-weight compiler, and thus compiled the code to the Transformer weights? Or did they go the Good, Old-Fashioned, Deep Learning way and train their Transformer to learn a (&quot;100% correct&quot;!) Sudoku solver from examples? And, if the latter, where&#x27;s the details of the training? What did they train with? What did they train on? How did they train? etc etc.<p>Very light on details that article is.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gavinray">gavinray</a>
+  </div>
+  <div class="comment-text">The article states they trained a WASM interpreter and programs are represented as WASM bytecode</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">Nope, they <i>encoded</i> or <i>compiled</i> in a simple VM &#x2F; WASM interpreter to the transformer weights, there is no training. You&#x27;d be forgiven for this misreading, as they deliberately mislead early on that their model is (in principle) trainable, but later admit that their actual model is not actually differentiable, but that a differentiable approximation &quot;should&quot; still work (despite no info about what loss function or training data could allow scoring partially correct &#x2F; incomplete program outputs).</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=MadnessASAP">MadnessASAP</a>
+  </div>
+  <div class="comment-text">My interpretation is that they built a simple virtual machine directly into the weights, then compiled a WASM runtime for that machine, then compiled the solver to that runtime.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
+  </div>
+  <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
+  
 </div>
 
     
@@ -451,9 +457,9 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=BenoitP">BenoitP</a>
+    <a href="https://news.ycombinator.com/user?id=koolala">koolala</a>
   </div>
-  <div class="comment-text">&gt; the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.<p>IMHO the key point at which this technique has an unfair advantage vs a traditional interpreter is here.<p>How disruptive is it to have differentiability? To me it would mean that some tweaking-around can happen in an LLM-program at train-time; like changing a constant, or switching from a function call to another function. Can we gradient-descent effectively inside this huge space? How different is it from tool-calling from a pool of learned programs (think github but for LLM programs written in classic languages)?</div>
+  <div class="comment-text">I&#x27;d like to see this combined with reinforcement learning to optimize models to think computationally. Generating ideas with hypothetical results and then running them in the same thought. Their solution sounded like a lot of tokens though.</div>
   
 </div>
 
@@ -461,9 +467,9 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=SPascareli13">SPascareli13</a>
+    <a href="https://news.ycombinator.com/user?id=BenoitP">BenoitP</a>
   </div>
-  <div class="comment-text">If the model is trained to be a interpreter, then that means that the loss should reach 0 for it to be fully trained?<p>Also, if it&#x27;s execution is purely deterministic, you probably don&#x27;t need non linearity in the layers, right?</div>
+  <div class="comment-text">&gt; the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.<p>IMHO the key point at which this technique has an unfair advantage vs a traditional interpreter is here.<p>How disruptive is it to have differentiability? To me it would mean that some tweaking-around can happen in an LLM-program at train-time; like changing a constant, or switching from a function call to another function. Can we gradient-descent effectively inside this huge space? How different is it from tool-calling from a pool of learned programs (think github but for LLM programs written in classic languages)?</div>
   
 </div>
 
@@ -481,10 +487,38 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=casey2">casey2</a>
+  </div>
+  <div class="comment-text">YAY! this is exactly what I wanted as the final step of some agent batching prompts to sub agents, but seeing it in action made me realize: Wow being able to talk to any program during runtime, including the OS, because an LLM is your CPU! What a concept!<p>Computing is going to be so weird in a few decades, writing programs faster than I can speak with full semantic introspection into every byte of code.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=deviation">deviation</a>
   </div>
   <div class="comment-text">I really liked the article, but food for thought: is a transformer that offloads computation to python really that different from Python code being read and then executed by a compiler?<p>Both examples are of a system we created to abstract most of the hard work.<p>I think a more important concept here is that the term &quot;AI&quot; has a lot of built-in assumptions, one of which being that it is (or will be) super intelligent, and so folks like the author here think (correctly) that it&#x27;s important for the AI to be actually doing the work itself.</div>
   
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=SPascareli13">SPascareli13</a>
+  </div>
+  <div class="comment-text">If the model is trained to be a interpreter, then that means that the loss should reach 0 for it to be fully trained?<p>Also, if it&#x27;s execution is purely deterministic, you probably don&#x27;t need non linearity in the layers, right?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">The model isn&#x27;t trained, it isn&#x27;t differentiable (read carefully to the end: they say their model <i>might</i> still work if they made it differentiable, but they don&#x27;t know), and it isn&#x27;t clear IMO it could ever be made trainable (what is your loss function that scores a &quot;partially correct&quot; program &#x2F; compiler?).<p>You need non-linearity in self-attention because it encodes feature &#x2F; embedding similarities &#x2F; correlations (e.g. self-attention is kernel smoothing) and&#x2F;or multiplicative interactions, it has nothing to do with determinism&#x2F;indeterminism. Also, LLMs are not really nondeterministic in any serious way, that all just comes from tweaks and optimizations that are not at all core to the architecture.</div>
+  
+</div>
+
 </div>
 
     
@@ -519,29 +553,19 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
-  </div>
-  <div class="comment-text">Is their convex hull attention mechanism new and generally useable? I mean, it substantially restricts the shape of the model, so it isn’t a universal solution of course, but it does seem to overcome a pretty annoying limitation.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=clarionbell">clarionbell</a>
-  </div>
-  <div class="comment-text">This has a lot of potential. Especially if the compiled &quot;code&quot; can be efficiently shared between models of the same architecture. That would easily overshadow LoRa and finetuning in general.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=galsapir">galsapir</a>
   </div>
   <div class="comment-text">one of the most interesting pieces I&#x27;ve read recently. Not sure I agree with all the statements there (e.g. without execution the system has no comprehension) - but extremely cool</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
+  </div>
+  <div class="comment-text">Is their convex hull attention mechanism new and generally useable? I mean, it substantially restricts the shape of the model, so it isn’t a universal solution of course, but it does seem to overcome a pretty annoying limitation.</div>
   
 </div>
 
@@ -555,7 +579,7 @@ and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gi
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 18:58 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 19:41 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

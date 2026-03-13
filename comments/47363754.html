@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">373 points</span>
+        <span class="score">457 points</span>
         by <a href="https://news.ycombinator.com/user?id=ricardbejarano">ricardbejarano</a>
-        6 hours ago
+        7 hours ago
         &nbsp;|&nbsp;<a href="/critique/47363754.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47363754" rel="noopener">original on HN</a>
       </p>
@@ -56,9 +56,41 @@
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=kylehotchkiss">kylehotchkiss</a>
+    <a href="https://news.ycombinator.com/user?id=johnmaguire">johnmaguire</a>
   </div>
-  <div class="comment-text">I&#x27;ve been really interested in the difference between 3.5 9b and 14b for information extraction. Is there a discernible difference in quality of capability?</div>
+  <div class="comment-text">I&#x27;d love to know how you fit smaller models into your workflow. I have an M4 Macbook Pro w&#x2F; 128GB RAM and while I have toyed with some models via ollama, I haven&#x27;t really found a nice workflow for them yet.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=philipkglass">philipkglass</a>
+  </div>
+  <div class="comment-text">It really depends on the tasks you have to perform. I am using specialized OCR models running locally to extract page layout information and text from scanned legal documents. The quality isn&#x27;t perfect, but it is <i>really</i> good compared to desktop&#x2F;server OCR software that I formerly used that cost hundreds or thousands of dollars for a license. If you have similar needs and the time to try just one model, start with GLM-OCR.<p>If you want a general knowledge model for answering questions or a coding agent, nothing you can run on your MacBook will come close to the frontier models. It&#x27;s going to be an exercise in frustration if you try to use local models that way. But there are a lot of useful applications for local-sized models when it comes to describing and categorizing unstructured data.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Bluecobra">Bluecobra</a>
+  </div>
+  <div class="comment-text">I didn’t realize that you can get 128GB of memory in a notebook, that is impressive!</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=saltwounds">saltwounds</a>
+  </div>
+  <div class="comment-text">I use Raycast and connect it to LM Studio to run text clean up and summaries often. The models are small enough I keep them in memory more often than not</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=nine_k">nine_k</a>
+  </div>
+  <div class="comment-text">What kind of hardware did you use? I suppose that a 8GB gaming GPU and a Mac Pro with 512 GB unified RAM give quite different results, both formally being local.</div>
   
 </div>
 
@@ -72,10 +104,68 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=nine_k">nine_k</a>
+    <a href="https://news.ycombinator.com/user?id=kylehotchkiss">kylehotchkiss</a>
   </div>
-  <div class="comment-text">What kind of hardware did you use? I suppose that a 8GB gaming GPU and a Mac Pro with 512 GB unified RAM give quite different results, both formally being local.</div>
+  <div class="comment-text">I&#x27;ve been really interested in the difference between 3.5 9b and 14b for information extraction. Is there a discernible difference in quality of capability?</div>
   
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=meatmanek">meatmanek</a>
+  </div>
+  <div class="comment-text">This seems to be estimating based on memory bandwidth &#x2F; size of model, which is a really good estimate for dense models, but MoE models like GPT-OSS-20b don&#x27;t involve the entire model for every token, so they can produce more tokens&#x2F;second on the same hardware. GPT-OSS-20B has 3.6B active parameters, so it should perform similarly to a 3-4B dense model, while requiring enough VRAM to fit the whole 20B model.<p>(In terms of intelligence, they tend to score similarly to a dense model that&#x27;s as big as the geometric mean of the full model size and the active parameters, i.e. for GPT-OSS-20B, it&#x27;s roughly as smart as a sqrt(20b*3.6b) ≈ 8.5b dense model, but produces tokens 2x faster.)</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=lambda">lambda</a>
+  </div>
+  <div class="comment-text">Yeah, I looked up some models I have actually run locally on my Strix Halo laptop, and its saying I should have much lower performance than I actually have on models I&#x27;ve tested.<p>For MoE models, it should be using the active parameters in memory bandwidth computation, not the total parameters.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tommy_axle">tommy_axle</a>
+  </div>
+  <div class="comment-text">I&#x27;m guessing this is also calculating based on the full context size that the model supports but depending on your use case it will be misleading. Even on a small consumer card with Qwen 3 30B-A3B you probably don&#x27;t need 128K context depending on what you&#x27;re doing so a smaller context and some tensor overrides will help. llama.cpp&#x27;s llama-fit-params is helpful in those cases.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pbronez">pbronez</a>
+  </div>
+  <div class="comment-text">The docs page addresses this:<p>&gt; A Mixture of Experts model splits its parameters into groups called &quot;experts.&quot; On each token, only a few experts are active — for example, Mixtral 8x7B has 46.7B total parameters but only activates ~12.9B per token. This means you get the quality of a larger model with the speed of a smaller one. The tradeoff: the full model still needs to fit in memory, even though only part of it runs at inference time.<p>&gt; A dense model activates all its parameters for every token — what you see is what you get. A MoE model has more total parameters but only uses a subset per token. Dense models are simpler and more predictable in terms of memory&#x2F;speed. MoE models can punch above their weight in quality but need more VRAM than their active parameter count suggests.<p><a href="https:&#x2F;&#x2F;www.canirun.ai&#x2F;docs" rel="nofollow">https:&#x2F;&#x2F;www.canirun.ai&#x2F;docs</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=lambda">lambda</a>
+  </div>
+  <div class="comment-text">It discusses it, and they have data showing that they know the number of active parameters on an MoE model, but they don&#x27;t seem to use that in their calculation. It gives me answers far lower than my real-world usage on my setup; its calculation lines up fairly well for if I were trying to run a dense model of that size. Or, if I increase my memory bandwidth in the calculator by a factor of 10 or so which is the ratio between active and total parameters in the model, I get results that are much closer to real world usage.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=littlestymaar">littlestymaar</a>
+  </div>
+  <div class="comment-text">While your remark is valid, there&#x27;s two small inaccuracies here:<p>&gt; GPT-OSS-20B has 3.6B active parameters, so it should perform similarly to a 3-4B dense model, while requiring enough VRAM to fit the whole 20B model.<p>First, the token generation speed is going to be comparable, but not the prefil speed (context processing is going to be much slower on a big MoE than on a small dense model).<p>Second, without speculative decoding, it is correct to say that a small dense model and a bigger MoE with the same amount of active parameters are going to be roughly as fast. But if you use a small dense model you will see token generation performance improvements with speculative decoding (up to x3 the speed), whereas you probably won&#x27;t gain much from speculative decoding on a MoE model (because two consecutive tokens won&#x27;t trigger the same “experts”, so you&#x27;d need to load more weight to the compute units, using more bandwidth).</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=lambda">lambda</a>
+  </div>
+  <div class="comment-text">So, this is all true, but this calculation isn&#x27;t that nuanced. It&#x27;s trying to get you into a ballpark range, and based on my usage on my real hardware (if I put in my specs, since it&#x27;s not in their hardware list), the results are fairly close to my real experience if I compensate for the issue where it&#x27;s calculating based on total params instead of active.<p>So by doing so, this calculator is telling you that you should be running entirely dense models, and sparse MoE models that maybe both faster and perform better are not recommended.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -96,103 +186,11 @@
   
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=meatmanek">meatmanek</a>
-  </div>
-  <div class="comment-text">This seems to be estimating based on memory bandwidth &#x2F; size of model, which is a really good estimate for dense models, but MoE models like GPT-OSS-20b don&#x27;t involve the entire model for every token, so they can produce more tokens&#x2F;second on the same hardware. GPT-OSS-20B has 3.6B active parameters, so it should perform similarly to a 3-4B dense model, while requiring enough VRAM to fit the whole 20B model.<p>(In terms of intelligence, they tend to score similarly to a dense model that&#x27;s as big as the geometric mean of the full model size and the active parameters, i.e. for GPT-OSS-20B, it&#x27;s roughly as smart as a sqrt(20b*3.6b) ≈ 8.5b dense model, but produces tokens 2x faster.)</div>
-  
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=tommy_axle">tommy_axle</a>
+    <a href="https://news.ycombinator.com/user?id=downrightmike">downrightmike</a>
   </div>
-  <div class="comment-text">I&#x27;m guessing this is also calculating based on the full context size that the model supports but depending on your use case it will be misleading. Even on a small consumer card with Qwen 3 30B-A3B you probably don&#x27;t need 128K context depending on what you&#x27;re doing so a smaller context and some tensor overrides will help. llama.cpp&#x27;s llama-fit-params is helpful in those cases.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=lambda">lambda</a>
-  </div>
-  <div class="comment-text">Yeah, I looked up some models I have actually run locally on my Strix Halo laptop, and its saying I should have much lower performance than I actually have on models I&#x27;ve tested.<p>For MoE models, it should be using the active parameters in memory bandwidth computation, not the total parameters.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=pbronez">pbronez</a>
-  </div>
-  <div class="comment-text">The docs page addresses this:<p>&gt; A Mixture of Experts model splits its parameters into groups called &quot;experts.&quot; On each token, only a few experts are active — for example, Mixtral 8x7B has 46.7B total parameters but only activates ~12.9B per token. This means you get the quality of a larger model with the speed of a smaller one. The tradeoff: the full model still needs to fit in memory, even though only part of it runs at inference time.<p>&gt; A dense model activates all its parameters for every token — what you see is what you get. A MoE model has more total parameters but only uses a subset per token. Dense models are simpler and more predictable in terms of memory&#x2F;speed. MoE models can punch above their weight in quality but need more VRAM than their active parameter count suggests.<p><a href="https:&#x2F;&#x2F;www.canirun.ai&#x2F;docs" rel="nofollow">https:&#x2F;&#x2F;www.canirun.ai&#x2F;docs</a></div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=littlestymaar">littlestymaar</a>
-  </div>
-  <div class="comment-text">While your remark is valid, there&#x27;s two small inaccuracies here:<p>&gt; GPT-OSS-20B has 3.6B active parameters, so it should perform similarly to a 3-4B dense model, while requiring enough VRAM to fit the whole 20B model.<p>First, the token generation speed is going to be comparable, but not the prefil speed (context processing is going to be much slower on a big MoE than on a small dense model).<p>Second, without speculative decoding, it is correct to say that a small dense model and a bigger MoE with the same amount of active parameters are going to be roughly as fast. But if you use a small dense model you will see token generation performance improvements with speculative decoding (up to x3 the speed), whereas you probably won&#x27;t gain much from speculative decoding on a MoE model (because two consecutive tokens won&#x27;t trigger the same “experts”, so you&#x27;d need to load more weight to the compute units, using more bandwidth).</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=JulianPembroke">JulianPembroke</a>
-  </div>
-  <div class="comment-text"><p><pre><code>  Tools like this are crucial for the local AI movement. What I&#x27;ve found in practice is that the 7-8B parameter models with Q4_K_M quantization hit a sweet spot for most developer machines, giving you 90%+ of the capability at a fraction of the memory footprint. The bigger unlock here isn&#x27;t just cost savings though, it&#x27;s data sovereignty. When you can run inference without your prompts leaving your machine, you can actually use LLMs for sensitive code reviews, proprietary data analysis, and internal tooling that you&#x27;d never trust to a cloud API. Would love to see this tool also flag which models have good tool-calling support since that&#x27;s increasingly what separates &quot;neat demo&quot; from &quot;production-ready.&quot;</code></pre></div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=A7OM">A7OM</a>
-  </div>
-  <div class="comment-text">Great tool for local inference. The flip side question is always &#x27;should I run it locally or use a cloud API?&#x27; The answer depends heavily on volume and current vendor pricing. Cloud inference costs have been surprisingly volatile lately. We tracked 30 price changes across 615 models just this week.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=JulianPembroke">JulianPembroke</a>
-  </div>
-  <div class="comment-text">Tools like this are crucial for the local AI movement. What I&#x27;ve found in practice is that the 7-8B parameter models with Q4_K_M quantization hit a sweet spot for most developer machines, giving you 90%+ of the capability at a fraction of the memory footprint. The bigger unlock here isn&#x27;t just cost savings though, it&#x27;s data sovereignty. When you can run inference without your prompts leaving your machine, you can actually use LLMs for sensitive code reviews, proprietary data analysis, and internal tooling that you&#x27;d never trust to a cloud API. Would love to see this tool also flag which models have good tool-calling support since that&#x27;s increasingly what separates &quot;neat demo&quot; from &quot;production-ready.&quot;</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=A7OM">A7OM</a>
-  </div>
-  <div class="comment-text">Great tool for local inference. The flip side question is always &#x27;should I run it locally or use a cloud API?&#x27; The answer depends heavily on volume and current vendor pricing. Cloud inference costs have been surprisingly volatile lately — we tracked 30 price changes across 615 models just this week.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=andy_ppp">andy_ppp</a>
-  </div>
-  <div class="comment-text">Is it correct that there&#x27;s zero improvement in performance between M4 (+Pro&#x2F;Max) and M5 (+Pro&#x2F;Max) the data looks identical. Also the memory does not seem to improve performance on larger models when I thought it would have?<p>Love the idea though!<p>EDIT: Okay the whole thing is nonsense and just some rough guesswork or asking an LLM to estimate the values. You should have real data (I&#x27;m sure people here can help) and put ESTIMATE next to any of the combinations you are guessing.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=GeekyBear">GeekyBear</a>
-  </div>
-  <div class="comment-text">&gt; Is it correct that there&#x27;s zero improvement in performance between M4 (+Pro&#x2F;Max) and M5 (+Pro&#x2F;Max)<p>Preliminary testing did not come to that conclusion.<p>&gt; Apple’s New M5 Max Changes the Local AI Story<p><a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=XGe7ldwFLSE" rel="nofollow">https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=XGe7ldwFLSE</a></div>
+  <div class="comment-text">LLMs are just special purpose calculators, as opposed to normal calculators which just do numbers and MUST be accurate. There aren&#x27;t very good ways of knowing what you want because the people making the models can&#x27;t read your mind and have different goals</div>
   
 </div>
 
@@ -236,10 +234,26 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=LeifCarrotson">LeifCarrotson</a>
+    <a href="https://news.ycombinator.com/user?id=andy_ppp">andy_ppp</a>
   </div>
-  <div class="comment-text">This lacks a whole lot of mobile GPUs. It also does not understand that you can share CPU memory with the GPU, or perform various KV cache offloading strategies to work around memory limits.<p>It says I have an Arc 750 with 2 GB of shared RAM, because that&#x27;s the GPU that renders my browser...but I actually have an RTX1000 Ada with 6 GB of GDDR6. It&#x27;s kind of like an RTX 4050 (not listed in the dropdowns) with lower thermal limits. I also have 64 GB of LPDDR5 main memory.<p>It works - Qwen3 Coder Next, Devstral Small, Qwen3.5 4B, and others can run locally on my laptop in near real-time. They&#x27;re not quite as good as the latest models, and I&#x27;ve tried some bigger ones (up to 24GB, it produces tokens about half as fast as I can type...which is disappointingly slow) that are slower but smarter.<p>But I don&#x27;t run out of tokens.</div>
+  <div class="comment-text">Is it correct that there&#x27;s zero improvement in performance between M4 (+Pro&#x2F;Max) and M5 (+Pro&#x2F;Max) the data looks identical. Also the memory does not seem to improve performance on larger models when I thought it would have?<p>Love the idea though!<p>EDIT: Okay the whole thing is nonsense and just some rough guesswork or asking an LLM to estimate the values. You should have real data (I&#x27;m sure people here can help) and put ESTIMATE next to any of the combinations you are guessing.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=GeekyBear">GeekyBear</a>
+  </div>
+  <div class="comment-text">&gt; Is it correct that there&#x27;s zero improvement in performance between M4 (+Pro&#x2F;Max) and M5 (+Pro&#x2F;Max)<p>Preliminary testing did not come to that conclusion.<p>&gt; Apple’s New M5 Max Changes the Local AI Story<p><a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=XGe7ldwFLSE" rel="nofollow">https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=XGe7ldwFLSE</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=lostmsu">lostmsu</a>
+  </div>
+  <div class="comment-text">From the video: 4.4k is &quot;almost&quot; 4x times 1.8k because 4.4k has &quot;number 4&quot; in the beginning, and the other one - number 1.<p>For the lazy: that&#x27;s less then 3x: 1.8 * 3 = 5.4</div>
+  
+</div>
+
+</div>
+
 </div>
 
     
@@ -250,6 +264,80 @@
   </div>
   <div class="comment-text">Cool thing!<p>A couple suggestions:<p>1. I have an M3 Ultra with 256GB of memory, but the options list only goes up to 192GB. The M3 Ultra supports up to 512GB.
 2. It&#x27;d be great if I could flip this around and choose a model, and then see the performance for all the different processors. Would help making buying decisions!</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=utopcell">utopcell</a>
+  </div>
+  <div class="comment-text">Unfortunately, Apple retired the 512GiB models.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ProllyInfamous">ProllyInfamous</a>
+  </div>
+  <div class="comment-text">Sure, but <i>those already sold still exist</i>.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=LeifCarrotson">LeifCarrotson</a>
+  </div>
+  <div class="comment-text">This lacks a whole lot of mobile GPUs. It also does not understand that you can share CPU memory with the GPU, or perform various KV cache offloading strategies to work around memory limits.<p>It says I have an Arc 750 with 2 GB of shared RAM, because that&#x27;s the GPU that renders my browser...but I actually have an RTX1000 Ada with 6 GB of GDDR6. It&#x27;s kind of like an RTX 4050 (not listed in the dropdowns) with lower thermal limits. I also have 64 GB of LPDDR5 main memory.<p>It works - Qwen3 Coder Next, Devstral Small, Qwen3.5 4B, and others can run locally on my laptop in near real-time. They&#x27;re not quite as good as the latest models, and I&#x27;ve tried some bigger ones (up to 24GB, it produces tokens about half as fast as I can type...which is disappointingly slow) that are slower but smarter.<p>But I don&#x27;t run out of tokens.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=azmenak">azmenak</a>
+  </div>
+  <div class="comment-text">From my personal testing, running various agentic tasks with a bunch of tool calls on an M4 Max 128GB, I&#x27;ve found that running quantized versions of larger models to produce the best results which this site completely ignores.<p>Currently, Nemotron 3 Super using Unsloth&#x27;s UD Q4_K_XL quant is running nearly everything I do locally (replacing Qwen3.5 122b)</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bearjaws">bearjaws</a>
+  </div>
+  <div class="comment-text">So many people have vibe coded these websites, they are posted to Reddit near daily.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mmaunder">mmaunder</a>
+  </div>
+  <div class="comment-text">OP can you please make it not as dark and slightly larger. Super useful otherwise. Qwen 3.5 9B is going to get a lot of love out of this.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ProllyInfamous">ProllyInfamous</a>
+  </div>
+  <div class="comment-text">I&#x27;m not usually one to whine, but agreed; additionally, add contrast to the modifiers (e.g. processor select). First thing I did when I visited was scale the website to 150%<p>Super impressive comparisons, and correlates with my perception having three seperate generations of GPU (from your list pulldown). Thanks for including the &quot;old AMD&quot; Polaris chipsets, which are actually <i>still much faster</i> than lower-spec Apple silicon. I have Ollama3.1 on a VEGA64 and it really is <i>twice as fast as an M2Pro</i>...<p>----<p>For anybody that thinks installing a local LLM is complicated: it&#x27;s not (so long as you have more than one computer, don&#x27;t tinker on your primary workhorse). I am a blue collar electrician (admittedly: geeky); no more difficult than installing linux.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=JulianPembroke">JulianPembroke</a>
+  </div>
+  <div class="comment-text">Tools like this are crucial for the local AI movement. What I&#x27;ve found in practice is that the 7-8B parameter models with Q4_K_M quantization hit a sweet spot for most developer machines, giving you 90%+ of the capability at a fraction of the memory footprint. The bigger unlock here isn&#x27;t just cost savings though, it&#x27;s data sovereignty. When you can run inference without your prompts leaving your machine, you can actually use LLMs for sensitive code reviews, proprietary data analysis, and internal tooling that you&#x27;d never trust to a cloud API. Would love to see this tool also flag which models have good tool-calling support since that&#x27;s increasingly what separates &quot;neat demo&quot; from &quot;production-ready.&quot;</div>
   
 </div>
 
@@ -285,10 +373,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=cafed00d">cafed00d</a>
+    <a href="https://news.ycombinator.com/user?id=reactordev">reactordev</a>
   </div>
-  <div class="comment-text">Open with multiple browsers (safari vs chrome) to get more &quot;accurate + glanceable&quot; rankings.<p>Its using WebGPU as a proxy to estimate system resource.
-Chrome tends to leverage as much resources (Compute + Memory) as the OS makes available. Safari tends to be more efficient.<p>Maybe this was obvious to everyone else. But its worth re-iterating for those of us skimmers of HN :)</div>
+  <div class="comment-text">This shows no models work with my hardware but that’s furthest from the truth as I’m running Qwen3.5…<p>This isn’t nearly complete.</div>
   
 </div>
 
@@ -324,6 +411,17 @@ Chrome tends to leverage as much resources (Compute + Memory) as the OS makes av
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=cafed00d">cafed00d</a>
+  </div>
+  <div class="comment-text">Open with multiple browsers (safari vs chrome) to get more &quot;accurate + glanceable&quot; rankings.<p>Its using WebGPU as a proxy to estimate system resource.
+Chrome tends to leverage as much resources (Compute + Memory) as the OS makes available. Safari tends to be more efficient.<p>Maybe this was obvious to everyone else. But its worth re-iterating for those of us skimmers of HN :)</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=rcarmo">rcarmo</a>
   </div>
   <div class="comment-text">This is kind of bogus since some of the S and A tier models are pretty useless for reasoning or tool calls and can’t run with any sizable system prompt… it seems to be solely based on tokens per second?</div>
@@ -334,29 +432,27 @@ Chrome tends to leverage as much resources (Compute + Memory) as the OS makes av
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=zitterbewegung">zitterbewegung</a>
+    <a href="https://news.ycombinator.com/user?id=SXX">SXX</a>
   </div>
-  <div class="comment-text">The M4 Ultra doesn&#x27;t exist and there is more credible rumors for an M5 Ultra. I wouldn&#x27;t put a projection like that without highlighting that this processor doesn&#x27;t exist yet.</div>
+  <div class="comment-text">Sorry if already been answered, but will there be a metric for latency aka time to first token?<p>Since I considered buying M3 Ultra and feel like it the most often discussed regarding using Apple hardware for runninh local LLMs. Where speed might be okay, but prompt processing can take ages.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=teaearlgraycold">teaearlgraycold</a>
+  </div>
+  <div class="comment-text">Wait for the M5 Ultra. It will get the 4x prompt processing speeds from the rest of the M5 product line. I hear rumors it will be released this year.</div>
+  
+</div>
+
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mkagenius">mkagenius</a>
+    <a href="https://news.ycombinator.com/user?id=A7OM">A7OM</a>
   </div>
-  <div class="comment-text">Literally made the same app, 2 weeks back - <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47171499">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47171499</a></div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=tencentshill">tencentshill</a>
-  </div>
-  <div class="comment-text">Missing laptop versions of all these chips.</div>
+  <div class="comment-text">Great tool for local inference. The flip side question is always &#x27;should I run it locally or use a cloud API?&#x27; The answer depends heavily on volume and current vendor pricing. Cloud inference costs have been surprisingly volatile lately. We tracked 30 price changes across 615 models just this week.</div>
   
 </div>
 
@@ -370,7 +466,7 @@ Chrome tends to leverage as much resources (Compute + Memory) as the OS makes av
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 18:58 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 19:41 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
