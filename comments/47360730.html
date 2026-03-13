@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">435 points</span>
+        <span class="score">454 points</span>
         by <a href="https://news.ycombinator.com/user?id=kothariji">kothariji</a>
-        10 hours ago
+        11 hours ago
         &nbsp;|&nbsp;<a href="/critique/47360730.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47360730" rel="noopener">original on HN</a>
       </p>
@@ -86,6 +86,14 @@
   
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=xxpor">xxpor</a>
+  </div>
+  <div class="comment-text">The economic incentives line up much better there. You charge for tokens -&gt; cost is GPUs -&gt; you work very hard to keep GPUs utilized 100% and get max tokens out of those cycles.<p>Compare this to essentially any modern business app, the product being sold has very little relationship with CPU cycles, or the CPU cycles are SO cheap relative to what you&#x27;re getting paid, no one cares to optimize.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=_heimdall">_heimdall</a>
   </div>
   <div class="comment-text">By then I understand that matrix multiplication will have cured cancer and invented unlimited free energy, so no hindsight of waste needed.</div>
@@ -100,6 +108,14 @@
   </div>
   <div class="comment-text">Build performance has been a pet topic for me for quite some time when I realized I was wasting so much times waiting for stuff to build 14 years ago. The problem is especially endemic in the Java world. But also in the backend world in general. I&#x27;ve seen people do integration tests where 99% of the time is spend creating and recreating the same database over and over again (some shitty ruby project more than a decade ago). That took something like 10 minutes.<p>With Kotlin&#x2F;Spring Boot, compilation is annoyingly slow. That&#x27;s what you get with modern languages and rich syntax. Apparently the Rust compiler isn&#x27;t a speed daemon either. But tests are something that&#x27;s under your control. Unit tests should be done in seconds&#x2F;milliseconds. Integration tests are where you can make huge gains if you are a bit smart.<p>Most integration tests are not thread safe and make assumptions about running against an empty database. Which if you think about it, is exactly how no user except your first user will ever use your system.<p>The fix for this is 1) allow no cleanup between tests 2) randomize data so there are no test collisions between tests and 3) use multiple threads&#x2F;processes to run your tests to 1 database that is provisioned before the tests and deleted after all tests.<p>I have a fast mac book pro that runs our hundreds of spring integration tests (proper end to end API tests with redis, db, elasticsearch and no fakes&#x2F;stubs) in under 40 seconds. It kind of doubles as a robustness and performance test. It&#x27;s fast enough that I have codex just trigger that on principle after every change it makes.<p>There&#x27;s a bit more to it of course (e.g. polling rather than sleeping for assertions, using timeouts on things that are eventually happening, etc.). But once you have set this up once, you&#x27;ll never want to deal with sequentially running integration tests again. Having to run those over and over again just sucks the joy out of life.<p>And with agentic coding tools having fast feedback loops is more critical than ever.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=panstromek">panstromek</a>
+  </div>
+  <div class="comment-text">&gt; Most integration tests are not thread safe and make assumptions about running against an empty database. Which if you think about it, is exactly how no user except your first user will ever use your system.<p>Yea, cypress has this in their anti-patterns:<p><a href="https:&#x2F;&#x2F;docs.cypress.io&#x2F;app&#x2F;core-concepts&#x2F;best-practices#Using-after-Or-afterEach-Hooks" rel="nofollow">https:&#x2F;&#x2F;docs.cypress.io&#x2F;app&#x2F;core-concepts&#x2F;best-practices#Usi...</a><p>Dangling state is useful for debugging when the test fails, you don&#x27;t want to clean that up.<p>This has been super useful practice in my experience. I really like to be able to run tests regardless of my application state. It&#x27;s faster and over time it helps you hit and fixup various issues that you only encounter after you fill the database with enough data.</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=Sammi">Sammi</a>
@@ -118,6 +134,16 @@
 
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=upsuper">upsuper</a>
+  </div>
+  <div class="comment-text">I contributed this change in Vite 8:<p>&gt; Wasm SSR support: .wasm?init imports now work in SSR environments, expanding Vite&#x27;s WebAssembly feature to server-side rendering.<p>While the process was relatively slow, I really appreciate the extra effort that the team have put on even this minor feature add. They not only guided me towards more compatible and idiomatic approach, but also added docs and helped keeping the code up to date before merging.</div>
+  
 </div>
 
     
@@ -150,6 +176,14 @@
   </div>
   <div class="comment-text">It is especially weird because JavaScript was not supposed to be processed at all! This is all wrong if you ask me. Web development should strive to launch unchanged sources in the browser. TypeScript also was specifically designed so engine could strip types and execute result code. These build tools should not exist in the first place.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tshaddox">tshaddox</a>
+  </div>
+  <div class="comment-text">&gt; TypeScript also was specifically designed so engine could strip types and execute result code.<p>That&#x27;s no less a build step than concating, bundling, minifying, etc. When people say &quot;I&#x27;m against processing code before deploying it to a web site&quot; but then also say &quot;TypeScript is okay though&quot; or &quot;JSX is okay though,&quot; all they&#x27;re really saying is &quot;I like some build steps but not others.&quot; Which is fine! Just say that!</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=__alexs">__alexs</a>
@@ -248,16 +282,6 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=useftmly">useftmly</a>
-  </div>
-  <div class="comment-text">For anyone running Next.js purely as a static site generator (no SSR, output: &#x27;export&#x27;), the rolldown bundler in Vite 8 makes switching to plain Vite + React Router or TanStack Router surprisingly attractive. You lose the file-based routing convenience, but you gain a significantly simpler mental model — no more reasoning about which components are server vs client, no &#x27;use client&#x27; directives, no ISR footguns.<p>We moved a 65-page static tool site off Next.js static export and found the build times dropped dramatically. The Next.js static export path has always been a second-class citizen in the project anyway — most of the interesting features (RSC, middleware, ISR) are opt-in SSR concerns that don&#x27;t apply when you&#x27;re just emitting HTML&#x2F;JS&#x2F;CSS. With Vite 8 and rolldown closing the performance gap, there&#x27;s less reason to carry Next&#x27;s complexity for static-only projects.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=moretti">moretti</a>
   </div>
   <div class="comment-text">Thanks to the Vite team for building a faster, modern bundling solution on a fully open source stack that isn&#x27;t tied to a specific framework...cough cough, Turbopack</div>
@@ -279,30 +303,24 @@ Huge fan, speaking from deep experience (webdev since 1998).</div>
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=vite_throwaway">vite_throwaway</a>
+    <a href="https://news.ycombinator.com/user?id=useftmly">useftmly</a>
   </div>
-  <div class="comment-text">I have a small React project using vite 7 and have the following in my config so that vite interprets &quot;.js&quot; files as JSX:<p><pre><code>    &#x2F;&#x2F; See https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;14652
-    esbuild: {
-      loader: &quot;jsx&quot;,
-      include: &#x2F;.*\.jsx?$&#x2F;,
-      exclude: [],
-    },
-    optimizeDeps: {
-      esbuildOptions: {
-        loader: {
-          &quot;.js&quot;: &quot;jsx&quot;,
-        },
-      },
-    },
-</code></pre>
-Note the comment at the top. I had no idea how to come up with this config by checking the documentation pages of vite and its various related tools. Luckily I found the GitHub issue and someone else had come up with the right incantation.<p>Now this new vite uses new tools, and their documentation is still lacking. I spent half an hour trying to figure out how vite (and related tools that I had to navigate and try to piece a coherent view of: esbuild, oxc, rolldown, etc.) might be convinced, but gave up and stayed with vite 7.<p>Someone could respond with a working solution and it would help, sure, but these tools sure as hell have documentation issues.</div>
+  <div class="comment-text">For anyone running Next.js purely as a static site generator (no SSR, output: &#x27;export&#x27;), the rolldown bundler in Vite 8 makes switching to plain Vite + React Router or TanStack Router surprisingly attractive. You lose the file-based routing convenience, but you gain a significantly simpler mental model — no more reasoning about which components are server vs client, no &#x27;use client&#x27; directives, no ISR footguns.<p>We moved a 65-page static tool site off Next.js static export and found the build times dropped dramatically. The Next.js static export path has always been a second-class citizen in the project anyway — most of the interesting features (RSC, middleware, ISR) are opt-in SSR concerns that don&#x27;t apply when you&#x27;re just emitting HTML&#x2F;JS&#x2F;CSS. With Vite 8 and rolldown closing the performance gap, there&#x27;s less reason to carry Next&#x27;s complexity for static-only projects.</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=spiros">spiros</a>
+    <a href="https://news.ycombinator.com/user?id=lioeters">lioeters</a>
   </div>
-  <div class="comment-text">The solution here is working for me: <a href="https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;21505" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;21505</a><p>Though sometimes oxc complains about JSX in JS when running vite, but it still works fine.</div>
+  <div class="comment-text">That&#x27;s the boat I&#x27;m in with several static sites, from tens to hundreds of pages, build on Next.js and stuck a few major versions behind because I didn&#x27;t have the motivation to upgrade them. One of these days I&#x27;ll roll up my sleeves and convert them to Vite, and finally be free of that awful framework.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=useftmly">useftmly</a>
+  </div>
+  <div class="comment-text">I had the same situation. Moving a static-only site off Next to Vite was much easier than I expected.<p>Once you remove SSR concerns, most of Next’s complexity just disappears. For static sites, Vite + a simple router feels much lighter.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -425,6 +443,70 @@ Note the comment at the top. I had no idea how to come up with this config by ch
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vite_throwaway">vite_throwaway</a>
+  </div>
+  <div class="comment-text">I have a small React project using vite 7 and have the following in my config so that vite interprets &quot;.js&quot; files as JSX:<p><pre><code>    &#x2F;&#x2F; See https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;14652
+    esbuild: {
+      loader: &quot;jsx&quot;,
+      include: &#x2F;.*\.jsx?$&#x2F;,
+      exclude: [],
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        loader: {
+          &quot;.js&quot;: &quot;jsx&quot;,
+        },
+      },
+    },
+</code></pre>
+Note the comment at the top. I had no idea how to come up with this config by checking the documentation pages of vite and its various related tools. Luckily I found the GitHub issue and someone else had come up with the right incantation.<p>Now this new vite uses new tools, and their documentation is still lacking. I spent half an hour trying to figure out how vite (and related tools that I had to navigate and try to piece a coherent view of: esbuild, oxc, rolldown, etc.) might be convinced, but gave up and stayed with vite 7.<p>Someone could respond with a working solution and it would help, sure, but these tools sure as hell have documentation issues.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ezfe">ezfe</a>
+  </div>
+  <div class="comment-text">I&#x27;m curious why you use `.js` files instead of `.jsx`? In my experience, using `jsx` files makes everything work better</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=iainmerrick">iainmerrick</a>
+  </div>
+  <div class="comment-text">Sorry if this comes across as overly facetious — I’m sure you have a reason for doing it that way! — but would it not be easier just to bow to convention and rename your .js files to .jsx?</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vite_throwaway">vite_throwaway</a>
+  </div>
+  <div class="comment-text">Probably.  It&#x27;s just that I&#x27;ve always used .js for my projects (decades).  Such a rename would likely result in configuration changes to the other tools I use, but indeed they are better documented.  When faced with a multiplicity of conventions I pick one and stick to it; the tools are flexible enough to work with it I&#x27;m sure, the real issue is of discoverability.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=spiros">spiros</a>
+  </div>
+  <div class="comment-text">The solution here is working for me: <a href="https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;21505" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;21505</a><p>Though sometimes oxc complains about JSX in JS when running vite, but it still works fine.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vite_throwaway">vite_throwaway</a>
+  </div>
+  <div class="comment-text">Thanks, I will consider this workaround later on.<p>Another instance is the use of rollupOptions.output.manualChunks that now has to be rewritten, maybe that would be less frustrating to fathom.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=Aldipower">Aldipower</a>
   </div>
   <div class="comment-text">As I am interested in long time maintainability (should still work in 10 years) with my projects I am just using esbuild directly. I am not interested in adjusting my projects, just because things changed under the hood in &quot;wrappers&quot; like Vite and I suddenly have a lot of work.</div>
@@ -439,17 +521,17 @@ Note the comment at the top. I had no idea how to come up with this config by ch
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=silverwind">silverwind</a>
+    <a href="https://news.ycombinator.com/user?id=emadda">emadda</a>
   </div>
-  <div class="comment-text">IIRC, esbuild is still lacking code splitting.</div>
+  <div class="comment-text">esbuild has been very stable for my projects too.<p>I think it is the only tool in the JS ecosystem that has not broken after a few years.</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=emadda">emadda</a>
+    <a href="https://news.ycombinator.com/user?id=silverwind">silverwind</a>
   </div>
-  <div class="comment-text">esbuild has been very stable for my projects too.<p>I think it is the only tool in the JS ecosystem that has not broken after a few years.</div>
+  <div class="comment-text">IIRC, esbuild is still lacking code splitting.</div>
   
 </div>
 
@@ -558,6 +640,14 @@ really excited to see how it&#x27;s improving the JavaScript and TypeScript tool
   </div>
   <div class="comment-text">800 lines config to compile code that&#x27;s later interpreted is wild. I get the general idea behind having a script instead of a static config, so you can do some runtime config (whether or not we should have runtime changes to config is a different conversation), but this is absurd.<p>I&#x27;m a big believer in fully reviewing all LLM generated code, but if I had to generate and review a webpack config like this, my eyes would gloss over...</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=karel-3d">karel-3d</a>
+  </div>
+  <div class="comment-text">No no no, the script on the link was BEFORE llms. That was how it used to be done before. That was the recommended facebook way.<p>The LLM generated vite config is 20 lines</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -639,16 +729,6 @@ really excited to see how it&#x27;s improving the JavaScript and TypeScript tool
 </div>
 
     
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=heldrida">heldrida</a>
-  </div>
-  <div class="comment-text">Migrating straight away! Thank you!</div>
-  
-</div>
-
-    
 
     
 
@@ -658,7 +738,7 @@ really excited to see how it&#x27;s improving the JavaScript and TypeScript tool
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 15:00 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 15:57 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">52 points</span>
+        <span class="score">75 points</span>
         by <a href="https://news.ycombinator.com/user?id=outofdistro">outofdistro</a>
-        1 hour ago
+        2 hours ago
         &nbsp;|&nbsp;<a href="/critique/47364397.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47364397" rel="noopener">original on HN</a>
       </p>
@@ -46,6 +46,40 @@
     
 
     <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=theptip">theptip</a>
+  </div>
+  <div class="comment-text">They may seem like small details, but I think a couple novel design decisions are going to prove to be widely adopted and revolutionary.<p>The biggest one (as Karpathy notes) is having skills for how to write a (slack, discord, etc) integration, instead of shipping an implementation for each.<p>Call it “Claude native development” if you will, but “fork and customize” instead of batteries-included platforms&#x2F;frameworks is going to be a big shift when it percolates through the ecosystem.<p>A bunch of things you need to figure out, eg how do you ship a spec for how to test and validate the thing, make it secure, etc.<p>How long before OSs start evolving in this way? You can imagine Auto research-like sharing and promotion upstream of good fixes&#x2F;approaches, but a more heterogenous ecosystem could be more resistant to attacks if each instance had a strong immune system.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=primer42">primer42</a>
+  </div>
+  <div class="comment-text">I get the appeal but I disagree<p>The strength of open source software is collaboration. That many people have tried it, read it, submitted fixes and had those fixes reviewed and accepted.<p>We&#x27;ve all seen LLMs spit out garbage bugs on the first few tries. I&#x27;ve written garbage bugs on my first try too. We all benefit from the review process.<p>I would rather have a battle tested base to start customizing from than having to stumble through the pitfalls of a buggy or insecure AI implementation.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=eli">eli</a>
+  </div>
+  <div class="comment-text">Troubleshooting &quot;works on my machine&quot; issues most be fun when no two people have exactly the same implementation.<p>Also seems like this will further entrench the top 2 or 3 models. Use something else and your software stack looks different.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tmaly">tmaly</a>
+  </div>
+  <div class="comment-text">I have thought of this ship a spec concept.  What is we are just trading markdown files instead of code files to implement some feature into our system?</div>
+  
+</div>
+
+</div>
+
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -60,6 +94,14 @@
   </div>
   <div class="comment-text">what workflows do you implement in Nanoclaw that wouldn&#x27;t be straightforward to build in Claude?</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=causal">causal</a>
+  </div>
+  <div class="comment-text">Straightforward is ambiguous. To replicate NanoClaw would probably only take about a day of work and testing and refining in Claude Code, but that&#x27;s a day I didn&#x27;t have to spend to get NanoClaw.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -80,6 +122,14 @@
 
   I wrote about this in Don’t Trust AI Agents: when you’re building with AI agents, they should be treated as untrusted and potentially malicious. Prompt injection, model misbehavior, things nobody’s thought of yet. The right approach is architecture that assumes agents will misbehave and contains the damage when they do…</code></pre></div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=croes">croes</a>
+  </div>
+  <div class="comment-text">Don‘t you see the contradiction?<p>I don’t trust the agent so I sandbox it before I gave it the access data to my mail and bank accounts</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -96,9 +146,103 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=lxgr">lxgr</a>
+  </div>
+  <div class="comment-text">Docker sandboxes sound exactly like what Apple is doing with their `container` framework. It&#x27;s missing several Docker features still, but if I were to pick a minimal, native runtime, it would probably be that, not the multi-gigabyte monster that is Docker for macOS.<p>On Linux, however, I absolutely don&#x27;t want a hypervisor on my quite underpowered single-board server. Linux namespaces are enough for what I want from them (i.e. preventing one of these agent harnesses to hijack my memory, disk, or CPU). I wonder why neither OpenClaw nor NanoClaw seem to offer a sanely configured, prebuilt, and frequently updated Docker image?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=lcrisci">lcrisci</a>
+  </div>
+  <div class="comment-text">Docker sandboxes are a neat way to contain AI agents. It spins a dedicated microVM and its Docker daemon for each agent container together with a flexible egress proxy to go with it. I&#x27;ve spent some time reverse engineering it and it&#x27;s an interesting piece of implementation.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Eggpants">Eggpants</a>
+  </div>
+  <div class="comment-text">What I found interesting is nanoclaw isn’t a working product out of the box. You must use a coding agent to complete it with features you want. For example add iMessage support, etc.<p>In other words, Claude is the compiler.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=_pdp_">_pdp_</a>
   </div>
   <div class="comment-text">The main issue is not so much if it needs to run inside a container or not (and to be honest there are even better isolation models, why not firecracker vm). The main issue is what are you going to do with it.<p>It does not really matter.<p>IMHO, until you figure out useful ways to spend tokens to do useful tasks the runtime should be a second thought.<p>As far as security goes, running LLM in a container in just simply not enough. What matters is not what files it can edit on your machine but what information it can access. And the access in this case as far as these agents are concerned is basically everything. If this does not scare you you should not be thinking about containers.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pploug">pploug</a>
+  </div>
+  <div class="comment-text">Docker sandboxes uses a MicroVM as an additional isolation layer - its not just containers (as also mentioned in the nanoclaw post)</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jbstack">jbstack</a>
+  </div>
+  <div class="comment-text">As an aside, app descriptions that just say &quot;a lightweight alternative to X&quot; are very unhelpful. That tells me nothing if I don&#x27;t know what X does, and I don&#x27;t want to have to go down a rabbit hole just to understand your product. It&#x27;s particularly bad in this case, because even OpenClaw&#x27;s Github page doesn&#x27;t clearly tell me what it actually <i>does</i>; just that it&#x27;s some kind of assistant that I can communicate with via WhatsApp etc. I appreciate that many people are already familiar with OpenClaw, but you shouldn&#x27;t assume.<p>It&#x27;s better if your app&#x27;s description just tells me what it does in a direct way using plain language. It&#x27;s fine to tell me it&#x27;s an alternative to something, but that should be in addition to rather than instead of your own description.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=worldsayshi">worldsayshi</a>
+  </div>
+  <div class="comment-text">What are the most obvious use cases for Nano&#x2F;Open-Claw. I can&#x27;t imagine anything obvious that I&#x27;d want to use it for. Is it supposed to run your digital life for you?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jdgoesmarching">jdgoesmarching</a>
+  </div>
+  <div class="comment-text">Hooking it up to your todo app and texting your bot to manage things. Assuming you’re a heavy todo app person that could benefit from such things.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=strickjb9">strickjb9</a>
+  </div>
+  <div class="comment-text">The non-answer is anything you want.<p>For me, it&#x27;s my diet and workout buddy.  It knows my goals, keeps me on track, does meal planning for me, gives me grocery lists, logs what I eat, when I exercise... anything I want so I don&#x27;t slack off.<p>I&#x27;ve enhanced Nanoclaw quite a bit.  Moved it to Apple containers (shipped with this Skill already).  Then I wrote an API for Nanoclaw to use (food log, workouts, etc), then implemented long-term memory using LanceDB (because I was tired of repeating myself!).</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Drupon">Drupon</a>
+  </div>
+  <div class="comment-text">I love how NanoClaw looks, but I simply can&#x27;t bring myself to give Israeli software like this access to any of my systems.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=MartiCarmona">MartiCarmona</a>
+  </div>
+  <div class="comment-text">Does getviktor use NanoClaw?</div>
   
 </div>
 
@@ -112,17 +256,17 @@
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=causal">causal</a>
+    <a href="https://news.ycombinator.com/user?id=wild_egg">wild_egg</a>
   </div>
-  <div class="comment-text">This is true, but the attack surface on your life is decreased by better security around the entire setup.<p>But I fundamentally agree that there is just too much overlap between what makes claws useful and what makes them insecure.</div>
+  <div class="comment-text">why give it root access to your life? i don&#x27;t use these tools but it seems like you should never give anything that access. if a claw needs email, set up a google account just for it and forward relevant stuff to it. share your calendar with it. whatever, just don&#x27;t let it &quot;be&quot; you.<p>access control, provisioning, and delegation have been solved for a very long time now.</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=wild_egg">wild_egg</a>
+    <a href="https://news.ycombinator.com/user?id=causal">causal</a>
   </div>
-  <div class="comment-text">why give it root access to your life? i don&#x27;t use these tools but it seems like you should never give anything that access. if a claw needs email, set up a google account just for it and forward relevant stuff to it. share your calendar with it. whatever, just don&#x27;t let it &quot;be&quot; you.<p>access control, provisioning, and delegation have been solved for a very long time now.</div>
+  <div class="comment-text">This is true, but the attack surface on your life is decreased by better security around the entire setup.<p>But I fundamentally agree that there is just too much overlap between what makes claws useful and what makes them insecure.</div>
   
 </div>
 
@@ -138,7 +282,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 15:00 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 15:57 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

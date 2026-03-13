@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">194 points</span>
+        <span class="score">213 points</span>
         by <a href="https://news.ycombinator.com/user?id=u1hcw9nx">u1hcw9nx</a>
         1 days ago
         &nbsp;|&nbsp;<a href="/critique/47348275.html">critique article</a>
@@ -50,10 +50,18 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
+    <a href="https://news.ycombinator.com/user?id=dnautics">dnautics</a>
   </div>
-  <div class="comment-text">So, what I&#x27;m trying to understand, and I can&#x27;t find any clear information about that in the article, is how they &quot;compiled&quot; e.g. the Sudoku solver into a Transformer&#x27;s weights. Did they do it manually? Say, they took the source of a hand-coded Sudoku solver and put it through their code-to-weight compiler, and thus compiled the code to the Transformer weights? Or did they go the Good, Old-Fashioned, Deep Learning way and train their Transformer to learn a (&quot;100% correct&quot;!) Sudoku solver from examples? And, if the latter, where&#x27;s the details of the training? What did they train with? What did they train on? How did they train? etc etc.<p>Very light on details that article is.</div>
+  <div class="comment-text">the paper is burying the lede here (i think?)<p>&gt; The key technical unlock is to restrict lookup heads to head dimension 2, which enables a decoding path where the dominant retrieval&#x2F;update operations can be computed in log time in the sequence length (for this structured executor regime), rather than by a full prefix-sized attention sweep.<p>i have a pretty good understanding of how transformers work but this did not make sense to me (can someone eli15 why head dimension two takes n^2 down to log(n)?).  also i dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>lastly, im not sure why wasm is a good target, iirc wasm seems to be really inefficient (not so much in code but in expressivity). i wonder if that curtails the llms ability to plan higher order stuff (since its always forced to think in the small)</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">&gt; i have a pretty good understanding of how transformers work but this did not make sense to me. also i dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>Yes, there is a monstrous lack of detail here and you should be skeptical about most of the article claims. The language is also IMO non-standard and no serious work would just use language to say this, there would be a simple equation showing the typical scaled dot-produce attention formula, and then e.g. some dimension notation indicating which matrix (or inserted projection matrix) got some dimension of two somewhere, otherwise, the claims are inscrutable.<p>There are also no training details or loss function details, both of which would be necessary and almost certainly highly novel to make this kind of thing end-to-end trainable, which is another red flag.</div>
+  
+</div>
+
 </div>
 
     
@@ -70,19 +78,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
+    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
   </div>
-  <div class="comment-text">Is their convex hull attention mechanism new and generally useable? I mean, it substantially restricts the shape of the model, so it isn’t a universal solution of course, but it does seem to overcome a pretty annoying limitation.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
-  </div>
-  <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
+  <div class="comment-text">So, what I&#x27;m trying to understand, and I can&#x27;t find any clear information about that in the article, is how they &quot;compiled&quot; e.g. the Sudoku solver into a Transformer&#x27;s weights. Did they do it manually? Say, they took the source of a hand-coded Sudoku solver and put it through their code-to-weight compiler, and thus compiled the code to the Transformer weights? Or did they go the Good, Old-Fashioned, Deep Learning way and train their Transformer to learn a (&quot;100% correct&quot;!) Sudoku solver from examples? And, if the latter, where&#x27;s the details of the training? What did they train with? What did they train on? How did they train? etc etc.<p>Very light on details that article is.</div>
   
 </div>
 
@@ -159,6 +157,14 @@
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">Did <i>you</i> read the post you are responding to? It says:<p>&gt; What&#x27;s the benefit? Is it speed? Where are the benchmarks? Is it that you can backprop through this computation? Do you do so?<p>The correct parsing of this is: &quot;What&#x27;s the benefit? [...] Is it [the benefit] that you can backprop through this computation? Do you do so?&quot;<p>There are no details about training nor the (almost-certainly necessarily novel) loss function that would be needed to handle partial &#x2F; imperfect outputs here, so it is extremely hard to believe any kind of gradient-based training procedure was used to determine &#x2F; set weight values here.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=bonoboTP">bonoboTP</a>
   </div>
   <div class="comment-text">Benchmark it against a fast Python interpreter optimized for AI tool calling, like Monty: <a href="https:&#x2F;&#x2F;github.com&#x2F;pydantic&#x2F;monty" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;pydantic&#x2F;monty</a></div>
@@ -205,19 +211,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Felixbot">Felixbot</a>
+    <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
   </div>
-  <div class="comment-text">Curious how this handles non-determinism. Most transformer inference has temperature &gt; 0, which means the &quot;program execution&quot; is probabilistic. The interesting question is whether the speedup holds when you need consistent outputs across multiple calls.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=BenoitP">BenoitP</a>
-  </div>
-  <div class="comment-text">&gt; the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.<p>IMHO the key point at which this technique has an unfair advantage vs a traditional interpreter is here.<p>How disruptive is it to have differentiability? To me it would mean that some tweaking-around can happen in an LLM-program at train-time; like changing a constant, or switching from a function call to another function. Can we gradient-descent effectively inside this huge space? How different is it from tool-calling from a pool of learned programs (think github but for LLM programs written in classic languages)?</div>
+  <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
   
 </div>
 
@@ -235,9 +231,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dwa3592">dwa3592</a>
+    <a href="https://news.ycombinator.com/user?id=clarionbell">clarionbell</a>
   </div>
-  <div class="comment-text">if you understood the article, please correct my understanding -<p>they created a new training dataset which also has computation solving step by step (multiplying two numbers or playing sudoku) and then trained a transformer on it- as a result, the model performs the computation(multiplying two numbers) &quot;inside&quot; itself instead of calling calculator (or python)?<p>++ And they also figured out how to make attention faster?</div>
+  <div class="comment-text">This has a lot of potential. Especially if the compiled &quot;code&quot; can be efficiently shared between models of the same architecture. That would easily overshadow LoRa and finetuning in general.</div>
   
 </div>
 
@@ -249,6 +245,14 @@
   </div>
   <div class="comment-text">This seems like it has some potential, but is pretty much useless as it is.<p>Shame there are no weights released - let alone the &quot;compiler&quot; tool they used to actually synthesize computational primitives into model weights. It seems like a &quot;small model&quot; system that&#x27;s amenable to low budget experiments, and I would love to see what this approach can be pushed towards.<p>I disagree with the core premise, it&#x27;s basically the old neurosymbolic garbage restated, but embedding predefined computational primitives into LLMs could have some uses nonetheless.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
+  </div>
+  <div class="comment-text">What&#x27;s &quot;the old neurosymbolic garbage&quot;?</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=yorwba">yorwba</a>
@@ -265,6 +269,26 @@
 
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
+  </div>
+  <div class="comment-text">Is their convex hull attention mechanism new and generally useable? I mean, it substantially restricts the shape of the model, so it isn’t a universal solution of course, but it does seem to overcome a pretty annoying limitation.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=BenoitP">BenoitP</a>
+  </div>
+  <div class="comment-text">&gt; the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.<p>IMHO the key point at which this technique has an unfair advantage vs a traditional interpreter is here.<p>How disruptive is it to have differentiability? To me it would mean that some tweaking-around can happen in an LLM-program at train-time; like changing a constant, or switching from a function call to another function. Can we gradient-descent effectively inside this huge space? How different is it from tool-calling from a pool of learned programs (think github but for LLM programs written in classic languages)?</div>
+  
 </div>
 
     
@@ -335,6 +359,60 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dwa3592">dwa3592</a>
+  </div>
+  <div class="comment-text">if you understood the article, please correct my understanding -<p>they created a new training dataset which also has computation solving step by step (multiplying two numbers or playing sudoku) and then trained a transformer on it- as a result, the model performs the computation(multiplying two numbers) &quot;inside&quot; itself instead of calling calculator (or python)?<p>++ And they also figured out how to make attention faster?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
+  </div>
+  <div class="comment-text">I can&#x27;t see anything about &quot;training a transformer&quot;. I&#x27;m trying to understand if e.g. the Sudoku solver was learned from examples (in which case, what examples?) or whether it was manually coded and then &quot;compiled&quot; into weights.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dwa3592">dwa3592</a>
+  </div>
+  <div class="comment-text">I assumed that they had to train, otherwise how else would they get &quot;inside&quot; a transformer.<p>I also feel a bit of bad smell from the article. Sounding revolutionary with no details or clear explanation.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jamilton">jamilton</a>
+  </div>
+  <div class="comment-text">I would assume it was manually coded.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Felixbot">Felixbot</a>
+  </div>
+  <div class="comment-text">Curious how this handles non-determinism. Most transformer inference has temperature &gt; 0, which means the &quot;program execution&quot; is probabilistic. The interesting question is whether the speedup holds when you need consistent outputs across multiple calls.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mirekrusin">mirekrusin</a>
+  </div>
+  <div class="comment-text">This is brilliant, game changing level.<p>Hey, give it also access to the dump of its weights and way to propose updates so it can see and tinker its brain directly.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=troelsSteegin">troelsSteegin</a>
   </div>
   <div class="comment-text">The Percepta stuff would seem to demonstrate a mechanism for implementing &quot;thinking&quot;. I don&#x27;t understand how foundation models implement &quot;thinking&quot;, but my intuition is that models are specifically trained for matching on and following procedural patterns. A task in a given domain can be performed through an associated and encoded procedure. The model holds all the linkages, as weights, that allows a procedure to be conditionally incrementally generated and performed. Does anyone have any insights about how LLM &quot;thinking&quot; is trained and coded?</div>
@@ -347,6 +425,16 @@
   
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=galsapir">galsapir</a>
+  </div>
+  <div class="comment-text">one of the most interesting pieces I&#x27;ve read recently. Not sure I agree with all the statements there (e.g. without execution the system has no comprehension) - but extremely cool</div>
+  
 </div>
 
     
@@ -368,46 +456,6 @@
 </div>
 
     
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mirekrusin">mirekrusin</a>
-  </div>
-  <div class="comment-text">This is brilliant, game changing level.<p>Hey, give it also access to the dump of its weights and way to propose updates so it can see and tinker its brain directly.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ontouchstart">ontouchstart</a>
-  </div>
-  <div class="comment-text">If this works, we might be able to have a special ISA for LLM and forget about high level computer language for humans.<p>I am talking strictly about computing, not garbage in garbage out IO.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=galsapir">galsapir</a>
-  </div>
-  <div class="comment-text">one of the most interesting pieces I&#x27;ve read recently. Not sure I agree with all the statements there (e.g. without execution the system has no comprehension) - but extremely cool</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=moktonar">moktonar</a>
-  </div>
-  <div class="comment-text">Is it possible to do the inverse, then? (Tranforming weights back to code)</div>
-  
-</div>
-
-    
 
     
 
@@ -417,7 +465,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 15:00 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 15:57 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

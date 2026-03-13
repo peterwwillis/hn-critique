@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">140 points</span>
+        <span class="score">147 points</span>
         by <a href="https://news.ycombinator.com/user?id=valyala">valyala</a>
         4 days ago
         &nbsp;|&nbsp;<a href="/critique/47309940.html">critique article</a>
@@ -46,24 +46,6 @@
     
 
     <p class="no-critique">AI critique is not available. Showing raw comments:</p>
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Someone">Someone</a>
-  </div>
-  <div class="comment-text">&gt; a goroutine’s state is surprisingly small. The mcall() assembly function only saves 3 values — the stack pointer, the program counter, and the base pointer — into a tiny gobuf struct. That’s it. Why so few? Because goroutine switches happen at function call boundaries, and at those points the compiler has already spilled any important registers to the stack following normal calling conventions.<p>Wouldn’t that mean go never uses registers to pass arguments to functions?<p>If so, that seems in conflict with <a href="https:&#x2F;&#x2F;go.dev&#x2F;src&#x2F;cmd&#x2F;compile&#x2F;abi-internal#function-call-argument-and-result-passing" rel="nofollow">https:&#x2F;&#x2F;go.dev&#x2F;src&#x2F;cmd&#x2F;compile&#x2F;abi-internal#function-call-ar...</a>, which says <i>“Because access to registers is generally faster than access to the stack, arguments and results are preferentially passed in registers”</i><p>Or does the compiler always Go’s stable ABI, known as ABI0 in functions where it inserts code to potentially context switch, and only uses the (potentially) faster ABI that passes arguments in registers elsewhere?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mknyszek">mknyszek</a>
-  </div>
-  <div class="comment-text">The compiler generates code to spill arguments to the stack at synchronous preemption points (function entry). Signal-based preemption has a spill path that saves the full ABI register set.</div>
-  
-</div>
-
-</div>
-
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -88,14 +70,6 @@
   
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=kevin_thibedeau">kevin_thibedeau</a>
-  </div>
-  <div class="comment-text">Nim&#x27;s GC is deterministic when you need it.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=gf000">gf000</a>
   </div>
   <div class="comment-text">This may have been practically true for a long time, but as Java&#x27;s ZGC garbage collector proves, this is not a hard truth.<p>You can have world pauses that are independent of heap size, and thus predictable latency (of course, trading off some throughput, but that is almost fundamental)</div>
@@ -104,25 +78,17 @@
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kevin_thibedeau">kevin_thibedeau</a>
+  </div>
+  <div class="comment-text">Nim&#x27;s GC is deterministic when you need it.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=pjmlp">pjmlp</a>
   </div>
   <div class="comment-text">Not really, it is a matter of having the right implementation.<p>- <a href="https:&#x2F;&#x2F;www.ptc.com&#x2F;en&#x2F;products&#x2F;developer-tools&#x2F;perc" rel="nofollow">https:&#x2F;&#x2F;www.ptc.com&#x2F;en&#x2F;products&#x2F;developer-tools&#x2F;perc</a><p>- <a href="https:&#x2F;&#x2F;www.aicas.com&#x2F;products-services&#x2F;jamaicavm" rel="nofollow">https:&#x2F;&#x2F;www.aicas.com&#x2F;products-services&#x2F;jamaicavm</a><p>- <a href="https:&#x2F;&#x2F;www.azul.com&#x2F;products&#x2F;prime" rel="nofollow">https:&#x2F;&#x2F;www.azul.com&#x2F;products&#x2F;prime</a><p>Not all GCs are born alike.</div>
-  
-</div>
-
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=kjksf">kjksf</a>
-  </div>
-  <div class="comment-text">&gt; No matter what load you have, P99 and especially P99.9 latency will be higher than any other language<p>I strongly call BS on that.<p>Strong claim and evidence seems to be a hallucination in your own head.<p>There are several writeups of large backends ported from node&#x2F;python&#x2F;ruby to Go which resulted in dramatic speedups, including drop in P99 and P99.9 latencies by 10x<p>That&#x27;s empirical evidence your claim is BS.<p>What exactly is so unfair about Go scheduler and what do you compare it to?<p>Node&#x27;s lack of multi-threading?<p>Python&#x27;s and Ruby&#x27;s GIL?<p>Just leaving this to OS thread scheduler which, unlike Go, has no idea about i&#x2F;o and therefore cannot optimize for it?<p>Apparently the source of your claim is <a href="https:&#x2F;&#x2F;github.com&#x2F;php&#x2F;frankenphp&#x2F;pull&#x2F;2016" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;php&#x2F;frankenphp&#x2F;pull&#x2F;2016</a><p>Which is optimizing for a very specific micro-benchmark of hammering std-lib http server with concurrent request. Which is not what 99% of go servers need to handle. And is exercising way more than a scheduler. And is not benchmarking against any other language, so the sweeping statement about &quot;higher than any other language&quot; is literally baseless.<p>And you were able to make a change that trades throughput for P99 latency without changing the scheduler, which kind of shows it wasn&#x27;t the scheduler but an interaction between a specific implementation of HTTP server and Go scheduler.<p>And there are other HTTP servers in Go that focus on speed. It&#x27;s just 99.9% of Go servers don&#x27;t need any of that because the baseline is 10x faster than python&#x2F;ruby&#x2F;javascript and on-par with Java or C#.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=withinboredom">withinboredom</a>
-  </div>
-  <div class="comment-text">Do I need to share the TLA+ spec that shows its unfair? Or do you have any actual proof to your claims?</div>
   
 </div>
 
@@ -150,6 +116,48 @@
   
 </div>
 
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kjksf">kjksf</a>
+  </div>
+  <div class="comment-text">&gt; No matter what load you have, P99 and especially P99.9 latency will be higher than any other language<p>I strongly call BS on that.<p>Strong claim and evidence seems to be a hallucination in your own head.<p>There are several writeups of large backends ported from node&#x2F;python&#x2F;ruby to Go which resulted in dramatic speedups, including drop in P99 and P99.9 latencies by 10x<p>That&#x27;s empirical evidence your claim is BS.<p>What exactly is so unfair about Go scheduler and what do you compare it to?<p>Node&#x27;s lack of multi-threading?<p>Python&#x27;s and Ruby&#x27;s GIL?<p>Just leaving this to OS thread scheduler which, unlike Go, has no idea about i&#x2F;o and therefore cannot optimize for it?<p>Apparently the source of your claim is <a href="https:&#x2F;&#x2F;github.com&#x2F;php&#x2F;frankenphp&#x2F;pull&#x2F;2016" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;php&#x2F;frankenphp&#x2F;pull&#x2F;2016</a><p>Which is optimizing for a very specific micro-benchmark of hammering std-lib http server with concurrent request. Which is not what 99% of go servers need to handle. And is exercising way more than a scheduler. And is not benchmarking against any other language, so the sweeping statement about &quot;higher than any other language&quot; is literally baseless.<p>And you were able to make a change that trades throughput for P99 latency without changing the scheduler, which kind of shows it wasn&#x27;t the scheduler but an interaction between a specific implementation of HTTP server and Go scheduler.<p>And there are other HTTP servers in Go that focus on speed. It&#x27;s just 99.9% of Go servers don&#x27;t need any of that because the baseline is 10x faster than python&#x2F;ruby&#x2F;javascript and on-par with Java or C#.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jerf">jerf</a>
+  </div>
+  <div class="comment-text">&quot;There are several writeups of large backends ported from node&#x2F;python&#x2F;ruby to Go which resulted in dramatic speedups, including drop in P99 and P99.9 latencies by 10x&quot;<p>But that&#x27;s not comparing apples to apples. When you get a dramatic speedup, you will also see big drops in the P99 and P99.9 latencies because what stressed out the scripting language is a yawn to a compiled language. Just going from stressed-&gt;yawning will do wonders for all your latencies, tail latencies included.<p>That doesn&#x27;t say anything about what will happen when the load increases enough to start stressing the compiled language.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=withinboredom">withinboredom</a>
+  </div>
+  <div class="comment-text">Do I need to share the TLA+ spec that shows its unfair? Or do you have any actual proof to your claims?</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Someone">Someone</a>
+  </div>
+  <div class="comment-text">&gt; a goroutine’s state is surprisingly small. The mcall() assembly function only saves 3 values — the stack pointer, the program counter, and the base pointer — into a tiny gobuf struct. That’s it. Why so few? Because goroutine switches happen at function call boundaries, and at those points the compiler has already spilled any important registers to the stack following normal calling conventions.<p>Wouldn’t that mean go never uses registers to pass arguments to functions?<p>If so, that seems in conflict with <a href="https:&#x2F;&#x2F;go.dev&#x2F;src&#x2F;cmd&#x2F;compile&#x2F;abi-internal#function-call-argument-and-result-passing" rel="nofollow">https:&#x2F;&#x2F;go.dev&#x2F;src&#x2F;cmd&#x2F;compile&#x2F;abi-internal#function-call-ar...</a>, which says <i>“Because access to registers is generally faster than access to the stack, arguments and results are preferentially passed in registers”</i><p>Or does the compiler always Go’s stable ABI, known as ABI0 in functions where it inserts code to potentially context switch, and only uses the (potentially) faster ABI that passes arguments in registers elsewhere?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mknyszek">mknyszek</a>
+  </div>
+  <div class="comment-text">The compiler generates code to spill arguments to the stack at synchronous preemption points (function entry). Signal-based preemption has a spill path that saves the full ABI register set.</div>
+  
 </div>
 
 </div>
@@ -196,6 +204,14 @@
   </div>
   <div class="comment-text">Go missed a big opportunity to be Rust when we needed Rust more than anything. I have long since moved on from Go and C#&#x2F;.NET is widely available nowadays and in many respects less held back by some strange political choices when it comes to DevEx (I am of course talking about generics).</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=9rx">9rx</a>
+  </div>
+  <div class="comment-text">Rust is the older project of the two, kicking off in 2006. Go, which set sail in 2007, duplicating the work of Rust would have been pointless. <i>We already had Rust.</i><p>Go&#x27;s objective was to become a faster Python. Which was something we also desperately needed at the time, and it has well succeeded on that front. Go has largely replaced all the non-data science things people were earlier doing with Python.</div>
+  
+</div>
+
 </div>
 
     
@@ -254,7 +270,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 15:00 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 15:57 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
