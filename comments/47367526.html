@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Show HN: Context Gateway – Compress agent context before it hits the LLM | HN Critique</title>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="/"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px #ffffff solid;" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="/">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr id="pagespace" style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="/">← Back to front page</a></p>
+      
+      <h2><a href="https://github.com/Compresr-ai/Context-Gateway" rel="noreferrer noopener">Show HN: Context Gateway – Compress agent context before it hits the LLM</a>
+        <span class="sitebit"> (github.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">15 points</span>
+        by <a href="https://news.ycombinator.com/user?id=ivzak">ivzak</a>
+        1 hour ago
+        &nbsp;|&nbsp;<a href="/critique/47367526.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47367526" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jameschaearley">jameschaearley</a>
+  </div>
+  <div class="comment-text"><p><pre><code>  The intent-conditioned compression is the interesting part here. Most context management I&#x27;ve seen is either naive truncation or generic summarization that doesn&#x27;t account for why the tool was called. Training classifiers on model internals to
+  figure out which tokens carry signal for a given task -- that&#x27;s doing something different from what frameworks offer out of the box.
+
+  I poked around the repo and didn&#x27;t see any evals measuring compression quality. You cite the GPT-5.4 long-context accuracy drop as motivation, which makes sense -- but the natural follow-up is: does your compression actually recover that accuracy?
+  Something like SWE-bench pass rates with and without the gateway at various context lengths would go a long way. Without that, it&#x27;s hard to tell if the SLM is making good decisions or just making the context shorter.
+
+  A few other things I&#x27;m curious about:
+
+  • How does the SLM handle ambiguous tool calls? E.g., a broad grep where the agent isn&#x27;t sure what it&#x27;s looking for yet -- does the compressor tend to be too aggressive in those cases?
+  • What&#x27;s the latency overhead per tool call? If the SLM inference adds even 200-300ms per compression step, that compounds fast in agentic loops with dozens of tool calls.
+  • How often does expand() get triggered in practice? If the agent frequently needs to recover stripped content, that&#x27;s a signal the compression is too lossy.</code></pre></div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=metadat">metadat</a>
+  </div>
+  <div class="comment-text"><i>Don&#x27;t post generated&#x2F;AI-edited comments. HN is for conversation between humans</i> <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47340079">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47340079</a> - 1 day ago, 1700 comments</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=uaghazade">uaghazade</a>
+  </div>
+  <div class="comment-text">ok, its great</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=thesiti92">thesiti92</a>
+  </div>
+  <div class="comment-text">do you guys have any stats on how much faster this is than claude or codex&#x27;s compression? claudes is super super slow, but codex feels like an acceptable amount of time? looks cool tho, ill have to try it out and see if it messes with outputs or not.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=verdverm">verdverm</a>
+  </div>
+  <div class="comment-text">I don&#x27;t want some other tooling messing with my context. It&#x27;s too important to leave to something that needs to optimize across many users, there by not being the best for my specifics.<p>The framework I use (ADK) already handles this, very low hanging fruit that should be a part of any framework, not something external. In ADK, this is a boolean you can turn on per tool or subagent, you can even decide turn by turn or based on any context you see fit by supplying a function.<p>YC over indexed on AI startups too early, not realizing how trivial these startup &quot;products&quot; are, more of a line item in the feature list of a mature agent framework.<p>I&#x27;ve also seen dozens of this same project submitted by the claws the led to our new rule addition this week. If your project can be vibe coded by dozens of people in mere hours...</div>
+  
+</div>
+
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-13 18:58 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+
