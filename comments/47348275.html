@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">180 points</span>
+        <span class="score">194 points</span>
         by <a href="https://news.ycombinator.com/user?id=u1hcw9nx">u1hcw9nx</a>
         1 days ago
         &nbsp;|&nbsp;<a href="/critique/47348275.html">critique article</a>
@@ -50,6 +50,16 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
+  </div>
+  <div class="comment-text">So, what I&#x27;m trying to understand, and I can&#x27;t find any clear information about that in the article, is how they &quot;compiled&quot; e.g. the Sudoku solver into a Transformer&#x27;s weights. Did they do it manually? Say, they took the source of a hand-coded Sudoku solver and put it through their code-to-weight compiler, and thus compiled the code to the Transformer weights? Or did they go the Good, Old-Fashioned, Deep Learning way and train their Transformer to learn a (&quot;100% correct&quot;!) Sudoku solver from examples? And, if the latter, where&#x27;s the details of the training? What did they train with? What did they train on? How did they train? etc etc.<p>Very light on details that article is.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=btown">btown</a>
   </div>
   <div class="comment-text">This seems way cooler than just computation (which is easy to hand off to a tool, and arguably more predictable that way). The broader point here is that you can have your model switch dynamically to&#x2F;from a kind of attention that scales with the log of the token count, by only exploring the convex hull in a 2D space. A less capable version of attention, to be sure, but one capable of tracing a program’s execution with text representations of registers and stack - which is a meaningful level of flexibility, and one many humans would find difficult to do reliably!<p>What could you do with an LLM that can go into “focus mode” and generate tokens extremely rapidly? How much more powerful would a reasoning-token-generation phase be that can explore and cull large numbers of paths&#x2F;hypotheses, so long as they are well defined? Does this have implications for multi-modal models and spatial reasoning?<p>As the paper suggests:<p>&gt; These models could be useful in several modes: as a dedicated fast path paired with a slower, more general model; as part of a fast&#x2F;slow hybrid architecture inside a single system; or as a speculative execution model that proposes tokens quickly while a regular-attention model verifies and accepts them. Regardless of their eventual capability ceiling, they already suggest a powerful systems primitive for speeding up larger models.</div>
@@ -60,9 +70,19 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=BenoitP">BenoitP</a>
+    <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
   </div>
-  <div class="comment-text">&gt; the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.<p>IMHO the key point at which this technique has an unfair advantage vs a traditional interpreter is here.<p>How disruptive is it to have differentiability? To me it would mean that some tweaking-around can happen in an LLM-program at train-time; like changing a constant, or switching from a function call to another function. Can we gradient-descent effectively inside this huge space? How different is it from tool-calling from a pool of learned programs (think github but for LLM programs written in classic languages)?</div>
+  <div class="comment-text">Is their convex hull attention mechanism new and generally useable? I mean, it substantially restricts the shape of the model, so it isn’t a universal solution of course, but it does seem to overcome a pretty annoying limitation.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
+  </div>
+  <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
   
 </div>
 
@@ -137,6 +157,14 @@
   
 </div>
 
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bonoboTP">bonoboTP</a>
+  </div>
+  <div class="comment-text">Benchmark it against a fast Python interpreter optimized for AI tool calling, like Monty: <a href="https:&#x2F;&#x2F;github.com&#x2F;pydantic&#x2F;monty" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;pydantic&#x2F;monty</a></div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -161,8 +189,56 @@
   </div>
   <div class="comment-text">What are the AI tells? The only one I found is redundancy, but it makes sense because this is trying to be approachable to laymen.<p>Like, you have a great point (the benefit of this approach isn&#x27;t explained), but that&#x27;s a mistake humans frequently make.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bonoboTP">bonoboTP</a>
+  </div>
+  <div class="comment-text">I read a lot of LLM text every day, so I&#x27;m quite good at seeing the cadence, the narrative structures and the phrasing styles. It&#x27;s not just &quot;it&#x27;s not just X but Y&quot; or emdashes. I could point them out and you would say oh humans use this trope or phrasing style too, and of course that&#x27;s true. It&#x27;s still a tell. But it&#x27;s pointless to argue about this.</div>
+  
 </div>
 
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Felixbot">Felixbot</a>
+  </div>
+  <div class="comment-text">Curious how this handles non-determinism. Most transformer inference has temperature &gt; 0, which means the &quot;program execution&quot; is probabilistic. The interesting question is whether the speedup holds when you need consistent outputs across multiple calls.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=BenoitP">BenoitP</a>
+  </div>
+  <div class="comment-text">&gt; the whole process remains differentiable: we can even propagate gradients through the computation itself. That makes this fundamentally different from an external tool. It becomes a trainable computational substrate that can be integrated directly into a larger model.<p>IMHO the key point at which this technique has an unfair advantage vs a traditional interpreter is here.<p>How disruptive is it to have differentiability? To me it would mean that some tweaking-around can happen in an LLM-program at train-time; like changing a constant, or switching from a function call to another function. Can we gradient-descent effectively inside this huge space? How different is it from tool-calling from a pool of learned programs (think github but for LLM programs written in classic languages)?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=andy12_">andy12_</a>
+  </div>
+  <div class="comment-text">This seems a really interesting path for interpretability, specially if a big chunk of a model&#x27;s behavior occurs pseudo-symbolically. This is an idea I had thought about, integrating tools into the main computation path of a model, but I never imagined that it could be done efficiently with just a vanilla transformer.<p>Truly, attention is all you need (I guess).</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dwa3592">dwa3592</a>
+  </div>
+  <div class="comment-text">if you understood the article, please correct my understanding -<p>they created a new training dataset which also has computation solving step by step (multiplying two numbers or playing sudoku) and then trained a transformer on it- as a result, the model performs the computation(multiplying two numbers) &quot;inside&quot; itself instead of calling calculator (or python)?<p>++ And they also figured out how to make attention faster?</div>
+  
 </div>
 
     
@@ -195,47 +271,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=andy12_">andy12_</a>
-  </div>
-  <div class="comment-text">This seems a really interesting path for interpretability, specially if a big chunk of a model&#x27;s behavior occurs pseudo-symbolically. This is an idea I had thought about, integrating tools into the main computation path of a model, but I never imagined that it could be done efficiently with just a vanilla transformer.<p>Truly, attention is all you need (I guess).</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=troelsSteegin">troelsSteegin</a>
-  </div>
-  <div class="comment-text">The Percepta stuff would seem to demonstrate a mechanism for implementing &quot;thinking&quot;. I don&#x27;t understand how foundation models implement &quot;thinking&quot;, but my intuition is that models are specifically trained for matching on and following procedural patterns. A task in a given domain can be performed through an associated and encoded procedure. The model holds all the linkages, as weights, that allows a procedure to be conditionally incrementally generated and performed. Does anyone have any insights about how LLM &quot;thinking&quot; is trained and coded?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=graemefawcett">graemefawcett</a>
-  </div>
-  <div class="comment-text">Basically just madlibs - the models generate intermediate tokens that help predict a better answer based on training (RLHF &amp; otherwise).  They tend to look like &quot;reasoning&quot; because those tokens correlated with accepted answers during training.<p>Extended thinking passes are just more of the same.  The entire methodology exists merely to provide additional context for the autoregression process.  There is no traditional computation occurring</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=koolala">koolala</a>
   </div>
   <div class="comment-text">I&#x27;d like to see this combined with reinforcement learning to optimize models to think computationally. Generating ideas with hypothetical results and then running them in the same thought. Their solution sounded like a lot of tokens though.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ontouchstart">ontouchstart</a>
-  </div>
-  <div class="comment-text">If this works, we might be able to have a special ISA for LLM and forget about high level computer language for humans.<p>I am talking strictly about computing, not garbage in garbage out IO.</div>
   
 </div>
 
@@ -277,24 +315,6 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=manas96">manas96</a>
-  </div>
-  <div class="comment-text">LLMs are not deterministic per my understanding. A program always produces the same output for the same input and instructions (ignore FP accuracy for now). How is determinism achieved here?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=armchairhacker">armchairhacker</a>
-  </div>
-  <div class="comment-text">LLMs may be deterministic for a subset of inputs, if one output (or intermediate layer) neuron-state probability is significantly higher than the rest. My understanding is, when probabilities are close they diverge.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=deviation">deviation</a>
   </div>
   <div class="comment-text">I really liked the article, but food for thought: is a transformer that offloads computation to python really that different from Python code being read and then executed by a compiler?<p>Both examples are of a system we created to abstract most of the hard work.<p>I think a more important concept here is that the term &quot;AI&quot; has a lot of built-in assumptions, one of which being that it is (or will be) super intelligent, and so folks like the author here think (correctly) that it&#x27;s important for the AI to be actually doing the work itself.</div>
@@ -315,9 +335,55 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=troelsSteegin">troelsSteegin</a>
+  </div>
+  <div class="comment-text">The Percepta stuff would seem to demonstrate a mechanism for implementing &quot;thinking&quot;. I don&#x27;t understand how foundation models implement &quot;thinking&quot;, but my intuition is that models are specifically trained for matching on and following procedural patterns. A task in a given domain can be performed through an associated and encoded procedure. The model holds all the linkages, as weights, that allows a procedure to be conditionally incrementally generated and performed. Does anyone have any insights about how LLM &quot;thinking&quot; is trained and coded?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=graemefawcett">graemefawcett</a>
+  </div>
+  <div class="comment-text">Basically just madlibs - the models generate intermediate tokens that help predict a better answer based on training (RLHF &amp; otherwise).  They tend to look like &quot;reasoning&quot; because those tokens correlated with accepted answers during training.<p>Extended thinking passes are just more of the same.  The entire methodology exists merely to provide additional context for the autoregression process.  There is no traditional computation occurring</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=manas96">manas96</a>
+  </div>
+  <div class="comment-text">LLMs are not deterministic per my understanding. A program always produces the same output for the same input and instructions (ignore FP accuracy for now). How is determinism achieved here?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=armchairhacker">armchairhacker</a>
+  </div>
+  <div class="comment-text">LLMs may be deterministic for a subset of inputs, if one output (or intermediate layer) neuron-state probability is significantly higher than the rest. My understanding is, when probabilities are close they diverge.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=mirekrusin">mirekrusin</a>
   </div>
   <div class="comment-text">This is brilliant, game changing level.<p>Hey, give it also access to the dump of its weights and way to propose updates so it can see and tinker its brain directly.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ontouchstart">ontouchstart</a>
+  </div>
+  <div class="comment-text">If this works, we might be able to have a special ISA for LLM and forget about high level computer language for humans.<p>I am talking strictly about computing, not garbage in garbage out IO.</div>
   
 </div>
 
@@ -342,64 +408,6 @@
 </div>
 
     
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=plaidfuji">plaidfuji</a>
-  </div>
-  <div class="comment-text">Besides being a very interesting conceptual exercise, the animated figures in this article are absolutely stunning - best I’ve ever seen.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=behehebd">behehebd</a>
-  </div>
-  <div class="comment-text">Is this genius? Or just a new binary executable format? Can&#x27;t tell.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=RagnarD">RagnarD</a>
-  </div>
-  <div class="comment-text">This is really important work.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=rebolek">rebolek</a>
-  </div>
-  <div class="comment-text">The original title is &quot;Can LLMs be computers?&quot;<p>But the right question is, should they?</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=yalok">yalok</a>
-  </div>
-  <div class="comment-text">very cool idea. But, time savings are not true for every tool call, and it&#x27;s not clear to me yet whether this is batch-able; also, intuitively, for most of the models that run on GPU, you&#x27;d still want to offload tool exec part to CPU since it&#x27;s much cheaper...</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=hrmtst93837">hrmtst93837</a>
-  </div>
-  <div class="comment-text">If you push tool execution into the model itself, you inherit all the I&#x2F;O unpredictability and error handling baggage, but now inside a GPU context that&#x27;s allergic to latency. Inference throughput tanks if external calls start blocking, and A100s make expensive waiters. Batching is fantasy unless you know up front exactly what gets executed, which is the opposite of dynamic tools. If you want &quot;faster&quot; here, the trade is reliable deterministic compute versus the usual Wild West of system calls and side effects.</div>
-  
-</div>
-
-</div>
-
-    
 
     
 
@@ -409,7 +417,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 14:05 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 15:00 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

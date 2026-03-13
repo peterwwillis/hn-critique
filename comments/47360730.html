@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">399 points</span>
+        <span class="score">435 points</span>
         by <a href="https://news.ycombinator.com/user?id=kothariji">kothariji</a>
-        9 hours ago
+        10 hours ago
         &nbsp;|&nbsp;<a href="/critique/47360730.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47360730" rel="noopener">original on HN</a>
       </p>
@@ -46,30 +46,6 @@
     
 
     <p class="no-critique">AI critique is not available. Showing raw comments:</p>
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=vite_throwaway">vite_throwaway</a>
-  </div>
-  <div class="comment-text">I have a small React project using vite 7 and have the following in my config so that vite interprets &quot;.js&quot; files as JSX:<p><pre><code>    &#x2F;&#x2F; See https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;14652
-    esbuild: {
-      loader: &quot;jsx&quot;,
-      include: &#x2F;.*\.jsx?$&#x2F;,
-      exclude: [],
-    },
-    optimizeDeps: {
-      esbuildOptions: {
-        loader: {
-          &quot;.js&quot;: &quot;jsx&quot;,
-        },
-      },
-    },
-</code></pre>
-Note the comment at the top. I had no idea how to come up with this config by checking the documentation pages of vite and its various related tools. Luckily I found the GitHub issue and someone else had come up with the right incantation.<p>Now this new vite uses new tools, and their documentation is still lacking. I spent half an hour trying to figure out how vite (and related tools that I had to navigate and try to piece a coherent view of: esbuild, oxc, rolldown, etc.) might be convinced, but gave up and stayed with vite 7.<p>Someone could respond with a working solution and it would help, sure, but these tools sure as hell have documentation issues.</div>
-  
-</div>
-
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -84,6 +60,22 @@ Note the comment at the top. I had no idea how to come up with this config by ch
   </div>
   <div class="comment-text">The waste of slow JS bundles is nothing compared to the cost of bloated interpreted runtimes or inefficient abstractions. Most production software is multiple orders of magnitude slower than it needs to be. Just look at all the electron apps that use multiple GB of ram doing nothing and are laggier than similar software written 40 years ago despite having access to an incredibly luxurious amount of resources from any sane historical perspective.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=shimman">shimman</a>
+  </div>
+  <div class="comment-text">Something I realized while doing more political campaign work is how inefficient most self hosted solutions are. Things like plausible or umami (analytics) require at least 2 gigs of ram, postiz (scheduled social media planner) requires 2 gigs of ram, etc.<p>It all slowly adds up where you think a simple $10 VPS with 2 gigs of ram is enough but it&#x27;s not, especially if you want a team of 10-30ish to work sporadically within the same box.<p>There can be a lot of major wins by rewriting these programs in more efficient languages like Go or Rust. It would make self hosting more maintainable and break away from the consulting class that often has worse solutions at way higher prices (for an example, one consulting group sells software similar to postiz but for $2k&#x2F;month).</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=awongh">awongh</a>
+  </div>
+  <div class="comment-text">I guess there&#x27;s the distinction between capacity that could be taken up by other things, and free capacity that doesn&#x27;t necessarily cost anything.<p>For a server built in the cloud those cycles could actually be taken up by other things, freeing the system and bringing costs down.<p>For a client computer running electron, as long as the user doesn&#x27;t have so many electro apps open that their computer slows down noticeably, that inefficency might not matter that much.<p>Another aspect is that the devices get cheaper and faster so today&#x27;s slow electron app might run fine on a system that is a few years away, and that capacity was never going to be taken up by anything else on the end user&#x27;s device.</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -113,6 +105,14 @@ Note the comment at the top. I had no idea how to come up with this config by ch
     <a href="https://news.ycombinator.com/user?id=Sammi">Sammi</a>
   </div>
   <div class="comment-text">&gt; I&#x27;ve seen people do integration tests where 99% of the time is spend creating and recreating the same database over and over again (some shitty ruby project more than a decade ago). That took something like 10 minutes.<p>For anyone that doesn&#x27;t know: With sqlite you can serialize the db to a buffer and create a &quot;new&quot; db from that buffer with just `new Datebase()`. Just run the migrations once on test initialization, serialize that migrated db and reuse it instantly for each test for amazing test isolation.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=esafak">esafak</a>
+  </div>
+  <div class="comment-text">Kotlin compiles fast; I don&#x27;t have any problems with ktor. Spring Boot and Rust do not.</div>
   
 </div>
 
@@ -248,6 +248,16 @@ Note the comment at the top. I had no idea how to come up with this config by ch
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=useftmly">useftmly</a>
+  </div>
+  <div class="comment-text">For anyone running Next.js purely as a static site generator (no SSR, output: &#x27;export&#x27;), the rolldown bundler in Vite 8 makes switching to plain Vite + React Router or TanStack Router surprisingly attractive. You lose the file-based routing convenience, but you gain a significantly simpler mental model — no more reasoning about which components are server vs client, no &#x27;use client&#x27; directives, no ISR footguns.<p>We moved a 65-page static tool site off Next.js static export and found the build times dropped dramatically. The Next.js static export path has always been a second-class citizen in the project anyway — most of the interesting features (RSC, middleware, ISR) are opt-in SSR concerns that don&#x27;t apply when you&#x27;re just emitting HTML&#x2F;JS&#x2F;CSS. With Vite 8 and rolldown closing the performance gap, there&#x27;s less reason to carry Next&#x27;s complexity for static-only projects.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=moretti">moretti</a>
   </div>
   <div class="comment-text">Thanks to the Vite team for building a faster, modern bundling solution on a fully open source stack that isn&#x27;t tied to a specific framework...cough cough, Turbopack</div>
@@ -269,39 +279,29 @@ Huge fan, speaking from deep experience (webdev since 1998).</div>
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Aldipower">Aldipower</a>
+    <a href="https://news.ycombinator.com/user?id=vite_throwaway">vite_throwaway</a>
   </div>
-  <div class="comment-text">As I am interested in long time maintainability (should still work in 10 years) with my projects I am just using esbuild directly. I am not interested in adjusting my projects, just because things changed under the hood in &quot;wrappers&quot; like Vite and I suddenly have a lot of work.</div>
+  <div class="comment-text">I have a small React project using vite 7 and have the following in my config so that vite interprets &quot;.js&quot; files as JSX:<p><pre><code>    &#x2F;&#x2F; See https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;14652
+    esbuild: {
+      loader: &quot;jsx&quot;,
+      include: &#x2F;.*\.jsx?$&#x2F;,
+      exclude: [],
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        loader: {
+          &quot;.js&quot;: &quot;jsx&quot;,
+        },
+      },
+    },
+</code></pre>
+Note the comment at the top. I had no idea how to come up with this config by checking the documentation pages of vite and its various related tools. Luckily I found the GitHub issue and someone else had come up with the right incantation.<p>Now this new vite uses new tools, and their documentation is still lacking. I spent half an hour trying to figure out how vite (and related tools that I had to navigate and try to piece a coherent view of: esbuild, oxc, rolldown, etc.) might be convinced, but gave up and stayed with vite 7.<p>Someone could respond with a working solution and it would help, sure, but these tools sure as hell have documentation issues.</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=christophilus">christophilus</a>
+    <a href="https://news.ycombinator.com/user?id=spiros">spiros</a>
   </div>
-  <div class="comment-text">This is the way. Trivial to get live reloading working. HMR is overrated. I went with esbuild in my last project, and have no regrets. Also, used my own 100line end-to-end  typed RPC layer with Zod validation doing the heavy lifting. No code gem required for any part of the project other than generating types from Postgres. No regrets there, either. The only thing I would have changed in that project is I would have used Kysely instead of just raw porsager.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=chearon">chearon</a>
-  </div>
-  <div class="comment-text">esbuild still doesn’t support top-level await. And live reloading is way, way slower than HMR.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=silverwind">silverwind</a>
-  </div>
-  <div class="comment-text">IIRC, esbuild is still lacking code splitting.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=emadda">emadda</a>
-  </div>
-  <div class="comment-text">esbuild has been very stable for my projects too.<p>I think it is the only tool in the JS ecosystem that has not broken after a few years.</div>
+  <div class="comment-text">The solution here is working for me: <a href="https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;21505" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;vitejs&#x2F;vite&#x2F;discussions&#x2F;21505</a><p>Though sometimes oxc complains about JSX in JS when running vite, but it still works fine.</div>
   
 </div>
 
@@ -371,17 +371,17 @@ Huge fan, speaking from deep experience (webdev since 1998).</div>
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=gnarlbar">gnarlbar</a>
+    <a href="https://news.ycombinator.com/user?id=codetantra">codetantra</a>
   </div>
-  <div class="comment-text">Not me, but I can imagine it happening.<p>JSX is a nice server side templating language. There a lot of people who aren&#x27;t dependency conscious, and a lot of people who love react, and there is quite a bit of overlap in those two groups. I&#x27;ve used bun + preact_render_to_string for server side JSX templates before and it was nice. When I did it seemed that bun somewhat embraced react, and I could imagine react being the path of least resistance to server-side JSX there for some of the folks in the aforementioned groups.</div>
+  <div class="comment-text">After Tanstack Start, Next.js seems even less intuitive. While it remains a viable option due to its established momentum, it feels quite alien to backend devs, esp with its unconventional defaults.</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=codetantra">codetantra</a>
+    <a href="https://news.ycombinator.com/user?id=gnarlbar">gnarlbar</a>
   </div>
-  <div class="comment-text">After Tanstack Start, Next.js seems even less intuitive. While it remains a viable option due to its established momentum, it feels quite alien to backend devs, esp with its unconventional defaults.</div>
+  <div class="comment-text">Not me, but I can imagine it happening.<p>JSX is a nice server side templating language. There a lot of people who aren&#x27;t dependency conscious, and a lot of people who love react, and there is quite a bit of overlap in those two groups. I&#x27;ve used bun + preact_render_to_string for server side JSX templates before and it was nice. When I did it seemed that bun somewhat embraced react, and I could imagine react being the path of least resistance to server-side JSX there for some of the folks in the aforementioned groups.</div>
   
 </div>
 
@@ -425,6 +425,48 @@ Huge fan, speaking from deep experience (webdev since 1998).</div>
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Aldipower">Aldipower</a>
+  </div>
+  <div class="comment-text">As I am interested in long time maintainability (should still work in 10 years) with my projects I am just using esbuild directly. I am not interested in adjusting my projects, just because things changed under the hood in &quot;wrappers&quot; like Vite and I suddenly have a lot of work.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=christophilus">christophilus</a>
+  </div>
+  <div class="comment-text">This is the way. Trivial to get live reloading working. HMR is overrated. I went with esbuild in my last project, and have no regrets. Also, used my own 100-line end-to-end  typed RPC layer with Zod validation doing the heavy lifting. No codegen required for any part of the project other than generating types from Postgres. No regrets there, either. The only thing I would have changed in that project is I would have used Kysely instead of just raw porsager.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=silverwind">silverwind</a>
+  </div>
+  <div class="comment-text">IIRC, esbuild is still lacking code splitting.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=emadda">emadda</a>
+  </div>
+  <div class="comment-text">esbuild has been very stable for my projects too.<p>I think it is the only tool in the JS ecosystem that has not broken after a few years.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=chearon">chearon</a>
+  </div>
+  <div class="comment-text">esbuild still doesn’t support top-level await. And live reloading is way, way slower than HMR.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=brillout">brillout</a>
   </div>
   <div class="comment-text">Vite+, Void Cloud, Void Framework... an epic battle between Vercel and Void is coming.<p>The PRC (aka server functions) demo [0] is particularly interesting — end-to-end type safety (from DB to UI) is a major milestone for JavaScript. We&#x27;ve been doing a lot of RPC design work in that space with Telefunc (tRPC alternative) [1] — it&#x27;s a really hard topic, and we&#x27;re looking forward to collaborating with the Void team. (Also looking forward to contributing as the creators of Vike [2].)<p>[0]: <a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=BX0Xv73kXNk" rel="nofollow">https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=BX0Xv73kXNk</a> (around the end of the first talk)  
@@ -455,16 +497,6 @@ Huge fan, speaking from deep experience (webdev since 1998).</div>
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=gdorsi">gdorsi</a>
-  </div>
-  <div class="comment-text">Sweet, great job Vite team!<p>I wonder how much of the Rollup bundling magic has been ported to Rolldown.<p>One thing that always made this kind of switch to Rust has always been that Rollup has become so sophisticated that&#x27;s hard to replace with something new.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=shunia_huang">shunia_huang</a>
   </div>
   <div class="comment-text">Ah, wondering how long it will take Angular to replace it&#x27;s sh*t building tool chain to fully vite compatible, hope it could happen before I change may career path or retire.</div>
@@ -478,6 +510,16 @@ Huge fan, speaking from deep experience (webdev since 1998).</div>
     <a href="https://news.ycombinator.com/user?id=h4ch1">h4ch1</a>
   </div>
   <div class="comment-text">I&#x27;ve been using rolldown-vite for the past 3-4 months with absolutely no issues on a very large monorepo with SvelteKit, multiple TS services and custom packages.<p>Just upgraded to 8 with some version bumping. Dev server time reduced to 1.5s from 8s and build reduced to 35s from 2m30. Really really impressed.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gdorsi">gdorsi</a>
+  </div>
+  <div class="comment-text">Sweet, great job Vite team!<p>I wonder how much of the Rollup bundling magic has been ported to Rolldown.<p>One thing that always made this kind of switch to Rust has always been that Rollup has become so sophisticated that&#x27;s hard to replace with something new.</div>
   
 </div>
 
@@ -530,6 +572,14 @@ really excited to see how it&#x27;s improving the JavaScript and TypeScript tool
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=abrztam">abrztam</a>
+  </div>
+  <div class="comment-text">also since typescript is being ported to go and rolldown is rust, they&#x27;re stuck using IPC, so they miss out on native stuff like type awareness that a pure go toolchain would get for free</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=rk06">rk06</a>
   </div>
   <div class="comment-text">it is not. lack of plugin support is sufficient to block adoptions among other things.</div>
@@ -544,16 +594,6 @@ really excited to see how it&#x27;s improving the JavaScript and TypeScript tool
 
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=heldrida">heldrida</a>
-  </div>
-  <div class="comment-text">Migrating straight away! Thank you!</div>
-  
 </div>
 
     
@@ -602,10 +642,9 @@ really excited to see how it&#x27;s improving the JavaScript and TypeScript tool
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=verma_yatharth">verma_yatharth</a>
+    <a href="https://news.ycombinator.com/user?id=heldrida">heldrida</a>
   </div>
-  <div class="comment-text">I tried it and I saw more than 6x improvement in speed.
-It&#x27;s on the top. Awesome tool 1</div>
+  <div class="comment-text">Migrating straight away! Thank you!</div>
   
 </div>
 
@@ -619,7 +658,7 @@ It&#x27;s on the top. Awesome tool 1</div>
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 14:05 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 15:00 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

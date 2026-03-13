@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">87 points</span>
+        <span class="score">116 points</span>
         by <a href="https://news.ycombinator.com/user?id=dgroshev">dgroshev</a>
         4 days ago
         &nbsp;|&nbsp;<a href="/critique/47309397.html">critique article</a>
@@ -50,10 +50,36 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=useftmly">useftmly</a>
+  </div>
+  <div class="comment-text">The performance concern is real but there&#x27;s another footgun that surprises people in practice: images with large white or transparent backgrounds — product photos on e-commerce sites are the classic case — where the dominant color ends up being white or near-white, which is useless for any branding or UI purpose.<p>The fix that works best is to either filter out near-white and near-black pixels before the clustering step, or to look at the distribution tail rather than the mode. The most visually interesting color in an image is often not the most frequent one — it&#x27;s the one that would be chosen as an accent color by a designer. That&#x27;s a harder problem than it looks because &#x27;visually interesting&#x27; is partly about contrast and saturation relative to the rest of the palette.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
   </div>
   <div class="comment-text">I’m surprised the baseline to compare against is shrinking the image to one pixel, that seems extremely hacky and very dependent on what your image editor happens to do (and also seems quite wasteful… the rescaling operation must be doing a lot of extra pointless work keeping track of the position of pixels that are all ultimately going to be collapsed to one point).<p>So, making a library that provides an alternative is a great service to the world, haha.<p>An additional feature that might be nice: the most prominent colors seem like they might be a bad pick in some cases, if you want the important part of the image to stand out. Maybe a color that is the close (in the color space) to the edges of your image, but far away (in the color space) from the center of your image could be interesting?</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mungoman2">mungoman2</a>
+  </div>
+  <div class="comment-text">Tbh shrinking the image is probably the cheapest operation you can do that still lets every pixel influence the result. It’s just the average of all pixels, after suitable color conversion.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bombcar">bombcar</a>
+  </div>
+  <div class="comment-text">It might work decently well, but I wonder if it makes it &quot;visually&quot; match - sometimes the perfect average is not what our eyes see as the color.</div>
+  
+</div>
+
+</div>
+
 </div>
 
     
@@ -100,10 +126,26 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dgroshev">dgroshev</a>
+  </div>
+  <div class="comment-text">Author here: the library just accepts RGB8 bitmaps, probably coming either from Rust&#x27;s image crate [1] or Python&#x27;s Pillow [2], which are both mature and widely used. Dealing with codecs is way out of scope.<p>As for loading into memory at once: I suppose I could integrate with something like libvips and stream strips out of the decoded image without holding the entire bitmap, but that&#x27;d require substantially more glue and complexity. The current approach works fine for extracting dominant colours once to save in a database.<p>You&#x27;re right that pre-resizing the images makes everything faster, but keep in mind that k-means still requires a pretty nontrivial amount of computation.<p>[1]: <a href="https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;image" rel="nofollow">https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;image</a><p>[2]: <a href="https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;pillow&#x2F;" rel="nofollow">https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;pillow&#x2F;</a></div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=latexr">latexr</a>
   </div>
   <div class="comment-text">&gt; I&#x27;ve built variants of this several times throughout my career.<p>Got any to share? A self-contained command-line tool to get a good palette from an image is something I’d have a use for.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dylan604">dylan604</a>
+  </div>
+  <div class="comment-text">Fred&#x27;s dominantcolor script for imagemagick might work for you:<p><a href="https:&#x2F;&#x2F;www.fmwconcepts.com&#x2F;imagemagick&#x2F;dominantcolor&#x2F;index.php" rel="nofollow">https:&#x2F;&#x2F;www.fmwconcepts.com&#x2F;imagemagick&#x2F;dominantcolor&#x2F;index....</a></div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=PaulHoule">PaulHoule</a>
@@ -136,6 +178,24 @@
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dgroshev">dgroshev</a>
+  </div>
+  <div class="comment-text">Good idea, I&#x27;ll add a CLI tool over the weekend.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jcynix">jcynix</a>
+  </div>
+  <div class="comment-text">ImageMagick is a wonderful command line tool, IMO. You could use it to extract various information, e.g. the 5 most used colors of an image, as in<p><pre><code>    convert $IMG -colors 5 -depth 8 -format &quot;%c&quot; histogram:info: | sort -nr
+</code></pre>
+If needed you can easily remove colored borders first (trim subcommand with fuzz option) or sample only xy% from the image&#x27;s center, or where the main subject might be.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=woodrowbarlow">woodrowbarlow</a>
   </div>
   <div class="comment-text">looks like it&#x27;s a rust lib with a python wrapper. making a CLI tool should be just a few lines of code.</div>
@@ -162,7 +222,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 14:05 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 15:00 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

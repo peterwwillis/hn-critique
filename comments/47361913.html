@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">178 points</span>
+        <span class="score">205 points</span>
         by <a href="https://news.ycombinator.com/user?id=boyter">boyter</a>
         6 hours ago
         &nbsp;|&nbsp;<a href="/critique/47361913.html">critique article</a>
@@ -50,10 +50,36 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=useftmly">useftmly</a>
+  </div>
+  <div class="comment-text">The -an suffix approach is clever because it embeds identity into the name itself rather than just restricting creation. The old problem was fundamentally that global uniqueness without identity binding is a footgun — the namespace was shared but accountability wasn&#x27;t.<p>What&#x27;s interesting is the backwards-compatibility angle: existing bucket naming conventions still work, you just opt into the namespace by following the new convention. Compare to GCS which has global uniqueness too but with stronger org-level policies baked in from the start, or Azure where storage accounts use subdomain namespacing (accountname.blob.core.windows.net) which achieves similar protection but in a completely different architectural layer.<p>The uncomfortable question is how many public S3 buckets in the wild are named with predictable patterns that are now vulnerable to being registered by anyone who notices they&#x27;ve been deleted.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=etothet">etothet</a>
   </div>
   <div class="comment-text">Speaking of unique names within AWS, I learned the other day that even after you delete an AWS account, you can’t reuse the root user email addresses (it’s documented, but I wasn’t aware).<p>Someone at my org used their main company email address for a root user om an account we just closed and a 2nd company email for our current account. We are past the time period where AWS allows for reverting the account deletion.<p>This now means that he isn’t allowed to use SSO via our external IdP because the email address he would use is forever attached to the deleted AWS account root user!<p>AWS support was rather terrible in providing help.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gnopgnip">gnopgnip</a>
+  </div>
+  <div class="comment-text">I thought it worked the other way, you can have multiple accounts with the same username as long as they have different passwords</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=etothet">etothet</a>
+  </div>
+  <div class="comment-text">IAM users get usernames - they don’t log in with an email address. Root users log in with their email address.</div>
+  
+</div>
+
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=noahmasur">noahmasur</a>
@@ -72,6 +98,46 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=a2tech">a2tech</a>
+  </div>
+  <div class="comment-text">AWS support seems to be struggling. I just came to help a new customer who had a rough severance with their previous key engineer. The root account password was documented, but the MFA went to his phone.<p>We&#x27;ve tried talking to everyone we can, opening tickets, chats, trying to talk to their assigned account rep, etc, no one can remove the MFA. So right now luckily they have other admin accounts, but we straight up can&#x27;t access their root account. We might have to nuke the entire environment and create a new account which is VERY lame considering they have a complicated and well established AWS account.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=NetMageSCW">NetMageSCW</a>
+  </div>
+  <div class="comment-text">What happens when someone loses their phone?</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kevin_thibedeau">kevin_thibedeau</a>
+  </div>
+  <div class="comment-text">This is why you either issue corporate phones or key dongles.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=shmolyneaux">shmolyneaux</a>
+  </div>
+  <div class="comment-text">That seems like a GDPR violation waiting to happen. It shouldn&#x27;t be possible for them to store an email address like that forever and be in compliance.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kstrauser">kstrauser</a>
+  </div>
+  <div class="comment-text">If user foo@gmail.com violates our ToS and I suspend them, I can keep that email address forever to keep them from signing up again. They can’t just say “GDPR! You have to forget me, tee-hee!”</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=jakobobobo">jakobobobo</a>
   </div>
   <div class="comment-text">Good for them. It&#x27;s amazing how pointless most
@@ -79,54 +145,6 @@ security is when a 10&#x2F;10 rating to some commodity
 communication service&#x27;s support from a phisher
 is all it will take.</div>
   
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=nawgz">nawgz</a>
-  </div>
-  <div class="comment-text">Help me understand why you would delete your AWS account if the company and email address are unchanged - I can’t see the motivation.<p>And on the flip side I can easily see why not allowing email addresses to be used again is a reasonable security stance, email addresses are immutable and so limiting them only to one identity seems logical.<p>Sounds quite frustrating for this user of course but I guess it sounds a bit silly to me.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mixdup">mixdup</a>
-  </div>
-  <div class="comment-text">&gt;Help me understand why you would delete your AWS account if the company and email address are unchanged - I can’t see the motivation.<p>Have you ever worked in a company of any size or complexity before?<p>1. Multiple accounts at the same company, spun up by different teams (either different departments, regions, operating divisions, or whatever) and eventually they want to consolidate<p>2. Acquisitions: Company A buys Company B, an admin at Company A takes over AWS account for Company B, then they eventually work on consolidating it down to one account</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=etothet">etothet</a>
-  </div>
-  <div class="comment-text">This was a secondary AWS account in use by the company that had been in place for quite some time and that secondary account was just no longer needed. So to consolidate things down, it was deleted. Also at that time, SSO wasn&#x27;t being used for anything with the company - and they were on a completely different email provider.<p>I&#x27;m not arguing that it was impossible to know the long term outcome here, but it doesn&#x27;t mean it isn&#x27;t frustrating. If you&#x27;ve spent any length of time working in AWS, you know that documentation can be difficult to find and parse.<p>I can certainly understand why the policy exists. What I think should be possible is in these situations to provide proof of ownership of the old email address so it can be released and reused somehow.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=zenoprax">zenoprax</a>
-  </div>
-  <div class="comment-text">&gt; email addresses are immutable<p>1. Use &quot;admin@domain.com&quot;<p>2. Let the domain registration lapse<p>3. Someone else registers the domain and now can&#x27;t create an AWS account.<p>Rare but not impossible.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=clickety_clack">clickety_clack</a>
-  </div>
-  <div class="comment-text">It’s not hard to imagine a case where maybe there’s 2 offices that had their own separate aws accounts and they closed one.<p>AWS has been around for quite a while now. It’s also not impossible to believe that there are companies out there that might have moved from aws to gcp or something, and maybe it’s time to move back.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dec0dedab0de">dec0dedab0de</a>
-  </div>
-  <div class="comment-text">what if you stopped using AWS for a while, then came back?</div>
-  
-</div>
-
 </div>
 
 </div>
@@ -145,6 +163,30 @@ is all it will take.</div>
   </div>
   <div class="comment-text">S3 was well aware of the pain when I was there ~10 years ago, just considered themselves handcuffed by the decisions made before the idea of a cloud was barely a twinkle in a few people&#x27;s eyes, and even the idea of this kind of scale of operation wasn&#x27;t seen as even remotely probable.  The namespace issue is one of a whole long list of things S3 engineers wish they could change, including things like HTTP status code behaviour etc.<p>I&#x27;ve never really understood S3&#x27;s determination not to have a v2 API.  Yes, the V1 would need to stick around for a long time, but there&#x27;s ways to encourage a migration, such as having all future value-add on the V2, and maybe eventually doing marginal increases in v1 API costs to cover the dev work involved in maintaining the legacy API.  Instead they&#x27;ve just let themselves, and their customers, deal with avoidable pain.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=shermantanktop">shermantanktop</a>
+  </div>
+  <div class="comment-text">V1 never dies.  You support it forever, including for customers who desperately want v2-only features but would rather escalate than migrate.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ryanjshaw">ryanjshaw</a>
+  </div>
+  <div class="comment-text">I recall being shocked the first time I used Azure and realizing so many resources aren’t namespaced to account level. Bizarre to me this wasn’t a v1 concern.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mwalser">mwalser</a>
+  </div>
+  <div class="comment-text">And the naming restrictions and maximum name lengths are all over the place: <a href="https:&#x2F;&#x2F;learn.microsoft.com&#x2F;en-us&#x2F;azure&#x2F;azure-resource-manager&#x2F;management&#x2F;resource-name-rules" rel="nofollow">https:&#x2F;&#x2F;learn.microsoft.com&#x2F;en-us&#x2F;azure&#x2F;azure-resource-manag...</a><p>Storage accounts are one of the worst offenders here. I would really like to know what kind of internal shenanigans are going on there that prevent dashes to be used within storage account names.</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -161,19 +203,11 @@ is all it will take.</div>
   </div>
   <div class="comment-text">&gt; especially with the really short name limit of only 24 characters.<p>And with no meaningful separator characters available! No dashes, underscores, or dots. Numbers and lowercase letters only. At least S3 and GCS allow dashes so you can put a little organization prefix on them or something and not look like complete jibberish.</div>
   
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ryanjshaw">ryanjshaw</a>
-  </div>
-  <div class="comment-text">I recall being shocked the first time I used Azure and realizing so many resources aren’t namespaced to account level. Bizarre to me this wasn’t a v1 concern.</div>
-  
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mwalser">mwalser</a>
+    <a href="https://news.ycombinator.com/user?id=NetMageSCW">NetMageSCW</a>
   </div>
-  <div class="comment-text">And the naming restrictions and maximum name lengths are all over the place: <a href="https:&#x2F;&#x2F;learn.microsoft.com&#x2F;en-us&#x2F;azure&#x2F;azure-resource-manager&#x2F;management&#x2F;resource-name-rules" rel="nofollow">https:&#x2F;&#x2F;learn.microsoft.com&#x2F;en-us&#x2F;azure&#x2F;azure-resource-manag...</a><p>Storage accounts are one of the worst offenders here. I would really like to know what kind of internal shenanigans are going on there that prevent dashes to be used within storage account names.</div>
+  <div class="comment-text">Use 1 for your separator.</div>
   
 </div>
 
@@ -228,6 +262,14 @@ i ended up just putting the 4 digits I had before at the end of my username caus
   </div>
   <div class="comment-text">IMO a better general solution is UUIDs and a petname system, at least as far as chat apps are concerned.<p>For buckets I thought easy to use names was a key feature in most cases. Otherwise why not assign randomly generated single use names? But now that they&#x27;re adding a namespace that incorporates the account name - an unwieldy numeric ID - I don&#x27;t understand.<p>In the case of buckets isn&#x27;t it better to use your own domain anyway?</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=coredog64">coredog64</a>
+  </div>
+  <div class="comment-text">Having worked in this space for years, it&#x27;s not nearly as bad as you think.  IaC tools can all look up the accountId&#x2F;region for the current execution context and you can use SSM Parameters to give you a helpful alias in your code.<p>Also, if you have a bunch of accounts, it&#x27;s far easier for troubleshooting that the accountId is in the name:  &quot;I can&#x27;t access bucket &#x27;foo&#x27;&quot; vs. &quot;I can&#x27;t access bucket &#x27;foo-12345678901&#x27;&quot;</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -278,6 +320,34 @@ i ended up just putting the 4 digits I had before at the end of my username caus
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=saurik">saurik</a>
+  </div>
+  <div class="comment-text">AWS buckets still offer special features if and only if the name of the bucket matches your hostname.<p><a href="https:&#x2F;&#x2F;docs.aws.amazon.com&#x2F;AmazonS3&#x2F;latest&#x2F;userguide&#x2F;VirtualHosting.html" rel="nofollow">https:&#x2F;&#x2F;docs.aws.amazon.com&#x2F;AmazonS3&#x2F;latest&#x2F;userguide&#x2F;Virtua...</a></div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Bridged7756">Bridged7756</a>
+  </div>
+  <div class="comment-text">I think I&#x27;m not getting it. What&#x27;s the problem if someone else can claim that bucket name? If it&#x27;s deleted wouldn&#x27;t the data be deleted too? Or is it there something I&#x27;m missing.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=echoangle">echoangle</a>
+  </div>
+  <div class="comment-text">I think you can put malicious data in the bucket and „impersonate“ the deleted bucket, so old code referencing the bucket uses your data instead of throwing an error (?).</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=ian_d">ian_d</a>
   </div>
   <div class="comment-text">The _really_ fun bucket squatting attacks are when the cloud providers themselves use deterministic names for &quot;scratch space&quot; buckets. There was a good DC talk about it at DC32 for AWS, although actual squatting was tough because there was a hash they researchers couldn&#x27;t reverse (but was consistent for a given account?): <a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=m9QVfYVJ7R8" rel="nofollow">https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=m9QVfYVJ7R8</a><p>GCP, however, has does this to itself multiple times because they rely so heavily on project-id, most recently just this February: <a href="https:&#x2F;&#x2F;www.sentinelone.com&#x2F;vulnerability-database&#x2F;cve-2026-1727&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.sentinelone.com&#x2F;vulnerability-database&#x2F;cve-2026-...</a></div>
@@ -288,19 +358,9 @@ i ended up just putting the 4 digits I had before at the end of my username caus
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=CafeRacer">CafeRacer</a>
+    <a href="https://news.ycombinator.com/user?id=peanut-walrus">peanut-walrus</a>
   </div>
-  <div class="comment-text">While I understand where it&#x27;s coming from I always had something like &lt;bucket_tag&gt;-&lt;9_random_\d\w&gt;</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=bulbar">bulbar</a>
-  </div>
-  <div class="comment-text">A name shouldn&#x27;t be the same as the thing it names.<p>When a name becomes free and somebody else uses it, it points to another thing. What that means for consumers of the name depends on the context, most likely it means not to use it. If you yourself reassign the name you can decide that the new thing will be considered to be identical to the old thing.</div>
+  <div class="comment-text">Why the hell is this a name suffix instead of just using subdomains?<p>myapp-123456789012-us-west-2-an<p>vs myapp.123456789012.us-west-2.s3.amazonaws.com<p>The manipulations I will need to do to fit into the 63 char limit will be atrocious.</div>
   
 </div>
 
@@ -318,9 +378,9 @@ i ended up just putting the 4 digits I had before at the end of my username caus
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=amne">amne</a>
+    <a href="https://news.ycombinator.com/user?id=bulbar">bulbar</a>
   </div>
-  <div class="comment-text">I hope nobody wanted &quot;ecommerce-admin&quot;. sorry</div>
+  <div class="comment-text">A name shouldn&#x27;t be the same as the thing it names.<p>When a name becomes free and somebody else uses it, it points to another thing. What that means for consumers of the name depends on the context, most likely it means not to use it. If you yourself reassign the name you can decide that the new thing will be considered to be identical to the old thing.</div>
   
 </div>
 
@@ -328,27 +388,9 @@ i ended up just putting the 4 digits I had before at the end of my username caus
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=calmworm">calmworm</a>
+    <a href="https://news.ycombinator.com/user?id=CafeRacer">CafeRacer</a>
   </div>
-  <div class="comment-text">That took a decade to resolve? Surprising, but hindsight is 20&#x2F;20 I guess.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=icedchai">icedchai</a>
-  </div>
-  <div class="comment-text">Two. S3 has been around since 2006!</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ClaudeFixer">ClaudeFixer</a>
-  </div>
-  <div class="comment-text">Good riddance. The number of production deploys I&#x27;ve seen pointing at bucket names that could&#x27;ve been claimed by anyone was wild. Glad this is finally getting closed off at the platform level instead of relying on everyone to not make the mistake.</div>
+  <div class="comment-text">While I understand where it&#x27;s coming from I always had something like &lt;bucket_tag&gt;-&lt;9_random_\d\w&gt;</div>
   
 </div>
 
@@ -360,6 +402,14 @@ i ended up just putting the 4 digits I had before at the end of my username caus
   </div>
   <div class="comment-text">I take it advertising your account id isn&#x27;t a security risk?</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=thenickdude">thenickdude</a>
+  </div>
+  <div class="comment-text">If you ever produce and share a signed link for e.g. S3, this link contains your access key ID in it. Turns out you can just slice and decode your Account ID out of that access key, it&#x27;s in there in base32:<p><a href="https:&#x2F;&#x2F;medium.com&#x2F;@TalBeerySec&#x2F;a-short-note-on-aws-key-id-f88cc4317489" rel="nofollow">https:&#x2F;&#x2F;medium.com&#x2F;@TalBeerySec&#x2F;a-short-note-on-aws-key-id-f...</a></div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=otterley">otterley</a>
@@ -384,6 +434,54 @@ i ended up just putting the 4 digits I had before at the end of my username caus
   
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=calmworm">calmworm</a>
+  </div>
+  <div class="comment-text">That took a decade to resolve? Surprising, but hindsight is 20&#x2F;20 I guess.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=icedchai">icedchai</a>
+  </div>
+  <div class="comment-text">Two. S3 has been around since 2006!</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=amne">amne</a>
+  </div>
+  <div class="comment-text">I hope nobody wanted &quot;ecommerce-admin&quot;. sorry</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=thih9">thih9</a>
+  </div>
+  <div class="comment-text">&gt; If you wish to protect your existing buckets, you’ll need to create new buckets with the namespace pattern and migrate your data to those buckets.<p>My pet conspiracy theory: this article was written by bucket squatters who want to claim old bucket names after AI agents read this and blindly follow.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ClaudeFixer">ClaudeFixer</a>
+  </div>
+  <div class="comment-text">Good riddance. The number of production deploys I&#x27;ve seen pointing at bucket names that could&#x27;ve been claimed by anyone was wild. Glad this is finally getting closed off at the platform level instead of relying on everyone to not make the mistake.</div>
+  
 </div>
 
     
@@ -450,26 +548,6 @@ i ended up just putting the 4 digits I had before at the end of my username caus
 
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=thih9">thih9</a>
-  </div>
-  <div class="comment-text">&gt; If you wish to protect your existing buckets, you’ll need to create new buckets with the namespace pattern and migrate your data to those buckets.<p>My pet conspiracy theory: this article was written by bucket squatters who want to claim old bucket names after AI agents read this and blindly follow.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=lsaferite">lsaferite</a>
-  </div>
-  <div class="comment-text">I mean, why isn&#x27;t this just the mandatory default going forward? Globally shared, unique bucket names always struck me as a horrible idea.</div>
-  
 </div>
 
     
@@ -550,52 +628,10 @@ i ended up just putting the 4 digits I had before at the end of my username caus
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=perunamies">perunamies</a>
+    <a href="https://news.ycombinator.com/user?id=lsaferite">lsaferite</a>
   </div>
-  <div class="comment-text">peruna.fi</div>
+  <div class="comment-text">I mean, why isn&#x27;t this just the mandatory default going forward? Globally shared, unique bucket names always struck me as a horrible idea.</div>
   
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=lijok">lijok</a>
-  </div>
-  <div class="comment-text">Huh? Hash your bucket names</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=why_only_15">why_only_15</a>
-  </div>
-  <div class="comment-text">if your bucket name is ever exposed and you later delete it, then this doesn&#x27;t help you.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=lijok">lijok</a>
-  </div>
-  <div class="comment-text">The entire article talks about “guessing” the bucket name as being the attack enabler, not the leaking of it. What does the landscape look like once you start doing the basics like hashing your bucket names? Is this still a problem worth engineering for?</div>
-  
-</div>
-
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Maxion">Maxion</a>
-  </div>
-  <div class="comment-text">I don&#x27;t think that&#x27;d prevent this attack vector.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=alemwjsl">alemwjsl</a>
-  </div>
-  <div class="comment-text">Ok; salt, and then hash your bucket names</div>
-  
-</div>
-
-</div>
-
 </div>
 
     
@@ -608,7 +644,7 @@ i ended up just putting the 4 digits I had before at the end of my username caus
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 14:05 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 15:00 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
