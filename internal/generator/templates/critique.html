@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Critique: {{.Story.Title}} | HN Critique</title>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">{{template "header" .}}</td></tr>
+  <tr id="pagespace" style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="/">← Back to front page</a></p>
+      {{if .Story.URL}}
+      <h2><a href="{{.Story.URL}}" rel="noreferrer noopener">{{.Story.Title}}</a>
+        {{if .Story.Domain}}<span class="sitebit"> ({{.Story.Domain}})</span>{{end}}
+      </h2>
+      {{else}}
+      <h2>{{.Story.Title}}</h2>
+      {{end}}
+      <p class="meta">
+        <span class="score">{{.Story.Score}} points</span>
+        by <a href="https://news.ycombinator.com/user?id={{.Story.Author}}">{{.Story.Author}}</a>
+        {{ago .Story.Time}}
+        &nbsp;|&nbsp;<a href="/comments/{{.Story.ID}}.html">{{.Story.CommentCount}}&nbsp;comments critique</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id={{.Story.ID}}" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    {{if .Story.Critique}}
+    <div class="critique-content">
+
+      <section class="critique-section">
+        <h3>Summary</h3>
+        <p>{{.Story.Critique.Summary}}</p>
+      </section>
+
+      <section class="critique-section">
+        <h3>Main Points &amp; Arguments</h3>
+        <ul>
+          {{range .Story.Critique.MainPoints}}<li>{{.}}</li>{{end}}
+        </ul>
+      </section>
+
+      <section class="critique-section">
+        <h3>Truthfulness Assessment</h3>
+        <div class="rating-badge {{ratingClass .Story.Critique.Rating}}">
+          {{.Story.Critique.Rating | title}}
+        </div>
+        <p>{{.Story.Critique.Truthfulness}}</p>
+      </section>
+
+      {{if .Story.Critique.Considerations}}
+      <section class="critique-section">
+        <h3>Additional Considerations</h3>
+        <ul>
+          {{range .Story.Critique.Considerations}}<li>{{.}}</li>{{end}}
+        </ul>
+      </section>
+      {{end}}
+
+    </div>
+    {{else}}
+    <div class="no-critique">
+      <p>AI critique is not available for this article.</p>
+      {{if .Story.URL}}<p><a href="{{.Story.URL}}" rel="noreferrer noopener">Read the original article</a></p>{{end}}
+    </div>
+    {{end}}
+
+  </td></tr>
+  <tr><td>{{template "footer" .}}</td></tr>
+</table>
+</center>
+</body>
+</html>

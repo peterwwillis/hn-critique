@@ -1,0 +1,106 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # ────────────────────────────────────────────────────────────
+  # Unit tests — fast, no external services required.
+  # ────────────────────────────────────────────────────────────
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build
+        run: make build
+
+      - name: Static analysis (go vet)
+        run: make vet
+
+      - name: Unit tests
+        run: make test-unit
+
+  # ────────────────────────────────────────────────────────────
+  # Integration tests — requires network access.
+  # Tests the HN API client, article fetcher, and the full
+  # HN -> article -> site-generator pipeline (no AI).
+  # ────────────────────────────────────────────────────────────
+  integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Integration tests
+        run: make test-integration
+
+  # ────────────────────────────────────────────────────────────
+  # AI integration tests — calls the GitHub Models inference API
+  # using the automatically-provided GITHUB_TOKEN.
+  #
+  # The job requires `permissions: models: read` so the token is
+  # granted access to the inference endpoint.
+  #
+  # To enable this job in your repository:
+  #   1. Go to Settings > Copilot > "Use GitHub Models" and enable it.
+  #   2. The `permissions: models: read` block below is already set.
+  #
+  # The TestAI_GitHubModels test will FAIL (not silently skip) when
+  # GITHUB_TOKEN is present but the API call fails, so you can see
+  # exactly what went wrong in the logs.
+  # ────────────────────────────────────────────────────────────
+  ai:
+    name: AI integration tests (GitHub Models)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+      models: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: AI integration tests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make test-ai

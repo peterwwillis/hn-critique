@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: {{.Story.Title}} | HN Critique</title>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">{{template "header" .}}</td></tr>
+  <tr id="pagespace" style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="/">← Back to front page</a></p>
+      {{if .Story.URL}}
+      <h2><a href="{{.Story.URL}}" rel="noreferrer noopener">{{.Story.Title}}</a>
+        {{if .Story.Domain}}<span class="sitebit"> ({{.Story.Domain}})</span>{{end}}
+      </h2>
+      {{else}}
+      <h2>{{.Story.Title}}</h2>
+      {{end}}
+      <p class="meta">
+        <span class="score">{{.Story.Score}} points</span>
+        by <a href="https://news.ycombinator.com/user?id={{.Story.Author}}">{{.Story.Author}}</a>
+        {{ago .Story.Time}}
+        &nbsp;|&nbsp;<a href="/critique/{{.Story.ID}}.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id={{.Story.ID}}" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    {{if .Story.CommentsCritique}}
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>{{.Story.CommentsCritique.Summary}}</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+
+    {{range .Story.CommentsCritique.Comments}}
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id={{.Author}}">{{.Author}}</a>
+        &nbsp;|&nbsp;rank #{{.AccuracyRank}}
+        &nbsp;|&nbsp;
+        {{range .Indicators}}<span class="indicator">{{.}}</span> {{end}}
+      </div>
+      <div class="comment-text">{{.Text | safeHTML}}</div>
+      <div class="comment-analysis"><em>{{.Analysis}}</em></div>
+    </div>
+    {{end}}
+
+    {{else if .Story.Comments}}
+
+    <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    {{range .Story.Comments}}
+    {{template "rawComment" .}}
+    {{end}}
+
+    {{else}}
+    <p class="no-critique">No comments are available for this story.</p>
+    {{end}}
+
+  </td></tr>
+  <tr><td>{{template "footer" .}}</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+{{define "rawComment"}}
+<div class="comment-row" style="margin-left:{{mul .Depth 20}}px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id={{.Author}}">{{.Author}}</a>
+  </div>
+  <div class="comment-text">{{.Text}}</div>
+  {{range .Kids}}{{template "rawComment" .}}{{end}}
+</div>
+{{end}}

@@ -1,0 +1,68 @@
+name: Crawl HN and Deploy
+
+on:
+  schedule:
+    # Run at the top of every hour.
+    - cron: '0 * * * *'
+  # Allow manual runs from the Actions tab with an optional provider override.
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'AI provider to use (openai, ollama, github). Overrides config file.'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  # Required for the GitHub Models provider (GITHUB_TOKEN auth).
+  models: read
+
+jobs:
+  crawl-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run crawler
+        env:
+          # OpenAI provider credentials and configuration.
+          # Set OPENAI_API_KEY secret to use api.openai.com.
+          # Set OPENAI_BASE_URL variable to target a different OpenAI-compatible
+          # server (e.g. a self-hosted Ollama instance on a private runner).
+          # Set OPENAI_CHAT_MODEL variable to override the default model name
+          # (required when using a local backend such as Ollama or llama-server).
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
+          OPENAI_CHAT_MODEL: ${{ vars.OPENAI_CHAT_MODEL }}
+          # GitHub Models provider: GITHUB_TOKEN is automatically available in
+          # Actions and granted models:read by the permissions block above.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ARGS=""
+          if [ -n "${{ inputs.provider }}" ]; then
+            ARGS="-provider ${{ inputs.provider }}"
+          fi
+          go run ./cmd/crawler/... $ARGS
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
+          allow_empty_commit: false
+          commit_message: 'chore: update HN Critique site [${{ github.run_number }}]'
+

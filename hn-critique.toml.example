@@ -1,0 +1,125 @@
+# hn-critique.toml — Configuration file for the HN Critique crawler
+#
+# Copy this file to hn-critique.toml in the project root (or specify a path
+# with the -config flag) and customise the settings below.
+#
+# Command-line flags override values in this file:
+#   -provider openai|ollama|github   select AI provider
+#   -config   <path>                 path to this TOML file
+#   -skip-ai                         disable AI analysis entirely
+#
+# Credentials and endpoints may be provided here OR via environment variables.
+# Environment variables always override values in this file:
+#   OPENAI_API_KEY    (for [openai] api_key)
+#   OPENAI_BASE_URL   (for [openai] base_url — point at any OpenAI-compatible server)
+#   OPENAI_CHAT_MODEL (for [openai] chat_model — overrides default and config-file value)
+#   GITHUB_TOKEN      (for [github] token)
+
+# ──────────────────────────────────────────────────────────────
+# Global: choose which AI provider to use
+# Allowed values: "openai", "ollama", "github"
+#
+# "openai" is the recommended provider.  By setting base_url you can
+# point it at any OpenAI-compatible server (Ollama, llama-server, LM
+# Studio, vLLM, …) without needing an OpenAI account.
+# ──────────────────────────────────────────────────────────────
+provider = "openai"
+
+# ──────────────────────────────────────────────────────────────
+# OpenAI provider
+#
+# This provider works with api.openai.com (default) AND with any
+# OpenAI-compatible server by setting base_url.
+#
+# ┌─────────────────────────────────────────────────────────────┐
+# │  Using a local / self-hosted backend                        │
+# │                                                             │
+# │  Set base_url to your server's root URL.  No API key is     │
+# │  required for most local backends.                          │
+# │                                                             │
+# │  Examples:                                                  │
+# │    Ollama:       base_url = "http://localhost:11434"         │
+# │    llama-server: base_url = "http://localhost:8080"          │
+# │    LM Studio:    base_url = "http://localhost:1234"          │
+# │    vLLM:         base_url = "http://localhost:8000"          │
+# │                                                             │
+# │  Or set the OPENAI_BASE_URL environment variable instead of │
+# │  editing this file — useful in GitHub Actions:              │
+# │                                                             │
+# │    env:                                                     │
+# │      OPENAI_BASE_URL: http://my-runner-host:11434           │
+# └─────────────────────────────────────────────────────────────┘
+# ──────────────────────────────────────────────────────────────
+[openai]
+# API key — leave empty to use the OPENAI_API_KEY environment variable.
+# Not required when base_url points to a local backend.
+api_key = ""
+
+# Base URL of the inference server.
+# Leave empty (or unset OPENAI_BASE_URL) to use https://api.openai.com.
+# Set this to target Ollama, llama-server, or any OpenAI-compatible API.
+base_url = ""
+
+# Model used for standard chat completions (article and comment analysis).
+# Override without editing this file by setting the OPENAI_CHAT_MODEL env var.
+chat_model = "gpt-4o-mini"
+
+# Model used when the Responses API (web search) is requested.
+search_model = "gpt-4o-mini"
+
+# When true, the Responses API with the web_search_preview tool is tried first
+# for article analysis so the model can verify claims against live web content.
+# Falls back to Chat Completions if the Responses API is unavailable.
+# Set to false when using a custom base_url (local servers do not support this).
+use_responses_api = true
+
+# ──────────────────────────────────────────────────────────────
+# Ollama provider (deprecated — use the openai provider instead)
+#
+# The "ollama" provider now routes through the same OpenAI-compatible
+# client used by the "openai" provider, so there is no behavioural
+# difference between:
+#
+#   provider = "ollama"          provider = "openai"
+#   [ollama]                     [openai]
+#   base_url = "http://..."      base_url = "http://..."
+#   model    = "llama3.2"        chat_model = "llama3.2"
+#
+# The [ollama] section is kept for backward compatibility.
+# ──────────────────────────────────────────────────────────────
+[ollama]
+# Base URL of the Ollama server.
+base_url = "http://localhost:11434"
+
+# Ollama model name.  See https://ollama.com/library for available models.
+model = "llama3.2"
+
+# ──────────────────────────────────────────────────────────────
+# GitHub Models provider
+# Uses the GitHub Models inference API — no external account needed when
+# running inside a GitHub Actions workflow.
+#
+# In your workflow job, add:
+#   permissions:
+#     models: read
+#
+# The GITHUB_TOKEN is then automatically available and grants access to
+# the GitHub Models API without any additional setup.
+#
+# Outside of Actions, use a personal access token with the models:read scope.
+# https://docs.github.com/en/github-models
+# ──────────────────────────────────────────────────────────────
+[github]
+# GitHub token — leave empty to use the GITHUB_TOKEN environment variable.
+token = ""
+
+# GitHub Models inference endpoint (do not change unless you know why).
+endpoint = "https://models.github.ai/inference"
+
+# Model identifier in "provider/model-name" format.
+# Available models: https://github.com/marketplace/models
+# Examples:
+#   openai/gpt-4.1
+#   openai/gpt-4o-mini
+#   ai21-labs/AI21-Jamba-1.6-Mini
+model = "openai/gpt-4o-mini"
