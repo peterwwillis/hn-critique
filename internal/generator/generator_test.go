@@ -100,8 +100,8 @@ for _, want := range []string{
 "go.dev",
 "500 points",
 "gopher",
-"/critique/12345.html",
-"/comments/12345.html",
+"critique/12345.html",
+"comments/12345.html",
 "Ask HN: Favorite tools?",
 "HN Critique",
 } {

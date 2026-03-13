@@ -78,6 +78,11 @@ func main() {
 
 	gen := generator.New(*outputDir)
 
+	// Ensure output directories exist early so the cache is accessible.
+	if err := os.MkdirAll(generator.CacheDir(*outputDir), 0o755); err != nil {
+		log.Printf("Warning: could not create cache directory: %v", err)
+	}
+
 	log.Printf("Fetching top %d stories…", *storyCount)
 	storyIDs, err := hnClient.GetTopStories(*storyCount)
 	if err != nil {
@@ -129,15 +134,27 @@ func main() {
 		}
 
 		if aiProvider != nil {
+			// Load any previously cached analysis as a fallback.
+			cached, cacheErr := generator.LoadCache(*outputDir, story.ID)
+			if cacheErr != nil {
+				log.Printf("  ⚠  cache load failed: %v", cacheErr)
+			}
+
 			// Article critique.
 			if story.ArticleText != "" || story.URL != "" {
 				log.Printf("  Analyzing article…")
 				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
 				if err != nil {
 					log.Printf("  ⚠  article analysis failed: %v", err)
+					if cached != nil && cached.Critique != nil {
+						log.Printf("  Using cached article analysis.")
+						story.Critique = cached.Critique
+					}
 				} else {
 					story.Critique = crit
 				}
+			} else if cached != nil && cached.Critique != nil {
+				story.Critique = cached.Critique
 			}
 
 			// Comments critique.
@@ -146,8 +163,26 @@ func main() {
 				cc, err := aiProvider.AnalyzeComments(story.Title, story.URL, story.Comments)
 				if err != nil {
 					log.Printf("  ⚠  comments analysis failed: %v", err)
+					if cached != nil && cached.CommentsCritique != nil {
+						log.Printf("  Using cached comments analysis.")
+						story.CommentsCritique = cached.CommentsCritique
+					}
 				} else {
 					story.CommentsCritique = cc
+				}
+			} else if cached != nil && cached.CommentsCritique != nil {
+				story.CommentsCritique = cached.CommentsCritique
+			}
+
+			// Save updated analysis to cache.
+			if story.Critique != nil || story.CommentsCritique != nil {
+				newCache := &generator.AnalysisCache{
+					StoryID:          story.ID,
+					Critique:         story.Critique,
+					CommentsCritique: story.CommentsCritique,
+				}
+				if saveErr := generator.SaveCache(*outputDir, story.ID, newCache); saveErr != nil {
+					log.Printf("  ⚠  cache save failed: %v", saveErr)
 				}
 			}
 		}
