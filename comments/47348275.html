@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">213 points</span>
+        <span class="score">234 points</span>
         by <a href="https://news.ycombinator.com/user?id=u1hcw9nx">u1hcw9nx</a>
         1 days ago
         &nbsp;|&nbsp;<a href="/critique/47348275.html">critique article</a>
@@ -50,18 +50,10 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dnautics">dnautics</a>
+    <a href="https://news.ycombinator.com/user?id=derangedHorse">derangedHorse</a>
   </div>
-  <div class="comment-text">the paper is burying the lede here (i think?)<p>&gt; The key technical unlock is to restrict lookup heads to head dimension 2, which enables a decoding path where the dominant retrieval&#x2F;update operations can be computed in log time in the sequence length (for this structured executor regime), rather than by a full prefix-sized attention sweep.<p>i have a pretty good understanding of how transformers work but this did not make sense to me (can someone eli15 why head dimension two takes n^2 down to log(n)?).  also i dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>lastly, im not sure why wasm is a good target, iirc wasm seems to be really inefficient (not so much in code but in expressivity). i wonder if that curtails the llms ability to plan higher order stuff (since its always forced to think in the small)</div>
+  <div class="comment-text">I initially agreed with a lot of the sentiment that asks &quot;why,&quot; but have reframed my opinion. Instead of seeing this as a way to run programs via inference, I&#x27;m now seeing this as a way to bootstrap training. Think about the task of classification. If I have an expert system that classifies correctly 80% of the time, now I can embed it into a model and train the model to try to raise the success rate. The lower we can make the cost of training on various tasks, the better it levels the playing field of who can compete in the AI landscape.</div>
   
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
-  </div>
-  <div class="comment-text">&gt; i have a pretty good understanding of how transformers work but this did not make sense to me. also i dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>Yes, there is a monstrous lack of detail here and you should be skeptical about most of the article claims. The language is also IMO non-standard and no serious work would just use language to say this, there would be a simple equation showing the typical scaled dot-produce attention formula, and then e.g. some dimension notation indicating which matrix (or inserted projection matrix) got some dimension of two somewhere, otherwise, the claims are inscrutable.<p>There are also no training details or loss function details, both of which would be necessary and almost certainly highly novel to make this kind of thing end-to-end trainable, which is another red flag.</div>
-  
-</div>
-
 </div>
 
     
@@ -78,9 +70,119 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=teiferer">teiferer</a>
+  </div>
+  <div class="comment-text">Why would that be desirable?<p>If we take the human brain as an example, it&#x27;s pretty bad at computation. Multiply two 10-digit numbers takes forever, despite the enormous size of its neural network. It&#x27;s not the right tool for the job - a few deterministic logic gates could do that much more efficiently. That same circuit can&#x27;t do much else, but multiplying, oh boy, it&#x27;s good at that! Why do we think that artificial neural nets would be the right tool for that job? What&#x27;s wrong with letting the LLM reach out to an ALU to do the calculation, just like a human would do? It&#x27;s surely going to be quicker and require less energy.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=OneDeuxTriSeiGo">OneDeuxTriSeiGo</a>
+  </div>
+  <div class="comment-text">One of the big appeals of this is it gives a mechanism for &quot;teaching&quot; models a geometric intuition and better spacial reasoning.<p>Not necessarily pure number crunching but the boundary between rote algorithms and fuzzy intuition based models that humans in particular excel at.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=soerxpso">soerxpso</a>
+  </div>
+  <div class="comment-text">The embedded programs can be connected to the other weights during training, in whatever way the training process finds useful. It doesn&#x27;t just have to be arithmetic calculation. You can put any hard-coded algorithm in there, make the weights for that algorithm static, and let the training process figure out how to connect the other trillion weights to it.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pegasus">pegasus</a>
+  </div>
+  <div class="comment-text">&gt; Why would that be desirable?<p>If we never try, we&#x27;ll never know. I wouldn&#x27;t be surprised if there is something to gain from a form of deterministic computation which is still integrated with the NN architecture. After all, tool calls have their own non-trivial overhead.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=teiferer">teiferer</a>
+  </div>
+  <div class="comment-text">Trying, sure. That&#x27;s what hackers do.<p>I&#x27;m asking whether it&#x27;s a desirable end state.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=SPascareli13">SPascareli13</a>
+  </div>
+  <div class="comment-text">If the model is trained to be a interpreter, then that means that the loss should reach 0 for it to be fully trained?<p>Also, if it&#x27;s execution is purely deterministic, you probably don&#x27;t need non linearity in the layers, right?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
   </div>
   <div class="comment-text">So, what I&#x27;m trying to understand, and I can&#x27;t find any clear information about that in the article, is how they &quot;compiled&quot; e.g. the Sudoku solver into a Transformer&#x27;s weights. Did they do it manually? Say, they took the source of a hand-coded Sudoku solver and put it through their code-to-weight compiler, and thus compiled the code to the Transformer weights? Or did they go the Good, Old-Fashioned, Deep Learning way and train their Transformer to learn a (&quot;100% correct&quot;!) Sudoku solver from examples? And, if the latter, where&#x27;s the details of the training? What did they train with? What did they train on? How did they train? etc etc.<p>Very light on details that article is.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dnautics">dnautics</a>
+  </div>
+  <div class="comment-text">the paper is burying the lede here (i think?)<p>&gt; The key technical unlock is to restrict lookup heads to head dimension 2, which enables a decoding path where the dominant retrieval&#x2F;update operations can be computed in log time in the sequence length (for this structured executor regime), rather than by a full prefix-sized attention sweep.<p>edit:  i understand how hullkv works now.  very clever.<p>I dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>lastly, im not sure why wasm is a good target, iirc wasm seems to be really inefficient (not so much in code but in expressivity). i wonder if that curtails the llms ability to plan higher order stuff (since its always forced to think in the small)</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">&gt; i have a pretty good understanding of how transformers work but this did not make sense to me. also i dont understand why this strategy is applicable only to &quot;code tokens&quot;<p>Yes, there is a monstrous lack of detail here and you should be skeptical about most of the article claims. The language is also IMO non-standard (serious people don&#x27;t talk about self-attention as lookup tables anymore, that was never a good analogy in the first place) and no good work would just use language to express this, there would also be a simple equation showing the typical scaled dot-product attention formula, and then e.g. some dimension notation&#x2F;details indicating which matrix (or inserted projection matrix) got some dimension of two somewhere, otherwise, the claims are inscrutable (EDIT: see edit below).<p>There are also no training details or loss function details, both of which would be necessary (and almost certainly highly novel) to make this kind of thing end-to-end trainable, which is another red flag.<p>EDIT: The key line seems to be around:<p><pre><code>    gate, val = ff_in(x).chunk(2, dim=-1)
+</code></pre>
+and related code, plus the lines &quot;Notice: d_model = 36 with n_heads = 18 gives exactly 2D per head&quot; but, again, this is very unclear and non-standard.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
+  </div>
+  <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=skybrian">skybrian</a>
+  </div>
+  <div class="comment-text">I couldn&#x27;t tell from the article whether this works as a <i>language</i> model or not. Can it read and write English or is it just a weird program interpreter? If it switches between modes, how do they interact?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+  </div>
+  <div class="comment-text">&gt; In our construction, each instruction maps to only a handful of tokens (at most 5).<p>I don&#x27;t see how this could work as an LLM given that, but the article is missing a huge amount of other crucial details too.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=andy12_">andy12_</a>
+  </div>
+  <div class="comment-text">This seems a really interesting path for interpretability, specially if a big chunk of a model&#x27;s behavior occurs pseudo-symbolically. This is an idea I had thought about, integrating tools into the main computation path of a model, but I never imagined that it could be done efficiently with just a vanilla transformer.<p>Truly, attention is all you need (I guess).</div>
   
 </div>
 
@@ -125,17 +227,17 @@
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=asplake">asplake</a>
+    <a href="https://news.ycombinator.com/user?id=stalfie">stalfie</a>
   </div>
-  <div class="comment-text">Agreeing first that it is genuinely interesting, let me make a constructive comment on the text: Early on, there are too many small paragraphs that don&#x27;t on their own make a cogent argument. That important but easily overlooked structural work is pushed back to the reader. I felt rewarded in pushing past that though. Bravo.</div>
+  <div class="comment-text">This is a nice case study of the downside of creating explicit policies of &quot;no AI comments&quot; without a technical method of enforcing it. I am sure the hacker news comment quality will suffer almost as much from an escalating culture of accusation and paranoia that it will from LLM comment themselves.</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=stalfie">stalfie</a>
+    <a href="https://news.ycombinator.com/user?id=asplake">asplake</a>
   </div>
-  <div class="comment-text">This is a nice case study of the downside of creating explicit policies of &quot;no AI comments&quot; without a technical method of enforcing it. I am sure the hacker news comment quality will suffer almost as much from an escalating culture of accusation and paranoia that it will from LLM comment themselves.</div>
+  <div class="comment-text">Agreeing first that it is genuinely interesting, let me make a constructive comment on the text: Early on, there are too many small paragraphs that don&#x27;t on their own make a cogent argument. That important but easily overlooked structural work is pushed back to the reader. I felt rewarded in pushing past that though. Bravo.</div>
   
 </div>
 
@@ -157,17 +259,17 @@
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
+    <a href="https://news.ycombinator.com/user?id=bonoboTP">bonoboTP</a>
   </div>
-  <div class="comment-text">Did <i>you</i> read the post you are responding to? It says:<p>&gt; What&#x27;s the benefit? Is it speed? Where are the benchmarks? Is it that you can backprop through this computation? Do you do so?<p>The correct parsing of this is: &quot;What&#x27;s the benefit? [...] Is it [the benefit] that you can backprop through this computation? Do you do so?&quot;<p>There are no details about training nor the (almost-certainly necessarily novel) loss function that would be needed to handle partial &#x2F; imperfect outputs here, so it is extremely hard to believe any kind of gradient-based training procedure was used to determine &#x2F; set weight values here.</div>
+  <div class="comment-text">Benchmark it against a fast Python interpreter optimized for AI tool calling, like Monty: <a href="https:&#x2F;&#x2F;github.com&#x2F;pydantic&#x2F;monty" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;pydantic&#x2F;monty</a></div>
   
 </div>
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=bonoboTP">bonoboTP</a>
+    <a href="https://news.ycombinator.com/user?id=D-Machine">D-Machine</a>
   </div>
-  <div class="comment-text">Benchmark it against a fast Python interpreter optimized for AI tool calling, like Monty: <a href="https:&#x2F;&#x2F;github.com&#x2F;pydantic&#x2F;monty" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;pydantic&#x2F;monty</a></div>
+  <div class="comment-text">Did <i>you</i> read the post you are responding to? It says:<p>&gt; What&#x27;s the benefit? Is it speed? Where are the benchmarks? Is it that you can backprop through this computation? Do you do so?<p>The correct parsing of this is: &quot;What&#x27;s the benefit? [...] Is it [the benefit] that you can backprop through this computation? Do you do so?&quot;<p>There are no details about training nor the (almost-certainly necessarily novel) loss function that would be needed to handle partial &#x2F; imperfect outputs here, so it is extremely hard to believe any kind of gradient-based training procedure was used to determine &#x2F; set weight values here.</div>
   
 </div>
 
@@ -211,48 +313,10 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=sheepscreek">sheepscreek</a>
-  </div>
-  <div class="comment-text">Early thoughts - this is very interesting and quite possibly revolutionary. If they have legitimately emulated a computer with memory reliably inside a transformer - that will open up an entirely new world for research.<p>I don’t want to say too much too soon, but I am pretty excited about this.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=andy12_">andy12_</a>
-  </div>
-  <div class="comment-text">This seems a really interesting path for interpretability, specially if a big chunk of a model&#x27;s behavior occurs pseudo-symbolically. This is an idea I had thought about, integrating tools into the main computation path of a model, but I never imagined that it could be done efficiently with just a vanilla transformer.<p>Truly, attention is all you need (I guess).</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=clarionbell">clarionbell</a>
-  </div>
-  <div class="comment-text">This has a lot of potential. Especially if the compiled &quot;code&quot; can be efficiently shared between models of the same architecture. That would easily overshadow LoRa and finetuning in general.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=ACCount37">ACCount37</a>
   </div>
   <div class="comment-text">This seems like it has some potential, but is pretty much useless as it is.<p>Shame there are no weights released - let alone the &quot;compiler&quot; tool they used to actually synthesize computational primitives into model weights. It seems like a &quot;small model&quot; system that&#x27;s amenable to low budget experiments, and I would love to see what this approach can be pushed towards.<p>I disagree with the core premise, it&#x27;s basically the old neurosymbolic garbage restated, but embedding predefined computational primitives into LLMs could have some uses nonetheless.</div>
   
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
-  </div>
-  <div class="comment-text">What&#x27;s &quot;the old neurosymbolic garbage&quot;?</div>
-  
-</div>
-
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=yorwba">yorwba</a>
@@ -269,15 +333,33 @@
 
 </div>
 
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
+  </div>
+  <div class="comment-text">What&#x27;s &quot;the old neurosymbolic garbage&quot;?</div>
+  
+</div>
+
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
+    <a href="https://news.ycombinator.com/user?id=koolala">koolala</a>
   </div>
-  <div class="comment-text">Is their convex hull attention mechanism new and generally useable? I mean, it substantially restricts the shape of the model, so it isn’t a universal solution of course, but it does seem to overcome a pretty annoying limitation.</div>
+  <div class="comment-text">I&#x27;d like to see this combined with reinforcement learning to optimize models to think computationally. Generating ideas with hypothetical results and then running them in the same thought. Their solution sounded like a lot of tokens though.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hashmap">hashmap</a>
+  </div>
+  <div class="comment-text">this is neat but to me seems like the circuitous path to just skipping autoregression, whereas the direct path is to just not do autoregression. get your answers from the one forward pass, and instead of backprop just do lookups and updates as the same operation.</div>
   
 </div>
 
@@ -295,16 +377,6 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=koolala">koolala</a>
-  </div>
-  <div class="comment-text">I&#x27;d like to see this combined with reinforcement learning to optimize models to think computationally. Generating ideas with hypothetical results and then running them in the same thought. Their solution sounded like a lot of tokens though.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=MattPalmer1086">MattPalmer1086</a>
   </div>
   <div class="comment-text">Interesting... But why?  What is the benefit, other than increasing our understanding of model architectures?<p>Our brains can also simulate turing machines, slowly.  We automated that with computers that are faster and more reliable.  So why not allow a model to use external much faster and reliable tools, just as we do?</div>
@@ -315,6 +387,14 @@
   </div>
   <div class="comment-text">I spent the entire time reading it pondering the same thing.<p>1. The article presents that calling out to a tool like python is &quot;expensive&quot; because of the overhead of forking a process, loading up the python env etc, but why not just eliminate that overhead and embed WebAssembly so this &quot;tool call&quot; is near zero? This feels very similar to the discussion in the 90&#x27;s around the overhead of threads v.s. processes or kernel space v.s. user space.  Could even go further and have a running beam vm so the LLM can write elixir which is ideal for LLM&#x27;s that stream out code? Elixir programs will be a lot shorter than webassembly.<p>2. The core argument stated is &quot;A system that cannot compute cannot truly internalize what computation is.&quot;  The idea being that it could write a program, execute it and by seeing all of the steps maybe even part way through stop and change its mind or when writing new programs write them better, aka be able to debug on the fly?<p>3. Not mentioned, but there is a 3rd x factor that LLM&#x27;s will use this new found computation engine to do overall better at &quot;thinking&quot;.  Computing in very unexpected ways and to unexpected problems. Maybe it would do dramatically better at some benchmark because of this?<p>Unfortunately these are not explored and it is just an execution engine even resulting in the conclusion stating &quot;arbitrary programs can be compiled directly into the transformer weights, bypassing the need to represent them as token sequences at all.&quot; which goes to point number 1 of if we are compiling to weights why not just optimize the tool calling?</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vuciuc">vuciuc</a>
+  </div>
+  <div class="comment-text">&gt; &quot;A system that cannot compute cannot truly internalize what computation is.&quot;<p>The way this is formulated, almost sounds like they think that giving llms this ability will bring them closer to having experiences of computation or smth? Weird?</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -333,6 +413,26 @@
 
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=clarionbell">clarionbell</a>
+  </div>
+  <div class="comment-text">This has a lot of potential. Especially if the compiled &quot;code&quot; can be efficiently shared between models of the same architecture. That would easily overshadow LoRa and finetuning in general.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bee_rider">bee_rider</a>
+  </div>
+  <div class="comment-text">Is their convex hull attention mechanism new and generally useable? I mean, it substantially restricts the shape of the model, so it isn’t a universal solution of course, but it does seem to overcome a pretty annoying limitation.</div>
+  
 </div>
 
     
@@ -359,100 +459,10 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dwa3592">dwa3592</a>
-  </div>
-  <div class="comment-text">if you understood the article, please correct my understanding -<p>they created a new training dataset which also has computation solving step by step (multiplying two numbers or playing sudoku) and then trained a transformer on it- as a result, the model performs the computation(multiplying two numbers) &quot;inside&quot; itself instead of calling calculator (or python)?<p>++ And they also figured out how to make attention faster?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=YeGoblynQueenne">YeGoblynQueenne</a>
-  </div>
-  <div class="comment-text">I can&#x27;t see anything about &quot;training a transformer&quot;. I&#x27;m trying to understand if e.g. the Sudoku solver was learned from examples (in which case, what examples?) or whether it was manually coded and then &quot;compiled&quot; into weights.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dwa3592">dwa3592</a>
-  </div>
-  <div class="comment-text">I assumed that they had to train, otherwise how else would they get &quot;inside&quot; a transformer.<p>I also feel a bit of bad smell from the article. Sounding revolutionary with no details or clear explanation.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jamilton">jamilton</a>
-  </div>
-  <div class="comment-text">I would assume it was manually coded.</div>
-  
-</div>
-
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Felixbot">Felixbot</a>
-  </div>
-  <div class="comment-text">Curious how this handles non-determinism. Most transformer inference has temperature &gt; 0, which means the &quot;program execution&quot; is probabilistic. The interesting question is whether the speedup holds when you need consistent outputs across multiple calls.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=mirekrusin">mirekrusin</a>
   </div>
   <div class="comment-text">This is brilliant, game changing level.<p>Hey, give it also access to the dump of its weights and way to propose updates so it can see and tinker its brain directly.</div>
   
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=troelsSteegin">troelsSteegin</a>
-  </div>
-  <div class="comment-text">The Percepta stuff would seem to demonstrate a mechanism for implementing &quot;thinking&quot;. I don&#x27;t understand how foundation models implement &quot;thinking&quot;, but my intuition is that models are specifically trained for matching on and following procedural patterns. A task in a given domain can be performed through an associated and encoded procedure. The model holds all the linkages, as weights, that allows a procedure to be conditionally incrementally generated and performed. Does anyone have any insights about how LLM &quot;thinking&quot; is trained and coded?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=graemefawcett">graemefawcett</a>
-  </div>
-  <div class="comment-text">Basically just madlibs - the models generate intermediate tokens that help predict a better answer based on training (RLHF &amp; otherwise).  They tend to look like &quot;reasoning&quot; because those tokens correlated with accepted answers during training.<p>Extended thinking passes are just more of the same.  The entire methodology exists merely to provide additional context for the autoregression process.  There is no traditional computation occurring</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=galsapir">galsapir</a>
-  </div>
-  <div class="comment-text">one of the most interesting pieces I&#x27;ve read recently. Not sure I agree with all the statements there (e.g. without execution the system has no comprehension) - but extremely cool</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=manas96">manas96</a>
-  </div>
-  <div class="comment-text">LLMs are not deterministic per my understanding. A program always produces the same output for the same input and instructions (ignore FP accuracy for now). How is determinism achieved here?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=armchairhacker">armchairhacker</a>
-  </div>
-  <div class="comment-text">LLMs may be deterministic for a subset of inputs, if one output (or intermediate layer) neuron-state probability is significantly higher than the rest. My understanding is, when probabilities are close they diverge.</div>
-  
-</div>
-
 </div>
 
     
@@ -465,7 +475,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 15:57 UTC &nbsp;|&nbsp;
+    Generated 2026-03-13 16:56 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
