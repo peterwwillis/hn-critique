@@ -36,6 +36,12 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
+      - name: Restore analysis cache from gh-pages
+        run: |
+          git fetch origin gh-pages --depth=1 2>/dev/null || true
+          mkdir -p docs/cache
+          git archive origin/gh-pages -- cache/ 2>/dev/null | tar -x -C docs/ || true
+
       - name: Run crawler
         env:
           # OpenAI provider credentials and configuration.

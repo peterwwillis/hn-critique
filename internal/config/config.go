@@ -88,7 +88,7 @@ type GitHubConfig struct {
 // Defaults returns a Config pre-filled with sensible default values.
 func Defaults() *Config {
 	return &Config{
-		Provider: ProviderOpenAI,
+		Provider: ProviderGitHub,
 		OpenAI: OpenAIConfig{
 			ChatModel:       "gpt-4o-mini",
 			SearchModel:     "gpt-4o-mini",

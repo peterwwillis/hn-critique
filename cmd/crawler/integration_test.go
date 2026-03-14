@@ -125,7 +125,7 @@ func TestIntegration_Pipeline(t *testing.T) {
 	}
 	// Check for the first story's ID rather than raw title text — the title
 	// may contain HTML-escaped characters in the output file.
-	firstStoryIDStr := fmt.Sprintf("/critique/%d.html", stories[0].ID)
+	firstStoryIDStr := fmt.Sprintf("critique/%d.html", stories[0].ID)
 	if !strings.Contains(index, firstStoryIDStr) {
 		t.Errorf("index.html does not contain link to first story %s", firstStoryIDStr)
 	}

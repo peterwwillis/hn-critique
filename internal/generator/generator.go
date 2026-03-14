@@ -35,6 +35,7 @@ func (g *Generator) Generate(stories []*Story) error {
 		g.outputDir,
 		filepath.Join(g.outputDir, "critique"),
 		filepath.Join(g.outputDir, "comments"),
+		filepath.Join(g.outputDir, "cache"),
 	} {
 		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return err
@@ -55,12 +56,12 @@ func (g *Generator) Generate(stories []*Story) error {
 	generatedAt := time.Now().UTC().Format("2006-01-02 15:04 UTC")
 
 	if err := g.writeTemplate("index.html", filepath.Join(g.outputDir, "index.html"),
-		IndexData{Stories: stories, GeneratedAt: generatedAt}); err != nil {
+		IndexData{Stories: stories, GeneratedAt: generatedAt, RootPath: ""}); err != nil {
 		return err
 	}
 
 	for _, s := range stories {
-		data := PageData{Story: s, GeneratedAt: generatedAt}
+		data := PageData{Story: s, GeneratedAt: generatedAt, RootPath: "../"}
 
 		if err := g.writeTemplate("critique.html",
 			filepath.Join(g.outputDir, "critique", fmt.Sprintf("%d.html", s.ID)), data); err != nil {
@@ -80,12 +81,14 @@ func (g *Generator) Generate(stories []*Story) error {
 type IndexData struct {
 	Stories     []*Story
 	GeneratedAt string
+	RootPath    string
 }
 
 // PageData is passed to the critique and comments templates.
 type PageData struct {
 	Story       *Story
 	GeneratedAt string
+	RootPath    string
 }
 
 // ---- internal helpers ----

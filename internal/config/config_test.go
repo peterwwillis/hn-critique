@@ -11,8 +11,8 @@ import (
 func TestDefaults(t *testing.T) {
 	cfg := config.Defaults()
 
-	if cfg.Provider != config.ProviderOpenAI {
-		t.Errorf("default provider = %q, want %q", cfg.Provider, config.ProviderOpenAI)
+	if cfg.Provider != config.ProviderGitHub {
+		t.Errorf("default provider = %q, want %q", cfg.Provider, config.ProviderGitHub)
 	}
 	if cfg.OpenAI.ChatModel == "" {
 		t.Error("default OpenAI.ChatModel is empty")
@@ -34,8 +34,8 @@ func TestLoadEmpty(t *testing.T) {
 	if cfg == nil {
 		t.Fatal("Load returned nil config")
 	}
-	if cfg.Provider != config.ProviderOpenAI {
-		t.Errorf("provider = %q, want %q", cfg.Provider, config.ProviderOpenAI)
+	if cfg.Provider != config.ProviderGitHub {
+		t.Errorf("provider = %q, want %q", cfg.Provider, config.ProviderGitHub)
 	}
 }
 
