@@ -19,10 +19,12 @@ import (
 )
 
 const (
-	defaultStoryCount   = 30
-	defaultCommentDepth = 3
-	maxTopComments      = 20
-	maxChildComments    = 5
+	defaultStoryCount                = 30
+	defaultCommentDepth              = 3
+	maxTopComments                   = 20
+	maxChildComments                 = 5
+	articleRetrievalFailureReason    = "the article could not be retrieved"
+	articleInsufficientContentReason = "the article did not contain enough readable content to analyze"
 	// Pause between HN API calls to be a good citizen.
 	hnDelay = 100 * time.Millisecond
 	// Pause between full story fetches (article + AI) to avoid rate limiting.
@@ -123,19 +125,18 @@ func main() {
 		}
 
 		// Fetch article content (only for stories with external URLs).
-		articleUnavailable := ""
+		articleUnavailableReason := ""
 		if item.URL != "" {
 			log.Printf("  Fetching article: %s", item.URL)
 			text, err := articleFetcher.Fetch(item.URL)
 			if err != nil {
 				log.Printf("  ⚠  article fetch failed: %v", err)
-				articleUnavailable = "Summary unavailable because the article could not be retrieved or did not contain enough readable content to analyze."
+				articleUnavailableReason = articleRetrievalFailureReason
+			} else if strings.TrimSpace(text) == "" {
+				articleUnavailableReason = articleInsufficientContentReason
 			} else {
 				story.ArticleText = text
 			}
-		}
-		if item.URL != "" && story.ArticleText == "" && articleUnavailable == "" {
-			articleUnavailable = "Summary unavailable because the article could not be retrieved or did not contain enough readable content to analyze."
 		}
 
 		if aiProvider != nil {
@@ -146,20 +147,15 @@ func main() {
 			}
 
 			// Article critique.
-			if articleUnavailable != "" {
-				story.Critique = unavailableCritique(
-					articleUnavailable,
-					"Truthfulness assessment unavailable because the article could not be retrieved or did not contain enough readable content to analyze.",
-				)
+			if articleUnavailableReason != "" {
+				story.Critique = unavailableCritiqueForReason(articleUnavailableReason)
 			} else if story.ArticleText != "" || story.URL != "" {
 				log.Printf("  Analyzing article…")
 				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
 				if err != nil {
 					log.Printf("  ⚠  article analysis failed: %v", err)
-					story.Critique = unavailableCritique(
-						"Summary unavailable because the AI assessment could not be completed due to an internal error.",
-						"Truthfulness assessment unavailable because the AI assessment could not be completed due to an internal error.",
-					)
+					analysisReason := "the AI assessment could not be completed because the AI provider returned an error. The analysis may be retried on the next run"
+					story.Critique = unavailableCritiqueForReason(analysisReason)
 				} else {
 					story.Critique = crit
 				}
@@ -193,17 +189,14 @@ func main() {
 					log.Printf("  ⚠  cache save failed: %v", saveErr)
 				}
 			}
-		} else if item.URL != "" {
-			if articleUnavailable != "" {
-				story.Critique = unavailableCritique(
-					articleUnavailable,
-					"Truthfulness assessment unavailable because the article could not be retrieved or did not contain enough readable content to analyze.",
-				)
+		}
+
+		if aiProvider == nil && item.URL != "" && story.Critique == nil {
+			if articleUnavailableReason != "" {
+				story.Critique = unavailableCritiqueForReason(articleUnavailableReason)
 			} else if story.ArticleText != "" {
-				story.Critique = unavailableCritique(
-					"Summary unavailable because the AI assessment is not available.",
-					"Truthfulness assessment unavailable because the AI assessment is not available.",
-				)
+				analysisReason := "the AI assessment is not available"
+				story.Critique = unavailableCritiqueForReason(analysisReason)
 			}
 		}
 
@@ -279,4 +272,16 @@ func unavailableCritique(summary, truthfulness string) *generator.ArticleCritiqu
 		Truthfulness: truthfulness,
 		Rating:       "unavailable",
 	}
+}
+
+func unavailableSummary(reason string) string {
+	return "Summary unavailable because " + reason + "."
+}
+
+func unavailableTruthfulness(reason string) string {
+	return "Truthfulness assessment unavailable because " + reason + "."
+}
+
+func unavailableCritiqueForReason(reason string) *generator.ArticleCritique {
+	return unavailableCritique(unavailableSummary(reason), unavailableTruthfulness(reason))
 }

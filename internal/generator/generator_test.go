@@ -66,6 +66,11 @@ func TestGenerate(t *testing.T) {
 			Author:       "asker",
 			Time:         1741716000,
 			CommentCount: 89,
+			Critique: &generator.ArticleCritique{
+				Summary:      "Summary unavailable because the article could not be retrieved.",
+				Truthfulness: "Truthfulness assessment unavailable because the article could not be retrieved.",
+				Rating:       "unavailable",
+			},
 		},
 	}
 
@@ -104,6 +109,8 @@ func TestGenerate(t *testing.T) {
 		"comments/12345.html",
 		"Questionable",
 		"rating-questionable",
+		"Unavailable",
+		"rating-unavailable",
 		"Ask HN: Favorite tools?",
 		"HN Critique",
 		"Disclaimer: This website uses AI to generate automated critiques and ratings.",
