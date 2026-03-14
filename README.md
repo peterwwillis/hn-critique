@@ -1,6 +1,6 @@
 # hn-critique
 
-A version of Hacker News that uses AI to critique the articles and comments.
+View the Hacker News top stories with an AI critic.
 
 The site mimics the Hacker News front page. Next to each story's "comments" link there is a **critique** link that leads to:
 
