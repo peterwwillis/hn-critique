@@ -100,7 +100,10 @@ func buildCommentText(comments []*generator.Comment) string {
 }
 
 func truncateWithEllipsis(s string, maxBytes int) string {
-	if len(s) <= maxBytes || maxBytes == 0 {
+	if maxBytes == 0 {
+		return ""
+	}
+	if len(s) <= maxBytes {
 		return s
 	}
 	if maxBytes <= len("…") {
@@ -110,7 +113,10 @@ func truncateWithEllipsis(s string, maxBytes int) string {
 }
 
 func truncateUTF8(s string, maxBytes int) string {
-	if len(s) <= maxBytes || maxBytes == 0 {
+	if maxBytes == 0 {
+		return ""
+	}
+	if len(s) <= maxBytes {
 		return s
 	}
 	truncated := s[:maxBytes]
