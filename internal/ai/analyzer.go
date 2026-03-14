@@ -55,7 +55,7 @@ The JSON must have exactly this shape:
     {
       "id": <comment id as integer>,
       "author": "<username>",
-      "text": "<comment text as provided above (may be truncated if exceptionally long), plain text>",
+      "text": "<comment text as provided above (some comments may be omitted to fit the input size, and exceptionally long comments may be truncated), plain text>",
       "indicators": ["<one or more of: emotional, intelligent, thoughtful, trolling, likely-true, likely-untrue, belligerent, constructive, useless>"],
       "accuracyRank": <integer starting at 1 for most accurate>,
       "analysis": "<1-2 sentence critique>"
@@ -87,7 +87,7 @@ func buildCommentText(comments []*generator.Comment) string {
 		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
 		if len(entry) > maxCommentChars {
 			sb.WriteString(entry[:maxCommentChars] + "…")
-			break
+			return sb.String()
 		}
 		if sb.Len()+len(entry) > maxCommentChars {
 			break
