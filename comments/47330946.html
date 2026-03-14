@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">24 points</span>
+        <span class="score">30 points</span>
         by <a href="https://news.ycombinator.com/user?id=luispa">luispa</a>
         3 days ago
         &nbsp;|&nbsp;<a href="/critique/47330946.html">critique article</a>
@@ -50,10 +50,46 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=twic">twic</a>
+  </div>
+  <div class="comment-text">&gt; This solution looks extremely similar to the previous one, which is a good thing. Our requirements have experienced a small change (reversing the traversal order) and our solution has responded with a small modification.<p>Now do breadth-first traversal. With the iterative approach, you just replace the stack with a queue. With the recursive approach, you have to make radical changes. You can make either approach look natural and elegant if you pick the right example.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=aleph_minus_one">aleph_minus_one</a>
+  </div>
+  <div class="comment-text">&gt; Now do breadth-first traversal. With the iterative approach, you just replace the stack with a queue. With the recursive approach, you have to make radical changes.<p>The reason is that no programming language that is in widespread use has first-class support for co-recursion. In a (fictional) programming language that has this support, this is just a change from a recursive call to a co-recursive call.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=twic">twic</a>
+  </div>
+  <div class="comment-text">&gt; It seems to be common knowledge that any recursive function can be transformed into an iterative function.<p>Huh. Where i work, the main problem is that everyone is hell-bent on transforming every iterative function into a recursive function. If i had a pound for every recursive function called &quot;loop&quot; in the codebase, i could retire.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=jonathanlydall">jonathanlydall</a>
   </div>
   <div class="comment-text">It depends on whether the limited call stack capacity will be an issue for the particular problem you’re solving.<p>I’m presently working on a problem which uses traversal of TypeScript file syntax trees.<p>I can reasonably assume that we will never get a file with a deep enough syntax tree which would cause a stack overflow.<p>A manually managed stack might seem safer, but as pointed out by this article the code would be more complicated and, in my case, for no good reason.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=randomNumber7">randomNumber7</a>
+  </div>
+  <div class="comment-text">&gt; I can reasonably assume that we will never get a file with a deep enough syntax tree which would cause a stack overflow.<p>What if eve constructs a file specifically so that you get stack overflow?</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=layer8">layer8</a>
@@ -80,6 +116,14 @@
   
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ufo">ufo</a>
+  </div>
+  <div class="comment-text">Tail call optimization optimizes the situations where the recursion doesn&#x27;t actually need any stack space, but I think the parent poster is asking about situations that aren&#x27;t tail recirsive.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=afiori">afiori</a>
   </div>
   <div class="comment-text">Just like many languages have annotations for inlining functions they could have annotations for tco. From an usability pov i would like annotations for must, must not, should, and should not. Where the &quot;must&quot; versions error if the compiler can&#x27;t do the optimization</div>
@@ -94,6 +138,14 @@
   </div>
   <div class="comment-text">Yeah, tail call elimination, is definitely doable.<p>Python famously does not have it because &quot;Language inventor Guido van Rossum contended that stack traces are altered by tail-call elimination making debugging harder, and preferred that programmers use explicit iteration instead&quot;.
 <a href="https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Tail_call" rel="nofollow">https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Tail_call</a></div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ufo">ufo</a>
+  </div>
+  <div class="comment-text">It&#x27;s indeed very mechanical and some programming languages can do it for you.<p>I think you&#x27;re mainly asking for heap-allocated stacks. Some languages always use the heap for stack frames instead of the native stack and can set the stack limit as high as there&#x27;s memory available.<p>You might also want to look into stackful coroutines, which allow one to pause the execution of a recursive function and switch to another function. This can provide you with multiple call stacks, which is another reason people sometimes choose to use write explicit stacks.</div>
   
 </div>
 
@@ -117,7 +169,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 11:36 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 13:13 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
