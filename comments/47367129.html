@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">298 points</span>
+        <span class="score">444 points</span>
         by <a href="https://news.ycombinator.com/user?id=meetpateltech">meetpateltech</a>
-        9 hours ago
+        12 hours ago
         &nbsp;|&nbsp;<a href="/critique/47367129.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47367129" rel="noopener">original on HN</a>
       </p>
@@ -46,6 +46,104 @@
     
 
     <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Frannky">Frannky</a>
+  </div>
+  <div class="comment-text">Opus 4.6 is nuts. Everything I throw at it works. Frontend, backend, algorithms—it does not matter.<p>I start with a PRD, ask for a step-by-step plan, and just execute on each step at a time. Sometimes ideas are dumb, but checking and guiding step by step helps it ship working things in hours.<p>It was also the first AI I felt, &quot;Damn, this thing is smarter than me.&quot;<p>The other crazy thing is that with today&#x27;s tech, these things can be made to work at 1k tokens&#x2F;sec with multiple agents working at the same time, each at that speed.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=koreth1">koreth1</a>
+  </div>
+  <div class="comment-text">I wish I had this kind of experience. I threw a tedious but straightforward task at Claude Code using Opus 4.6 late last week: find the places in a React code base where we were using useState and useEffect to calculate a value that was purely dependent on the inputs to useEffect, and replace them with useMemo. I told it to be careful to only replace cases where the change did not introduce any behavior changes, and I put it in plan mode first.<p>It gave me an impressive plan of attack, including a reasonable way to determine which code it could safely modify. I told it to start with just a few files and let me review; its changes looked good. So I told it to proceed with the rest of the code.<p>It made hundreds of changes, as expected (big code base). And most of them were correct! Except the places where it decided to do things like put its &quot;const x = useMemo(...)&quot; call <i>after</i> some piece of code that used the value of &quot;x&quot;, meaning I now had a bunch of undefined variable references. There were some other missteps too.<p>I tried to convince it to fix the places where it had messed up, but it quickly started wanting to make larger structural changes (extracting code into helper functions, etc.) rather than just moving the offending code a few lines higher in the source file. Eventually I gave up trying to steer it and, with the help of another dev on my team, fixed up all the broken code by hand.<p>It probably still saved time compared to making all the changes myself. But it was way more frustrating.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dcre">dcre</a>
+  </div>
+  <div class="comment-text">One tip I have is that once you have the diff you want to fix, start a new session and have it work on the diff fresh. They’ve improved this, but it’s still the case that the farther you get into context window, the dumber and less focused the model gets. I learned this from the Claude Code team themselves, who have long advised starting over rather than trying to steer a conversation that has started down a wrong path.<p>I have heard from people who regularly push a session through multiple compactions. I don’t think this is a good idea. I virtually never do this — when I see context getting up to even 100k, I start making sure I have enough written to disk to type &#x2F;new, pipe it the diff so far, and just say “keep going.”<p>This fresh context thing is a big reason subagents might work where a single agent fails. It’s not just about parallelism: each subagent starts with a fresh context, and the parent agent only sees the result of whatever the subagent does — its own context also remains clean.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=conception">conception</a>
+  </div>
+  <div class="comment-text">Branch first so you can just undo. I think this would have worked with sub agents and &#x2F;loop maybe? Write all items to change to a todo.md. Have it split up the work with haiku sub agents doing 5-10 changes at a time, marking the todos done,  and &#x2F;loop until all are done. You’ll succeed I suspect. If the main claude instance compacts its context - stop and start from where you left off.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dyauspitr">dyauspitr</a>
+  </div>
+  <div class="comment-text">You’re using it wrong. As soon as it starts going off the rails once you’ve repeated yourself, you drop the whole session and start over.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sarchertech">sarchertech</a>
+  </div>
+  <div class="comment-text">What kinds of things are you building? This is not my experience at all.<p>Just today I asked Claude using opus 4.6 to build out a test harness for a new dynamic database diff tool. Everything seemed to be fine but it built a test suite for an existing diff tool. It set everything up in the new directory, but it was actually testing code and logic from a preexisting directory despite the plan being correct before I told it to execute.<p>I started over and wrote out a few skeleton functions myself then asked it write tests for those to test for some new functionality. Then my plan was to the ask it to add that functionality using the tests as guardrails.<p>Well the tests didn’t actually call any of the functions under test. They just directly implemented the logic I asked for in the tests.<p>After $50 and 2 hours I finally got something working only to realize that instead of creating a new pg database to test against, it found a dev database I had lying around and started adding tables to it.<p>When I managed to fix that, it decided that it needed to rebuild multiple docker components before each test and test them down after each one.<p>After about 4 hours and $75, I managed to get something working that was probably more code than I would have written in 4 hours, but I think it was probably worse than what I would have come up with on my own. And I really have no idea if it works because the day was over and I didn’t have the energy left to review it all.<p>We’ve recently been tasked at work with spending more money on Claude (not being more productive the metric is literally spending more money) and everyone is struggling to do anything like what the posts on HN say they are doing. So far no one in my org in a very large tech company has managed to do anything very impressive with Claude other than bringing down prod 2 days ago.<p>Yes I’m using planning mode and clearing context and being specific with requirements and starting new sessions, and every other piece of advice I’ve read.<p>I’ve had much more luck using opus 4.6 in vs studio to make more targeted changes, explain things, debug etc… Claude seems too hard to wrangle and it isn’t good enough for you to be operating that far removed from the code.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dcre">dcre</a>
+  </div>
+  <div class="comment-text">Curious what language and stack. And have people at your company had marginally more success with greenfield projects like prototypes? I guess that’s what you’re describing, though it sounds like it’s a directory in a monorepo maybe?</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=raincole">raincole</a>
+  </div>
+  <div class="comment-text">It&#x27;s so far the best model that answers my questions about Wolfram language.<p>That being said it&#x27;s the only use case for me. I won&#x27;t subscribe to something that I can&#x27;t use with third party harness.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=scroogey">scroogey</a>
+  </div>
+  <div class="comment-text">Just yesterday I asked it to repeat a very simple task 10 times. It ended up doing it 15 times. It wasn&#x27;t a problem per se, just a bit jarring that it was unable to follow such simple instructions (it even repeated my desire for 10 repetitions at the start!).</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dzink">dzink</a>
+  </div>
+  <div class="comment-text">Opus 4.6 is AGI in my book. They won’t admit it, but it’s absolutely true. It shows initiative in not only getting things right but also adding improvements that the original prompt didn&#x27;t request that match the goals of the job.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=winrid">winrid</a>
+  </div>
+  <div class="comment-text">On the adding improvements and being helpful thing, isn&#x27;t that part of the system prompt?</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dyauspitr">dyauspitr</a>
+  </div>
+  <div class="comment-text">I don’t know if Opus is AGI but on a broader note, that’s how we will get AGI. Not some consciousness like people are expecting. It’s just going to be chatbot that’s very hard to stump and starts making actual scientific breakthroughs and solving long standing problems.</div>
+  
+</div>
+
+</div>
+
+</div>
+
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -70,6 +168,15 @@
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kaizenb">kaizenb</a>
+  </div>
+  <div class="comment-text">Thanks for the video.<p>His fix for &quot;the dumb zone&quot; is the RPI Framework:<p>● RESEARCH. Don&#x27;t code yet. Let the agent scan the files first. Docs lie. Code doesn&#x27;t.<p>● PLAN. The agent writes a detailed step-by-step plan. You review and approve the plan, not just the output. Dex calls this avoiding &quot;outsourcing your thinking.&quot; The plan is where intent gets compressed before execution starts.<p>● IMPLEMENT. Execute in a fresh context window.
+The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the chat run long. Ask the agent to summarize state, open a new chat with that summary, keep the model in the smart zone.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=SkyPuncher">SkyPuncher</a>
   </div>
   <div class="comment-text">Yes. I&#x27;ve recently become a convert.<p>For me, it&#x27;s less about being able to look back -800k tokens. It&#x27;s about being able to flow a conversation for a lot longer without forcing compaction. Generally, I really only need the most recent ~50k tokens, but having the old context sitting around is helpful.</div>
@@ -81,14 +188,6 @@
     <a href="https://news.ycombinator.com/user?id=ogig">ogig</a>
   </div>
   <div class="comment-text">When running long autonomous tasks it is quite frequent to fill the context, even several times. You are out of the loop so it just happens if Claude goes a bit in circles, or it needs to iterate over CI reds, or the task was too complex. I&#x27;m hoping a long context &gt; small context + 2 compacts.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=maskull">maskull</a>
-  </div>
-  <div class="comment-text">After running a context window up high, probably near 70% on opus 4.6 High and watching it take 20% bites out of my 5hr quota per prompt I&#x27;ve been experimenting with dumping context after completing a task. Seems to be working ok.  I wonder if I was running into the long context premium. Would that apply to Pro subs or is just relevant to api pricing?</div>
   
 </div>
 
@@ -120,17 +219,43 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=islewis">islewis</a>
+    <a href="https://news.ycombinator.com/user?id=chatmasta">chatmasta</a>
   </div>
-  <div class="comment-text">The quality with the 1M window has been very poor for me, specifically for coding tasks. It constantly forgets stuff that has happened in the existing conversation. n=1, ymmv</div>
+  <div class="comment-text">So a picture is worth 1,666 words?</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=chatmasta">chatmasta</a>
+    <a href="https://news.ycombinator.com/user?id=islewis">islewis</a>
   </div>
-  <div class="comment-text">So a picture is worth 1,666 words?</div>
+  <div class="comment-text">The quality with the 1M window has been very poor for me, specifically for coding tasks. It constantly forgets stuff that has happened in the existing conversation. n=1, ymmv</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=robwwilliams">robwwilliams</a>
+  </div>
+  <div class="comment-text">Yes, especially with shifts in focus of a long conversation. But given the high error rates of Opus 4.6 the last few weeks it is possibly due to other factors. Conversational and code prodding has been essential.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=syntaxing">syntaxing</a>
+  </div>
+  <div class="comment-text">It’s interesting because my career went from doing higher level language (Python) to lower language (C++ and C). Opus and the like is amazing at Python, honestly sometimes better than me but it does do some really stupid architectural decisions occasionally. But when it comes to embedded stuff, it’s still like a junior engineer. Unsure if that will ever change but I wonder if it’s just the quality and availability of training data. This is why I find it hard to believe LLMs will replace hardware engineers anytime soon (I was a MechE for a decade).</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ex-aws-dude">ex-aws-dude</a>
+  </div>
+  <div class="comment-text">I&#x27;ve had a similar experience as a graphics programmer that works in C++ every day<p>Writing quick python scripts works a lot better than niche domain specific code</div>
   
 </div>
 
@@ -148,7 +273,7 @@
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=esperent">esperent</a>
   </div>
-  <div class="comment-text">[delayed]</div>
+  <div class="comment-text">&gt; As you got closer to 100k performance degraded substantially<p>In practice, I haven&#x27;t found this to be the case at all with Claude Code using Opus 4.6. So maybe it&#x27;s another one of those things that used to be true, and now we all expect it to be true.<p>And of course when we expect something, we&#x27;ll find it, so any mistakes at 150k context use get attributed to the context, while the same mistake at 50k gets attributed to the model.</div>
   
 </div>
 
@@ -157,6 +282,14 @@
     <a href="https://news.ycombinator.com/user?id=tyleo">tyleo</a>
   </div>
   <div class="comment-text">I mentioned this at work but context still rots at the same rate. 90k tokens consumed has just as bad results in 100k context window or 1M.<p>Personally, I’m on a 6M+ line codebase and had no problems with the old window. I’m not sending it blindly into the codebase though like I do for small projects. Good prompts are necessary at scale.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=minimaxir">minimaxir</a>
+  </div>
+  <div class="comment-text">The benchmark charts provided <i>are</i> the writeup. Everything else is just anecdata.</div>
   
 </div>
 
@@ -176,24 +309,6 @@
 
 </div>
 
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=minimaxir">minimaxir</a>
-  </div>
-  <div class="comment-text">The benchmark charts provided <i>are</i> the writeup. Everything else is just anecdata.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=nemo44x">nemo44x</a>
-  </div>
-  <div class="comment-text">Has anyone started a project to replace Linux yet?</div>
-  
 </div>
 
     
@@ -218,74 +333,6 @@
   </div>
   <div class="comment-text">No change for Pro, just checked it, the 1M context is still extra usage.</div>
   
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=aragonite">aragonite</a>
-  </div>
-  <div class="comment-text">Do long sessions also burn through token budgets much faster?<p>If the chat client is resending the whole conversation each turn, then once you&#x27;re deep into a session every request already includes tens of thousands of tokens of prior context. So a message at 70k tokens into a conversation is much &quot;heavier&quot; than one at 2k (at least in terms of input tokens). Yes?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dathery">dathery</a>
-  </div>
-  <div class="comment-text">That&#x27;s correct. Input caching helps, but even then at e.g. 800k tokens with all of them cached, the API price is $0.50 * 0.8 = $0.40 per request, which adds up really fast. A &quot;request&quot; can be e.g. a single tool call response, so you can easily end up making many $0.40 requests per minute.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jasondclinton">jasondclinton</a>
-  </div>
-  <div class="comment-text">If you use context cacheing, it saves quite a lot on the costs&#x2F;budgets. You can cache 900k tokens if you want.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=vessenes">vessenes</a>
-  </div>
-  <div class="comment-text">This is super exciting. I&#x27;ve been poking at it today, and it definitely changes my workflow -- I feel like a full three or four hour parallel coding session with subagents is now generally fitting into a single master session.<p>The stats claim Opus at 1M is about like 5.4 at 256k -- these needle long context tests don&#x27;t always go with quality reasoning ability sadly -- but this is still a significant improvement, and I haven&#x27;t seen dramatic falloff in my tests, unlike q4 &#x27;25 models.<p>p.s. what&#x27;s up with sonnet 4.5 getting comparatively better as context got longer?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=steve-atx-7600">steve-atx-7600</a>
-  </div>
-  <div class="comment-text">Did it get better?  I used sonnet 4.5 1m frequently and my impression was that it was around the same performance but a hell of a lot faster since the 1m model was willing to spends more tokens at each step vs preferring more token-cautious tool calls.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=vessenes">vessenes</a>
-  </div>
-  <div class="comment-text">Opus 4.6 is wayy better than sonnet 4.5 for sure.</div>
-  
-</div>
-
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mattfrommars">mattfrommars</a>
-  </div>
-  <div class="comment-text">Random: are you personally paying for Claude Code or is it paid by you employer?<p>My employer only pays for GitHub copilot extension</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=celestialcheese">celestialcheese</a>
-  </div>
-  <div class="comment-text">Both.  Employer pays for work max 20x, i pay for a personal 10x for my side projects and personal stuff.</div>
-  
-</div>
-
 </div>
 
 </div>
@@ -324,6 +371,14 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tclancy">tclancy</a>
+  </div>
+  <div class="comment-text">We’ll make it up on volume.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=operatingthetan">operatingthetan</a>
   </div>
   <div class="comment-text">I think they are both subsidized so either is a great deal.</div>
@@ -344,39 +399,111 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=chaboud">chaboud</a>
+    <a href="https://news.ycombinator.com/user?id=vessenes">vessenes</a>
   </div>
-  <div class="comment-text">Awesome.... With Sonnet 4.5, I had Cline soft trigger compaction at 400k (it wandered off into the weeds at 500k).  But the stability of the 4.6 models is notable.  I still think it pays to structure systems to be comprehensible in smaller contexts (smaller files, concise plans), but this is great.<p>(And, yeah, I&#x27;m all Claude Code these days...)</div>
+  <div class="comment-text">This is super exciting. I&#x27;ve been poking at it today, and it definitely changes my workflow -- I feel like a full three or four hour parallel coding session with subagents is now generally fitting into a single master session.<p>The stats claim Opus at 1M is about like 5.4 at 256k -- these needle long context tests don&#x27;t always go with quality reasoning ability sadly -- but this is still a significant improvement, and I haven&#x27;t seen dramatic falloff in my tests, unlike q4 &#x27;25 models.<p>p.s. what&#x27;s up with sonnet 4.5 getting comparatively better as context got longer?</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=steve-atx-7600">steve-atx-7600</a>
+  </div>
+  <div class="comment-text">Did it get better?  I used sonnet 4.5 1m frequently and my impression was that it was around the same performance but a hell of a lot faster since the 1m model was willing to spends more tokens at each step vs preferring more token-cautious tool calls.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vessenes">vessenes</a>
+  </div>
+  <div class="comment-text">Opus 4.6 is wayy better than sonnet 4.5 for sure.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mattfrommars">mattfrommars</a>
+  </div>
+  <div class="comment-text">Random: are you personally paying for Claude Code or is it paid by you employer?<p>My employer only pays for GitHub copilot extension</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kiratp">kiratp</a>
+  </div>
+  <div class="comment-text">GitHub Copilot CLI lets you use all these models (unless your employer disables them.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;features&#x2F;copilot&#x2F;cli" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;features&#x2F;copilot&#x2F;cli</a><p>Disclosure: work at Msft</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=celestialcheese">celestialcheese</a>
+  </div>
+  <div class="comment-text">Both.  Employer pays for work max 20x, i pay for a personal 10x for my side projects and personal stuff.</div>
+  
+</div>
+
+</div>
+
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=alienbaby">alienbaby</a>
+    <a href="https://news.ycombinator.com/user?id=aragonite">aragonite</a>
   </div>
-  <div class="comment-text">is this the market played in front of our eyes slice by slice: ok, maybe not, but watching these entities duke it out is kinda amusing? There will be consequences but may as well sit it out for the ride, who knows where we are going?</div>
+  <div class="comment-text">Do long sessions also burn through token budgets much faster?<p>If the chat client is resending the whole conversation each turn, then once you&#x27;re deep into a session every request already includes tens of thousands of tokens of prior context. So a message at 70k tokens into a conversation is much &quot;heavier&quot; than one at 2k (at least in terms of input tokens). Yes?</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dathery">dathery</a>
+  </div>
+  <div class="comment-text">That&#x27;s correct. Input caching helps, but even then at e.g. 800k tokens with all of them cached, the API price is $0.50 * 0.8 = $0.40 per request, which adds up really fast. A &quot;request&quot; can be e.g. a single tool call response, so you can easily end up making many $0.40 requests per minute.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=acjohnson55">acjohnson55</a>
+  </div>
+  <div class="comment-text">Interesting, so a prompt that causes a couple dozen tool calls will end up costing in the tens of dollars?</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jasondclinton">jasondclinton</a>
+  </div>
+  <div class="comment-text">If you use context cacheing, it saves quite a lot on the costs&#x2F;budgets. You can cache 900k tokens if you want.</div>
+  
+</div>
+
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=thunkle">thunkle</a>
+    <a href="https://news.ycombinator.com/user?id=vips7L">vips7L</a>
   </div>
-  <div class="comment-text">Just have to ask. Will I be spending way more money since my context window is getting so much bigger?</div>
+  <div class="comment-text">Friends, just write the code. It’s not that hard.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=andrewstuart">andrewstuart</a>
+  </div>
+  <div class="comment-text">Only someone not using Claude could equate human coding.</div>
+  
+</div>
+
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=margorczynski">margorczynski</a>
+    <a href="https://news.ycombinator.com/user?id=causalzap">causalzap</a>
   </div>
-  <div class="comment-text">What about response coherence with longer context? Usually in other models with such big windows I see the quality to rapidly drop as it gets past a certain point.</div>
+  <div class="comment-text">I&#x27;ve been using Opus 4.5 for programmatic SEO and localizing game descriptions. If 4.6 truly improves context compaction, it could significantly lower the API costs for large-scale content generation. Has anyone tested its logic consistency on JSON output compared to 4.5?</div>
   
 </div>
 
@@ -402,9 +529,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=arjie">arjie</a>
+    <a href="https://news.ycombinator.com/user?id=throw03172019">throw03172019</a>
   </div>
-  <div class="comment-text">This is fantastic. I keep having to save to memory with instructions and then tell it to restore to get anywhere on long running tasks.</div>
+  <div class="comment-text">Pentagon may switch to Claude knowing OpenAI has the premium rates for 1M context.</div>
   
 </div>
 
@@ -412,9 +539,39 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=swader999">swader999</a>
+    <a href="https://news.ycombinator.com/user?id=margorczynski">margorczynski</a>
   </div>
-  <div class="comment-text">I notice Claude steadily consuming less tokens, especially with tool calling every week too</div>
+  <div class="comment-text">What about response coherence with longer context? Usually in other models with such big windows I see the quality to rapidly drop as it gets past a certain point.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=chaboud">chaboud</a>
+  </div>
+  <div class="comment-text">Awesome.... With Sonnet 4.5, I had Cline soft trigger compaction at 400k (it wandered off into the weeds at 500k).  But the stability of the 4.6 models is notable.  I still think it pays to structure systems to be comprehensible in smaller contexts (smaller files, concise plans), but this is great.<p>(And, yeah, I&#x27;m all Claude Code these days...)</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dkpk">dkpk</a>
+  </div>
+  <div class="comment-text">Is this also applicable for usage in Claude web &#x2F; mobile apps for chat?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=8note">8note</a>
+  </div>
+  <div class="comment-text">im guessing this is why the compacts have started sucking? i just finished getting me some nicer tools for manipulating the graph so i could compact less frequently, and fish out context from the prior session.<p>maybe itll still be useful, though i only have opus at 1M, not sonnet yet</div>
   
 </div>
 
@@ -440,113 +597,29 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=johnwheeler">johnwheeler</a>
+    <a href="https://news.ycombinator.com/user?id=arjie">arjie</a>
   </div>
-  <div class="comment-text">This is incredible. I just blew through $200 last night in a few hours on 1M context. This is like the best news I&#x27;ve heard all year in regards to my business.<p>What is OpenAIs response to this? Do they even have 1M context window or is it still opaque and &quot;depends on the time of day&quot;</div>
+  <div class="comment-text">This is fantastic. I keep having to save to memory with instructions and then tell it to restore to get anywhere on long running tasks.</div>
   
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=hagen8">hagen8</a>
-  </div>
-  <div class="comment-text">Did u use the API or subscription?</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=johnwheeler">johnwheeler</a>
-  </div>
-  <div class="comment-text">Max subscription and &quot;extra usage&quot; billing</div>
-  
-</div>
-
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dominotw">dominotw</a>
-  </div>
-  <div class="comment-text">rarely go over 25 percent in codex but i hit 80 on claude code in just a short time.</div>
-  
-</div>
-
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=aliljet">aliljet</a>
+    <a href="https://news.ycombinator.com/user?id=thunkle">thunkle</a>
   </div>
-  <div class="comment-text">Are there evals showing how this improves outputs?</div>
+  <div class="comment-text">Just have to ask. Will I be spending way more money since my context window is getting so much bigger?</div>
   
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=apetresc">apetresc</a>
-  </div>
-  <div class="comment-text">Improves outputs relative to what? Compared to previous contexts of 1M, it improves outputs by allowing them to exist (because previously you couldn&#x27;t exceed 200K). Compared to contexts of &lt;200K, it degrades outputs rather than improves them, but that&#x27;s what you&#x27;d expect from longer contexts. It&#x27;s still better than compaction, which was previously the alternative.</div>
-  
-</div>
-
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=8cvor6j844qw_d6">8cvor6j844qw_d6</a>
+    <a href="https://news.ycombinator.com/user?id=sergiotapia">sergiotapia</a>
   </div>
-  <div class="comment-text">Oh nice, does it mean less game of &#x2F;compact, &#x2F;clear, and updating CLAUDE.md with Claude Code?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=fnordpiglet">fnordpiglet</a>
-  </div>
-  <div class="comment-text">I’ve been using 1M for a while and it defers it and makes it worse almost when it happens. Compacting a context that big loses a ton of fidelity. But I’ve taken to just editing the context instead (double esc).  I also am planning to build an agent to slice the session logs up into contextually useful and useless discarding the useless and keeping things high fidelity that way. (I.e., carve up with a script the jsonl and have subagent haiku return the relevant parts and reconstructing the jsonl)</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dominotw">dominotw</a>
-  </div>
-  <div class="comment-text">til you can edit context. i keep a running log and &#x2F;clear &#x2F;reload log</div>
-  
-</div>
-
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=zmmmmm">zmmmmm</a>
-  </div>
-  <div class="comment-text">Noticed this just now - all of a sudden i have 1M context window (!!!) without changing anything. It&#x27;s actually slightly disturbing because this IS a behavior change. Don&#x27;t get me wrong, I like having longer context but we really need to pin down behaviour for how things are deployed.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=steve-atx-7600">steve-atx-7600</a>
-  </div>
-  <div class="comment-text">You can pin to specific models with  —-model.  Check out their doc.  See <a href="https:&#x2F;&#x2F;support.claude.com&#x2F;en&#x2F;articles&#x2F;11940350-claude-code-model-configuration" rel="nofollow">https:&#x2F;&#x2F;support.claude.com&#x2F;en&#x2F;articles&#x2F;11940350-claude-code-...</a>. You can also pin to a less specific tag like sonnet-4.5[1m] (that’s from memory might be a little off).</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=phist_mcgee">phist_mcgee</a>
-  </div>
-  <div class="comment-text">Anthropic is famous for changing things under your feet. Claude code is basically alpha software with a global footprint.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=gaigalas">gaigalas</a>
-  </div>
-  <div class="comment-text">I&#x27;m getting close to my goal of fitting an entire bootstrappable-from-source system source code as context and just telling Claude &quot;go ahead, make it better&quot;.</div>
+  <div class="comment-text">maybe i&#x27;m thinking too small, or maybe it&#x27;s because i&#x27;ve been using these ai systems since they were first launched, but it feels wrong to just saturate the hell out of the context, even if it can take 1 million tokens.<p>maybe i need to unlearn this habit?</div>
   
 </div>
 
@@ -560,7 +633,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 02:47 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 04:53 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
