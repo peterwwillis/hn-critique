@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">507 points</span>
+        <span class="score">561 points</span>
         by <a href="https://news.ycombinator.com/user?id=meetpateltech">meetpateltech</a>
-        13 hours ago
+        14 hours ago
         &nbsp;|&nbsp;<a href="/critique/47367129.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47367129" rel="noopener">original on HN</a>
       </p>
@@ -46,96 +46,6 @@
     
 
     <p class="no-critique">AI critique is not available. Showing raw comments:</p>
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Frannky">Frannky</a>
-  </div>
-  <div class="comment-text">Opus 4.6 is nuts. Everything I throw at it works. Frontend, backend, algorithms—it does not matter.<p>I start with a PRD, ask for a step-by-step plan, and just execute on each step at a time. Sometimes ideas are dumb, but checking and guiding step by step helps it ship working things in hours.<p>It was also the first AI I felt, &quot;Damn, this thing is smarter than me.&quot;<p>The other crazy thing is that with today&#x27;s tech, these things can be made to work at 1k tokens&#x2F;sec with multiple agents working at the same time, each at that speed.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ai_fry_ur_brain">ai_fry_ur_brain</a>
-  </div>
-  <div class="comment-text">Im convinced everyone saying this is building the simplest web apps, and doing magic tricks on themselves.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=koreth1">koreth1</a>
-  </div>
-  <div class="comment-text">I wish I had this kind of experience. I threw a tedious but straightforward task at Claude Code using Opus 4.6 late last week: find the places in a React code base where we were using useState and useEffect to calculate a value that was purely dependent on the inputs to useEffect, and replace them with useMemo. I told it to be careful to only replace cases where the change did not introduce any behavior changes, and I put it in plan mode first.<p>It gave me an impressive plan of attack, including a reasonable way to determine which code it could safely modify. I told it to start with just a few files and let me review; its changes looked good. So I told it to proceed with the rest of the code.<p>It made hundreds of changes, as expected (big code base). And most of them were correct! Except the places where it decided to do things like put its &quot;const x = useMemo(...)&quot; call <i>after</i> some piece of code that used the value of &quot;x&quot;, meaning I now had a bunch of undefined variable references. There were some other missteps too.<p>I tried to convince it to fix the places where it had messed up, but it quickly started wanting to make larger structural changes (extracting code into helper functions, etc.) rather than just moving the offending code a few lines higher in the source file. Eventually I gave up trying to steer it and, with the help of another dev on my team, fixed up all the broken code by hand.<p>It probably still saved time compared to making all the changes myself. But it was way more frustrating.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dcre">dcre</a>
-  </div>
-  <div class="comment-text">One tip I have is that once you have the diff you want to fix, start a new session and have it work on the diff fresh. They’ve improved this, but it’s still the case that the farther you get into context window, the dumber and less focused the model gets. I learned this from the Claude Code team themselves, who have long advised starting over rather than trying to steer a conversation that has started down a wrong path.<p>I have heard from people who regularly push a session through multiple compactions. I don’t think this is a good idea. I virtually never do this — when I see context getting up to even 100k, I start making sure I have enough written to disk to type &#x2F;new, pipe it the diff so far, and just say “keep going.” I learned recently that even essentials like the CLAUDE.md part of the prompt get diluted through compactions. You can write a hook to re-insert it but it&#x27;s not done by default.<p>This fresh context thing is a big reason subagents might work where a single agent fails. It’s not just about parallelism: each subagent starts with a fresh context, and the parent agent only sees the result of whatever the subagent does — its own context also remains clean.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=conception">conception</a>
-  </div>
-  <div class="comment-text">Branch first so you can just undo. I think this would have worked with sub agents and &#x2F;loop maybe? Write all items to change to a todo.md. Have it split up the work with haiku sub agents doing 5-10 changes at a time, marking the todos done,  and &#x2F;loop until all are done. You’ll succeed I suspect. If the main claude instance compacts its context - stop and start from where you left off.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=a13n">a13n</a>
-  </div>
-  <div class="comment-text">If you use eslint and tell it how to run lint in CLAUDE.md it will run lint itself and find and fix most issues like this.<p>Definitely not ideal, but sure helps.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dyauspitr">dyauspitr</a>
-  </div>
-  <div class="comment-text">You’re using it wrong. As soon as it starts going off the rails once you’ve repeated yourself, you drop the whole session and start over.</div>
-  
-</div>
-
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=eknkc">eknkc</a>
-  </div>
-  <div class="comment-text">I find that Opus misses a lot of details in the code base when I want it to design a feature or something. It jumps to a basic solution which is actually good but might affect something elsewhere.<p>GPT 5.4 on codex cli has been much more reliable for me lately. I used to have opus write and codex review, I now to the opposite (I actually have codex write and both review in parallel).<p>So on the latest models for my use case gpt &gt; opus but these change all the time.<p>Edit: also the harness is shit. Claude code has been slow, weird and a resource hog. Refuses to read now standardized .agents dirs so I need symlink gymnastics. Hides as much info as it can… Codex cli is working much better lately.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=toraway">toraway</a>
-  </div>
-  <div class="comment-text">Codex CLI is so much more pleasant to use than CC. I cancelled my CC subscription after the OpenCode thing, but somewhat ironically have recently found myself naturally trying the native Codex CLI client first more often lately over OpenCode.<p>Kinda funny how you don&#x27;t actually need to use coercion if you put in the engineering work to build a product that&#x27;s competitive on its own technical merits...</div>
-  
-</div>
-
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=olalonde">olalonde</a>
-  </div>
-  <div class="comment-text">&gt; PRD<p>Is it Baader-Meinhof or is everyone on HN suddenly using obscure acronyms?</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=fbrncci">fbrncci</a>
-  </div>
-  <div class="comment-text">I am starting to believe it’s not OPUS but developers getting better at using LLMs across the board. And not realizing they are just getting much better at using these tools.<p>I also thought it was OPUS 4.5 (also tested a lot with 4.6) and then in February switched to only using auto mode in the coding IDEs. They do not use OPUS (most of the times), and I’m ending up with a similar result after a very rough learning curve.<p>Now switching back to OPUS I notice that I get more out of it, but it’s no longer a huge difference. In a lot of cases OPUS is actually in the way after learning to prompt more effectively with cheaper models.<p>The big difference now is that I’m just paying 60-90$ month for 40-50hrs of weekly usage… while I was inching towards 1000$ with OPUS. I chose these auto modes because they don’t dig into usage based pricing or throttling which is a pretty sweet deal.</div>
-  
-</div>
-
-</div>
-
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -245,6 +155,14 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=n_u">n_u</a>
+  </div>
+  <div class="comment-text">I&#x27;ve found it&#x27;s ok at Rust. I think a lot of existing Rust code is high quality and also the stricter Rust compiler enforces that the output of the LLM is somewhat reasonable.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=ex-aws-dude">ex-aws-dude</a>
   </div>
   <div class="comment-text">I&#x27;ve had a similar experience as a graphics programmer that works in C++ every day<p>Writing quick python scripts works a lot better than niche domain specific code</div>
@@ -258,6 +176,128 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
   
 </div>
 
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Frannky">Frannky</a>
+  </div>
+  <div class="comment-text">Opus 4.6 is nuts. Everything I throw at it works. Frontend, backend, algorithms—it does not matter.<p>I start with a PRD, ask for a step-by-step plan, and just execute on each step at a time. Sometimes ideas are dumb, but checking and guiding step by step helps it ship working things in hours.<p>It was also the first AI I felt, &quot;Damn, this thing is smarter than me.&quot;<p>The other crazy thing is that with today&#x27;s tech, these things can be made to work at 1k tokens&#x2F;sec with multiple agents working at the same time, each at that speed.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=koreth1">koreth1</a>
+  </div>
+  <div class="comment-text">I wish I had this kind of experience. I threw a tedious but straightforward task at Claude Code using Opus 4.6 late last week: find the places in a React code base where we were using useState and useEffect to calculate a value that was purely dependent on the inputs to useEffect, and replace them with useMemo. I told it to be careful to only replace cases where the change did not introduce any behavior changes, and I put it in plan mode first.<p>It gave me an impressive plan of attack, including a reasonable way to determine which code it could safely modify. I told it to start with just a few files and let me review; its changes looked good. So I told it to proceed with the rest of the code.<p>It made hundreds of changes, as expected (big code base). And most of them were correct! Except the places where it decided to do things like put its &quot;const x = useMemo(...)&quot; call <i>after</i> some piece of code that used the value of &quot;x&quot;, meaning I now had a bunch of undefined variable references. There were some other missteps too.<p>I tried to convince it to fix the places where it had messed up, but it quickly started wanting to make larger structural changes (extracting code into helper functions, etc.) rather than just moving the offending code a few lines higher in the source file. Eventually I gave up trying to steer it and, with the help of another dev on my team, fixed up all the broken code by hand.<p>It probably still saved time compared to making all the changes myself. But it was way more frustrating.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dcre">dcre</a>
+  </div>
+  <div class="comment-text">One tip I have is that once you have the diff you want to fix, start a new session and have it work on the diff fresh. They’ve improved this, but it’s still the case that the farther you get into context window, the dumber and less focused the model gets. I learned this from the Claude Code team themselves, who have long advised starting over rather than trying to steer a conversation that has started down a wrong path.<p>I have heard from people who regularly push a session through multiple compactions. I don’t think this is a good idea. I virtually never do this — when I see context getting up to even 100k, I start making sure I have enough written to disk to type &#x2F;new, pipe it the diff so far, and just say “keep going.” I learned recently that even essentials like the CLAUDE.md part of the prompt get diluted through compactions. You can write a hook to re-insert it but it&#x27;s not done by default.<p>This fresh context thing is a big reason subagents might work where a single agent fails. It’s not just about parallelism: each subagent starts with a fresh context, and the parent agent only sees the result of whatever the subagent does — its own context also remains clean.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=conception">conception</a>
+  </div>
+  <div class="comment-text">Branch first so you can just undo. I think this would have worked with sub agents and &#x2F;loop maybe? Write all items to change to a todo.md. Have it split up the work with haiku sub agents doing 5-10 changes at a time, marking the todos done,  and &#x2F;loop until all are done. You’ll succeed I suspect. If the main claude instance compacts its context - stop and start from where you left off.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=a13n">a13n</a>
+  </div>
+  <div class="comment-text">If you use eslint and tell it how to run lint in CLAUDE.md it will run lint itself and find and fix most issues like this.<p>Definitely not ideal, but sure helps.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dyauspitr">dyauspitr</a>
+  </div>
+  <div class="comment-text">You’re using it wrong. As soon as it starts going off the rails once you’ve repeated yourself, you drop the whole session and start over.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=eknkc">eknkc</a>
+  </div>
+  <div class="comment-text">I find that Opus misses a lot of details in the code base when I want it to design a feature or something. It jumps to a basic solution which is actually good but might affect something elsewhere.<p>GPT 5.4 on codex cli has been much more reliable for me lately. I used to have opus write and codex review, I now to the opposite (I actually have codex write and both review in parallel).<p>So on the latest models for my use case gpt &gt; opus but these change all the time.<p>Edit: also the harness is shit. Claude code has been slow, weird and a resource hog. Refuses to read now standardized .agents dirs so I need symlink gymnastics. Hides as much info as it can… Codex cli is working much better lately.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=toraway">toraway</a>
+  </div>
+  <div class="comment-text">Codex CLI is so much more pleasant to use than CC. I cancelled my CC subscription after the OpenCode thing, but somewhat ironically have recently found myself naturally trying the native Codex CLI client first more often over OpenCode.<p>Kinda funny how you don&#x27;t actually need to use coercion if you put in the engineering work to build a product that&#x27;s competitive on its own technical merits...</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sarchertech">sarchertech</a>
+  </div>
+  <div class="comment-text">What kinds of things are you building? This is not my experience at all.<p>Just today I asked Claude using opus 4.6 to build out a test harness for a new dynamic database diff tool. Everything seemed to be fine but it built a test suite for an existing diff tool. It set everything up in the new directory, but it was actually testing code and logic from a preexisting directory despite the plan being correct before I told it to execute.<p>I started over and wrote out a few skeleton functions myself then asked it write tests for those to test for some new functionality. Then my plan was to the ask it to add that functionality using the tests as guardrails.<p>Well the tests didn’t actually call any of the functions under test. They just directly implemented the logic I asked for in the tests.<p>After $50 and 2 hours I finally got something working only to realize that instead of creating a new pg database to test against, it found a dev database I had lying around and started adding tables to it.<p>When I managed to fix that, it decided that it needed to rebuild multiple docker components before each test and test them down after each one.<p>After about 4 hours and $75, I managed to get something working that was probably more code than I would have written in 4 hours, but I think it was probably worse than what I would have come up with on my own. And I really have no idea if it works because the day was over and I didn’t have the energy left to review it all.<p>We’ve recently been tasked at work with spending more money on Claude (not being more productive the metric is literally spending more money) and everyone is struggling to do anything like what the posts on HN say they are doing. So far no one in my org in a very large tech company has managed to do anything very impressive with Claude other than bringing down prod 2 days ago.<p>Yes I’m using planning mode and clearing context and being specific with requirements and starting new sessions, and every other piece of advice I’ve read.<p>I’ve had much more luck using opus 4.6 in vs studio to make more targeted changes, explain things, debug etc… Claude seems too hard to wrangle and it isn’t good enough for you to be operating that far removed from the code.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=extr">extr</a>
+  </div>
+  <div class="comment-text">You probably just don&#x27;t have the hang of it yet. It&#x27;s very good but it&#x27;s not a mind reader and if you have something specific you want, it&#x27;s best to just articulate that exactly as best you can (&quot;I want a test harness for &lt;specific_tool&gt;, which you can find &lt;here&gt;&quot;). You need to explain that you want tests that assert on observable outcomes and state, not internal structure, use real objects not mocks, property based testing for invariants, etc. It&#x27;s a feedback loop between yourself and the agent that you must develop a bit before you start seeing &quot;magic&quot; results. A typical session for me looks like:<p>- I ask for something highly general and claude explores a bit and responds.<p>- We go back and forth a bit on precisely what I&#x27;m asking for. Maybe I correct it a few times and maybe it has a few ideas I didn&#x27;t know about&#x2F;think of.<p>- It writes some kind of plan to a markdown file. In a fresh session I tell a new instance to execute the plan.<p>- After it&#x27;s done, I skim the broad strokes of the code and point out any code&#x2F;architectural smells.<p>- I ask it to review it&#x27;s own work and then critique that review, etc. We write tests.<p>Perhaps that sounds like a lot but typically this process takes around 30-45 minutes of intermittent focus and the result will be several thousand lines of pretty good, working code.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dcre">dcre</a>
+  </div>
+  <div class="comment-text">Curious what language and stack. And have people at your company had marginally more success with greenfield projects like prototypes? I guess that’s what you’re describing, though it sounds like it’s a directory in a monorepo maybe?</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jhatemyjob">jhatemyjob</a>
+  </div>
+  <div class="comment-text">Similar experience. I use these AI tools on a daily basis. I have tons of examples like yours. In one recent instance I explicitly told it in the prompt to not use memcpy, and it used memcpy anyway, and generated a 30-line diff after thinking for 20 minutes. In that amount of time I created a 10-line diff that didn&#x27;t use memcpy.<p>I think it&#x27;s the big investors&#x27; extremely powerful incentives manifesting in the form of internet comments. The pace of improvement peaked at GPT-4. There is value in autocomplete-as-a-service, and the &quot;harnesses&quot; like Codex take it a lot farther. But the people who are blown away by these new releases either don&#x27;t spend a lot of time writing code, or are being paid to be blown away. This is not a hockey stick curve. It&#x27;s a log curve.<p>Bigger context windows are a welcome addition. And stuff like JSON inputs is nice too. But these things aren&#x27;t gonna like, take your SWE job, if you&#x27;re any good. It&#x27;s just like, a nice substitute for the Google -&gt; Stack Overflow -&gt; Copy&#x2F;Paste workflow.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ai_fry_ur_brain">ai_fry_ur_brain</a>
+  </div>
+  <div class="comment-text">Im convinced everyone saying this is building the simplest web apps, and doing magic tricks on themselves.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=raldi">raldi</a>
+  </div>
+  <div class="comment-text">What evidence would convince you otherwise?</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=fbrncci">fbrncci</a>
+  </div>
+  <div class="comment-text">I am starting to believe it’s not OPUS but developers getting better at using LLMs across the board. And not realizing they are just getting much better at using these tools.<p>I also thought it was OPUS 4.5 (also tested a lot with 4.6) and then in February switched to only using auto mode in the coding IDEs. They do not use OPUS (most of the times), and I’m ending up with a similar result after a very rough learning curve.<p>Now switching back to OPUS I notice that I get more out of it, but it’s no longer a huge difference. In a lot of cases OPUS is actually in the way after learning to prompt more effectively with cheaper models.<p>The big difference now is that I’m just paying 60-90$ month for 40-50hrs of weekly usage… while I was inching towards 1000$ with OPUS. I chose these auto modes because they don’t dig into usage based pricing or throttling which is a pretty sweet deal.</div>
+  
 </div>
 
 </div>
@@ -380,6 +420,14 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=merrvk">merrvk</a>
+  </div>
+  <div class="comment-text">5 times the already subsidised rate is still a discount.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=operatingthetan">operatingthetan</a>
   </div>
   <div class="comment-text">I think they are both subsidized so either is a great deal.</div>
@@ -394,25 +442,15 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
   
 </div>
 
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Zambyte">Zambyte</a>
-  </div>
-  <div class="comment-text">5 for 5</div>
-  
-</div>
-
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=LarsDu88">LarsDu88</a>
+    <a href="https://news.ycombinator.com/user?id=bob1029">bob1029</a>
   </div>
-  <div class="comment-text">The stuff I built with Opus 4.6 in the past 2.5 weeks:<p>Full clone of Panel de Pon&#x2F;Tetris attack with full P2P rollback online multiplayer:
-<a href="https:&#x2F;&#x2F;panel-panic.com" rel="nofollow">https:&#x2F;&#x2F;panel-panic.com</a><p>An emulator of the MOS 6502 CPU with visual display of the voltage going into the DIP package of the physical CPU:
-<a href="https:&#x2F;&#x2F;larsdu.github.io&#x2F;Dippy6502&#x2F;" rel="nofollow">https:&#x2F;&#x2F;larsdu.github.io&#x2F;Dippy6502&#x2F;</a><p>I&#x27;m impressed as fuck, but a part of me deep down knows that I know fuck all about the 6502 or its assembly language and architecture, and now I&#x27;ll probably never be motivated to do this project in a way that I would&#x27;ve learned all the tings I wanted to learn.</div>
+  <div class="comment-text">I&#x27;ve been avoiding context beyond 100k tokens in general. The performance is simply terrible. There&#x27;s no training data for a megabyte of your very particular context.<p>If you are really interested in deep NIAH tasks, external symbolic recursion and self-similar prompts+tools are a much bigger unlock than more context window. Recursion and (most) tools tend to be fairly deterministic processes.<p>I generally prohibit tool calling in the first stack frame of complex agents in order to preserve context window for the overall task and human interaction. Most of the nasty token consumption happens in brief, nested conversations that pass summaries back up the call stack.</div>
   
 </div>
 
@@ -464,6 +502,26 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
 
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=fittingopposite">fittingopposite</a>
+  </div>
+  <div class="comment-text">I don&#x27;t get the announcement. Is this included in the standard 5 or 20x Max plans?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=alienchow">alienchow</a>
+  </div>
+  <div class="comment-text">If this is a skill issue, feel free to let me know. In general Claude Code is decent for tooling. Onduty fullstack tooling features that used to sit ignored in the on-caller ticket queue for months can now be easily built in 20 minutes with unit tests and integration tests. The code quality isn&#x27;t always the best (although what&#x27;s good code for humans may not be good code for agents) but that&#x27;s another specific and directed prompt away to refactor.<p>However, I can&#x27;t seem to get Opus 4.6 to wire up proper infrastructure. This is especially so if OSS forks are used. It trips up on arguments from the fork source, invents args that don&#x27;t exist in either, and has a habit of tearing down entire clusters just to fix a Helm chart for &quot;testing purposes&quot;. I&#x27;ve tried modifying the CLAUDE.md and SPEC.md with specific instructions on how to do things but it just goes off on a tangent and starts to negotiate on the specs. &quot;I know you asked for help with figuring out the CNI configurations across 2 clusters but it&#x27;s too complex. Can we just do single cluster?&quot; The entire repository gets littered with random MD files everywhere for directory specific memories, context, action plans, deprecated action plans, pre-compaction memories etc. I don&#x27;t quite know which to prune either. It has taken most of the fun out of software engineering and I&#x27;m now just an Obsidian janitor for what I can best describe as a &quot;clueless junior engineer that never learns&quot;. When the auto compaction kicks in it&#x27;s like an episode of 50 first dates.<p>Right now this is where I assume is the limitation because the literature for real-world infrastructure requiring large contexts and integration is very limited. If anyone has any idea if Claude Opus is suitable for such tasks, do give some suggestions.</div>
+  
 </div>
 
     
@@ -522,6 +580,36 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=LarsDu88">LarsDu88</a>
+  </div>
+  <div class="comment-text">The stuff I built with Opus 4.6 in the past 2.5 weeks:<p>Full clone of Panel de Pon&#x2F;Tetris attack with full P2P rollback online multiplayer:
+<a href="https:&#x2F;&#x2F;panel-panic.com" rel="nofollow">https:&#x2F;&#x2F;panel-panic.com</a><p>An emulator of the MOS 6502 CPU with visual display of the voltage going into the DIP package of the physical CPU:
+<a href="https:&#x2F;&#x2F;larsdu.github.io&#x2F;Dippy6502&#x2F;" rel="nofollow">https:&#x2F;&#x2F;larsdu.github.io&#x2F;Dippy6502&#x2F;</a><p>I&#x27;m impressed as fuck, but a part of me deep down knows that I know fuck all about the 6502 or its assembly language and architecture, and now I&#x27;ll probably never be motivated to do this project in a way that I would&#x27;ve learned all the tings I wanted to learn.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=causalzap">causalzap</a>
+  </div>
+  <div class="comment-text">I&#x27;ve been using Opus 4.5 for programmatic SEO and localizing game descriptions. If 4.6 truly improves context compaction, it could significantly lower the API costs for large-scale content generation. Has anyone tested its logic consistency on JSON output compared to 4.5?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=arizen">arizen</a>
+  </div>
+  <div class="comment-text">Out of curiosity, what specific use cases on programmatic SEO are you currently doing with Opus?</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=vips7L">vips7L</a>
   </div>
   <div class="comment-text">Friends, just write the code. It’s not that hard.</div>
@@ -532,6 +620,14 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
   </div>
   <div class="comment-text">I hear what you&#x27;re saying, but for a lot of people coding isn&#x27;t something we can throw 40+ hours per week at.<p>My main job is running a small eComm business, and I have to both develop software automations for the office (to improve productivity long-term) while also doing non-coding day to day tasks.  On top of this, I maintain an open source project after hours.  I&#x27;ve also got a young family with 3 kids.<p>I&#x27;m not saying Claude is the damn singularity or anything, but stuff is getting done now that simply wasn&#x27;t being addressed before.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=fixxation92">fixxation92</a>
+  </div>
+  <div class="comment-text">100% agree with this, as much as I hate the term &quot;game-changer&quot;... it truly is, I&#x27;m working on projects that I&#x27;ve always wanted to do but never had the capacity (or money to pay a small team of devs to build something)-- all these things that you thought you&#x27;d never have a chance to do, are suddenly now real and completely possible.  I know there&#x27;s a lot of AI haters out there but I&#x27;m pretty sure in time, all devs will embrance it and truly enjoy working with it</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -550,16 +646,6 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
 
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=causalzap">causalzap</a>
-  </div>
-  <div class="comment-text">I&#x27;ve been using Opus 4.5 for programmatic SEO and localizing game descriptions. If 4.6 truly improves context compaction, it could significantly lower the API costs for large-scale content generation. Has anyone tested its logic consistency on JSON output compared to 4.5?</div>
-  
 </div>
 
     
@@ -586,16 +672,6 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=throw03172019">throw03172019</a>
-  </div>
-  <div class="comment-text">Pentagon may switch to Claude knowing OpenAI has the premium rates for 1M context.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=vicchenai">vicchenai</a>
   </div>
   <div class="comment-text">The no-degradation-at-scale claim is the interesting part. Context rot has been the main thing limiting how useful long context actually is in practice — curious to see what independent evals show on retrieval consistency across the full 1M window.</div>
@@ -614,39 +690,19 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=throw03172019">throw03172019</a>
+  </div>
+  <div class="comment-text">Pentagon may switch to Claude knowing OpenAI has the premium rates for 1M context.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=dkpk">dkpk</a>
   </div>
   <div class="comment-text">Is this also applicable for usage in Claude web &#x2F; mobile apps for chat?</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=8note">8note</a>
-  </div>
-  <div class="comment-text">im guessing this is why the compacts have started sucking? i just finished getting me some nicer tools for manipulating the graph so i could compact less frequently, and fish out context from the prior session.<p>maybe itll still be useful, though i only have opus at 1M, not sonnet yet</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=arjie">arjie</a>
-  </div>
-  <div class="comment-text">This is fantastic. I keep having to save to memory with instructions and then tell it to restore to get anywhere on long running tasks.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=thunkle">thunkle</a>
-  </div>
-  <div class="comment-text">Just have to ask. Will I be spending way more money since my context window is getting so much bigger?</div>
   
 </div>
 
@@ -660,7 +716,7 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 05:58 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 07:03 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
