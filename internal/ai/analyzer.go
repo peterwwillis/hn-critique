@@ -15,9 +15,10 @@ import (
 )
 
 const (
-	maxCommentChars = 6000
-	maxArticleChars = 6000
-	httpTimeout     = 120 * time.Second
+	maxCommentChars       = 6000
+	maxSingleCommentChars = 20000
+	maxArticleChars       = 6000
+	httpTimeout           = 120 * time.Second
 )
 
 // articlePrompt builds the fact-checking prompt for an article.
@@ -85,6 +86,9 @@ func buildCommentText(comments []*generator.Comment) string {
 	var sb strings.Builder
 	for _, c := range comments {
 		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
+		if len(entry) > maxSingleCommentChars {
+			entry = entry[:maxSingleCommentChars] + "…"
+		}
 		if sb.Len() == 0 && len(entry) > maxCommentChars {
 			// Always include the first comment even if it exceeds the limit so we do not truncate it.
 			sb.WriteString(entry)

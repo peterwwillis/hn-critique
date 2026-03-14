@@ -37,3 +37,21 @@ func TestApplyCommentTextUsesOriginalHTML(t *testing.T) {
 		t.Fatalf("expected comment text to use original HTML, got %q", critique.Comments[0].Text)
 	}
 }
+
+func TestApplyCommentTextMissingID(t *testing.T) {
+	critique := &generator.CommentsCritique{
+		Summary: "summary",
+		Comments: []generator.AnalyzedComment{
+			{ID: 99, Author: "unknown", Text: "original", AccuracyRank: 1},
+		},
+	}
+	comments := []*generator.Comment{
+		{ID: 42, Author: "alice", Text: template.HTML("<p>Full comment.</p>")},
+	}
+
+	applyCommentText(critique, comments)
+
+	if critique.Comments[0].Text != "original" {
+		t.Fatalf("expected comment text to remain unchanged, got %q", critique.Comments[0].Text)
+	}
+}
