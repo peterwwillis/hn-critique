@@ -56,7 +56,7 @@ The JSON must have exactly this shape:
     {
       "id": <comment id as integer>,
       "author": "<username>",
-      "text": "<comment text as provided above (some comments may be omitted to fit the input size, and exceptionally long comments may be truncated), plain text>",
+      "text": "<comment text as provided above (some comments may be omitted to fit the input size; analyze only the text provided here), plain text>",
       "indicators": ["<one or more of: emotional, intelligent, thoughtful, trolling, likely-true, likely-untrue, belligerent, constructive, useless>"],
       "accuracyRank": <integer starting at 1 for most accurate>,
       "analysis": "<1-2 sentence critique>"
@@ -86,21 +86,30 @@ func buildCommentText(comments []*generator.Comment) string {
 	var sb strings.Builder
 	for _, c := range comments {
 		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
-		if len(entry) > maxCommentChars {
-			// The first oversized comment consumes the entire budget, so stop after truncating it.
-			sb.WriteString(truncateUTF8(entry, maxCommentChars) + "…")
-			return sb.String()
-		}
+		entry = truncateWithEllipsis(entry, maxCommentChars)
 		if sb.Len()+len(entry) > maxCommentChars {
 			break
 		}
 		sb.WriteString(entry)
+		if sb.Len() >= maxCommentChars {
+			break
+		}
 	}
 	return sb.String()
 }
 
+func truncateWithEllipsis(s string, max int) string {
+	if len(s) <= max || max == 0 {
+		return s
+	}
+	if max <= len("…") {
+		return truncateUTF8(s, max)
+	}
+	return truncateUTF8(s, max-len("…")) + "…"
+}
+
 func truncateUTF8(s string, max int) string {
-	if len(s) <= max {
+	if len(s) <= max || max == 0 {
 		return s
 	}
 	truncated := s[:max]
