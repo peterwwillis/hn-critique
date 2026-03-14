@@ -86,6 +86,7 @@ func buildCommentText(comments []*generator.Comment) string {
 	for _, c := range comments {
 		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
 		if sb.Len() == 0 && len(entry) > maxCommentChars {
+			// Always include the first comment even if it exceeds the limit so we do not truncate it.
 			sb.WriteString(entry)
 			break
 		}
@@ -103,16 +104,15 @@ func applyCommentText(critique *generator.CommentsCritique, comments []*generato
 	}
 
 	commentByID := make(map[int]*generator.Comment, len(comments))
-	var collect func(list []*generator.Comment)
-	collect = func(list []*generator.Comment) {
-		for _, c := range list {
-			commentByID[c.ID] = c
-			if len(c.Kids) > 0 {
-				collect(c.Kids)
-			}
+	stack := append([]*generator.Comment(nil), comments...)
+	for len(stack) > 0 {
+		comment := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		commentByID[comment.ID] = comment
+		if len(comment.Kids) > 0 {
+			stack = append(stack, comment.Kids...)
 		}
 	}
-	collect(comments)
 
 	for i := range critique.Comments {
 		if original, ok := commentByID[critique.Comments[i].ID]; ok {
