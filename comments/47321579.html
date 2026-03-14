@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">5 points</span>
+        <span class="score">36 points</span>
         by <a href="https://news.ycombinator.com/user?id=dhruv_ahuja">dhruv_ahuja</a>
         4 days ago
         &nbsp;|&nbsp;<a href="/critique/47321579.html">critique article</a>
@@ -44,7 +44,72 @@
     </div>
 
     
-    <p class="no-critique">No comments are available for this story.</p>
+
+    <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=wise0wl">wise0wl</a>
+  </div>
+  <div class="comment-text">The OpenTelemetry spec is absolutely what folks have been waiting for for as long as I&#x27;ve been in computing (~20 years).  A single standard that is implemented in nearly every popular language with very close feature parity.  It&#x27;s honestly wonderful to work with compared to the old vendor supplied frameworks.<p>I took it upon myself to write a library for my current employer (4yrs ago now?) that abstracted and standardized the way our Rust services instantiated and utilized the metrics and tracing fundamentals that OpenTelemetry provides.  I recently added OTLP logging (technically using tracing events) to allow for forwarding baggage &#x2F; context &#x2F; metadata with the log lines.  The `tracing` crate in rust also has a macro called `instrument` that allows you to mostly auto-instrument your functions for tracing, allowing the tracing context to be extracted and propagated into your function so the trace &#x2F; span can be added to subsequent HTTP &#x2F; gRPC requests.<p>We did all kinds of other stuff too, like adding a method for attaching the trace-id to our kafka messages so we can see how long the entire lifetime of the request takes (including sitting on the queue).  It&#x27;s been extremely insightful.<p>Signoz is newer to the game.  I&#x27;m glad there are more competitors and vendors using OpenTelemetry natively.  We originally talked to some of the <i>big</i> vendors and they were going to gladly accept OpenTelemetry, but they marked every metric as a &quot;custom&quot; metric and would charge out the wazoo for each of them, far in excess of whatever was instrumented natively with their APM plugin thingamabob.<p>The more the better.  I love OpenTelemetry, and using it in Rust has been mostly great.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=luzejian">luzejian</a>
+  </div>
+  <div class="comment-text">The interesting meta-pattern here is how often the tooling around a problem lags the problem itself by 5-10 years. The operational complexity exists, the pain is real, but because it&#x27;s distributed across many small actors rather than concentrated in a few large ones, the market for structured solutions is slower to develop. That&#x27;s usually a signal rather than a dead end — it means the first tool that actually fits the workflow has real leverage.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=zamalek">zamalek</a>
+  </div>
+  <div class="comment-text">I have OTEL + Rust in production, alongside some other languages (+ OTEL), and it is <i>by far</i> more useful and predictable than the others. I often find myself monkey-patching in logging for other language libraries, where with Rust it just works.<p>(Except for this, that is: <a href="https:&#x2F;&#x2F;github.com&#x2F;tokio-rs&#x2F;tracing&#x2F;issues&#x2F;2519" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;tokio-rs&#x2F;tracing&#x2F;issues&#x2F;2519</a>)</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=scottlamb">scottlamb</a>
+  </div>
+  <div class="comment-text">Opened the link. Saw my own comment. I&#x27;m still as confused today as I was then about how this was ever supposed to work—either the quoted code is wrong or there&#x27;s some weird unstated interface contract. I gather from other issues the maintainers are uninterested in a semver break any time soon. Unsure if they&#x27;d accept a performance regression (even if it makes the thing actually work). So I feel stuck. In the meantime, I don&#x27;t use per-layer filtering. That&#x27;s a trap.<p>I&#x27;ve got a whole list of puzzling bugs in the tracing &lt;-&gt; opentelemetry &lt;-&gt; datadog linkage.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=luzejian">luzejian</a>
+  </div>
+  <div class="comment-text">The interesting meta-pattern here is how often the tooling around a problem lags the problem itself by 5-10 years. The operational complexity exists, the pain is real, but because it&#x27;s distributed across many small actors rather than concentrated in a few large ones, the market for structured solutions is slower to develop. That&#x27;s usually a signal rather than a dead end — it means the first tool that actually fits the workflow, rather than a generic workflow tool, has real leverage.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pooper">pooper</a>
+  </div>
+  <div class="comment-text">Speaking of opentelemetry, I try to use open telemetry with my personal projects in an asp dotnet as well as with a dotnet console app. I don&#x27;t have the required corporate background in opentelemetry. I had to write my own file log exporter. I didn&#x27;t write it myself -- I used Claude to write it for me in jsonl format which seemed like a good way to have each row in json and for the console app, I get a file something like this<p>```
+logs_2025-12-24_0003.jsonl
+```<p>I asked Claude to keep it in an xdg folder and it chose<p>```
+&#x2F;home&#x2F;{username}&#x2F;.local&#x2F;share&#x2F;{applicationName}&#x2F;telemetry&#x2F;logs
+```<p>I also have folders for metrics and traces but those are empty.<p>I have never had a need to look at the logs for the dotnet console app I have and the only reason I have looked at the logs on the asp dotnet app was to review errors when I ran into some error on my asp dotnet application, which frankly I don&#x27;t need open telemetry for.<p>What am I missing here? Am I using it wrong?<p>If you use open telemetry, where do your logs, metrics, and traces go? Do you write your own custom classes to write them to a file on the disk? Do you pay for something like datadog (congratulations on winning the lottery I guess?)<p>I appreciate your reply. Thank you for helping me learn.</div>
+  
+</div>
+
+    
+
     
 
   </td></tr>
@@ -53,7 +118,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-13 23:41 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 02:47 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
