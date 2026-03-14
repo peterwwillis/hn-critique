@@ -90,7 +90,7 @@ func buildCommentText(comments []*generator.Comment) string {
 			entry = entry[:maxSingleCommentChars] + "…"
 		}
 		if sb.Len() == 0 && len(entry) > maxCommentChars {
-			// Always include the first comment even if it exceeds the limit so we do not truncate it.
+			// Always include the first comment even if it exceeds maxCommentChars, up to maxSingleCommentChars.
 			sb.WriteString(entry)
 			break
 		}
@@ -107,22 +107,28 @@ func applyCommentText(critique *generator.CommentsCritique, comments []*generato
 		return
 	}
 
-	commentByID := make(map[int]*generator.Comment, len(comments))
-	stack := append([]*generator.Comment(nil), comments...)
-	for len(stack) > 0 {
-		comment := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		commentByID[comment.ID] = comment
-		if len(comment.Kids) > 0 {
-			stack = append(stack, comment.Kids...)
-		}
-	}
+	commentByID := indexCommentsByID(comments)
 
 	for i := range critique.Comments {
 		if original, ok := commentByID[critique.Comments[i].ID]; ok {
 			critique.Comments[i].Text = string(original.Text)
 		}
 	}
+}
+
+func indexCommentsByID(comments []*generator.Comment) map[int]*generator.Comment {
+	commentByID := make(map[int]*generator.Comment, len(comments))
+	var walk func(list []*generator.Comment)
+	walk = func(list []*generator.Comment) {
+		for _, comment := range list {
+			commentByID[comment.ID] = comment
+			if len(comment.Kids) > 0 {
+				walk(comment.Kids)
+			}
+		}
+	}
+	walk(comments)
+	return commentByID
 }
 
 // parseJSON extracts JSON from the model response and decodes it into v.
