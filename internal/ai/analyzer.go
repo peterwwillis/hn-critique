@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/peterwwillis/hn-critique/internal/generator"
 )
@@ -86,7 +87,8 @@ func buildCommentText(comments []*generator.Comment) string {
 	for _, c := range comments {
 		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
 		if len(entry) > maxCommentChars {
-			sb.WriteString(entry[:maxCommentChars] + "…")
+			// The first oversized comment consumes the entire budget, so stop after truncating it.
+			sb.WriteString(truncateUTF8(entry, maxCommentChars) + "…")
 			return sb.String()
 		}
 		if sb.Len()+len(entry) > maxCommentChars {
@@ -95,6 +97,17 @@ func buildCommentText(comments []*generator.Comment) string {
 		sb.WriteString(entry)
 	}
 	return sb.String()
+}
+
+func truncateUTF8(s string, max int) string {
+	if len(s) <= max {
+		return s
+	}
+	truncated := s[:max]
+	for !utf8.ValidString(truncated) && len(truncated) > 0 {
+		truncated = truncated[:len(truncated)-1]
+	}
+	return truncated
 }
 
 func applyCommentText(critique *generator.CommentsCritique, comments []*generator.Comment) {
