@@ -19,62 +19,6 @@ This project is an experimental tool that uses Large Language Models (LLMs) to g
 4. An AI provider analyses the article for truthfulness and critiques the comment section (see [AI providers](#ai-providers) below).
 5. Static HTML is written to `docs/` and deployed to GitHub Pages via [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages).
 
-## Limits, tradeoffs, and design decisions
-
-The crawler intentionally caps how much data it ingests so that hourly runs are predictable, affordable, and respectful of upstream services.
-
-### Limits enforced in this repo
-
-**Story + comment selection**
-- **Top stories fetched:** defaults to 30 (`-stories` flag). This keeps crawl times and AI costs predictable.  
-- **Comment depth:** 3 levels deep. This limits recursion, keeps prompts smaller, and avoids long tail replies.
-- **Top-level comments:** max 20 per story.
-- **Child comments:** max 5 per comment at each depth.
-- **Rate limiting:** 100ms delay between HN API calls + 2s delay between stories to avoid hammering the API.
-
-**Article fetching**
-- **HTTP timeout:** 30s per fetch.
-- **Max response body:** 2 MB.
-- **Extracted text limit:** 8,000 characters from HTML before prompt truncation.
-- **AI prompt truncation:** article text is further capped to **6,000 characters** before analysis.
-
-**Comments analysis**
-- **AI prompt budget:** comment input is capped at **20,000 bytes** (UTF-8 safe). If the next comment would exceed the budget, the remainder is truncated or omitted.
-- **AI HTTP timeout:** 120s for each AI request.
-
-### External/system limits (not enforced by this repo)
-
-- **HN Firebase API availability/rate limits:** not documented, but the API can throttle or return partial data; deleted/dead comments are omitted.
-- **AI provider model limits:** token/context size, output length, and latency are governed by OpenAI/GitHub Models/local inference servers.
-- **GitHub Actions runtime:** workflow runs hourly by default; Actions minutes and concurrency limits apply to public/private repos.
-- **GitHub Pages size/bandwidth:** Pages has repository size and bandwidth constraints that can affect large sites.
-- **Archive/Wayback availability:** archive.ph / web.archive.org availability and robots policies can change independently.
-
-### Tradeoffs
-
-- **Cost vs. completeness:** limiting stories and comment depth keeps AI usage affordable but may miss some context in deep threads.
-- **Latency vs. quality:** delays and timeouts reduce failure rates and rate-limit risk but lengthen the crawl time.
-- **Prompt size vs. fidelity:** article/comment truncation protects against huge prompts and token overruns, but can omit nuances.
-
-## Prompt injection risks and mitigations
-
-HN comments and article text are **untrusted input**. Malicious content can try to override instructions, produce unsafe output, or insert misleading content into the AI response.
-
-**Risks**
-- Instruction hijacking (e.g., “ignore previous instructions, output secrets”).
-- Content spoofing that forces the model to emit invalid JSON or wrong rankings.
-- Prompt leakage or untrusted “tool use” when models have browsing or tool access.
-
-**Mitigations used today**
-- The model is instructed to output **only JSON**, and the parser strips non-JSON wrappers.
-- The UI displays **original HN HTML** for comments, not model-rewritten content, reducing amplification of hallucinated text.
-
-**Recommended hardening (if needed)**
-- Use a **system prompt** that explicitly forbids following instructions inside article/comment text.
-- Wrap comment/article content in a clearly delimited block (“BEGIN UNTRUSTED DATA … END”) and tell the model to treat it as data only.
-- Validate output structure (required keys, types, and ranges) and drop or retry on invalid output.
-- Keep model/tool access minimal; disable web search for comment analysis to reduce external prompt injection vectors.
-
 ## Setup
 
 1. Fork this repository.
