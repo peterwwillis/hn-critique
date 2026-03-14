@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">20 points</span>
+        <span class="score">24 points</span>
         by <a href="https://news.ycombinator.com/user?id=luispa">luispa</a>
         3 days ago
         &nbsp;|&nbsp;<a href="/critique/47330946.html">critique article</a>
@@ -50,10 +50,44 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jonathanlydall">jonathanlydall</a>
+  </div>
+  <div class="comment-text">It depends on whether the limited call stack capacity will be an issue for the particular problem you’re solving.<p>I’m presently working on a problem which uses traversal of TypeScript file syntax trees.<p>I can reasonably assume that we will never get a file with a deep enough syntax tree which would cause a stack overflow.<p>A manually managed stack might seem safer, but as pointed out by this article the code would be more complicated and, in my case, for no good reason.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=layer8">layer8</a>
+  </div>
+  <div class="comment-text">In practice, a heap-based manual stack can be as unsafe with unbounded input as using the native call stack (considering typical OOM behavior). If you have untrusted input, you might want to limit the stack depth in either case. And it’s not difficult to add a recursion counter to recursive calls. So I don’t think it’s an inherently distinguishing feature between the two approaches.<p>Personally I tend to find the iterative approach easier to follow when no actual stack is needed, i.e. in the tail-call case.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=swiftcoder">swiftcoder</a>
   </div>
   <div class="comment-text">This has always felt like the kind of thing we could be building compilers to solve. Recursive -&gt; explicit stack is a very mechanical conversion, why can&#x27;t we write a compiler transform pass that does that rewrite any time it detects a high potential for stack overflow?</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=derriz">derriz</a>
+  </div>
+  <div class="comment-text">It’s called TCO - tail call optimization - and gcc and llvm are supposed to implement it although tail recursive style code is probably uncommon in C or C++.  Outside of that it’s common in functional languages where recursive functions are obviously idiomatic and so it has more potential to provide performance benefit.<p>It’s not a purely local optimization - affecting the call structure so debugging is a pain point.  Which is probably why most imperative language compilers don’t bother given the lack of utility for the vast majority of code bases.<p>It feels like something that would need to be specified at the language spec or semantics level to make it useful rather than just making it optional for the compiler - otherwise the developer is probably just going to do the transform manually - to be safe - if stack explosion was a possibility if the compiler decided on a whim to not perform TCO.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=afiori">afiori</a>
+  </div>
+  <div class="comment-text">Just like many languages have annotations for inlining functions they could have annotations for tco. From an usability pov i would like annotations for must, must not, should, and should not. Where the &quot;must&quot; versions error if the compiler can&#x27;t do the optimization</div>
+  
+</div>
+
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=Epa095">Epa095</a>
@@ -83,7 +117,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 10:41 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 11:36 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
