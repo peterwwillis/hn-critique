@@ -62,5 +62,6 @@ func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*g
 	if err := parseJSON(text, &critique); err != nil {
 		return nil, fmt.Errorf("github models: parsing comments critique: %w", err)
 	}
+	applyCommentText(&critique, comments)
 	return &critique, nil
 }

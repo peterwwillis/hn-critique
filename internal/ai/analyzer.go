@@ -46,9 +46,6 @@ Article content:
 
 // commentsPrompt builds the analysis prompt for a comment section.
 func commentsPrompt(title, articleURL, commentLines string) string {
-	if len(commentLines) > maxCommentChars {
-		commentLines = commentLines[:maxCommentChars] + "…"
-	}
 	return fmt.Sprintf(`You are a critical analyst. Analyze the following Hacker News comment section and respond with ONLY a valid JSON object — no markdown, no code fences, just raw JSON.
 
 The JSON must have exactly this shape:
@@ -58,7 +55,7 @@ The JSON must have exactly this shape:
     {
       "id": <comment id as integer>,
       "author": "<username>",
-      "text": "<first 120 chars of the comment, plain text>",
+      "text": "<full comment text, plain text>",
       "indicators": ["<one or more of: emotional, intelligent, thoughtful, trolling, likely-true, likely-untrue, belligerent, constructive, useless>"],
       "accuracyRank": <integer starting at 1 for most accurate>,
       "analysis": "<1-2 sentence critique>"
@@ -87,9 +84,37 @@ func sanitizeRating(r string) string {
 func buildCommentText(comments []*generator.Comment) string {
 	var sb strings.Builder
 	for _, c := range comments {
-		sb.WriteString(fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text))
+		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
+		if sb.Len() > 0 && sb.Len()+len(entry) > maxCommentChars {
+			break
+		}
+		sb.WriteString(entry)
 	}
 	return sb.String()
+}
+
+func applyCommentText(critique *generator.CommentsCritique, comments []*generator.Comment) {
+	if critique == nil || len(critique.Comments) == 0 || len(comments) == 0 {
+		return
+	}
+
+	commentByID := make(map[int]*generator.Comment, len(comments))
+	var collect func(list []*generator.Comment)
+	collect = func(list []*generator.Comment) {
+		for _, c := range list {
+			commentByID[c.ID] = c
+			if len(c.Kids) > 0 {
+				collect(c.Kids)
+			}
+		}
+	}
+	collect(comments)
+
+	for i := range critique.Comments {
+		if original, ok := commentByID[critique.Comments[i].ID]; ok {
+			critique.Comments[i].Text = string(original.Text)
+		}
+	}
 }
 
 // parseJSON extracts JSON from the model response and decodes it into v.
@@ -213,4 +238,3 @@ func (a *Analyzer) AnalyzeArticle(title, articleURL, content string) (*generator
 func (a *Analyzer) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
 	return a.p.AnalyzeComments(title, articleURL, comments)
 }
-
