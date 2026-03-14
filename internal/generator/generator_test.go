@@ -3,11 +3,9 @@ package generator_test
 import (
 	"html/template"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/peterwwillis/hn-critique/internal/generator"
 )
@@ -42,7 +40,7 @@ func TestGenerate(t *testing.T) {
 				MainPoints:     []string{"Faster GC", "New crypto packages"},
 				Truthfulness:   "Claims appear accurate.",
 				Considerations: []string{"Performance varies by workload."},
-				Rating:         "reliable",
+				Rating:         "questionable",
 			},
 			CommentsCritique: &generator.CommentsCritique{
 				Summary: "Discussion is mostly positive.",
@@ -68,6 +66,11 @@ func TestGenerate(t *testing.T) {
 			Author:       "asker",
 			Time:         1741716000,
 			CommentCount: 89,
+			Critique: &generator.ArticleCritique{
+				Summary:      "Summary unavailable because the article could not be retrieved.",
+				Truthfulness: "Truthfulness assessment unavailable because the article could not be retrieved.",
+				Rating:       "unavailable",
+			},
 		},
 	}
 
@@ -75,21 +78,19 @@ func TestGenerate(t *testing.T) {
 		t.Fatalf("Generate failed: %v", err)
 	}
 
-	firstDatePath := time.Unix(stories[0].Time, 0).UTC().Format("2006/01/02")
-	secondDatePath := time.Unix(stories[1].Time, 0).UTC().Format("2006/01/02")
-	critiqueFirst := filepath.Join("critique", filepath.FromSlash(firstDatePath), "12345.html")
-	commentsFirst := filepath.Join("comments", filepath.FromSlash(firstDatePath), "12345.html")
-	critiqueSecond := filepath.Join("critique", filepath.FromSlash(secondDatePath), "67890.html")
-	commentsSecond := filepath.Join("comments", filepath.FromSlash(secondDatePath), "67890.html")
+	critiquePath := filepath.FromSlash(stories[0].CritiquePath)
+	commentsPath := filepath.FromSlash(stories[0].CommentsPath)
+	secondCritiquePath := filepath.FromSlash(stories[1].CritiquePath)
+	secondCommentsPath := filepath.FromSlash(stories[1].CommentsPath)
 
 	expectedFiles := []string{
 		"index.html",
 		"style.css",
 		".nojekyll",
-		critiqueFirst,
-		commentsFirst,
-		critiqueSecond,
-		commentsSecond,
+		critiquePath,
+		commentsPath,
+		secondCritiquePath,
+		secondCommentsPath,
 	}
 	for _, rel := range expectedFiles {
 		full := filepath.Join(outDir, rel)
@@ -109,10 +110,15 @@ func TestGenerate(t *testing.T) {
 		"go.dev",
 		"500 points",
 		"gopher",
-		path.Join("critique", firstDatePath, "12345.html"),
-		path.Join("comments", firstDatePath, "12345.html"),
+		stories[0].CritiquePath,
+		stories[0].CommentsPath,
+		"Questionable",
+		"rating-questionable",
+		"Unavailable",
+		"rating-unavailable",
 		"Ask HN: Favorite tools?",
 		"HN Critique",
+		"Disclaimer: This website uses AI to generate automated critiques and ratings.",
 	} {
 		if !strings.Contains(index, want) {
 			t.Errorf("index.html missing expected content: %q", want)
@@ -120,27 +126,28 @@ func TestGenerate(t *testing.T) {
 	}
 
 	// Verify critique page contains expected content.
-	critiqueData, err := os.ReadFile(filepath.Join(outDir, critiqueFirst))
+	critiqueData, err := os.ReadFile(filepath.Join(outDir, critiquePath))
 	if err != nil {
-		t.Fatalf("reading %s: %v", critiqueFirst, err)
+		t.Fatalf("reading %s: %v", critiquePath, err)
 	}
 	critique := string(critiqueData)
 	for _, want := range []string{
 		"Go 1.24 Released",
 		"Go 1.24 introduces performance improvements.",
 		"Faster GC",
-		"reliable",
-		"rating-reliable",
+		"questionable",
+		"rating-questionable",
+		"Disclaimer: This website uses AI to generate automated critiques and ratings.",
 	} {
 		if !strings.Contains(critique, want) {
-			t.Errorf("%s missing expected content: %q", critiqueFirst, want)
+			t.Errorf("%s missing expected content: %q", critiquePath, want)
 		}
 	}
 
 	// Verify comments page contains expected content.
-	commentsData, err := os.ReadFile(filepath.Join(outDir, commentsFirst))
+	commentsData, err := os.ReadFile(filepath.Join(outDir, commentsPath))
 	if err != nil {
-		t.Fatalf("reading %s: %v", commentsFirst, err)
+		t.Fatalf("reading %s: %v", commentsPath, err)
 	}
 	comments := string(commentsData)
 	for _, want := range []string{
@@ -151,7 +158,7 @@ func TestGenerate(t *testing.T) {
 		"#1",
 	} {
 		if !strings.Contains(comments, want) {
-			t.Errorf("%s missing expected content: %q", commentsFirst, want)
+			t.Errorf("%s missing expected content: %q", commentsPath, want)
 		}
 	}
 }
