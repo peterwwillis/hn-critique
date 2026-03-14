@@ -56,7 +56,7 @@ The JSON must have exactly this shape:
     {
       "id": <comment id as integer>,
       "author": "<username>",
-      "text": "<comment text as provided above (some comments may be omitted to fit the input size; analyze only the text provided here)>",
+      "text": "<comment text as provided above>",
       "indicators": ["<one or more of: emotional, intelligent, thoughtful, trolling, likely-true, likely-untrue, belligerent, constructive, useless>"],
       "accuracyRank": <integer starting at 1 for most accurate>,
       "analysis": "<1-2 sentence critique>"
@@ -106,10 +106,12 @@ func truncateWithEllipsis(s string, maxBytes int) string {
 	if len(s) <= maxBytes {
 		return s
 	}
-	if maxBytes <= len("…") {
+	ellipsis := "…"
+	ellipsisBytes := len(ellipsis)
+	if maxBytes <= ellipsisBytes {
 		return truncateUTF8(s, maxBytes)
 	}
-	return truncateUTF8(s, maxBytes-len("…")) + "…"
+	return truncateUTF8(s, maxBytes-ellipsisBytes) + ellipsis
 }
 
 func truncateUTF8(s string, maxBytes int) string {
