@@ -9,7 +9,7 @@ import (
 )
 
 func TestBuildCommentTextKeepsFullComment(t *testing.T) {
-	longText := strings.Repeat("a", maxCommentChars+100)
+	longText := strings.Repeat("a", maxCommentChars-100)
 	comments := []*generator.Comment{
 		{ID: 1, Author: "alice", Text: template.HTML(longText)},
 	}

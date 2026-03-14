@@ -15,10 +15,9 @@ import (
 )
 
 const (
-	maxCommentChars       = 6000
-	maxSingleCommentChars = 20000
-	maxArticleChars       = 6000
-	httpTimeout           = 120 * time.Second
+	maxCommentChars = 20000
+	maxArticleChars = 6000
+	httpTimeout     = 120 * time.Second
 )
 
 // articlePrompt builds the fact-checking prompt for an article.
@@ -56,7 +55,7 @@ The JSON must have exactly this shape:
     {
       "id": <comment id as integer>,
       "author": "<username>",
-      "text": "<full comment text as provided above, plain text>",
+      "text": "<comment text as provided above (may be truncated if exceptionally long), plain text>",
       "indicators": ["<one or more of: emotional, intelligent, thoughtful, trolling, likely-true, likely-untrue, belligerent, constructive, useless>"],
       "accuracyRank": <integer starting at 1 for most accurate>,
       "analysis": "<1-2 sentence critique>"
@@ -86,12 +85,8 @@ func buildCommentText(comments []*generator.Comment) string {
 	var sb strings.Builder
 	for _, c := range comments {
 		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
-		if len(entry) > maxSingleCommentChars {
-			entry = entry[:maxSingleCommentChars] + "…"
-		}
-		if sb.Len() == 0 && len(entry) > maxCommentChars {
-			// Always include the first comment even if it exceeds maxCommentChars, up to maxSingleCommentChars.
-			sb.WriteString(entry)
+		if len(entry) > maxCommentChars {
+			sb.WriteString(entry[:maxCommentChars] + "…")
 			break
 		}
 		if sb.Len()+len(entry) > maxCommentChars {
