@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">1051 points</span>
+        <span class="score">1063 points</span>
         by <a href="https://news.ycombinator.com/user?id=meetpateltech">meetpateltech</a>
         1 days ago
         &nbsp;|&nbsp;<a href="/critique/47367129.html">critique article</a>
@@ -56,14 +56,6 @@
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=tontinton">tontinton</a>
-  </div>
-  <div class="comment-text">Yeah we all converge to the same workflow, in my ai coding agent I&#x27;m working on now, I&#x27;ve added an &quot;index&quot; tool that uses tree-sitter to compress and show the AI a skeleton of a code file.<p>Here&#x27;s the implementation for the interested: <a href="https:&#x2F;&#x2F;github.com&#x2F;tontinton&#x2F;maki&#x2F;blob&#x2F;main&#x2F;maki-code-index%2Fsrc%2Flib.rs" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;tontinton&#x2F;maki&#x2F;blob&#x2F;main&#x2F;maki-code-index%...</a></div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=daemonk">daemonk</a>
   </div>
   <div class="comment-text">Yeah this is the simpler and also effective strategy. A lot of people are building sophisticated AST RAG models. But you really just need to ask Claude to generally build a semantic index for each large-ish piece of code and re-use it when getting context.<p>You have to make sure the semantic summary takes up significantly less tokens than just reading the code or its just a waste of token&#x2F;time.<p>Then have a skill that uses git version logs to perform lazy summary cache when needed.</div>
@@ -80,17 +72,33 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=speakbits">speakbits</a>
+    <a href="https://news.ycombinator.com/user?id=tontinton">tontinton</a>
   </div>
-  <div class="comment-text">I think you&#x27;ve kind of hit on the more successful point here, which is that you should be keeping things focused in a sufficiently focused area to have better success and not necessarily needing more context.</div>
+  <div class="comment-text">Yeah we all converge to the same workflow, in my ai coding agent I&#x27;m working on now, I&#x27;ve added an &quot;index&quot; tool that uses tree-sitter to compress and show the AI a skeleton of a code file.<p>Here&#x27;s the implementation for the interested: <a href="https:&#x2F;&#x2F;github.com&#x2F;tontinton&#x2F;maki&#x2F;blob&#x2F;main&#x2F;maki-code-index%2Fsrc%2Flib.rs" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;tontinton&#x2F;maki&#x2F;blob&#x2F;main&#x2F;maki-code-index%...</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jeremychone">jeremychone</a>
+  </div>
+  <div class="comment-text">Oh, that&#x27;s great.<p>I&#x27;ve always wanted to explore how to fit tree-sitter into this workflow. It&#x27;s great to know that this works well too.<p>Thanks for sharing the code.<p>(Here is the AIPack runtime I built, MIT: <a href="https:&#x2F;&#x2F;github.com&#x2F;aipack-ai&#x2F;aipack" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;aipack-ai&#x2F;aipack</a>), and here is the code for pro@coder (<a href="https:&#x2F;&#x2F;github.com&#x2F;aipack-ai&#x2F;packs-pro&#x2F;tree&#x2F;main&#x2F;pro&#x2F;coder" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;aipack-ai&#x2F;packs-pro&#x2F;tree&#x2F;main&#x2F;pro&#x2F;coder</a>) (AIPack is in Rust, and AI Packs are in md &#x2F; lua)</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=rafael-lua">rafael-lua</a>
+  </div>
+  <div class="comment-text">Well, out of all the workflows I have seen, this one is rather nice, might give it a try.<p>I imagine if the context were being commited and kept up-to-date with CI would work for others to use as well.<p>However, I&#x27;m a little confused on the autocontext&#x2F;globs narrowing part. Do you, the developer, provide them? Or you feed the full code map to flash + your prompt so it returns the globs based on your prompt?<p>Also, in general, is your map of a file relatively smaller than the file itself, even for very small files?</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=LuxBennu">LuxBennu</a>
+    <a href="https://news.ycombinator.com/user?id=speakbits">speakbits</a>
   </div>
-  <div class="comment-text">Your code map compresses signal on the context side. Same principle applies on the prompt side: prompts that front-load specifics (file, error, expected behavior) resolve in 1-2 turns. Vague ones spiral into 5-6. 1M context doesn&#x27;t change that — it just gives you more room for the spiral.</div>
+  <div class="comment-text">I think you&#x27;ve kind of hit on the more successful point here, which is that you should be keeping things focused in a sufficiently focused area to have better success and not necessarily needing more context.</div>
   
 </div>
 
@@ -339,24 +347,6 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=anshumankmr">anshumankmr</a>
-  </div>
-  <div class="comment-text">All while their usage limits are so excessively shitty that I paid them 50$ just two days back cause I ran out of usage and they still blocked from using it during a critical work week (and did not refund my 50$ despite my emails and requests and route me to s*ty AI bot.). Anyway, I am using Copilot and OpenCode a lot more these days which is much better.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=praddlebus">praddlebus</a>
-  </div>
-  <div class="comment-text">What model(s) do you use with OpenCode? Can you use opus4.6 1m? Is it better in terms of usage if you use the same model?</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=convenwis">convenwis</a>
   </div>
   <div class="comment-text">Is there a writeup anywhere on what this means for effective context? I think that many of us have found that even when the context window was 100k tokens the actual usable window was smaller than that. As you got closer to 100k performance degraded substantially. I&#x27;m assuming that is still true but what does the curve look like?</div>
@@ -423,10 +413,18 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=iandanforth">iandanforth</a>
+    <a href="https://news.ycombinator.com/user?id=anshumankmr">anshumankmr</a>
   </div>
-  <div class="comment-text">I&#x27;m very happy about this change. For long sessions with Claude it was always like a punch to the gut when a compaction came along. Codex&#x2F;GPT-5.4 is better with compactions so I switched to that to avoid the pain of the model suddenly forgetting key aspects of the work and making the same dumb errors all over again. I&#x27;m excited to return to Claude as my daily driver!</div>
+  <div class="comment-text">All while their usage limits are so excessively shitty that I paid them 50$ just two days back cause I ran out of usage and they still blocked from using it during a critical work week (and did not refund my 50$ despite my emails and requests and route me to s*ty AI bot.). Anyway, I am using Copilot and OpenCode a lot more these days which is much better.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=praddlebus">praddlebus</a>
+  </div>
+  <div class="comment-text">What model(s) do you use with OpenCode? Can you use opus4.6 1m? Is it better in terms of usage if you use the same model?</div>
+  
+</div>
+
 </div>
 
     
@@ -453,6 +451,16 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
   
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=iandanforth">iandanforth</a>
+  </div>
+  <div class="comment-text">I&#x27;m very happy about this change. For long sessions with Claude it was always like a punch to the gut when a compaction came along. Codex&#x2F;GPT-5.4 is better with compactions so I switched to that to avoid the pain of the model suddenly forgetting key aspects of the work and making the same dumb errors all over again. I&#x27;m excited to return to Claude as my daily driver!</div>
+  
 </div>
 
     
@@ -511,16 +519,6 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
   
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=PeterStuer">PeterStuer</a>
-  </div>
-  <div class="comment-text">The thing that would get me more excited is how far they could push context coherence before the model loses track. I&#x27;m hoping 250k.</div>
-  
 </div>
 
     
@@ -673,16 +671,6 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=elophanto_agent">elophanto_agent</a>
-  </div>
-  <div class="comment-text">finally, enough context to fit my entire codebase AND my excuses for why it doesn&#x27;t work</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=jeff_antseed">jeff_antseed</a>
   </div>
   <div class="comment-text">the coherence question is the one that matters here. 1M tokens is not the same as actually using 1M tokens well.<p>we&#x27;ve been testing long-context in prod across a few models and the degradation isn&#x27;t linear — there&#x27;s something like a cliff somewhere around 600-700k where instruction following starts getting flaky and the model starts ignoring things it clearly &quot;saw&quot; earlier. its not about retrieval exactly, more like... it stops weighting distant context appropriately.<p>gemini&#x27;s problems with loops and tool forgetting that someone mentioned are real. we see that too. whether claude actually handles the tail end of 1M coherently is the real question here, and &quot;standard pricing with no long-context premium&quot; doesn&#x27;t answer it.<p>honestly the fact that they&#x27;re shipping at standard pricing is more interesting to me than the window size itself. that suggests they&#x27;ve got the KV cache economics figured out, which is harder than it sounds.</div>
@@ -701,9 +689,9 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=tariky">tariky</a>
+    <a href="https://news.ycombinator.com/user?id=PeterStuer">PeterStuer</a>
   </div>
-  <div class="comment-text">This is amazing. I have to test it with my reverse engineering workflow. I don&#x27;t know how many people use CC for RE but it is really good at it.<p>Also it is really good for writing SketchUp plugins in ruby. It one shots plugins that are in some versions better then commercial one you can buy online.<p>CC will change development landscape so much in next year. It is exciting and terrifying in same time.</div>
+  <div class="comment-text">The thing that would get me more excited is how far they could push context coherence before the model loses track. I&#x27;m hoping 250k.</div>
   
 </div>
 
@@ -711,9 +699,19 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jwilliams">jwilliams</a>
+    <a href="https://news.ycombinator.com/user?id=elophanto_agent">elophanto_agent</a>
   </div>
-  <div class="comment-text">I&#x27;m fairly sure that your best throughput is <i>single-prompt</i> single-shot runs with Claude (and that means no plan, no swarms, etc) -- just with a high degree of work in parallel.<p>So for me this is a pretty huge change as the ceiling on a single prompt just jumped considerably. I&#x27;m replaying some of my less effective prompts today to see the impact.</div>
+  <div class="comment-text">finally, enough context to fit my entire codebase AND my excuses for why it doesn&#x27;t work</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tariky">tariky</a>
+  </div>
+  <div class="comment-text">This is amazing. I have to test it with my reverse engineering workflow. I don&#x27;t know how many people use CC for RE but it is really good at it.<p>Also it is really good for writing SketchUp plugins in ruby. It one shots plugins that are in some versions better then commercial one you can buy online.<p>CC will change development landscape so much in next year. It is exciting and terrifying in same time.</div>
   
 </div>
 
@@ -765,6 +763,16 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
 
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jwilliams">jwilliams</a>
+  </div>
+  <div class="comment-text">I&#x27;m fairly sure that your best throughput is <i>single-prompt</i> single-shot runs with Claude (and that means no plan, no swarms, etc) -- just with a high degree of work in parallel.<p>So for me this is a pretty huge change as the ceiling on a single prompt just jumped considerably. I&#x27;m replaying some of my less effective prompts today to see the impact.</div>
+  
 </div>
 
     
@@ -825,9 +833,9 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jmkozko">jmkozko</a>
+    <a href="https://news.ycombinator.com/user?id=jFriedensreich">jFriedensreich</a>
   </div>
-  <div class="comment-text">Do subscription users still need to tap into &quot;extra usage&quot; spending to go above 200K tokens?</div>
+  <div class="comment-text">My testing was extremely disappointing, this is not a context window that magically extends your breathing room for a conversation. I can tell blindly at this point when 150 - 200 k tokens are reached because the coding quality and coherence just drops by one or two generations. Its great for the case you really need a giant context for specific task but it changes nothing for needing to compact or handover at 200k.</div>
   
 </div>
 
@@ -851,7 +859,7 @@ The meta-principle he calls Frequent Intentional Compaction: don&#x27;t let the 
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 18:55 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 19:38 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
