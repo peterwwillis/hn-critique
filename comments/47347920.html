@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">74 points</span>
+        <span class="score">92 points</span>
         by <a href="https://news.ycombinator.com/user?id=enz">enz</a>
         2 days ago
         &nbsp;|&nbsp;<a href="/critique/47347920.html">critique article</a>
@@ -46,6 +46,94 @@
     
 
     <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=JackC">JackC</a>
+  </div>
+  <div class="comment-text">The article argues that shared memory and message passing are the same thing because they share the same classes of potential failure modes.<p>Isn&#x27;t it more like, message passing is a way of constraining shared memory to the point where it&#x27;s possible for humans to reason about most of the time?<p>Sort of like rust and c. Yes, you can write code with &#x27;unsafe&#x27; in rust that makes any mistake c can make. But the rules outside unsafe blocks, combined with the rules at module boundaries, greatly reduce the m * n polynomial complexity of a given size of codebase, letting us reason better about larger codebases.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=toast0">toast0</a>
+  </div>
+  <div class="comment-text">&gt; Isn&#x27;t it more like, message passing is a way of constraining shared memory to the point where it&#x27;s possible for humans to reason about most of the time?<p>That&#x27;s a good way to look at it. A processes&#x27;s mailbox is shared mutable state, but restrictions and conventions make a lot of things simpler when a given process owns its statr and responds to requests than when the requesters can access the state in shared memory. But when the requests aren&#x27;t well thought out, you can build all the same kinds of issues.<p>Let&#x27;s say you have a process that holds an account balance. If requests are deposit X or withdrawl Y, no problem (other than two generals). If instead requestors get balance, adjust and then send a set balance, you have a classic race condition.<p>ETS can be mentally modeled as a process that owns the table (even though the implementation is not), and the same thing applies... if the mutations you want to do aren&#x27;t available as atomic requests or you don&#x27;t use those facilities, the mutation isn&#x27;t atomic and you get all the consequences that come with that.<p>Circular message passing can be an easy mistake to make in some applications, too.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=IsTom">IsTom</a>
+  </div>
+  <div class="comment-text">&gt; Forget to set a timeout on a gen_server:call?<p>Default timeout is 5 seconds. You need to set explicit infinity timeout to not have one.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pshirshov">pshirshov</a>
+  </div>
+  <div class="comment-text">I believe it&#x27;s more correct to reference circular calls as &quot;livelocks&quot;, not &quot;deadlocks&quot; - something is happening but the whole computation cannot progress.<p>For the rest - pure untyped actors come with a lot of downsides and provoke engineers to make systems unnecessarily distributed (with all the consistency and timeout issues). There aren&#x27;t that many problems which can be mapped well directly to actors. I personally find async runtimes with typed front-ends (e.g. Cats&#x2F;ZIO in Scala, async in Rust, etc) much more robust and much less error-prone.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=toast0">toast0</a>
+  </div>
+  <div class="comment-text">If process A is waiting for a reply from process B and process B is waiting for a reply from process A; that is deadlock. There is no way those processes can continue (unless there&#x27;s a timeout or one process gets killed). Other processes may progress as long as they don&#x27;t need a reply from process A or B ... which sometimes is fine. (Edit: nevermind, I forgot the 5 second timeout if you use gen_server:call&#x2F;2; you will end up in livelock if it happens continuously, but a mostly ok system if it works out)<p>Livelock is something like you&#x27;ve got 1000 nodes that all want to do X, which requires an exclusive lock and the method to get an exclusive lock is:<p>Broadcast request to cluster<p>If you got the lock on all nodes, proceed<p>If you get the lock on all nodes, release and try again after a timeout<p>This procedure works in practice, when there is low contention. If the cluster is large and many processes contend for the lock, progress is rare. It&#x27;s not impossible to progress, so the system is not deadlocked; but it takes an inordinate amount of time, mostly waiting for locks: the system is livelocked. In this case, whenever progress happens, future progress is easier.<p>This is a rough description of an actual incident with nodes joining pg2, I think around 2018... the new pg module avoids that lock (and IMHO, the lock was not needed anyway; it was there to provide consistent order in member lists across nodes, but member lists would no longer be consistent when dist distonects happened and resolved, so why add locks to be consistent sometimes). As an Erlang user with I think the largest clusters anywhere, we ran into a good number of these kinds of things in OTP. Ericsson built dist for telecom switches with two nodes in a single enclosure in a rack. It works over tcp and they didn&#x27;t put explicit limits, so you can run a dist cluster with thousands of nodes in locations across the globe and it <i>mostly</i> works, but there will be some things to debug from time to time. Erlang is fairly easy to debug... All the new nodes have a process waiting to join pg2, what&#x27;s the pg2 process doing, why does that lock not have the consensus building algorithm, can we add it? In the meantime, let&#x27;s kill some nodes so others can progreas and then we&#x27;ll run a sequenced start of the rest.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gzread">gzread</a>
+  </div>
+  <div class="comment-text">It&#x27;s a deadlock because two threads are each waiting for the other.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=johnisgood">johnisgood</a>
+  </div>
+  <div class="comment-text">&gt; This isn’t obviously wrong<p>I thought it was obviously wrong. Server A calls Server B, and Server B calls server A. Because when I read the code my first thought was that it is circular. Is it really not obvious? Am I losing my mind?<p>The mention of `persistent_term` is cool.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=loloquwowndueo">loloquwowndueo</a>
+  </div>
+  <div class="comment-text">It wasn’t obvious to the AI that wrote the article. There’s still hope for humans :)</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bluGill">bluGill</a>
+  </div>
+  <div class="comment-text">It is too common &#x2F; useful. Not everything is a tree.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=allreduce">allreduce</a>
+  </div>
+  <div class="comment-text">Most things are a dag tho. :)</div>
+  
+</div>
+
+</div>
+
+</div>
+
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -110,39 +198,61 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=JackC">JackC</a>
+    <a href="https://news.ycombinator.com/user?id=anonymous_user9">anonymous_user9</a>
   </div>
-  <div class="comment-text">The article argues that shared memory and message passing are the same thing because they share the same classes of potential failure modes.<p>Isn&#x27;t it more like, message passing is a way of constraining shared memory to the point where it&#x27;s possible for humans to reason about most of the time?<p>Sort of like rust and c. Yes, you can write code with &#x27;unsafe&#x27; in rust that makes any mistake c can make. But the rules outside unsafe blocks, combined with the rules at module boundaries, greatly reduce the m * n polynomial complexity of a given size of codebase, letting us reason better about larger codebases.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=johnisgood">johnisgood</a>
-  </div>
-  <div class="comment-text">&gt; This isn’t obviously wrong<p>I thought it was obviously wrong. Server A calls Server B, and Server B calls server A. Because when I read the code my first thought was that it is circular. Is it really not obvious? Am I losing my mind?<p>The mention of `persistent_term` is cool.</div>
+  <div class="comment-text">This seems interesting, but the sheer density of LLM-isms make it hard to get through.</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=loloquwowndueo">loloquwowndueo</a>
+    <a href="https://news.ycombinator.com/user?id=rando1234">rando1234</a>
   </div>
-  <div class="comment-text">It wasn’t obvious to the AI that wrote the article. There’s still hope for humans :)</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=bluGill">bluGill</a>
-  </div>
-  <div class="comment-text">It is too common &#x2F; useful. Not everything is a tree.</div>
+  <div class="comment-text">I actually disagree, thought it read reasonably well and didn&#x27;t feel LLMy at all.</div>
   
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=allreduce">allreduce</a>
+    <a href="https://news.ycombinator.com/user?id=loloquwowndueo">loloquwowndueo</a>
   </div>
-  <div class="comment-text">Most things are a dag tho. :)</div>
+  <div class="comment-text">It stinks of LLM - sections with headers beginning with “The”, a lot of “it’s not just X, it’s Y” etc etc.<p>The content is good and interesting though. Just hard to wade through with all the thorny LLM bushes getting in the way.<p>Looks like the author had a draft with the core content and ideas and asked an LLM to embellish it. Maybe because author wasn’t confident in their writing skills? Whatever the reason, I’d honestly prefer something human-written.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=boxed">boxed</a>
+  </div>
+  <div class="comment-text">I think at this point comments like this are equivalent to saying &quot;I didn&#x27;t like this article, because it&#x27;s written in too good English&quot;.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Linux-Fan">Linux-Fan</a>
+  </div>
+  <div class="comment-text">I liked the content of the article enough to read it to the end, but I did have a hard time due to inflation with LLM-isms. Then again I am not a native so how would I know if this is good English? I can only tell that to me, it is hard to read despite interesting content.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=andrelaszlo">andrelaszlo</a>
+  </div>
+  <div class="comment-text">I would edit sentences like this:<p>&quot;Erlang is the strongest form of the isolation argument, and it deserves to be taken seriously, which is why what happens next matters.&quot;<p>It doesn&#x27;t add much, and it has this condescending and pretentious LLM tone. For me as a reader, it distracts from an otherwise interesting article.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=loloquwowndueo">loloquwowndueo</a>
+  </div>
+  <div class="comment-text">Sorry, good English is good grammatically and structurally while being unique and feeling creative.  and AI-written English is not good. It’s correct but totally repetitive, formulaic and circular. It’s like expecting a pizza and finding it’s made of cardboard.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=trashburger">trashburger</a>
+  </div>
+  <div class="comment-text">It shows a lack of care for the reader. Use your own words.</div>
   
 </div>
 
@@ -164,50 +274,10 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=anonymous_user9">anonymous_user9</a>
+    <a href="https://news.ycombinator.com/user?id=worthless-trash">worthless-trash</a>
   </div>
-  <div class="comment-text">This seems interesting, but the sheer density of LLM-isms make it hard to get through.</div>
+  <div class="comment-text">Could be wrong, but that wont deadlock because 5 seconds later, you&#x27;re going to have call&#x2F;2 fail.</div>
   
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=rando1234">rando1234</a>
-  </div>
-  <div class="comment-text">I actually disagree, thought it read reasonably well and didn&#x27;t feel LLMy at all.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=boxed">boxed</a>
-  </div>
-  <div class="comment-text">I think at this point comments like this are equivalent to saying &quot;I didn&#x27;t like this article, because it&#x27;s written in too good English&quot;.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=loloquwowndueo">loloquwowndueo</a>
-  </div>
-  <div class="comment-text">Sorry, good English is good grammatically and structurally while being unique and feeling creative.  and AI-written English is not good. It’s correct but totally repetitive, formulaic and circular. It’s like expecting a pizza and finding it’s made of cardboard.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=andrelaszlo">andrelaszlo</a>
-  </div>
-  <div class="comment-text">I would edit sentences like this:<p>&quot;Erlang is the strongest form of the isolation argument, and it deserves to be taken seriously, which is why what happens next matters.&quot;<p>It doesn&#x27;t add much, and it has this condescending and pretentious LLM tone. For me as a reader, it distracts from an otherwise interesting article.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=trashburger">trashburger</a>
-  </div>
-  <div class="comment-text">It shows a lack of care for the reader. Use your own words.</div>
-  
-</div>
-
-</div>
-
 </div>
 
     
@@ -230,7 +300,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 13:13 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 14:41 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

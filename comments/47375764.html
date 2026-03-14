@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">46 points</span>
+        <span class="score">116 points</span>
         by <a href="https://news.ycombinator.com/user?id=y1n0">y1n0</a>
-        1 hour ago
+        3 hours ago
         &nbsp;|&nbsp;<a href="/critique/47375764.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47375764" rel="noopener">original on HN</a>
       </p>
@@ -62,20 +62,165 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=necovek">necovek</a>
+    <a href="https://news.ycombinator.com/user?id=alexpetros">alexpetros</a>
   </div>
-  <div class="comment-text">FWIW, this is also one of the reasons MathML has never become the &quot;input&quot; language for mathematics, and the layout-focused (La)TeX remains the de-facto standard.<p>Ergonomics of input are important because they increase chances of it being correct, and you can usually still keep it strict and semantic enough (eg. LaTeX is less layout-focused than Plain TeX)</div>
+  <div class="comment-text">Author here. I agree with all this, and I think it&#x27;s important to note that nothing precludes you from doing a declarative specification that looks like imperative math notation, but it&#x27;s also somewhat besides the point. Yes, you could make your own custom language, but then you have created the problem that the article is about: You need to port your parser to every single different place you want to use it.<p>That&#x27;s to say nothing of all the syntax decisions you have to make now. If you want to do infix math notation, you&#x27;re going to be making a lot of choices about operator precedence. The article is using a lot of simple functions to explain the domain, but we also have switch statements—how are those going to expressed? Ditto functions that don&#x27;t have a common math notation, like stepwise multiply. All of these can be solved, but they also make your parser much more complicated and create a situation where you are likely to only have one implementation of it.<p>If you try to solve that by standardizing on prefix notations and parenthesis, well, now you have s-expressions (an option also discussed in the post).<p>That&#x27;s what &quot;cheap&quot; means in this context: There&#x27;s a library in every environment that can immediately parse it and mature tooling to query the document. Adding new ideas to your XML DSL does not at all increase the complexity of your parsing. That&#x27;s really helpful on a small team! I agonized over the word &quot;cheap&quot; in the title and considered using something more obviously positive like &quot;cost-effective&quot; but I still think &quot;cheap&quot; is the right one. You&#x27;re making a cost-cutting choice with the syntax, and that has expressiveness tradeoffs like OP notes, but it&#x27;s a decision that is absolutely correct in many domains, especially one where you want people to be able to widely (and cheaply) build on the thing you&#x27;re specifying.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=johnbarron">johnbarron</a>
+  </div>
+  <div class="comment-text">Why did you hardly engaged in the article on the subject of schema driven validation?</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Someone1234">Someone1234</a>
+  </div>
+  <div class="comment-text">I keep seeing people make the same mistake as XML made over and over; without learning from it. I will clarify the problem thusly:<p>&gt; The more capabilities you add to a interchange format, the harder that format is to parse.<p>There is a reason why JSON is so popular, it supports so little, that it is legitimately easy to import. Whereas XML supports attributes, namespaces, CDATA, DTDs, QNames, xml:base, xml:lang, XInclude, etc etc. They gave it everything, including the kitchen sink.<p>There was a thread here the other day about using Sqlite as an interchange format to REDUCE complexity. Look, I love Sqlite, as an application specific data-store. But much like XML it has a ton of capabilities, which is good for a data-store, but awful for an interchange format with multiple producers&#x2F;consumers with their own ideas.<p>CSV may be under-specified, but it remains popular largely due to its simplicity to produce&#x2F;consume. Unfortunately, we&#x27;re seeing people slowly ruin JSON by adding e.g. commands to the format, with others than using those &quot;comments&quot; to hold data (e.g. type information), which must be parsed. Which is a bad version of an XML Attribute.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=conartist6">conartist6</a>
+  </div>
+  <div class="comment-text">Just gonna drop this here : ) <a href="https:&#x2F;&#x2F;docs.bablr.org&#x2F;guides&#x2F;cstml" rel="nofollow">https:&#x2F;&#x2F;docs.bablr.org&#x2F;guides&#x2F;cstml</a><p>CSTML is my attempt to fix all these issues with XML and revive the idea of HTML as a specific subset of a general data language.<p>As you mention one of the major learnings from the success of JSON was to keep the syntax stupid-simple -- easy to parse, easy to handle. Namespaces were probably the feature to get the most rework.<p>In theory it could also revive the ability we had with XHTML&#x2F;XSLT to describe a document in a minimal, fully-semantic DSL, only generating the HTML tag structure as needed for presentation.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=moron4hire">moron4hire</a>
+  </div>
+  <div class="comment-text">I consider CSV to be a signal of an unserious organization. The kind of place that uses thousand line Excel files with VBA macros instead of just buying a real CRM already. The kind of place that thinks junior developers are cheaper than senior developers. The kind of place where the managers brow beat you into working overtime by arguing from a single personal perspective that &quot;this is just how business is done, son.&quot;<p>People will blithely parrot, &quot;it&#x27;s a poor Workman who blames his tools.&quot; But I think the saying, as I&#x27;ve always heard it used to suggest that someone who is complaining is a just bad at their job, is a backwards sentiment. Experts in their respective fields do not complain about their tools not because they are internalizing failure as their own fault. They don&#x27;t complain because they insist on only using the best tools and thus have nothing to complain about.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=xienze">xienze</a>
+  </div>
+  <div class="comment-text">&gt; Whereas XML supports attributes, namespaces, CDATA, DTDs, QNames, xml:base, xml:lang, XInclude, etc etc. They gave it everything, including the kitchen sink.<p>But you don&#x27;t have to use all those things. Configure your parser without namespace support, DTD support, etc. I&#x27;d much rather have a tool with tons of capabilities that can be selectively disabled rather than a &quot;simple&quot; one that requires _me_ to bolt on said extra capabilities.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=petcat">petcat</a>
+  </div>
+  <div class="comment-text">&gt; XML Is a Cheap [...]<p>&gt; XML is notoriously expensive to properly parse in many languages.<p>I&#x27;m glad this is the top comment.  I have extensive experience in enterprise-y Java and XML and XML is <i>anything but cheap</i>.  In fact, doing anything non-trivial with XML was regularly a memory and CPU bottleneck.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=diffuse_l">diffuse_l</a>
+  </div>
+  <div class="comment-text">That&#x27;s if you parse the into a DOM and work on that. If you use SAX parsing, it makes it much better regarding the memory footprint.<p>But of course, working with SAX parsing is yet another, very different, bag of snakes.<p>I still hope that json parsing had the same support for stream processing as XML (I know that there are existing solutions for that, but it&#x27;s much less common than in the XML world)</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=alexpetros">alexpetros</a>
+  </div>
+  <div class="comment-text">In the context of the article, &quot;cheap&quot; means &quot;easy to set up&quot; not &quot;computationally efficient.&quot; The article is making the argument that there are situations in which you benefit from sacrificing the latter in favor of the former. You&#x27;re right that it&#x27;s annoyingly slow to parse though and that does cause issues I&#x27;d like to fix.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bubbleRefuge">bubbleRefuge</a>
+  </div>
+  <div class="comment-text">Yup. SAP and their glorious idocs with german acronyms</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=twoodfin">twoodfin</a>
+  </div>
+  <div class="comment-text">Much of XML’s complexity derives from either the desire to be round-trip compatible with any number of existing character and data encodings or the desire to be largely forward-compatible with SGML.<p>A parser that only had to support a specified “profile” of XML (say, UTF-8 only, no user-defined entities or DTD support generally) could be much simpler and more efficient while still capturing 99% of the value of the language expressed by this post.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=phlakaton">phlakaton</a>
+  </div>
+  <div class="comment-text">That&#x27;s besides the point of this post. You&#x27;re welcome to enforce such a profile on your documents, but the point of this post is the ease from throwing the whole ecosystem of out-of-the-box XML tools at it, tools which don&#x27;t assume any such profile.<p>(Now ITOT they may have implicit or explicit profiles of their own, e.g. where safe parsing, validation, and XSLT support are concerned, but they have a large overlap.)</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=phlakaton">phlakaton</a>
+  </div>
+  <div class="comment-text">Unless you are compiling really large systems of DSL specification, speed of parsing is not the operation you want to be optimizing. XML for this use case, even if you DOM it, is plenty fast.<p>What are more concerning are the issues that result in unbounded parses – but there are several ways to control for this.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Hendrikto">Hendrikto</a>
+  </div>
+  <div class="comment-text">&gt; XML for this use case, even if you DOM it, is plenty fast.<p>This mindset is why we have computers now that are three+ orders of magnitude faster than a C64 but yet have worse latency.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Hfuffzehn">Hfuffzehn</a>
+  </div>
+  <div class="comment-text">Right. 
+And as one of the people who has helped the downfall of the German economy by writing DSLs in the last decades: Our DSLs compiled to XML for transportability.<p>But please don&#x27;t write DSLs anymore.
+If you have to, probably even just using Opus to write something for you is better.
+And AI doesn&#x27;t like DSLs that can&#x27;t be in its training base.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jaen">jaen</a>
+  </div>
+  <div class="comment-text">Or... you could just use a programming language that looks good and has great support for embedded domain-specific languages (eDSL), like Haskell, OCaml or Scala.<p>Or, y&#x27;know, use the language you have (JavaScript) properly, eg. add a `sum` abstraction instead of `.reduce((acc, val) =&gt; { return acc+val }, 0)`.<p>In particular, the problem of &quot;all the calculations are blocked for a single user input&quot; is solved by eg. applicatives or arrows (these are fairly trivial abstract algebraic concepts, but foreign to most programmers), which have <i>syntactic</i> support in the abovementioned languages.<p>(Of course, avoid the temptation to overcomplicate it with <i>too</i> abstract functional programming concepts.)<p>If you write an XML DSL:<p>1. You have to solve the problem of &quot;what parts can I parallelize and evaluate independently&quot; anyway. Except in this case, that problem has been solved a long time ago by functional programming &#x2F; abstract algebra &#x2F; category-theoretic concepts.<p>2. It looks ugly (IMHO).<p>3. You are inventing an entirely new vocabulary unreadable to fellow programmers.<p>4. You will very likely run into Greenspun&#x27;s tenth rule if the domain is non-trivial.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=librasteve">librasteve</a>
+  </div>
+  <div class="comment-text">Suggest to Raku to that list. All the early Raku devs were Haskell coders (the first Raku parser (PUGS) was written in Haskell).<p>Since Raku suports both OO and Functional coding styles, and has built in Grammars, it is very nice for DSLs.</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=raverbashing">raverbashing</a>
+    <a href="https://news.ycombinator.com/user?id=AnimalMuppet">AnimalMuppet</a>
   </div>
-  <div class="comment-text">&gt; and have two axes for adding metadata: one being the tag name, another being attributes<p>Yes let&#x27;s not even get started on implementations who do &lt;something value=&quot;value&quot;&gt;&lt;&#x2F;something&gt;</div>
+  <div class="comment-text">Or Lisp.<p>&quot;Looks good&quot; might be something not everyone agrees on for Lisp, but once you&#x27;ve seen S-expressions, XML looks <i>terrible</i>.  Disgustingly verbose and heavyweight.</div>
   
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=imglorp">imglorp</a>
+  </div>
+  <div class="comment-text">The cheaper DSL is lisp. Cheap to parse, extend, transform. And you can have real macros and of course it&#x27;s all executable.<p>Oh and the universe is written in lisp (but mostly perl).</div>
+  
 </div>
 
     
@@ -88,10 +233,36 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hnfong">hnfong</a>
+  </div>
+  <div class="comment-text">I&#x27;m not sure what the author means by &quot;(XML) was abandoned because JavaScript won. The browser won.&quot;<p>The browser supported XML as much as Javascript. Remember that the &quot;X&quot; in &quot;AJAX&quot; acronym stands for XML, as well as &quot;XMLHttpRequest&quot; which was originally intended to be used for fetching data on the fly in XML. It was <i>later</i> repurposed to grab JSON data.<p>Javascript was not a reason XML was abandoned. It was just that the developer community did not like XML at all (after trying to use it for a while).<p>As for whether the dev community was &quot;right&quot;, it&#x27;s hard to comment because the article you linked is heavy on the ranting but light on the contextual details. For example it admits that simpler formats like JSON might be appropriate where &quot;small data transfers between cooperating services and scenarios where schema validation would be overkill&quot;. So are they talking about people storing &quot;documents&quot; and &quot;files&quot; in JSON form? I guess it happens, but is it really as common to use JSON as opposed to other formats like YAML (which is definitely not caused by Javascript in the browser winning)?<p>Personally I think XML was abandoned because inherent bad design (and maybe over-engineering). A simpler format with schema checking is probably more ideal IMHO.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=skrebbel">skrebbel</a>
   </div>
-  <div class="comment-text">I read both, but I feel like they both miss what it was like to work with APIs back in the bad old XML days.<p>Yes, XML is more descriptive. It&#x27;s also much harder for programmers to work with. Every client or server speaking an XML-based protocol had to have their own encoder&#x2F;decoder that could map XML strings into in-memory data structures (dicts, objects, arrays, etc) that made sense in that language. These were often large and non-trivial to maintain. There were magic libraries in languages like Java and C# that let you map XML to objects using a million annotations, but they only supported a subset of XML and if your XML didn&#x27;t fit that shoe you&#x27;d get 95% of the way and <i>then</i> realize that there was no way you&#x27;d get the last 5% in, and had to rewrite the whole thing with some awful streaming XML parser like SAX.<p>JSON, while not perfect, maps neatly onto data structures that nearly every language has: arrays, objects and dictionaries. <i>That</i> it why it got popular, and no other reason. Definitely not &quot;fashion&quot; or something as silly as that. Hundreds of thousands of developers had simply gotten extremely tired of spending 20% of their working lives producing and then parsing XML streams. It was terrible.</div>
+  <div class="comment-text">I read both, but I feel like they both miss what it was like to work with APIs back in the bad old XML days.<p>Yes, XML is more descriptive. It&#x27;s also much harder for programmers to work with. Every client or server speaking an XML-based protocol had to have their own encoder&#x2F;decoder that could map XML strings into in-memory data structures (dicts, objects, arrays, etc) that made sense in that language. These were often large and non-trivial to maintain. There were magic libraries in languages like Java and C# that let you map XML to objects using a million annotations, but they only supported a subset of XML and if your XML didn&#x27;t fit that shoe you&#x27;d get 95% of the way and <i>then</i> realize that there was no way you&#x27;d get the last 5% in, and had to rewrite the whole thing with some awful streaming XML parser like SAX.<p>JSON, while not perfect, maps neatly onto data structures that nearly every language has: arrays, objects and dictionaries. <i>That</i> it why it got popular, and no other reason. Definitely not &quot;fashion&quot; or something as silly as that. Hundreds of thousands of developers had simply gotten extremely tired of spending 20% of their working lives producing and then parsing XML streams. It was terrible.<p>And don&#x27;t even get me started on the endless meetings of people trying to <i>design</i> their XML schemas. Should this here thing be an attribute or a child element? Will we allow mixing different child elements in a list or will we add a level of indirection so the parser can be simpler? Everybody had a different idea about what was the most elegant and none of it mattered. JSON did for API design what Prettier did for the tabs vs spaces debate.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sgarland">sgarland</a>
+  </div>
+  <div class="comment-text">Since you explicitly mentioned fashion, I assume you read this:<p>&gt; There is a distinction that the industry refuses to acknowledge: developer convenience and correctness are different concerns. They are not opposed, necessarily, but they are not the same thing.
+…
+The rationalization is remarkable. &quot;JSON is simpler&quot;, they say, while maintaining thousands of lines of validation code. &quot;JSON is more readable&quot;, they claim, while debugging subtle bugs caused by typos in key names that a schema would have caught immediately. &quot;JSON is lightweight&quot;, they insist, while transmitting megabytes of redundant field names that binary XML would have compressed away. This is not engineering. This is fashion masquerading as technical judgment.<p>I feel the same way about RDBMS. Every single time I have found a data integrity issue - which is nearly daily - the fix that is chosen is yet another validation check. When I propose actually creating a proper relational schema, or leaning on guarantees an RDBMS can provide (such as making columns that shouldn’t be NULL non-NULLable, or using foreign key constraints), I’m told that it would “break the developer mental model.”<p>Apparently, the desired mental model is “make it as simple as possible, but then slowly add layer upon layer of complex logic to handle all of the bugs.”</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=microtonal">microtonal</a>
+  </div>
+  <div class="comment-text">The &#x27;much harder for programmers to work with&#x27; was that the official way of doing a lot of programming related to XML was to do it in... XML. E.g. transformations were done with XSLT, query processing with XQuery. There were even XML databases that you had to query with XML (typically XQuery).<p>All these XML DSLs were so dreadful to write and maintain for humans that most people despised them. I worked in a department where semantic web and all this stuff was fairly popular and I still remember remember one colleague, after another annoying XML programming session, saying <i>fuck this, I&#x27;ll rip out all the XSLT and XQuery and will just write a Python script</i> (without the swearing, but that was certainly his sentiment). First it felt a bit like an offense for ditching the &#x27;correct&#x27; way, but in the end everyone sympathized.<p>As someone who has lived through the whole XML mania: good riddance (mostly).<p><i>And don&#x27;t even get me started on the endless meetings of people trying to design their XML schemas.</i><p>I have found that this attracts certain type of people who like to travel to meetings and talk about schemas and ontologies for days. I had to sit through some presentations, and I had no idea what they presented had to do anything, they were so detached from reality that they built a little world on their own. Sui generis.</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -99,6 +270,69 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
     <a href="https://news.ycombinator.com/user?id=badgersnake">badgersnake</a>
   </div>
   <div class="comment-text">It’s the usual case of “I can’t be bothered to learn the complicated thing, give me something simple.” Two years later, “Oh wait, I need more features, this problem is more complicated than I thought”.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sgarland">sgarland</a>
+  </div>
+  <div class="comment-text">As a devil’s advocate, it is extremely difficult to produce something that’s simple to understand, flexible, and not inherently prone to bugs.<p>I am not a dev; I’m ops that happens to know how to code. As such, I tend to write scripts more than large programs. I’ve been burned enough by bash and Python to know how to tame them (mostly, rigid insistence on linters and tests), but as one of my scripts blossomed into a 15K LOC monstrosity, I could see in real time how various decisions I made earlier became liabilities. Some of these were because I thought I wouldn’t need it, others were because I later had learned I might need flexibility, but didn’t have the fundamental knowledge to do it correctly.<p>For example, I initially was only using boolean return types. “It’s simpler,” I thought - either a function works, or it doesn’t, and it’s up to the caller to decide what to do with that. Soon, of course, I needed to have some kind of state and data manipulation, and I wound up with a hideous mix of side effects and callbacks.<p>Another: since I was doing a lot of boto3 calls in this script, some of which could kick off lengthy operations, it needed to gracefully handle timeouts, non-fatal exceptions, and mutations that AWS was doing (e.g. Blue&#x2F;Green on a DB causes an endpoint name swap), while persisting state in a way that was crash-proof while also being able to resume a lengthy series of operations with dependencies, only some of which were idempotent.<p>I didn’t know enough of design patterns to do all of this elegantly, I just knew when what I had was broken, so I hacked around it endlessly until it worked. It <i>did</i> work (I even had tests), but it was confusing, ugly, and fragile.<p>The biggest technical learning I took away from that project was how incredibly useful true ADTs are, and how languages that have them can prevent entire classes of bugs from ever happening. I still love Python, but man, is it easy to introduce bugs.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jfengel">jfengel</a>
+  </div>
+  <div class="comment-text">It&#x27;s not a DSL. It&#x27;s a generic lexer and parser. It takes the text and gives you an abstract syntax tree. The actual DSL is your spec, and the syntax you apply.<p>It&#x27;s one of many equivalent such parser tools, a particularly verbose one. As such it&#x27;s best for stuff not written by hand, but it&#x27;s ok for generated text.<p>It has some advantages mostly stemming from its ubiquity, so it has a big tool kit. It has a lot of (somewhat redundant) features, making it complex compared to other options, but sometimes one of those features really fits your use case.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=1a527dd5">1a527dd5</a>
+  </div>
+  <div class="comment-text">The trouble with XML has never been XML itself.<p>It was also about how easy it was to generate great XML.<p>Because it is complicated and everyone doesn&#x27;t really agree on how to properly representative an idea or concept, you have to deal with varying output between producers.<p>I personally love well formed XML, but the std dev is huge.<p>Things like JSON have a much more tighter std dev.<p>The best XML I&#x27;ve seen is generated by hashdeep&#x2F;md5deep. That&#x27;s how XML should be.<p>Financial institutions are basically run on XML, but we do a tonne of work with them and my god their &quot;XML&quot; makes you pray and weep for a swift end.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kwon-young">kwon-young</a>
+  </div>
+  <div class="comment-text">The article mentions prolog but doesn&#x27;t mention you can use constraints to fully express his computation graph.
+My prefered library is clpBNR which has powerful constraints over boolean, integers and floats:<p><pre><code>  Welcome to SWI-Prolog (threaded, 64 bits, version 9.2.9)
+
+  ?- use_module(library(clpBNR)).
+  % *** clpBNR v0.12.2 ***.
+  true.
+  
+  ?- {TotalOwed == TotalTax - TotalPayments}.
+  TotalOwed::real(-1.0Inf, 1.0Inf),
+  TotalTax::real(-1.0Inf, 1.0Inf),
+  TotalPayments::real(-1.0Inf, 1.0Inf).
+  
+  ?- {TotalOwed == TotalTax - TotalPayments}, TotalTax = 10, TotalPayments = 5.
+  TotalOwed = TotalPayments, TotalPayments = 5,
+  TotalTax = 10.
+</code></pre>
+If you restrict yourself to the pure subset of prolog, you can even express complicated computation involving conditions or recusions.
+However, this means that your graph is now encoded into the prolog code itself, which is harder to manipulate, but still fully manipulable in prolog itself.<p>But the author talks about xml as an interchange format which is indeed better than prolog code...</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=alexpetros">alexpetros</a>
+  </div>
+  <div class="comment-text">In the blog I link to a Prolog post I wrote in January because I am <i>very</i> interested in the possibility of using Prolog to prove things about the Fact Graph. I have a personal branch where I try to build some tools for it with DCGs. The nice thing about XML is that I can easily explore it as Prolog terms with committing the entire project to Prolog.</div>
   
 </div>
 
@@ -114,12 +348,187 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hnfong">hnfong</a>
+  </div>
+  <div class="comment-text">&gt; can tell in an instant whether or not the document is correct<p>Speaking of &quot;correctness&quot;... It seems to me people almost never mention that while schema verification can detect a lot of issues, in the end it cannot replace actual content validation. There are often arbitrarily complicated constraints on data that requires custom code to validate.<p>This is analogous to the ridiculous claim that type checking compilers can tell you whether the program is correct or not.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=DamonHD">DamonHD</a>
+  </div>
+  <div class="comment-text">If your type checking was in the Martin-Löf school, and you started with a putative proof that what you wanted to execute was possible, then maybe!  B^&gt;</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=bananamansion">bananamansion</a>
   </div>
   <div class="comment-text">what jobs require XSD verification?</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=AndrewDucker">AndrewDucker</a>
+  </div>
+  <div class="comment-text">Anything that wants to be sure that the data passed to it is structurally valid.</div>
+  
 </div>
 
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=baq">baq</a>
+  </div>
+  <div class="comment-text">Ideally all of them.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Sharlin">Sharlin</a>
+  </div>
+  <div class="comment-text">&gt;  It evokes memories of SOAP configs and J2EE (it’s fine, even good, if those acronyms don’t mean anything to you).<p>Heh, a couple of years ago I walked past a cart of free-to-take discards at the uni, full of thousand-page tomes about exciting subjects like SOAP, J2EE and CORBA. I wonder how many of the current students even recognized any of those terms.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=DamonHD">DamonHD</a>
+  </div>
+  <div class="comment-text">I used all three of those to some extent, in investment banking back when it was bigger than tech, and while I still have some time for J2EE (WAR in particular), the other two, especially SOAP, should be taught as cautionary tales to the young &#x27;uns...</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Decabytes">Decabytes</a>
+  </div>
+  <div class="comment-text">S-expressions are a cheap dsl too. I use it in my desktop browser runtime that is powered by wasm that I’m developing
+As the “HTML”^1 and CSS^2 in fact it works so well I use it also reused it to do the styling for html exports in my markup language designed to fight documentation drift^3.<p>1. <a href="https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blame&#x2F;main&#x2F;examples&#x2F;counter&#x2F;app.cuiml?ref_type=heads#L10" rel="nofollow">https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blame&#x2F;main&#x2F;exa...</a><p>2. <a href="https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blob&#x2F;main&#x2F;examples&#x2F;counter&#x2F;styles&#x2F;app.cuiss?ref_type=heads#L3" rel="nofollow">https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blob&#x2F;main&#x2F;exam...</a><p>3. <a href="https:&#x2F;&#x2F;gitlab.com&#x2F;sablelang&#x2F;libcuidoc" rel="nofollow">https:&#x2F;&#x2F;gitlab.com&#x2F;sablelang&#x2F;libcuidoc</a></div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=catlifeonmars">catlifeonmars</a>
+  </div>
+  <div class="comment-text">[delayed]</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=n_e">n_e</a>
+  </div>
+  <div class="comment-text">After thinking a bit about the problem, and assuming the project&#x27;s language is javascript, I&#x27;d write the fact graph directly in javascript:<p><pre><code>  const totalEstimatedTaxesPaid = writable(&quot;totalEstimatedTaxesPaid&quot;, {
+    type: &quot;dollar&quot;,
+  });
+  
+  const totalPayments = fact(
+    &quot;totalPayments&quot;,
+    sum([
+      totalEstimatedTaxesPaid,
+      totalTaxesPaidOnSocialSecurityIncome,
+      totalRefundableCredits,
+    ]),
+  );
+  
+  const totalOwed = fact(&quot;totalOwed&quot;, diff(totalTax, totalPayments));
+
+</code></pre>
+This way it&#x27;s a lot terser, you have auto-completion and real-time type-checking.<p>The code that processes the graph will also be simpler as you don&#x27;t have to parse the XML graph and turn it into something that can be executed.<p>And if you still need XML, you can generate it easily.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=librasteve">librasteve</a>
+  </div>
+  <div class="comment-text">I have been playing with DSLs a little, here is the kind of syntax that I would choose:<p><pre><code>  invoice &quot;INV-001&quot; for &quot;ACME Corp&quot;
+    item &quot;Hosting&quot; 100 x 3
+    item &quot;Support&quot; 50 x 2
+    tax 20%
+  invoice &quot;INV-002&quot; for &quot;Globex&quot;
+    item &quot;Consulting&quot; 200 x 5
+    discount 10%
+    tax 21%
+</code></pre>
+In contrast to XML (even with authoring tools), my feeling is that XML (or any angle-bracket language tbh) is just too hard to write correctly (ie XML syntax and XMl schema parsing is very unforgiving) and has a lot of noise when you read it that obscures the main intent of the DSL code.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=librasteve">librasteve</a>
+  </div>
+  <div class="comment-text">Here&#x27;s how the built-in Raku Grammar can be used to parse this. I can see Raku generating the XML as the Actions from this Grammar so allow ease of DSL authoring with XML as a interchange and strict scheme validation format.<p><pre><code>  grammar InvoiceDSL {
+
+    token TOP {
+        ^ &lt;invoice&gt;+ % \n* $
+    }
+
+    token invoice {
+        &lt;header&gt;
+        \n
+        &lt;line&gt;+
+    }
+
+    token header {
+        &#x27;invoice&#x27; \h+ &lt;id=string&gt; \h+ &#x27;for&#x27; \h+ &lt;client=string&gt;
+    }
+
+    token line {
+        \h**4 &lt;entry&gt; \n?
+    }
+
+    token entry {
+        | &lt;item&gt;
+        | &lt;tax&gt;
+        | &lt;discount&gt;
+    }
+
+    token item {
+        &#x27;item&#x27; \h+ &lt;desc=string&gt; \h+ &lt;price=num&gt; \h+ &#x27;x&#x27; \h+ &lt;qty=int&gt;
+    }
+
+    token tax {
+        &#x27;tax&#x27; \h+ &lt;percent=num&gt; &#x27;%&#x27;
+    }
+
+    token discount {
+        &#x27;discount&#x27; \h+ &lt;percent=num&gt; &#x27;%&#x27;
+    }
+
+    token string { \&quot; &lt;( &lt;-[&quot;]&gt;* )&gt; \&quot; }
+    token num    { \d+ [ &#x27;.&#x27; \d+ ]? }
+    token int    { \d+ }
+  }</code></pre></div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sdovan1">sdovan1</a>
+  </div>
+  <div class="comment-text">Sometimes I wonder why we need to invent another DSL. (or when should we?)<p>At work, we have an XML DSL that bridges two services. It&#x27;s actually a series of API calls with JSONPath mappings.
+It has if-else and goto, but no real math (you can only add 1 to a variable though) and no arrays.
+Debugging is such a pain, makes me wonder why we don&#x27;t just write Java.</div>
+  
 </div>
 
     
@@ -136,6 +545,93 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dale_glass">dale_glass</a>
+  </div>
+  <div class="comment-text">It kinda blows my mind that after XML we&#x27;ve managed to make a whole bunch of stuff that&#x27;s significantly worse for any serious usage.<p>JSON: No comments, no datatypes, no good system for validation.<p>YAML: Arcane nonsense like sexagesimal number literals, footguns with anchors, Norway problem, non-string keys, accidental conversion to a number, CODE INJECTION!<p>I don&#x27;t know why, but XML&#x27;s verbosity seems to cause such a visceral aversion in a lot of people that they&#x27;d rather write a bunch of boring code to make sure a JSON parses to something sensible, or spend a day scratching their head about why a minor change in YAML caused everything to explode.<p>Actually my own problem with XML was annoyance that back when I had the thought of doing a complex config format in XML, the idea of modifying it programmatically while retaining comments turned out to be absolutely non-trivial. In comparison with the mess one can make with YAML that&#x27;s just a trivial thing.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ACCount37">ACCount37</a>
+  </div>
+  <div class="comment-text">&quot;Any serious usage&quot; starts at &quot;it just works&quot;.<p>JSON just works. Every language worth giving a damn about has a half-decent parser, and the syntax is simple enough that you can write valid JSON by hand. You wouldn&#x27;t hit the edgy edge cases or the need to use things like schemas until down the line, by which point you&#x27;re already rolling with JSON.<p>XML doesn&#x27;t &quot;just work&quot;. There are like 4 decent libraries total, all extremely heavy, that have bindings in common languages, and the syntax is heavy and verbose. And by the time you could possibly get to &quot;advanced features that make XML worth using&quot;, you&#x27;ve already bounced off the upfront cost of having to put up with XML.<p>Frontloading complexity ain&#x27;t great for adoption - who would have thought.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=n_e">n_e</a>
+  </div>
+  <div class="comment-text">&gt; JSON: No comments, no datatypes, no good system for validation.<p>I don&#x27;t agree at all. With tools like Zod, it is much more pleasant to write schemas and validate the file than with XML. If you want comments, you can use JSON5 or YAML, that can be validated the same way.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=LastTrain">LastTrain</a>
+  </div>
+  <div class="comment-text">This looks fun but I’d rather have the free direct filing service they discontinued.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Hackbraten">Hackbraten</a>
+  </div>
+  <div class="comment-text">At the cost of a slightly more complex schema, the JSON representation can be made much more readable:<p><pre><code>    {
+      &quot;path&quot;: &quot;&#x2F;tentativeTaxNetNonRefundableCredits&quot;,
+      &quot;description&quot;: &quot;Total tentative tax after applying non-refundable credits, but before applying refundable credits.&quot;,
+      &quot;maxOf&quot;: [
+        {
+          &quot;const&quot;: {
+            &quot;value&quot;: 0,
+            &quot;currency&quot;: &quot;Dollar&quot;
+          }
+        },
+        {
+          &quot;subtract&quot;: {
+            &quot;from&quot;: &quot;&#x2F;totalTentativeTax&quot;,
+            &quot;amount&quot;: &quot;&#x2F;totalNonRefundableCredits&quot;
+          }
+        }
+      ]
+    }</code></pre></div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=himata4113">himata4113</a>
+  </div>
+  <div class="comment-text">YAML seems like a great middleground here between xml and json..</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=DamonHD">DamonHD</a>
+  </div>
+  <div class="comment-text">I have worked with a lot of langauges over decades including YAML, and I regard it as one of the worst that I have tangled with for a number of reasons...</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=IshKebab">IshKebab</a>
+  </div>
+  <div class="comment-text">YAML is never a great anything.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=dndn2">dndn2</a>
   </div>
   <div class="comment-text">I think the declarative calculations part is important, why I made calculang <a href="https:&#x2F;&#x2F;calculang.dev" rel="nofollow">https:&#x2F;&#x2F;calculang.dev</a><p>Will check later if there&#x27;s some interesting calcs here to transpose, I&#x27;m for more models being published by public bodies!</div>
@@ -146,28 +642,18 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=raverbashing">raverbashing</a>
+    <a href="https://news.ycombinator.com/user?id=scotty79">scotty79</a>
   </div>
-  <div class="comment-text">Honestly let&#x27;s leave XML in that 90s drawer from where it should have never left</div>
+  <div class="comment-text">How awesome would XML be if it didn&#x27;t have attributes, namespaces and could close elements with &lt;&#x2F;&gt;</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=rkomorn">rkomorn</a>
+    <a href="https://news.ycombinator.com/user?id=panzi">panzi</a>
   </div>
-  <div class="comment-text">XML is one of those things that fulfills the requirements I have but makes me say &quot;not like this...&quot;</div>
+  <div class="comment-text">Without namespaces it would be just ML, and that already has another meaning.</div>
   
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jgalt212">jgalt212</a>
-  </div>
-  <div class="comment-text">&gt; Tax logic needs a declarative specification<p>preach.  I&#x27;m convinced there are cycles in the tax code that can be exploited for either infinite taxes or zero taxes.  Can Claude find them?</div>
-  
 </div>
 
     
@@ -180,7 +666,7 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 13:13 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 14:41 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
