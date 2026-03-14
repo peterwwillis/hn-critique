@@ -19,10 +19,12 @@ import (
 )
 
 const (
-	defaultStoryCount   = 30
-	defaultCommentDepth = 3
-	maxTopComments      = 20
-	maxChildComments    = 5
+	defaultStoryCount                = 30
+	defaultCommentDepth              = 3
+	maxTopComments                   = 20
+	maxChildComments                 = 5
+	articleRetrievalFailureReason    = "the article could not be retrieved"
+	articleInsufficientContentReason = "the article did not contain enough readable content to analyze"
 	// Pause between HN API calls to be a good citizen.
 	hnDelay = 100 * time.Millisecond
 	// Pause between full story fetches (article + AI) to avoid rate limiting.
@@ -123,11 +125,15 @@ func main() {
 		}
 
 		// Fetch article content (only for stories with external URLs).
+		articleUnavailableReason := ""
 		if item.URL != "" {
 			log.Printf("  Fetching article: %s", item.URL)
 			text, err := articleFetcher.Fetch(item.URL)
 			if err != nil {
 				log.Printf("  ⚠  article fetch failed: %v", err)
+				articleUnavailableReason = articleRetrievalFailureReason
+			} else if strings.TrimSpace(text) == "" {
+				articleUnavailableReason = articleInsufficientContentReason
 			} else {
 				story.ArticleText = text
 			}
@@ -141,20 +147,18 @@ func main() {
 			}
 
 			// Article critique.
-			if story.ArticleText != "" || story.URL != "" {
+			if articleUnavailableReason != "" {
+				story.Critique = unavailableCritiqueForReason(articleUnavailableReason)
+			} else if story.ArticleText != "" || story.URL != "" {
 				log.Printf("  Analyzing article…")
 				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
 				if err != nil {
 					log.Printf("  ⚠  article analysis failed: %v", err)
-					if cached != nil && cached.Critique != nil {
-						log.Printf("  Using cached article analysis.")
-						story.Critique = cached.Critique
-					}
+					analysisReason := "the AI assessment could not be completed because the AI provider returned an error. The analysis may be retried on the next run"
+					story.Critique = unavailableCritiqueForReason(analysisReason)
 				} else {
 					story.Critique = crit
 				}
-			} else if cached != nil && cached.Critique != nil {
-				story.Critique = cached.Critique
 			}
 
 			// Comments critique.
@@ -184,6 +188,15 @@ func main() {
 				if saveErr := generator.SaveCache(*outputDir, story.ID, newCache); saveErr != nil {
 					log.Printf("  ⚠  cache save failed: %v", saveErr)
 				}
+			}
+		}
+
+		if aiProvider == nil && item.URL != "" && story.Critique == nil {
+			if articleUnavailableReason != "" {
+				story.Critique = unavailableCritiqueForReason(articleUnavailableReason)
+			} else if story.ArticleText != "" {
+				analysisReason := "the AI assessment is not available"
+				story.Critique = unavailableCritiqueForReason(analysisReason)
 			}
 		}
 
@@ -251,4 +264,24 @@ func extractDomain(rawURL string) string {
 	host := u.Hostname()
 	host = strings.TrimPrefix(host, "www.")
 	return host
+}
+
+func unavailableCritique(summary, truthfulness string) *generator.ArticleCritique {
+	return &generator.ArticleCritique{
+		Summary:      summary,
+		Truthfulness: truthfulness,
+		Rating:       "unavailable",
+	}
+}
+
+func unavailableSummary(reason string) string {
+	return "Summary unavailable because " + reason + "."
+}
+
+func unavailableTruthfulness(reason string) string {
+	return "Truthfulness assessment unavailable because " + reason + "."
+}
+
+func unavailableCritiqueForReason(reason string) *generator.ArticleCritique {
+	return unavailableCritique(unavailableSummary(reason), unavailableTruthfulness(reason))
 }
