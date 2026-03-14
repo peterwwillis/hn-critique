@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">23 points</span>
+        <span class="score">29 points</span>
         by <a href="https://news.ycombinator.com/user?id=ingve">ingve</a>
         4 days ago
         &nbsp;|&nbsp;<a href="/critique/47320482.html">critique article</a>
@@ -46,6 +46,56 @@
     
 
     <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kjksf">kjksf</a>
+  </div>
+  <div class="comment-text">Good lord. WebAssembly was sold as &quot;portable assembly for the web&quot;. It&#x27;s in the fricking name. Web. Assembly. Assembly for the web.<p>It was supposed to solve the problem of: some computers run x86, some arm, we need something that is equivalent, but portable across different cpus<p>What business is it for WebAssembly to know about complex types? What x86 instructions is there for `(type $t (struct i32))` ? Or doing garbage collection.<p>We would be better off standardizing on a subset of x86 and writing translators to arm etc. Or standardize on arm and translate to x86.<p>We know it can work. Apple did it with rosetta. Microsoft did it with Prism. I don&#x27;t think WebAssembly implementation generate faster code than rosetta or prism.<p>QEMU did it simply (albeit slowly).<p>WebAssembly is becoming another JVM. It&#x27;s not simple. It&#x27;s not fast. It&#x27;s not easy to use.<p>But now we&#x27;re stuck with it and the only path is to add and add and add.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=14113">14113</a>
+  </div>
+  <div class="comment-text">This post is actually a joke, but it does bring about an important point: For an interpreter, having <i>more</i> information results in faster execution. WASM is much closer to Java bytecode than you might think, and SpiderMonkey&#x2F;V8 are basically the JVM. WASM also undergoes multiple different stages and kinds of JIT compilation in most browsers, and detailed type and usage information helps that produce faster execution.<p>Also, don&#x27;t forget that WASM is designed to replace JavaScript, thus it must interoperate with it to smooth the transition. Rosetta and Prism also work to smooth the transition from x86 -&gt; ARM, and much of the difficult work that they do actually involves translating between the calling conventions of the different architectures, and making them work across binaries compiled both for and not for ARM, not with the bytecode translation. WebAssembly is designed to not have that limitation: it&#x27;s much more closely aligned to JS. That&#x27;s why it wouldn&#x27;t make sense to use a subset of x86 or similar, as it would simply produce more work trying to get it to interface with JavaScript.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=flohofwoe">flohofwoe</a>
+  </div>
+  <div class="comment-text">&gt; It&#x27;s not fast.<p>My emulators here have roughly the same performance as the same code compiled as native executable (e.g. within around 5%) - this is mostly integer bit twiddling code. Unless you hand-optimize your code beyond what portable C provides (like manually tuned SIMD intrinsics), WASM code pretty much runs at native speed these days:<p><a href="https:&#x2F;&#x2F;floooh.github.io&#x2F;tiny8bit&#x2F;" rel="nofollow">https:&#x2F;&#x2F;floooh.github.io&#x2F;tiny8bit&#x2F;</a></div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=zffr">zffr</a>
+  </div>
+  <div class="comment-text">&gt; It&#x27;s not fast.<p>Not disagreeing with you, but here’s an article from Akamai about how using WASM can minimize cold startup time for serverless functions.<p><a href="https:&#x2F;&#x2F;www.akamai.com&#x2F;blog&#x2F;developers&#x2F;build-serverless-functions-zero-cold-starts-webassembly-spin" rel="nofollow">https:&#x2F;&#x2F;www.akamai.com&#x2F;blog&#x2F;developers&#x2F;build-serverless-func...</a></div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mavdol04">mavdol04</a>
+  </div>
+  <div class="comment-text">I mean standardizing on an x86 subset would replace wasm&#x27;s native portability with a kind of &#x27;emulated&#x27; compatibility, and this is one of wasm&#x27;s strengths. If we do that, non-x86 hardware(mobile etc.) will pay the translation tax. So, keeping Wasm agnostic makes more sense anyway.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=flohofwoe">flohofwoe</a>
+  </div>
+  <div class="comment-text">I guess you didn&#x27;t read to the end?<p>&gt; Friends, as I am sure is abundantly clear, this is a troll post :)</div>
+  
+</div>
+
+</div>
+
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -70,50 +120,6 @@
 
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=kjksf">kjksf</a>
-  </div>
-  <div class="comment-text">Good lord. WebAssembly was sold as &quot;portable assembly for the web&quot;. It&#x27;s in the fricking name. Web. Assembly. Assembly for the web.<p>It was supposed to solve the problem of: some computers run x86, some arm, we need something that is equivalent, but portable across different cpus<p>What business is it for WebAssembly to know about complex types? What x86 instructions is there for `(type $t (struct i32))` ? Or doing garbage collection.<p>We would be better off standardizing on a subset of x86 and writing translators to arm etc. Or standardize on arm and translate to x86.<p>We know it can work. Apple did it with rosetta. Microsoft did it with Prism. I don&#x27;t think WebAssembly implementation generate faster code than rosetta or prism.<p>QEMU did it simply (albeit slowly).<p>WebAssembly is becoming another JVM. It&#x27;s not simple. It&#x27;s not fast. It&#x27;s not easy to use.<p>But now we&#x27;re stuck with it and the only path is to add and add and add.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=flohofwoe">flohofwoe</a>
-  </div>
-  <div class="comment-text">&gt; It&#x27;s not fast.<p>My emulators here have roughly the same performance as the same code compiled as native executable (e.g. within around 5%) - this is mostly integer bit twiddling code. Unless you hand-optimize your code beyond what portable C provides (like manually tuned SIMD intrinsics), WASM code pretty much runs at native speed these days:<p><a href="https:&#x2F;&#x2F;floooh.github.io&#x2F;tiny8bit&#x2F;" rel="nofollow">https:&#x2F;&#x2F;floooh.github.io&#x2F;tiny8bit&#x2F;</a></div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=zffr">zffr</a>
-  </div>
-  <div class="comment-text">&gt; It&#x27;s not fast.<p>Not disagreeing with you, but here’s an article from Akamai about how using WASM can minimize cold startup time for serverless functions.<p><a href="https:&#x2F;&#x2F;www.akamai.com&#x2F;blog&#x2F;developers&#x2F;build-serverless-functions-zero-cold-starts-webassembly-spin" rel="nofollow">https:&#x2F;&#x2F;www.akamai.com&#x2F;blog&#x2F;developers&#x2F;build-serverless-func...</a></div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=flohofwoe">flohofwoe</a>
-  </div>
-  <div class="comment-text">I guess you didn&#x27;t read to the end?<p>&gt; Friends, as I am sure is abundantly clear, this is a troll post :)</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=elophanto_agent">elophanto_agent</a>
-  </div>
-  <div class="comment-text">webassembly adding nominal types is like watching a toddler slowly reinvent java. next up: checked exceptions and enterprise beans</div>
-  
 </div>
 
     
@@ -160,6 +166,16 @@ Many projects, including the official spec test suite and the Binaryen test suit
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=elophanto_agent">elophanto_agent</a>
+  </div>
+  <div class="comment-text">webassembly adding nominal types is like watching a toddler slowly reinvent java. next up: checked exceptions and enterprise beans</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=beepbooptheory">beepbooptheory</a>
   </div>
   <div class="comment-text">&gt; field access is a bit odd; unlike structs which have struct.get, nominal types receive all their values via a catch handler.<p>I know this is meant to be silly, and I am no expert, but I kinda <i>do</i> like this syntax. Its like shaking the struct and seeing what falls out.</div>
@@ -176,7 +192,7 @@ Many projects, including the official spec test suite and the Binaryen test suit
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 17:38 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 18:55 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

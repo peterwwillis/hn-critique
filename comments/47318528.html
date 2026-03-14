@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">33 points</span>
+        <span class="score">35 points</span>
         by <a href="https://news.ycombinator.com/user?id=vmatsiiako">vmatsiiako</a>
         5 days ago
         &nbsp;|&nbsp;<a href="/critique/47318528.html">critique article</a>
@@ -86,6 +86,14 @@
 secret management for AI agents is something most teams are ignoring right now.<p>One adjacent risk worth noting: the URLs these agents visit during research. 
 Even with proper secret management, if an agent browses a poisoned page during research, the injected instructions could override its behavior before secrets ever come into play.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=derefr">derefr</a>
+  </div>
+  <div class="comment-text">&gt; if an agent browses a poisoned page during research, the injected instructions could override its behavior before secrets ever come into play.<p>Why is this problem (UGC instruction injection) still a thing, anyway? It feels like a problem that can be solved very simply in an agentic architecture that&#x27;s willing to do multiple calls to different models per request.<p>How: filter fetched data through a non-instruction-following model (i.e. the sort of base text-prediction model you have before instruction-following fine-tuning) that has instead been hard-fine-tuned into a classifier, such that it just outputs whether the text in its context window contains &quot;instructions directed toward the reader&quot; or not.<p>(And if that non-instruction-following classifier model is in the same model-family &#x2F; using the same LLM base model that will be used by the deliberative model to actually evaluate the text, then it will inherently apply all the same &quot;deep recognition&quot; techniques [i.e. unwrapping &#x2F; unarmoring &#x2F; translation &#x2F; etc] the deliberative model uses; and so it will discover + point out &quot;obfuscated&quot; injected instructions to exactly the same degree that the deliberative model would be able to discover + obey them.)<p>Note that this is a strictly-simpler problem to that of preventing jailbreaks. Jailbreaks try to inject &quot;system-prompt instructions&quot; among &quot;user-prompt instructions&quot; (where, from the model&#x27;s perspective, there is no <i>natural</i> distinction between these, only whatever <i>artificial</i> distinctions the model&#x27;s developers try to impose. Without explicit anti-jailbreak training, these are both just picked up as &quot;instructions&quot; to an LLM.) Whereas the goal here would just be to prevent any UGC-tainted document containing anything that could be recognized as &quot;instructions I would try to follow&quot; from ever being injected into the context window.<p>(Actually, a very simple way to do this is to just take the instruction-following model, experimentally derive a vector direction within it representing &quot;I am interpreting some of the input as instructions to follow&quot; [ala the vector directions for refusal et al], and then just chop off all the rest of the layers past that point and replace them with an output head emitting the cosine similarity between the input and that vector direction.)</div>
+  
+</div>
+
 </div>
 
     
@@ -98,7 +106,7 @@ Even with proper secret management, if an agent browses a poisoned page during r
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 17:38 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 18:55 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

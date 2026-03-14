@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">117 points</span>
+        <span class="score">128 points</span>
         by <a href="https://news.ycombinator.com/user?id=enz">enz</a>
         2 days ago
         &nbsp;|&nbsp;<a href="/critique/47347920.html">critique article</a>
@@ -78,6 +78,14 @@
 
 </div>
 
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=roncesvalles">roncesvalles</a>
+  </div>
+  <div class="comment-text">Exactly, reading TFA and its prequel, can&#x27;t shake the feeling that the author doesn&#x27;t <i>really</i> understand concurrency.<p>The main purpose of synchronization is creating happens-before (memory&#x2F;cache coherence) relationships between lines of code that aren&#x27;t in the same program order. Go channels are just syntactic sugar for creating these happens-before relationships. Problems such as deadlocks and races (at least in the way that TFA calls them out) are irreducible complexity if you&#x27;re executing two sequences of logical instructions in parallel. If you&#x27;re passing data in whatever way, there is no isolation between those two sequences. All you can enforce is degrees of discipline.<p>It&#x27;s typical AI slop. I&#x27;d recommend for the author (or anyone else) to watch Jenkov&#x27;s course[1] first if they have an honest interest in the topic.<p>[1] <a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLL8woMHwr36EDxjUoCzboZjedsnhLP1j4" rel="nofollow">https:&#x2F;&#x2F;www.youtube.com&#x2F;playlist?list=PLL8woMHwr36EDxjUoCzbo...</a></div>
+  
+</div>
+
 </div>
 
     
@@ -98,10 +106,28 @@
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=rdtsc">rdtsc</a>
   </div>
-  <div class="comment-text">&gt; ETS is not a process that responds to messages, you have to wrap it in a process and do the messages part yourself.<p>I didn&#x27;t say it&#x27;s implemented as a process but works as if it where logically. Most terms (except literals and the binary references) are still copied just like when you send message. You could replace it behind the scenes with a process and it would act the same. Performance-wise it won&#x27;t be the same, and that why they are implemented differently but it doesn&#x27;t allow sharing a process heap and you don&#x27;t have to do locks and mutexes access this &quot;shared&quot; data.<p>&gt; i am pretty sure that&#x27;s a process_info bif that directly queries the vm internal database and not a secret message that can be trapped or even uses the normal message passing system.<p>I specifically meant querying the dictionary of another process. Since it&#x27;s in the context of &quot;erlang is violating the shared nothing&quot; comment. In that case if we look at <a href="https:&#x2F;&#x2F;www.erlang.org&#x2F;doc&#x2F;system&#x2F;ref_man_processes.html#receiving-signals" rel="nofollow">https:&#x2F;&#x2F;www.erlang.org&#x2F;doc&#x2F;system&#x2F;ref_man_processes.html#rec...</a> we see that process_info_request is a signal. A process is sent a signal, and then it gets its dictionary entries and replies (note the difference between messages and signals there).</div>
+  <div class="comment-text">&gt; ETS is not a process that responds to messages, you have to wrap it in a process and do the messages part yourself.<p>I didn&#x27;t say it&#x27;s implemented as a process but works as if it where logically. Most terms (except literals and the binary references) are still copied just like when you send message. You could replace it behind the scenes with a process and it would act the same. Performance-wise it won&#x27;t be the same, and that&#x27;s why they are implemented differently but it doesn&#x27;t allow sharing a process heap and you don&#x27;t have to do locks and mutexes to protect access to this &quot;shared&quot; data.<p>&gt; i am pretty sure that&#x27;s a process_info bif that directly queries the vm internal database and not a secret message that can be trapped or even uses the normal message passing system.<p>I specifically meant querying the dictionary of another process. Since it&#x27;s in the context of &quot;erlang is violating the shared nothing&quot; comment. In that case if we look at <a href="https:&#x2F;&#x2F;www.erlang.org&#x2F;doc&#x2F;system&#x2F;ref_man_processes.html#receiving-signals" rel="nofollow">https:&#x2F;&#x2F;www.erlang.org&#x2F;doc&#x2F;system&#x2F;ref_man_processes.html#rec...</a> we see that process_info_request is a signal. A process is sent a signal, and then it gets its dictionary entries and replies (note the difference between messages and signals there).</div>
   
 </div>
 
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Twey">Twey</a>
+  </div>
+  <div class="comment-text">Message passing is <i>a type of</i> mutable shared state — but one that&#x27;s restricted in some important way to eliminate a certain class of errors (in Erlang&#x27;s case, to a thread-safe queue with pairwise ordering guarantees so that all processing on a particular actor&#x27;s state is effectively atomic). You can also pick other structures that give different guarantees, e.g. LVars or CRDTs make operations commutative so that the ordering problems go away (but by removing your ability to write non-commutative operations). The big win for the actor model is (just) that it linearizes all operations on a particular substate of the program while allowing other actors&#x27; states to be operated on concurrently.<p>Nobody argues that any of these approaches is a silver bullet for all concurrency problems. Indeed most of the problems of concurrency have direct equivalents in the world of single-threaded programming that are typically hard and only partially solved: deadlocks and livelocks are just infinite loops that occur across a thread boundary, protocol violations are just type errors that occur across a thread boundary, et cetera. But being able to rule out some of these problems in the happy case, even if you have to deal with them occasionally when writing more fiddly code, is still a big win.<p>If you have an actor <i>Mem</i> that is shared between two other actors <i>A</i> and <i>B</i> then <i>Mem</i> functions exactly as shared memory does between colocated threads in a multithreaded system: after all, RAM on a computer is implemented by sending messages down a bus! The difference is just that in the hardware case the messages you can pass to&#x2F;from the actor (i.e. the atomicity boundaries) are fixed by the hardware, e.g. to reads&#x2F;writes on particular fixed-sized ranges of memory, while with a shared actor <i>Mem</i> is free to present its own set of software-defined operations, with awareness of the program&#x27;s semantics. Memory fences are a limited way to bring that programmability to hardware memory, but the programmer still has the onerous and error-prone task of mapping domain operations to fences.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=_mrinalwadhwa_">_mrinalwadhwa_</a>
+  </div>
+  <div class="comment-text">&gt; a thread-safe queue with pairwise ordering guarantees so that all processing on a particular actor&#x27;s state is effectively atomic<p>&gt; The big win for the actor model is (just) that it linearizes all operations on a particular substate of the program while allowing other actors&#x27; states to be operated on concurrently.<p>Came here to say exactly those two things. Your comment is as clear as it could be.</div>
+  
 </div>
 
 </div>
@@ -128,28 +154,18 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=tonnydourado">tonnydourado</a>
-  </div>
-  <div class="comment-text">Thank god I found this page: <a href="https:&#x2F;&#x2F;causality.blog&#x2F;series&#x2F;" rel="nofollow">https:&#x2F;&#x2F;causality.blog&#x2F;series&#x2F;</a>, now I can relax knowing that at least there&#x27;s a plan for a conclusion. Looking forward to the next posts</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=NeutralForest">NeutralForest</a>
-  </div>
-  <div class="comment-text">Yeah I was looking for the next one!</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=johnisgood">johnisgood</a>
   </div>
   <div class="comment-text">&gt; This isn’t obviously wrong<p>I thought it was obviously wrong. Server A calls Server B, and Server B calls server A. Because when I read the code my first thought was that it is circular. Is it really not obvious? Am I losing my mind?<p>The mention of `persistent_term` is cool.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jacquesm">jacquesm</a>
+  </div>
+  <div class="comment-text">Servers are not ever supposed to be calling each other, also not in longer chains. They&#x27;re supposed to layered and you only call &quot;down&quot;.</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=loloquwowndueo">loloquwowndueo</a>
@@ -172,24 +188,6 @@
   
 </div>
 
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Twey">Twey</a>
-  </div>
-  <div class="comment-text">Message passing is <i>a type of</i> mutable shared state — but one that&#x27;s restricted in some important way to eliminate a certain class of errors (in Erlang&#x27;s case, to a thread-safe queue with pairwise ordering guarantees so that all processing on a particular actor&#x27;s state is effectively atomic). You can also pick other structures that give different guarantees, e.g. LVars or CRDTs make operations commutative so that the ordering problems go away (but by removing your ability to write non-commutative operations). The big win for the actor model is (just) that it linearizes all operations on a particular substate of the program while allowing other actors&#x27; states to be operated on concurrently.<p>Nobody argues that any of these approaches is a silver bullet for all concurrency problems. Indeed most of the problems of concurrency have direct equivalents in the world of single-threaded programming that are typically hard and only partially solved: deadlocks and livelocks are just infinite loops that occur across a thread boundary, protocol violations are just type errors that occur across a thread boundary, et cetera. But being able to rule out some of these problems in the happy case, even if you have to deal with them occasionally when writing more fiddly code, is still a big win.<p>If you have an actor <i>Mem</i> that is shared between two other actors <i>A</i> and <i>B</i> then <i>Mem</i> functions exactly as shared memory does between colocated threads in a multithreaded system: after all, RAM on a computer is implemented by sending messages down a bus! The difference is just that in the hardware case the messages you can pass to&#x2F;from the actor (i.e. the atomicity boundaries) are fixed by the hardware, e.g. to reads&#x2F;writes on particular fixed-sized ranges of memory, while with a shared actor <i>Mem</i> is free to present its own set of software-defined operations, with awareness of the program&#x27;s semantics. Memory fences are a limited way to bring that programmability to hardware memory, but the programmer still has the onerous and error-prone task of mapping domain operations to fences.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=_mrinalwadhwa_">_mrinalwadhwa_</a>
-  </div>
-  <div class="comment-text">&gt; a thread-safe queue with pairwise ordering guarantees so that all processing on a particular actor&#x27;s state is effectively atomic<p>&gt; The big win for the actor model is (just) that it linearizes all operations on a particular substate of the program while allowing other actors&#x27; states to be operated on concurrently.<p>Came here to say exactly those two things. Your comment is as clear as it could be.</div>
-  
 </div>
 
 </div>
@@ -274,32 +272,6 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=pshirshov">pshirshov</a>
-  </div>
-  <div class="comment-text">I believe it&#x27;s more correct to reference circular calls as &quot;livelocks&quot;, not &quot;deadlocks&quot; - something is happening but the whole computation cannot progress.<p>For the rest - pure untyped actors come with a lot of downsides and provoke engineers to make systems unnecessarily distributed (with all the consistency and timeout issues). There aren&#x27;t that many problems which can be mapped well directly to actors. I personally find async runtimes with typed front-ends (e.g. Cats&#x2F;ZIO in Scala, async in Rust, etc) much more robust and much less error-prone.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=toast0">toast0</a>
-  </div>
-  <div class="comment-text">If process A is waiting for a reply from process B and process B is waiting for a reply from process A; that is deadlock. There is no way those processes can continue (unless there&#x27;s a timeout or one process gets killed). Other processes may progress as long as they don&#x27;t need a reply from process A or B ... which sometimes is fine. (Edit: nevermind, I forgot the 5 second timeout if you use gen_server:call&#x2F;2; you will end up in livelock if it happens continuously, but a mostly ok system if it works out)<p>Livelock is something like you&#x27;ve got 1000 nodes that all want to do X, which requires an exclusive lock and the method to get an exclusive lock is:<p>Broadcast request to cluster<p>If you got the lock on all nodes, proceed<p>If you get the lock on all nodes, release and try again after a timeout<p>This procedure works in practice, when there is low contention. If the cluster is large and many processes contend for the lock, progress is rare. It&#x27;s not impossible to progress, so the system is not deadlocked; but it takes an inordinate amount of time, mostly waiting for locks: the system is livelocked. In this case, whenever progress happens, future progress is easier.<p>This is a rough description of an actual incident with nodes joining pg2, I think around 2018... the new pg module avoids that lock (and IMHO, the lock was not needed anyway; it was there to provide consistent order in member lists across nodes, but member lists would no longer be consistent when dist distonects happened and resolved, so why add locks to be consistent sometimes). As an Erlang user with I think the largest clusters anywhere, we ran into a good number of these kinds of things in OTP. Ericsson built dist for telecom switches with two nodes in a single enclosure in a rack. It works over tcp and they didn&#x27;t put explicit limits, so you can run a dist cluster with thousands of nodes in locations across the globe and it <i>mostly</i> works, but there will be some things to debug from time to time. Erlang is fairly easy to debug... All the new nodes have a process waiting to join pg2, what&#x27;s the pg2 process doing, why does that lock not have the consensus building algorithm, can we add it? In the meantime, let&#x27;s kill some nodes so others can progreas and then we&#x27;ll run a sequenced start of the rest.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=gzread">gzread</a>
-  </div>
-  <div class="comment-text">It&#x27;s a deadlock because two threads are each waiting for the other.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=anonymous_user9">anonymous_user9</a>
   </div>
   <div class="comment-text">This seems interesting, but the sheer density of LLM-isms make it hard to get through.</div>
@@ -366,10 +338,44 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=never_inline">never_inline</a>
+    <a href="https://news.ycombinator.com/user?id=tonnydourado">tonnydourado</a>
   </div>
-  <div class="comment-text">&gt; This isn’t just academic elegance, it kept phone switches running with five nines of availability.<p>Hmm....<p>&gt; Erlang is the strongest form of the isolation argument, and it deserves to be taken seriously, which is why what happens next matters.<p>OK I think I know who wrote this.<p>&gt; The problem isn’t that developers write circular calls by accident. It’s that deadlock-freedom doesn’t compose.<p>Is there a need to regugriate it in this format? &quot;two protocols that are individually deadlock-free can still combine to deadlock in an actor system.&quot; This is the actually meaningful part.<p>&gt; Forget to set a timeout on a gen_server:call?<p>People have pointed out its factually wrong in the thread. Eh<p>&gt; This is the discipline tax. It works when the team is experienced, the codebase is well-maintained, and the conventions are followed consistently. It erodes when any of those conditions weaken, and given enough time and enough turnover they do.<p>I know this is an LLM tell, but can&#x27;t point out. It makes me uneasy to read this. Maybe the rule of three? Maybe the reguggeiation of a elementary SE concept in between a technical description? Maybe because it&#x27;s tryhard to sound smart? All three I guess.<p>I could go on, but sigh, man don&#x27;t use these clankers to write prose. They&#x27;re like negative level gzip compression.</div>
+  <div class="comment-text">Thank god I found this page: <a href="https:&#x2F;&#x2F;causality.blog&#x2F;series&#x2F;" rel="nofollow">https:&#x2F;&#x2F;causality.blog&#x2F;series&#x2F;</a>, now I can relax knowing that at least there&#x27;s a plan for a conclusion. Looking forward to the next posts</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=NeutralForest">NeutralForest</a>
+  </div>
+  <div class="comment-text">Yeah I was looking for the next one!</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pshirshov">pshirshov</a>
+  </div>
+  <div class="comment-text">I believe it&#x27;s more correct to reference circular calls as &quot;livelocks&quot;, not &quot;deadlocks&quot; - something is happening but the whole computation cannot progress.<p>For the rest - pure untyped actors come with a lot of downsides and provoke engineers to make systems unnecessarily distributed (with all the consistency and timeout issues). There aren&#x27;t that many problems which can be mapped well directly to actors. I personally find async runtimes with typed front-ends (e.g. Cats&#x2F;ZIO in Scala, async in Rust, etc) much more robust and much less error-prone.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=toast0">toast0</a>
+  </div>
+  <div class="comment-text">If process A is waiting for a reply from process B and process B is waiting for a reply from process A; that is deadlock. There is no way those processes can continue (unless there&#x27;s a timeout or one process gets killed). Other processes may progress as long as they don&#x27;t need a reply from process A or B ... which sometimes is fine. (Edit: nevermind, I forgot the 5 second timeout if you use gen_server:call&#x2F;2; you will end up in livelock if it happens continuously, but a mostly ok system if it works out)<p>Livelock is something like you&#x27;ve got 1000 nodes that all want to do X, which requires an exclusive lock and the method to get an exclusive lock is:<p>Broadcast request to cluster<p>If you got the lock on all nodes, proceed<p>If you get the lock on all nodes, release and try again after a timeout<p>This procedure works in practice, when there is low contention. If the cluster is large and many processes contend for the lock, progress is rare. It&#x27;s not impossible to progress, so the system is not deadlocked; but it takes an inordinate amount of time, mostly waiting for locks: the system is livelocked. In this case, whenever progress happens, future progress is easier.<p>This is a rough description of an actual incident with nodes joining pg2, I think around 2018... the new pg module avoids that lock (and IMHO, the lock was not needed anyway; it was there to provide consistent order in member lists across nodes, but member lists would no longer be consistent when dist distonects happened and resolved, so why add locks to be consistent sometimes). As an Erlang user with I think the largest clusters anywhere, we ran into a good number of these kinds of things in OTP. Ericsson built dist for telecom switches with two nodes in a single enclosure in a rack. It works over tcp and they didn&#x27;t put explicit limits, so you can run a dist cluster with thousands of nodes in locations across the globe and it <i>mostly</i> works, but there will be some things to debug from time to time. Erlang is fairly easy to debug... All the new nodes have a process waiting to join pg2, what&#x27;s the pg2 process doing, why does that lock not have the consensus building algorithm, can we add it? In the meantime, let&#x27;s kill some nodes so others can progreas and then we&#x27;ll run a sequenced start of the rest.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gzread">gzread</a>
+  </div>
+  <div class="comment-text">It&#x27;s a deadlock because two threads are each waiting for the other.</div>
+  
+</div>
+
 </div>
 
     
@@ -388,6 +394,16 @@
   
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=never_inline">never_inline</a>
+  </div>
+  <div class="comment-text">&gt; This isn’t just academic elegance, it kept phone switches running with five nines of availability.<p>Hmm....<p>&gt; Erlang is the strongest form of the isolation argument, and it deserves to be taken seriously, which is why what happens next matters.<p>OK I think I know who wrote this.<p>&gt; The problem isn’t that developers write circular calls by accident. It’s that deadlock-freedom doesn’t compose.<p>Is there a need to regugriate it in this format? &quot;two protocols that are individually deadlock-free can still combine to deadlock in an actor system.&quot; This is the actually meaningful part.<p>&gt; Forget to set a timeout on a gen_server:call?<p>People have pointed out its factually wrong in the thread. Eh<p>&gt; This is the discipline tax. It works when the team is experienced, the codebase is well-maintained, and the conventions are followed consistently. It erodes when any of those conditions weaken, and given enough time and enough turnover they do.<p>I know this is an LLM tell, but can&#x27;t point out. It makes me uneasy to read this. Maybe the rule of three? Maybe the reguggeiation of a elementary SE concept in between a technical description? Maybe because it&#x27;s tryhard to sound smart? All three I guess.<p>I could go on, but sigh, man don&#x27;t use these clankers to write prose. They&#x27;re like negative level gzip compression.</div>
+  
 </div>
 
     
@@ -430,7 +446,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 17:38 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 18:55 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>

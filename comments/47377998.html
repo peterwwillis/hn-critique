@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">11 points</span>
+        <span class="score">40 points</span>
         by <a href="https://news.ycombinator.com/user?id=signa11">signa11</a>
-        1 hour ago
+        3 hours ago
         &nbsp;|&nbsp;<a href="/critique/47377998.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47377998" rel="noopener">original on HN</a>
       </p>
@@ -50,10 +50,141 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=saghm">saghm</a>
+  </div>
+  <div class="comment-text">Early on the article mentions that xz have zstd have gotten more popular than bzip, and my admitted naive understanding is that they&#x27;re considered to have better tradeoffs in teems of collision compression time and overall space saved by compression. The performance section heavily discusses encoding performance of gzip and bzip, but unless I&#x27;m missing something, the only references to xz or zstd in that section are briefly handwaving about the decoding times probably being similar.<p>My impression is that this article has a lot of technical insight into how bzip compares to gzip, but it fails actually account for the real cause of the diminished popularity of bzip in favor of the non-gzip alternatives that it admits are the more popular choices in recent years.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=fl0ki">fl0ki</a>
+  </div>
+  <div class="comment-text">This seems as good a thread as any to mention that the gzhttp package in klauspost&#x2F;compress for Go now supports zstd on both server handles and client transports. Strangely this was added in a patch version instead of a minor version despite both expanding the API surface and changing default behavior.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;klauspost&#x2F;compress&#x2F;releases&#x2F;tag&#x2F;v1.18.4" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;klauspost&#x2F;compress&#x2F;releases&#x2F;tag&#x2F;v1.18.4</a></div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=klauspost">klauspost</a>
+  </div>
+  <div class="comment-text">About the versioning, glad you spotted it anyway. There isn&#x27;t as much use of the gzhttp package compared to the other ones, so the bar is a bit higher for that one.<p>Also making good progress on getting a slimmer version of zstd into the stdlib and improving the stdlib deflate.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pella">pella</a>
+  </div>
+  <div class="comment-text">imho: the future is a specialized compressor optimized for your specific format.
+( <a href="https:&#x2F;&#x2F;openzl.org&#x2F;" rel="nofollow">https:&#x2F;&#x2F;openzl.org&#x2F;</a> , ... )</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=srean">srean</a>
+  </div>
+  <div class="comment-text">That is an interesting link.<p>Does gmail use a special codec for storing emails ?</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hexxagone">hexxagone</a>
+  </div>
+  <div class="comment-text">Notice that bzip3 has close to nothing to do with bzip2. It is a different BWT implementation with a different entropy codec, from a different author (as noted in the GitHub description &quot;better and stronger spiritual successor to BZip2&quot;).</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=elophanto_agent">elophanto_agent</a>
   </div>
   <div class="comment-text">bzip2 is the compression algorithm equivalent of that one coworker who does incredible work but nobody ever talks about. meanwhile gzip gets all the credit because it&#x27;s &quot;good enough&quot;</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kergonath">kergonath</a>
+  </div>
+  <div class="comment-text">Bzip2 is <i>slow</i>. That’s the main issue. Gzip is good enough and much faster. Also, the fact that you cannot get a valid bzip2 file by cat-ing 2 compressed files is not a deal breaker, but it is annoying.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=nine_k">nine_k</a>
+  </div>
+  <div class="comment-text">Gzip is woefully old. Its only redeeming value is that it&#x27;s already built into some old tools. Otherwise, use zstd, which is better <i>and</i> faster, both at compression and decompression. There&#x27;s no reason to use gzip in anything new, except for backwards compatibility with something old.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sedatk">sedatk</a>
+  </div>
+  <div class="comment-text">&gt; the fact that you cannot get a valid bzip2 file by cat-ing 2 compressed files<p>TIL. Now that&#x27;s why gzip has a file header! But, tar.gz compresses even better, that&#x27;s probably why it hasn&#x27;t caught on.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=saidnooneever">saidnooneever</a>
+  </div>
+  <div class="comment-text">the catting issue might be more an implementation of bzip program problem than algorithm (it could expect an array of compressed files). that would only be impossible if the program cannot reason about the length of data from file header, which again is technically not something about compression algo but rather file format its carried through.<p>that being said, speed is important for compression so for systems like webservers etc  its an easy sell ofc. very strong point (and smarter implementation in programs) for gzip</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=stefan_">stefan_</a>
+  </div>
+  <div class="comment-text">bzip and gzip are both horrible, terribly slow. Wherever I see &quot;gz&quot; or &quot;bz&quot; I immediately rip that nonsense out for zstd. There is such a thing as a right choice, and zstd is it every time.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=joecool1029">joecool1029</a>
+  </div>
+  <div class="comment-text">Just use zstd unless you absolutely need to save a tiny bit more space. bzip2 and xz are extremely slow to compress.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=silisili">silisili</a>
+  </div>
+  <div class="comment-text">I&#x27;d argue it&#x27;s more workload dependent, and everything is a tradeoff.<p>In my own testing of compressing internal generic json blobs, I found brotli a clear winner when comparing space and time.<p>If I want higher compatibility and fast speeds, I&#x27;d probably just reach for gzip.<p>zstd is good for many use cases, too, perhaps even most...but I think just telling everyone to always use it isn&#x27;t necessarily the best advice.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=joecool1029">joecool1029</a>
+  </div>
+  <div class="comment-text">&gt; If I want higher compatibility and fast speeds, I&#x27;d probably just reach for gzip.<p>It’s slower and compresses less than zstd. gzip should only be reached for as a compatibility option, that’s the only place it wins, it’s everywhere.<p>EDIT: If you must use it, use the modern implementation, <a href="https:&#x2F;&#x2F;www.zlib.net&#x2F;pigz&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.zlib.net&#x2F;pigz&#x2F;</a></div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hexxagone">hexxagone</a>
+  </div>
+  <div class="comment-text">In the LZ high compression regime where LZ can compete in terms of ratio, BWT compressors are faster to compress and slower to decompress than LZ codecs. BWT compressors are also more amenable to parallelization (check bsc and kanzi for modern implementations besides bzip3).</div>
+  
+</div>
+
 </div>
 
     
@@ -66,7 +197,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 17:38 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 18:55 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
