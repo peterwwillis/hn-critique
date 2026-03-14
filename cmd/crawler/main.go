@@ -123,14 +123,19 @@ func main() {
 		}
 
 		// Fetch article content (only for stories with external URLs).
+		articleUnavailable := ""
 		if item.URL != "" {
 			log.Printf("  Fetching article: %s", item.URL)
 			text, err := articleFetcher.Fetch(item.URL)
 			if err != nil {
 				log.Printf("  ⚠  article fetch failed: %v", err)
+				articleUnavailable = "Summary unavailable because the article could not be retrieved or did not contain enough readable content to analyze."
 			} else {
 				story.ArticleText = text
 			}
+		}
+		if item.URL != "" && story.ArticleText == "" && articleUnavailable == "" {
+			articleUnavailable = "Summary unavailable because the article could not be retrieved or did not contain enough readable content to analyze."
 		}
 
 		if aiProvider != nil {
@@ -141,20 +146,23 @@ func main() {
 			}
 
 			// Article critique.
-			if story.ArticleText != "" || story.URL != "" {
+			if articleUnavailable != "" {
+				story.Critique = unavailableCritique(
+					articleUnavailable,
+					"Truthfulness assessment unavailable because the article could not be retrieved or did not contain enough readable content to analyze.",
+				)
+			} else if story.ArticleText != "" || story.URL != "" {
 				log.Printf("  Analyzing article…")
 				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
 				if err != nil {
 					log.Printf("  ⚠  article analysis failed: %v", err)
-					if cached != nil && cached.Critique != nil {
-						log.Printf("  Using cached article analysis.")
-						story.Critique = cached.Critique
-					}
+					story.Critique = unavailableCritique(
+						"Summary unavailable because the AI assessment could not be completed due to an internal error.",
+						"Truthfulness assessment unavailable because the AI assessment could not be completed due to an internal error.",
+					)
 				} else {
 					story.Critique = crit
 				}
-			} else if cached != nil && cached.Critique != nil {
-				story.Critique = cached.Critique
 			}
 
 			// Comments critique.
@@ -184,6 +192,18 @@ func main() {
 				if saveErr := generator.SaveCache(*outputDir, story.ID, newCache); saveErr != nil {
 					log.Printf("  ⚠  cache save failed: %v", saveErr)
 				}
+			}
+		} else if item.URL != "" {
+			if articleUnavailable != "" {
+				story.Critique = unavailableCritique(
+					articleUnavailable,
+					"Truthfulness assessment unavailable because the article could not be retrieved or did not contain enough readable content to analyze.",
+				)
+			} else if story.ArticleText != "" {
+				story.Critique = unavailableCritique(
+					"Summary unavailable because the AI assessment is not available.",
+					"Truthfulness assessment unavailable because the AI assessment is not available.",
+				)
 			}
 		}
 
@@ -251,4 +271,12 @@ func extractDomain(rawURL string) string {
 	host := u.Hostname()
 	host = strings.TrimPrefix(host, "www.")
 	return host
+}
+
+func unavailableCritique(summary, truthfulness string) *generator.ArticleCritique {
+	return &generator.ArticleCritique{
+		Summary:      summary,
+		Truthfulness: truthfulness,
+		Rating:       "unavailable",
+	}
 }

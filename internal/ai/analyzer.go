@@ -38,6 +38,8 @@ The JSON must have exactly these keys:
 
 Use web search to verify factual claims where possible.
 
+If the article is journalism, it must cite at least two distinct sources of information and provide multiple perspectives to earn a "reliable" rating. If it lacks either requirement, do not rate it as "reliable" (use "questionable" or "misleading" instead).
+
 Article title: %s
 Article URL: %s
 Article content:
@@ -76,7 +78,7 @@ Comments:
 // sanitizeRating ensures the rating field has a valid value.
 func sanitizeRating(r string) string {
 	switch r {
-	case "reliable", "questionable", "misleading":
+	case "reliable", "questionable", "misleading", "unavailable":
 		return r
 	default:
 		return "questionable"
@@ -213,4 +215,3 @@ func (a *Analyzer) AnalyzeArticle(title, articleURL, content string) (*generator
 func (a *Analyzer) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
 	return a.p.AnalyzeComments(title, articleURL, comments)
 }
-
