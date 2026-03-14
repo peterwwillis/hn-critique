@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">103 points</span>
+        <span class="score">112 points</span>
         by <a href="https://news.ycombinator.com/user?id=enz">enz</a>
         2 days ago
         &nbsp;|&nbsp;<a href="/critique/47347920.html">critique article</a>
@@ -50,30 +50,18 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Twey">Twey</a>
-  </div>
-  <div class="comment-text">Message passing is <i>a type of</i> mutable shared state — but one that&#x27;s restricted in some important way to eliminate a certain class of errors (in Erlang&#x27;s case, to a thread-safe queue with pairwise ordering guarantees so that all processing on a particular actor&#x27;s state is effectively atomic). You can also pick other structures that give different guarantees, e.g. LVars or CRDTs make operations commutative so that the ordering problems go away (but by removing your ability to write non-commutative operations). The big win for the actor model is (just) that it linearizes all operations on a particular substate of the program while allowing other actors&#x27; states to be operated on concurrently.<p>Nobody argues that any of these approaches is a silver bullet for all concurrency problems. Indeed most of the problems of concurrency have direct equivalents in the world of single-threaded programming that are typically hard and only partially solved: deadlocks and livelocks are just infinite loops that occur across a thread boundary, protocol violations are just type errors that occur across a thread boundary, et cetera. But being able to rule out some of these problems in the happy case, even if you have to deal with them occasionally when writing more fiddly code, is still a big win.<p>If you have an actor <i>Mem</i> that is shared between two other actors <i>A</i> and <i>B</i> then <i>Mem</i> functions exactly as shared memory does between colocated threads in a multithreaded system: after all, RAM on a computer is implemented by sending messages down a bus! The difference is just that in the hardware case the messages you can pass to&#x2F;from the actor (i.e. the atomicity boundaries) are fixed by the hardware, while with a shared actor <i>Mem</i> is free to present its own set of software-defined operations, with awareness of the program&#x27;s semantics. Memory fences are a limited way to bring that programmability to hardware memory, but the programmer still has the onerous and error-prone task of mapping domain operations to fences.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=rdtsc">rdtsc</a>
-  </div>
-  <div class="comment-text">&gt; But an escape hatch is still an escape hatch. These mechanisms bypass the process isolation model entirely. They are shared state outside the process model, accessible concurrently by any process, with no mailbox serialization, no message copying, no ownership semantics. And when you introduce shared state into a system built on the premise of having none, you reintroduce the bugs that premise was supposed to eliminate.<p>Not they are not. I don&#x27;t know what &quot;Technical Program Managers at Google&quot; do but they don&#x27;t seem to be using a lot of Erlang ;-) it seems. ETS tables can be modeled as a process which stores data and then replies to queries. Every update and read is equivalent to sending a message. The terms are still copied (see note * below). You&#x27;re not going to read half a tuple and then it will mutate underneath as another process updates it. Traversing an ETS table is logically not that different than asking a process for individual kvs using regular message passing.<p>What is different is what these are optimized for. ETS tables are great for querying and looking up data. They even have a mini query language for it (<a href="https:&#x2F;&#x2F;www.erlang.org&#x2F;doc&#x2F;apps&#x2F;stdlib&#x2F;qlc.html" rel="nofollow">https:&#x2F;&#x2F;www.erlang.org&#x2F;doc&#x2F;apps&#x2F;stdlib&#x2F;qlc.html</a>). Persistent terms are great for configuration values. None of them break the isolated heap and immutable data paradigm, they just optimize for certain access patterns.<p>Even dictionary fields they mention, when a process reads another process&#x27; dictionary it&#x27;s still a signal being sent to a process and a reply needing to be received.<p>* Immutable binary blocks &gt;64B can be referenced, but they are referenced when sending data using explicit messages between processes anyway.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=JackC">JackC</a>
   </div>
   <div class="comment-text">The article argues that shared memory and message passing are the same thing because they share the same classes of potential failure modes.<p>Isn&#x27;t it more like, message passing is a way of constraining shared memory to the point where it&#x27;s possible for humans to reason about most of the time?<p>Sort of like rust and c. Yes, you can write code with &#x27;unsafe&#x27; in rust that makes any mistake c can make. But the rules outside unsafe blocks, combined with the rules at module boundaries, greatly reduce the m * n polynomial complexity of a given size of codebase, letting us reason better about larger codebases.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=alberth">alberth</a>
+  </div>
+  <div class="comment-text">Tangentially related: I haven’t seen DragonflyBSD talked about on HN in a long while but wasn’t it a split from FreeBSD to be built entirely around messaging passing as the core construct.<p>And with the tiny team working on it, it has remarkable performance.<p><a href="https:&#x2F;&#x2F;www.dragonflybsd.org&#x2F;performance&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.dragonflybsd.org&#x2F;performance&#x2F;</a></div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=toast0">toast0</a>
@@ -96,10 +84,46 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=rdtsc">rdtsc</a>
+  </div>
+  <div class="comment-text">&gt; But an escape hatch is still an escape hatch. These mechanisms bypass the process isolation model entirely. They are shared state outside the process model, accessible concurrently by any process, with no mailbox serialization, no message copying, no ownership semantics. And when you introduce shared state into a system built on the premise of having none, you reintroduce the bugs that premise was supposed to eliminate.<p>No, they do bypass it. I don&#x27;t know what &quot;Technical Program Managers at Google&quot; do but they don&#x27;t seem to be using a lot of Erlang it seems ;-). ETS tables can be modeled as a process which stores data and then replies to message queries. Every update and read is equivalent to sending a message. The terms are still copied (see note * below). You&#x27;re not going to read half a tuple and then it will mutate underneath as another process updates it. Traversing an ETS table is logically equivalent to asking a process for individual key-values using regular message passing.<p>What is different is what these are optimized for. ETS tables are great for querying and looking up data. They even have a mini query language for it (<a href="https:&#x2F;&#x2F;www.erlang.org&#x2F;doc&#x2F;apps&#x2F;stdlib&#x2F;qlc.html" rel="nofollow">https:&#x2F;&#x2F;www.erlang.org&#x2F;doc&#x2F;apps&#x2F;stdlib&#x2F;qlc.html</a>). Persistent terms are great for configuration values. None of them break the isolated heap and immutable data paradigm, they just optimize for certain access patterns.<p>Even dictionary fields they mention, when a process reads another process&#x27; dictionary it&#x27;s still a signal being sent to a process and a reply needing to be received.<p>* Immutable binary blocks &gt;64B can be referenced, but they are referenced when sending data using explicit messages between processes anyway.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tonnydourado">tonnydourado</a>
+  </div>
+  <div class="comment-text">Thank god I found this page: <a href="https:&#x2F;&#x2F;causality.blog&#x2F;series&#x2F;" rel="nofollow">https:&#x2F;&#x2F;causality.blog&#x2F;series&#x2F;</a>, now I can relax knowing that at least there&#x27;s a plan for a conclusion. Looking forward to the next posts</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=NeutralForest">NeutralForest</a>
+  </div>
+  <div class="comment-text">Yeah I was looking for the next one!</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=IsTom">IsTom</a>
   </div>
   <div class="comment-text">&gt; Forget to set a timeout on a gen_server:call?<p>Default timeout is 5 seconds. You need to set explicit infinity timeout to not have one.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=__turbobrew__">__turbobrew__</a>
+  </div>
+  <div class="comment-text">I work on infrastructure at bigco and we landed on a 5 second default timeout for our RPC framework which is interesting.<p>Sometimes I think there should be a list of sane and tested production configs: default rpc timeout, default backoff exponent, default initial backoff, default max backoff, health check frequency, health check timeout, process restart delay, process restart backoff, etc…</div>
+  
+</div>
+
 </div>
 
     
@@ -166,32 +190,6 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=pshirshov">pshirshov</a>
-  </div>
-  <div class="comment-text">I believe it&#x27;s more correct to reference circular calls as &quot;livelocks&quot;, not &quot;deadlocks&quot; - something is happening but the whole computation cannot progress.<p>For the rest - pure untyped actors come with a lot of downsides and provoke engineers to make systems unnecessarily distributed (with all the consistency and timeout issues). There aren&#x27;t that many problems which can be mapped well directly to actors. I personally find async runtimes with typed front-ends (e.g. Cats&#x2F;ZIO in Scala, async in Rust, etc) much more robust and much less error-prone.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=toast0">toast0</a>
-  </div>
-  <div class="comment-text">If process A is waiting for a reply from process B and process B is waiting for a reply from process A; that is deadlock. There is no way those processes can continue (unless there&#x27;s a timeout or one process gets killed). Other processes may progress as long as they don&#x27;t need a reply from process A or B ... which sometimes is fine. (Edit: nevermind, I forgot the 5 second timeout if you use gen_server:call&#x2F;2; you will end up in livelock if it happens continuously, but a mostly ok system if it works out)<p>Livelock is something like you&#x27;ve got 1000 nodes that all want to do X, which requires an exclusive lock and the method to get an exclusive lock is:<p>Broadcast request to cluster<p>If you got the lock on all nodes, proceed<p>If you get the lock on all nodes, release and try again after a timeout<p>This procedure works in practice, when there is low contention. If the cluster is large and many processes contend for the lock, progress is rare. It&#x27;s not impossible to progress, so the system is not deadlocked; but it takes an inordinate amount of time, mostly waiting for locks: the system is livelocked. In this case, whenever progress happens, future progress is easier.<p>This is a rough description of an actual incident with nodes joining pg2, I think around 2018... the new pg module avoids that lock (and IMHO, the lock was not needed anyway; it was there to provide consistent order in member lists across nodes, but member lists would no longer be consistent when dist distonects happened and resolved, so why add locks to be consistent sometimes). As an Erlang user with I think the largest clusters anywhere, we ran into a good number of these kinds of things in OTP. Ericsson built dist for telecom switches with two nodes in a single enclosure in a rack. It works over tcp and they didn&#x27;t put explicit limits, so you can run a dist cluster with thousands of nodes in locations across the globe and it <i>mostly</i> works, but there will be some things to debug from time to time. Erlang is fairly easy to debug... All the new nodes have a process waiting to join pg2, what&#x27;s the pg2 process doing, why does that lock not have the consensus building algorithm, can we add it? In the meantime, let&#x27;s kill some nodes so others can progreas and then we&#x27;ll run a sequenced start of the rest.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=gzread">gzread</a>
-  </div>
-  <div class="comment-text">It&#x27;s a deadlock because two threads are each waiting for the other.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=aeonfox">aeonfox</a>
   </div>
   <div class="comment-text">A real interesting read as someone who spends a bit of time with Elixir.  Wasn&#x27;t aware of the atomic and counter Erlang features that break isolation.<p>Though they do say that race conditions are purely mitigated by discipline at design time, but then mention race conditions found via static analysis:<p>&gt; Maria Christakis and Konstantinos Sagonas built a static race detector for Erlang and integrated it into Dialyzer, Erlang’s standard static analysis tool. They ran it against OTP’s own libraries, which are heavily tested and widely deployed.<p>&gt; They found previously unknown race conditions. Not in obscure corners of the codebase. Not in exotic edge cases. In the kind of code that every Erlang application depends on, code that had been running in production for years.<p>I imagine that the 4th issue of protocol violation could possibly be mitigated by a typesafe abstracted language like Gleam (or Elixir when types are fully implemented)</div>
@@ -242,6 +240,50 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pshirshov">pshirshov</a>
+  </div>
+  <div class="comment-text">I believe it&#x27;s more correct to reference circular calls as &quot;livelocks&quot;, not &quot;deadlocks&quot; - something is happening but the whole computation cannot progress.<p>For the rest - pure untyped actors come with a lot of downsides and provoke engineers to make systems unnecessarily distributed (with all the consistency and timeout issues). There aren&#x27;t that many problems which can be mapped well directly to actors. I personally find async runtimes with typed front-ends (e.g. Cats&#x2F;ZIO in Scala, async in Rust, etc) much more robust and much less error-prone.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=toast0">toast0</a>
+  </div>
+  <div class="comment-text">If process A is waiting for a reply from process B and process B is waiting for a reply from process A; that is deadlock. There is no way those processes can continue (unless there&#x27;s a timeout or one process gets killed). Other processes may progress as long as they don&#x27;t need a reply from process A or B ... which sometimes is fine. (Edit: nevermind, I forgot the 5 second timeout if you use gen_server:call&#x2F;2; you will end up in livelock if it happens continuously, but a mostly ok system if it works out)<p>Livelock is something like you&#x27;ve got 1000 nodes that all want to do X, which requires an exclusive lock and the method to get an exclusive lock is:<p>Broadcast request to cluster<p>If you got the lock on all nodes, proceed<p>If you get the lock on all nodes, release and try again after a timeout<p>This procedure works in practice, when there is low contention. If the cluster is large and many processes contend for the lock, progress is rare. It&#x27;s not impossible to progress, so the system is not deadlocked; but it takes an inordinate amount of time, mostly waiting for locks: the system is livelocked. In this case, whenever progress happens, future progress is easier.<p>This is a rough description of an actual incident with nodes joining pg2, I think around 2018... the new pg module avoids that lock (and IMHO, the lock was not needed anyway; it was there to provide consistent order in member lists across nodes, but member lists would no longer be consistent when dist distonects happened and resolved, so why add locks to be consistent sometimes). As an Erlang user with I think the largest clusters anywhere, we ran into a good number of these kinds of things in OTP. Ericsson built dist for telecom switches with two nodes in a single enclosure in a rack. It works over tcp and they didn&#x27;t put explicit limits, so you can run a dist cluster with thousands of nodes in locations across the globe and it <i>mostly</i> works, but there will be some things to debug from time to time. Erlang is fairly easy to debug... All the new nodes have a process waiting to join pg2, what&#x27;s the pg2 process doing, why does that lock not have the consensus building algorithm, can we add it? In the meantime, let&#x27;s kill some nodes so others can progreas and then we&#x27;ll run a sequenced start of the rest.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gzread">gzread</a>
+  </div>
+  <div class="comment-text">It&#x27;s a deadlock because two threads are each waiting for the other.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Twey">Twey</a>
+  </div>
+  <div class="comment-text">Message passing is <i>a type of</i> mutable shared state — but one that&#x27;s restricted in some important way to eliminate a certain class of errors (in Erlang&#x27;s case, to a thread-safe queue with pairwise ordering guarantees so that all processing on a particular actor&#x27;s state is effectively atomic). You can also pick other structures that give different guarantees, e.g. LVars or CRDTs make operations commutative so that the ordering problems go away (but by removing your ability to write non-commutative operations). The big win for the actor model is (just) that it linearizes all operations on a particular substate of the program while allowing other actors&#x27; states to be operated on concurrently.<p>Nobody argues that any of these approaches is a silver bullet for all concurrency problems. Indeed most of the problems of concurrency have direct equivalents in the world of single-threaded programming that are typically hard and only partially solved: deadlocks and livelocks are just infinite loops that occur across a thread boundary, protocol violations are just type errors that occur across a thread boundary, et cetera. But being able to rule out some of these problems in the happy case, even if you have to deal with them occasionally when writing more fiddly code, is still a big win.<p>If you have an actor <i>Mem</i> that is shared between two other actors <i>A</i> and <i>B</i> then <i>Mem</i> functions exactly as shared memory does between colocated threads in a multithreaded system: after all, RAM on a computer is implemented by sending messages down a bus! The difference is just that in the hardware case the messages you can pass to&#x2F;from the actor (i.e. the atomicity boundaries) are fixed by the hardware, e.g. to reads&#x2F;writes on particular fixed-sized ranges of memory, while with a shared actor <i>Mem</i> is free to present its own set of software-defined operations, with awareness of the program&#x27;s semantics. Memory fences are a limited way to bring that programmability to hardware memory, but the programmer still has the onerous and error-prone task of mapping domain operations to fences.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=_mrinalwadhwa_">_mrinalwadhwa_</a>
+  </div>
+  <div class="comment-text">&gt; a thread-safe queue with pairwise ordering guarantees so that all processing on a particular actor&#x27;s state is effectively atomic<p>&gt; The big win for the actor model is (just) that it linearizes all operations on a particular substate of the program while allowing other actors&#x27; states to be operated on concurrently.<p>Came here to say exactly those two things. Your comment is as clear as it could be.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=anonymous_user9">anonymous_user9</a>
   </div>
   <div class="comment-text">This seems interesting, but the sheer density of LLM-isms make it hard to get through.</div>
@@ -270,14 +312,6 @@
   
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Linux-Fan">Linux-Fan</a>
-  </div>
-  <div class="comment-text">I liked the content of the article enough to read it to the end, but I did have a hard time due to inflation with LLM-isms. Then again I am not a native so how would I know if this is good English? I can only tell that to me, it is hard to read despite interesting content.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=andrelaszlo">andrelaszlo</a>
   </div>
   <div class="comment-text">I would edit sentences like this:<p>&quot;Erlang is the strongest form of the isolation argument, and it deserves to be taken seriously, which is why what happens next matters.&quot;<p>It doesn&#x27;t add much, and it has this condescending and pretentious LLM tone. For me as a reader, it distracts from an otherwise interesting article.</div>
@@ -289,6 +323,14 @@
     <a href="https://news.ycombinator.com/user?id=loloquwowndueo">loloquwowndueo</a>
   </div>
   <div class="comment-text">Sorry, good English is good grammatically and structurally while being unique and feeling creative.  and AI-written English is not good. It’s correct but totally repetitive, formulaic and circular. It’s like expecting a pizza and finding it’s made of cardboard.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Linux-Fan">Linux-Fan</a>
+  </div>
+  <div class="comment-text">I liked the content of the article enough to read it to the end, but I did have a hard time due to inflation with LLM-isms. Then again I am not a native so how would I know if this is good English? I can only tell that to me, it is hard to read despite interesting content.</div>
   
 </div>
 
@@ -352,7 +394,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 15:39 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 16:44 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
