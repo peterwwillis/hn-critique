@@ -56,7 +56,7 @@ The JSON must have exactly this shape:
     {
       "id": <comment id as integer>,
       "author": "<username>",
-      "text": "<comment text as provided above (some comments may be omitted to fit the input size; analyze only the text provided here), plain text>",
+      "text": "<comment text as provided above (some comments may be omitted to fit the input size; analyze only the text provided here)>",
       "indicators": ["<one or more of: emotional, intelligent, thoughtful, trolling, likely-true, likely-untrue, belligerent, constructive, useless>"],
       "accuracyRank": <integer starting at 1 for most accurate>,
       "analysis": "<1-2 sentence critique>"
@@ -86,33 +86,34 @@ func buildCommentText(comments []*generator.Comment) string {
 	var sb strings.Builder
 	for _, c := range comments {
 		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
-		entry = truncateWithEllipsis(entry, maxCommentChars)
-		if sb.Len()+len(entry) > maxCommentChars {
+		remaining := maxCommentChars - sb.Len()
+		if remaining <= 0 {
+			break
+		}
+		if len(entry) > remaining {
+			sb.WriteString(truncateWithEllipsis(entry, remaining))
 			break
 		}
 		sb.WriteString(entry)
-		if sb.Len() >= maxCommentChars {
-			break
-		}
 	}
 	return sb.String()
 }
 
-func truncateWithEllipsis(s string, max int) string {
-	if len(s) <= max || max == 0 {
+func truncateWithEllipsis(s string, maxBytes int) string {
+	if len(s) <= maxBytes || maxBytes == 0 {
 		return s
 	}
-	if max <= len("…") {
-		return truncateUTF8(s, max)
+	if maxBytes <= len("…") {
+		return truncateUTF8(s, maxBytes)
 	}
-	return truncateUTF8(s, max-len("…")) + "…"
+	return truncateUTF8(s, maxBytes-len("…")) + "…"
 }
 
-func truncateUTF8(s string, max int) string {
-	if len(s) <= max || max == 0 {
+func truncateUTF8(s string, maxBytes int) string {
+	if len(s) <= maxBytes || maxBytes == 0 {
 		return s
 	}
-	truncated := s[:max]
+	truncated := s[:maxBytes]
 	for !utf8.ValidString(truncated) && len(truncated) > 0 {
 		truncated = truncated[:len(truncated)-1]
 	}
