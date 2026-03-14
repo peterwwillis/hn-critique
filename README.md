@@ -7,7 +7,9 @@ The site mimics the Hacker News front page. Next to each story's "comments" link
 - **Article critique** — an AI assessment of whether the article is truthful, a summary of its main points, and additional considerations not mentioned in the piece.
 - **Comments critique** — a summary of the comment thread, with each comment ranked from most to least accurate and annotated with short indicators (e.g. *thoughtful*, *emotional*, *constructive*, *trolling*).
 
-All pages are pre-rendered static HTML, suitable for caching by Cloudflare or a browser.
+## Disclaimer
+
+This project is an experimental tool that uses Large Language Models (LLMs) to generate automated critiques and ratings. The outputs are provided for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.
 
 ## How it works
 
