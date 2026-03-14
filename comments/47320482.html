@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Nominal Types in WebAssembly | HN Critique</title>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="/"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px #ffffff solid;" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="/">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr id="pagespace" style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="/">← Back to front page</a></p>
+      
+      <h2><a href="https://wingolog.org/archives/2026/03/10/nominal-types-in-webassembly" rel="noreferrer noopener">Nominal Types in WebAssembly</a>
+        <span class="sitebit"> (wingolog.org)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">11 points</span>
+        by <a href="https://news.ycombinator.com/user?id=ingve">ingve</a>
+        4 days ago
+        &nbsp;|&nbsp;<a href="/critique/47320482.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47320482" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <p class="no-critique">AI critique is not available. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tlively">tlively</a>
+  </div>
+  <div class="comment-text">Andy jests, but I would actually like to add nominal types to Wasm (along with type imports to make them usable). No proposal yet, but maybe later this year.<p>This blog post mentions that you can kind of emulate nominal types by putting all your types in one rec group, but then it brushes that off as inferior to using exceptions. (Which is hilarious! Good work, Andy.) What it doesn’t make clear is that people actually use this rec group trick in practice. There are two ways to do it: you can put literally all your types in one rec group, or you can emit minimal rec groups with additional “brand types” that serve no purpose but to ensure the groups have different structures. The former solution is better for code size when the entire application is one module, but the latter solution is better if there are multiple modules involved. You don’t want to repeat every type definition in every module, and using smaller rec groups lets you define only the types that are (transitively) used in each module.<p>The Binaryen optimizer has to ensure that it does not accidentally give distinct types the same structural identity because that would generally be observable by casts. Most of its type optimizations therefore put all the types in one rec group. However, it does have a type merging optimization that takes the casts into account[0]. That optimization is fun because it reuses the DFA minimization code from the original equirecursive type system we were experimenting with for Wasm GC. We also have a rec group minimization optimization[1] that creates minimal rec groups (by finding strongly connected components of the type definition graph), then ensures the types remain distinct first by using different permutations of the types within a rec group and then only as necessary by adding brand types.<p>[0]: <a href="https:&#x2F;&#x2F;github.com&#x2F;WebAssembly&#x2F;binaryen&#x2F;blob&#x2F;main&#x2F;src&#x2F;passes&#x2F;TypeMerging.cpp" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;WebAssembly&#x2F;binaryen&#x2F;blob&#x2F;main&#x2F;src&#x2F;passes...</a><p>[1]: <a href="https:&#x2F;&#x2F;github.com&#x2F;WebAssembly&#x2F;binaryen&#x2F;blob&#x2F;main&#x2F;src&#x2F;passes&#x2F;MinimizeRecGroups.cpp" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;WebAssembly&#x2F;binaryen&#x2F;blob&#x2F;main&#x2F;src&#x2F;passes...</a></div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=beepbooptheory">beepbooptheory</a>
+  </div>
+  <div class="comment-text">&gt; field access is a bit odd; unlike structs which have struct.get, nominal types receive all their values via a catch handler.<p>I know this is meant to be silly, and I am no expert, but I kinda <i>do</i> like this syntax. Its like shaking the struct and seeing what falls out.</div>
+  
+</div>
+
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-14 15:39 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">53 points</span>
+        <span class="score">88 points</span>
         by <a href="https://news.ycombinator.com/user?id=Twirrim">Twirrim</a>
         4 days ago
         &nbsp;|&nbsp;<a href="/critique/47327703.html">critique article</a>
@@ -50,9 +50,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=arlattimore">arlattimore</a>
+    <a href="https://news.ycombinator.com/user?id=repple">repple</a>
   </div>
-  <div class="comment-text">What a great article!</div>
+  <div class="comment-text">Significant AI smell in this write up. As a result, my current reflex is to immediately stop reading. Not judgement on the actual analysis and human effort which went in. It’s just that the other context is missing.</div>
   
 </div>
 
@@ -64,15 +64,41 @@
   </div>
   <div class="comment-text">Great writeup.<p>I&#x27;ve been in the pandas (and now polars world) for the past 15 years. Staying in the sandbox gets most folks good enough performance. (That&#x27;s why Python is the language of data science and ML).<p>I generally teach my clients to reach for numba first. Potentially lots of bang for little buck.<p>One overlooked area in the article is running on GPUs. Some numpy and pandas (and polars) code can get a big speedup by using GPUs (same code with import change).</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bloaf">bloaf</a>
+  </div>
+  <div class="comment-text">Taichi, benchmarked in the article, claims to be able to outperform CUDA at some GPU tasks, although their benchmarks look to be a few years old:<p><a href="https:&#x2F;&#x2F;github.com&#x2F;taichi-dev&#x2F;taichi_benchmark" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;taichi-dev&#x2F;taichi_benchmark</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjmlp">pjmlp</a>
+  </div>
+  <div class="comment-text">And doesn&#x27;t account for cuTitle, NVidia&#x27;s new API infrastructure that supports writing CUDA directly in Python via a JIT that is based on MLIR.</div>
+  
+</div>
+
+</div>
+
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=retsibsi">retsibsi</a>
+    <a href="https://news.ycombinator.com/user?id=blt">blt</a>
   </div>
-  <div class="comment-text">A personal opinion: I would much prefer to read the rough, human version of this article than this AI-polished version. I&#x27;m interested in the content and the author clearly put thought and effort into it, but I&#x27;m constantly thrown out of it by the LLM smell. (I&#x27;m also a bit mad that `--` is now on the em dash treadmill and will soon be unusable.)<p>I&#x27;m not just saying this to vent. I honestly wonder if we could eventually move to a norm where people publish two versions of their writing and allow the reader to choose between them. Even when the original is just a set of notes, I would personally choose to make my own way through them.</div>
+  <div class="comment-text">Surprised Python is only 21x slower than C for tree traversal stuff. In my experience that&#x27;s one of the most painful places to use Python. But maybe that&#x27;s because I use numpy automatically when simple arrays are involved, and there&#x27;s no easy path for trees.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjmlp">pjmlp</a>
+  </div>
+  <div class="comment-text">Kudos for going through all the existing JIT approaches, instead of reaching for rewrite into X straight away.<p>However if Rust with PyO3 is part of the alternatives, then Boost.Python, cppyy, and pybind11 should also be accounted for, given their use in HPC and HFT integrations.</div>
   
 </div>
 
@@ -100,10 +126,38 @@ Good news. Python 3.15 adapts Pypy tracing approach to JIT and there are real pe
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=superlopuh">superlopuh</a>
+  </div>
+  <div class="comment-text">Missing Muna[0][1], I&#x27;m curious how it would compare on these benchmarks.<p>[0]: <a href="https:&#x2F;&#x2F;www.muna.ai&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.muna.ai&#x2F;</a>
+[1]: <a href="https:&#x2F;&#x2F;docs.muna.ai&#x2F;predictors&#x2F;create" rel="nofollow">https:&#x2F;&#x2F;docs.muna.ai&#x2F;predictors&#x2F;create</a></div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=seanwilson">seanwilson</a>
   </div>
   <div class="comment-text">&gt;  The real story is that Python is designed to be maximally dynamic -- you can monkey-patch methods at runtime, replace builtins, change a class&#x27;s inheritance chain while instances exist -- and that design makes it fundamentally hard to optimize. ...<p>&gt; 4 bytes of number, 24 bytes of machinery to support dynamism. a + b means: dereference two heap pointers, look up type slots, dispatch to int.__add__, allocate a new PyObject for the result (unless it hits the small-integer cache), update reference counts.<p>Would Python be a lot less useful without being maximally dynamic everywhere? Are there domains&#x2F;frameworks&#x2F;packages that benefit from this where this is a good trade-off?<p>I can&#x27;t think of cases in strong statically typed languages  where I&#x27;ve wanted something like monkey patching, and when I see monkey patching elsewhere there&#x27;s often some reasonable alternative or it only needs to be used very rarely.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bloaf">bloaf</a>
+  </div>
+  <div class="comment-text">I&#x27;ve always thought the flexibility should allow python to consume things like gRPC proto files or OpenAPI docs and auto-generate the classes&#x2F;methods at runtime as opposed to using codegen tools.  But as far as I know, there aren&#x27;t any libraries out there actually doing that.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=NeutralForest">NeutralForest</a>
+  </div>
+  <div class="comment-text">There are some use cases for very dynamic code, like ORMs; with descriptors you can add attributes + behavior at runtime and it&#x27;s quite useful.
+Anyways, breaking metaprogramming and more dynamic features would mean python 4 and we know how 2 -&gt; 3 went. I also don&#x27;t think it&#x27;s where the core developers are going. Also also, there are other things I&#x27;d change before going after monkey patching like some scoping rules, mutable defaults in function attributes, better async ergonomics, etc.</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=LtWorf">LtWorf</a>
@@ -122,6 +176,14 @@ Good news. Python 3.15 adapts Pypy tracing approach to JIT and there are real pe
   </div>
   <div class="comment-text">Python is perfect as a &quot;glue&quot; language. &quot;Inner Loops&quot; that have to run efficiently is not where it shines, and I would write them in C or C++ and patch them with Python for access to the huge library base.<p>This is the &quot;two language problem&quot; ( I would like to hear from people who extensively used Julia by the way, which claims to solve this problem, does it really ?)</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjmlp">pjmlp</a>
+  </div>
+  <div class="comment-text">This problem has been solved already by Lisp, Scheme, Java, .NET, Eiffel, among others, with their pick and choose mix of JIT and AOT compiler toolchains and runtimes.</div>
+  
+</div>
+
 </div>
 
     
@@ -135,6 +197,26 @@ Good news. Python 3.15 adapts Pypy tracing approach to JIT and there are real pe
 </div>
 
     
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=arlattimore">arlattimore</a>
+  </div>
+  <div class="comment-text">What a great article!</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=retsibsi">retsibsi</a>
+  </div>
+  <div class="comment-text">A personal opinion: I would much prefer to read the rough, human version of this article than this AI-polished version. I&#x27;m interested in the content and the author clearly put thought and effort into it, but I&#x27;m constantly thrown out of it by the LLM smell. (I&#x27;m also a bit mad that `--` is now on the em dash treadmill and will soon be unusable.)<p>I&#x27;m not just saying this to vent. I honestly wonder if we could eventually move to a norm where people publish two versions of their writing and allow the reader to choose between them. Even when the original is just a set of notes, I would personally choose to make my own way through them.</div>
+  
+</div>
+
+    
 
     
 
@@ -144,7 +226,7 @@ Good news. Python 3.15 adapts Pypy tracing approach to JIT and there are real pe
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 14:41 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 15:39 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
