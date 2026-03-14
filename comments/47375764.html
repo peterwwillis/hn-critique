@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">172 points</span>
+        <span class="score">185 points</span>
         by <a href="https://news.ycombinator.com/user?id=y1n0">y1n0</a>
-        5 hours ago
+        6 hours ago
         &nbsp;|&nbsp;<a href="/critique/47375764.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47375764" rel="noopener">original on HN</a>
       </p>
@@ -68,17 +68,25 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
   
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=necovek">necovek</a>
+    <a href="https://news.ycombinator.com/user?id=GuB-42">GuB-42</a>
   </div>
-  <div class="comment-text">Funnily enough, XML was an attempt to simplify SGML so it is easier to parse (as SGML only ever had one compliant parser, nsgml).</div>
+  <div class="comment-text">I think JSON has the opposite problem, it is too simple, the lack of comments in particular is particularly bad for many common usages of the format today.<p>I know some implementations of JSON support comments and other things, but is is not true JSON, in the same way that most simple XML implementations are not true XML. That&#x27;s what I say &quot;opposite problem&quot;, XML is too complex, and most practical uses of XML use incomplete implementations, while many practical uses of JSON use extended implementations.<p>By the way, this is not a problem for what JSON was designed for: a text interchange format, with JS being the language of choice, but it has gone beyond its design: configuration files, data stores, etc...</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=GuB-42">GuB-42</a>
+    <a href="https://news.ycombinator.com/user?id=0xbadcafebee">0xbadcafebee</a>
   </div>
-  <div class="comment-text">I think JSON has the opposite problem, it is too simple, the lack of comments in particular is particularly bad for many common usages of the format today.<p>I know some implementations of JSON support comments and other things, but is is not true JSON, in the same way that most simple XML implementations are not true XML. That&#x27;s what I say &quot;opposite problem&quot;, XML is too complex, and most practical uses of XML use incomplete implementations, while many practical uses of JSON use extended implementations.<p>By the way, this is not a problem for what JSON was designed for: a text interchange format, with JS being the language of choice, but it has gone beyond its design: configuration files, data stores, etc...</div>
+  <div class="comment-text">The problem is that engineers of data formats have ignored the concept of layers. With network protocols, you make one layer (Ethernet), you add another layer (IP), then another (TCP), then another (HTTP). Each one fits inside the last, but is independent, and you can deal with them separately or together. Each one has a specialty and is used for certain things. The benefits are 1) you don&#x27;t need &quot;a kitchen sink&quot;, 2) you can replace layers as needed for your use-case, 3) you can ship them together or individually.<p>I don&#x27;t think anyone designs formats this way, and I doubt any popular formats are designed for this. I&#x27;m not that familiar with enterprise&#x2F;big-data formats so maybe one of them is?</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=python-b5">python-b5</a>
+  </div>
+  <div class="comment-text">I&#x27;ve been working on an XML parser of my own recently and, to be honest, as long as you&#x27;re fine with a non-validating parser (which are still compliant), it&#x27;s really not that bad. You have to parse DTDs, but you don&#x27;t need to actually _do_ anything with them. Namespaces are annoying but they&#x27;re not in the main spec. CDATA sections aren&#x27;t all that useful, but they&#x27;re easy to parse. As far as I&#x27;m aware, parsers don&#x27;t actually need to handle xml:lang&#x2F;xml:space&#x2F;etc themselves - they&#x27;re for use by applications using the parser. Really the only thing that&#x27;s been particularly frustrating for me is entity expansion.<p>If you want to support the wider XML ecosystem, with all the complex auxiliary standards, then yes, it&#x27;s a lot of work, but the language itself isn&#x27;t that awful to parse. It&#x27;s a little messy, but I appreciate it at least being well-specified, which JSON is absolutely not.</div>
   
 </div>
 
@@ -92,20 +100,9 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=PunchyHamster">PunchyHamster</a>
+    <a href="https://news.ycombinator.com/user?id=necovek">necovek</a>
   </div>
-  <div class="comment-text">Constant erosion of data formats into the shittiest DSLs in existence is annoying. &quot;Oh, hey, instead of writing Python, how about you write in<p>* YAML, with magical keywords that turn data into conditions&#x2F;commands
-* template language for the YAML in places when that isn&#x27;t enough
-* ....Python, because you need to eventually write stuff that ingests the above either way
-.... ansible is great isn&#x27;t it?&quot;<p>... and for some reason others decide &quot;YES THIS IS AWESOME&quot; and we now have a bunch of declarative YAML+template garbage.<p>&gt; There was a thread here the other day about using Sqlite as an interchange format to REDUCE complexity. Look, I love Sqlite, as an application specific data-store. But much like XML it has a ton of capabilities, which is good for a data-store, but awful for an interchange format with multiple producers&#x2F;consumers with their own ideas.<p>It&#x27;s just a bunch of records put in tables with pretty simple data types.  And it&#x27;s trivial to convert into other formats while being compact and queryable on its own. So as far as formats go, you could do a whole lot worse.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=xienze">xienze</a>
-  </div>
-  <div class="comment-text">&gt; Whereas XML supports attributes, namespaces, CDATA, DTDs, QNames, xml:base, xml:lang, XInclude, etc etc. They gave it everything, including the kitchen sink.<p>But you don&#x27;t have to use all those things. Configure your parser without namespace support, DTD support, etc. I&#x27;d much rather have a tool with tons of capabilities that can be selectively disabled rather than a &quot;simple&quot; one that requires _me_ to bolt on said extra capabilities.</div>
+  <div class="comment-text">Funnily enough, XML was an attempt to simplify SGML so it is easier to parse (as SGML only ever had one compliant parser, nsgml).</div>
   
 </div>
 
@@ -141,6 +138,14 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
   </div>
   <div class="comment-text">&gt; XML Is a Cheap [...]<p>&gt; XML is notoriously expensive to properly parse in many languages.<p>I&#x27;m glad this is the top comment.  I have extensive experience in enterprise-y Java and XML and XML is <i>anything but cheap</i>.  In fact, doing anything non-trivial with XML was regularly a memory and CPU bottleneck.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hrmtst93837">hrmtst93837</a>
+  </div>
+  <div class="comment-text">If you want a parser that actually checks the XML spec and various edge cases, then parsing goes from human-readable config to O(n^2) string handling. The funny part is how often people silently accept partial or broken XML in prod because revisiting schema validation years later is a nightmare. If you want cheap parsing, you end up writing a regex or DOM walker and hoping for the best, which raises the question of why not just use JSON or invent a different DSL to start.</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=diffuse_l">diffuse_l</a>
@@ -189,6 +194,14 @@ means exactly the same as the XML-alike DSL you&#x27;ve got.<p>One declarative l
   </div>
   <div class="comment-text">Your first counterpoint seems unnecessarily picky.<p>&gt; So while it is a suitable DSL for many things (it is also seeing new life in web components definition), we are mostly only talking about XML-lookalike language, and not XML proper. If you go XML proper, you need to throw &quot;cheap&quot; out the window.<p>But the TWE did not embrace all that stuff. It’s not required for its purpose. And to call it “xml lookalike” on that basis seems odd. It’s objectively XML. It doesn’t use every xml feature, but it’s still XML.<p>It’s as if you’re saying, a school bus isn’t a bus, it’s just a bus-lookalike. Buses can have cup holders and school buses lack cup holders. Therefore a school bus is not really a bus.<p>I don’t see the validity or the relevance.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=necovek">necovek</a>
+  </div>
+  <div class="comment-text">As discussed in the thread, the author has not dove deep into schema validation, but the org does use it.<p>Ignoring that part of schema definition and subsequent validation is exactly why it seems &quot;cheap&quot; on the surface.<p>So, TWE is not using an XML lookalike language, but someone has done the expensive part before the author joined in.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -263,8 +276,24 @@ It has the nice property that you&#x27;re always guaranteed to see the type befo
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=foltik">foltik</a>
   </div>
-  <div class="comment-text">Agreed. Any language that wants to use the fact graph is going to have to “interpret” the chosen DSL anyways, and JSON is more ubiquitous and <i>far</i> simpler to parse than XML.<p>Just imagine what the sum total of all code needed to parse and interpret the fact graph without any dependencies would look like.<p>With XML you’re  carrying complex state in hash maps and comparing strings everywhere to match open&#x2F;close tags. Even more complexity depending on how the DSL uses attributes, child nodes, text content.<p>With JSON you just need to match open&#x2F;close [] {} and a few literals. The declarative part is riding on a much simpler sexp-like core.<p>It’s easy to ignore all this and sure XML is probably good enough to get the job done, but like others pointed out, decisions like this compound and result in latency getting worse despite computers getting exponentially faster.</div>
+  <div class="comment-text">Agreed. Any language that wants to use the fact graph is going to have to “interpret” the chosen DSL anyways, and JSON is more ubiquitous and <i>far</i> simpler to parse than XML. Also way cheaper in the sense that the article uses it (how many langs can you parse and walk an XML document in off the top of your head? what about JSON?)<p>To see why JSON is simpler, imagine what the sum total of all code needed to parse and interpret the fact graph without any dependencies would look like.<p>With XML you’re  carrying complex state in hash maps and comparing strings everywhere to match open&#x2F;close tags. Even more complexity depending on how the DSL uses attributes, child nodes, text content.<p>With JSON you just need to match open&#x2F;close [] {} and a few literals. Then you can skim the declarative part right off the top of the resulting AST.<p>It’s easy to ignore all this complexity since XML libs hide it away, and sure it will get the job done. But like others pointed out, decisions like these pile up and result in latency getting worse despite computers getting exponentially faster.</div>
   
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=phlakaton">phlakaton</a>
+  </div>
+  <div class="comment-text">Aesthetically, I consider such JSON structures degenerate. It&#x27;s akin to building a ECMAScript app where every class and structure is only allowed to have one member.<p>If you want tagged data, why not just pick a representation that does that?</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=foltik">foltik</a>
+  </div>
+  <div class="comment-text">Because (imo) the goal should be to minimize <i>overall</i> complexity.<p>Pulling in XML and all of its additional complexity just to get a (debatably) cleaner way to express tagged unions doesn’t seem like a great tradeoff.<p>I also don’t buy the degenerate argument. XML is arguably worse here since you have to decide between attributes, child nodes, and text content for every piece of data.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -341,19 +370,29 @@ The rationalization is remarkable. &quot;JSON is simpler&quot;, they say, while 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=thelastgallon">thelastgallon</a>
+    <a href="https://news.ycombinator.com/user?id=Decabytes">Decabytes</a>
   </div>
-  <div class="comment-text">It is an ironic truth that those who seek to create systems which most assume the perfectibility of humans end up building the systems which are most soul destroying and most rigid, systems that rot from within until like great creaking rotten oak trees they collapse on top of themselves leaving a sour smell and decay. We saw it happen in 1989 with the astonishing fall of the USSR. Conversely, those systems which best take into account the complex, frail, brilliance of human nature and build in flexibility, checks and balances, and tolerance tend to survive beyond all hopes. -- Adam Bosworth, <a href="https:&#x2F;&#x2F;adambosworth.net&#x2F;2004&#x2F;11&#x2F;18&#x2F;iscoc04-talk&#x2F;" rel="nofollow">https:&#x2F;&#x2F;adambosworth.net&#x2F;2004&#x2F;11&#x2F;18&#x2F;iscoc04-talk&#x2F;</a></div>
+  <div class="comment-text">S-expressions are a cheap dsl too. I use it in my desktop browser runtime that is powered by wasm that I’m developing
+As the “HTML”^1 and CSS^2 in fact it works so well I use it also reused it to do the styling for html exports in my markup language designed to fight documentation drift^3.<p>1. <a href="https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blame&#x2F;main&#x2F;examples&#x2F;counter&#x2F;app.cuiml?ref_type=heads#L10" rel="nofollow">https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blame&#x2F;main&#x2F;exa...</a><p>2. <a href="https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blob&#x2F;main&#x2F;examples&#x2F;counter&#x2F;styles&#x2F;app.cuiss?ref_type=heads#L3" rel="nofollow">https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blob&#x2F;main&#x2F;exam...</a><p>3. <a href="https:&#x2F;&#x2F;gitlab.com&#x2F;sablelang&#x2F;libcuidoc" rel="nofollow">https:&#x2F;&#x2F;gitlab.com&#x2F;sablelang&#x2F;libcuidoc</a></div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=catlifeonmars">catlifeonmars</a>
+  </div>
+  <div class="comment-text">S-expressions are great. They are trivial to implement parsers for. For a while I used S expression parsing and evaluation as a technical coding screen interview question because it is feasible to implement a functional (pun intended) programming language using S-expressions in the space of an interview.<p>While not the point of the interview, the best part for me was seeing a candidate’s face light up when they realized they implemented a working programming language.</div>
+  
+</div>
+
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=omoikane">omoikane</a>
+    <a href="https://news.ycombinator.com/user?id=conorcleary">conorcleary</a>
   </div>
-  <div class="comment-text">I like how this article lists various alternatives.  Like I was thinking &quot;well, JSON is more compact&quot;, and they covered JSON.  And then &quot;well, s-expressions supports nesting too&quot;, and then they covered s-expressions as well.  The best documentation always include the things that weren&#x27;t done.</div>
+  <div class="comment-text">again with the DSL
+use more title</div>
   
 </div>
 
@@ -371,16 +410,24 @@ The rationalization is remarkable. &quot;JSON is simpler&quot;, they say, while 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Decabytes">Decabytes</a>
+    <a href="https://news.ycombinator.com/user?id=MarkSweep">MarkSweep</a>
   </div>
-  <div class="comment-text">S-expressions are a cheap dsl too. I use it in my desktop browser runtime that is powered by wasm that I’m developing
-As the “HTML”^1 and CSS^2 in fact it works so well I use it also reused it to do the styling for html exports in my markup language designed to fight documentation drift^3.<p>1. <a href="https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blame&#x2F;main&#x2F;examples&#x2F;counter&#x2F;app.cuiml?ref_type=heads#L10" rel="nofollow">https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blame&#x2F;main&#x2F;exa...</a><p>2. <a href="https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blob&#x2F;main&#x2F;examples&#x2F;counter&#x2F;styles&#x2F;app.cuiss?ref_type=heads#L3" rel="nofollow">https:&#x2F;&#x2F;gitlab.com&#x2F;canvasui&#x2F;canvasui-engine&#x2F;-&#x2F;blob&#x2F;main&#x2F;exam...</a><p>3. <a href="https:&#x2F;&#x2F;gitlab.com&#x2F;sablelang&#x2F;libcuidoc" rel="nofollow">https:&#x2F;&#x2F;gitlab.com&#x2F;sablelang&#x2F;libcuidoc</a></div>
+  <div class="comment-text">There is a middle ground between using XML and imperative code for representing tax forms. Robert Sesek’s ustaxlib [0] uses JavaScript to encode the forms in a way that is reasonably statically analyzable. See the visualizer [1]. My approach uses XML to represent the forms with an embedded DSL to represent most expressions tersely. See for example Form 8960 in ustaxlib [2] and my TaxStuff program [3]. The main thing that the XML format from the article has going for it is that it is easy to write a parser for. But it is a bit verbose for my taste.<p>[0]: <a href="https:&#x2F;&#x2F;github.com&#x2F;rsesek&#x2F;ustaxlib" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;rsesek&#x2F;ustaxlib</a><p>[1]: <a href="https:&#x2F;&#x2F;github.com&#x2F;rsesek&#x2F;ustaxviewer" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;rsesek&#x2F;ustaxviewer</a><p>[2]: <a href="https:&#x2F;&#x2F;github.com&#x2F;rsesek&#x2F;ustaxlib&#x2F;blob&#x2F;master&#x2F;src&#x2F;fed2019&#x2F;Form8960.ts" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;rsesek&#x2F;ustaxlib&#x2F;blob&#x2F;master&#x2F;src&#x2F;fed2019&#x2F;F...</a><p>[3]: <a href="https:&#x2F;&#x2F;github.com&#x2F;AustinWise&#x2F;TaxStuff&#x2F;blob&#x2F;master&#x2F;TaxStuff&#x2F;2025&#x2F;8960.xml" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;AustinWise&#x2F;TaxStuff&#x2F;blob&#x2F;master&#x2F;TaxStuff&#x2F;...</a></div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=catlifeonmars">catlifeonmars</a>
+    <a href="https://news.ycombinator.com/user?id=alexpetros">alexpetros</a>
   </div>
-  <div class="comment-text">S-expressions are great. They are trivial to implement parsers for. For a while I used S expression parsing and evaluation as a technical coding screen interview question because it is feasible to implement a functional (pun intended) programming language using S-expressions in the space of an interview.<p>While not the point of the interview, the best part for me was seeing a candidate’s face light up when they realized they implemented a working programming language.</div>
+  <div class="comment-text">For what it&#x27;s worth, I think that an embedded DSL to represent most expressions tersely is a worthwhile idea to explore—it&#x27;s just a more expensive one. That&#x27;s a cost-effective choice at a some levels of resourcing, but not <i>every</i> level of resourcing.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jauntywundrkind">jauntywundrkind</a>
+  </div>
+  <div class="comment-text">Also, the IRS open source Direct File and their Fact Graph too.
+<a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=45599567">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=45599567</a> <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=44131901">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=44131901</a> <a href="https:&#x2F;&#x2F;github.com&#x2F;IRS-Public&#x2F;direct-file&#x2F;blob&#x2F;main&#x2F;direct-file&#x2F;fact-graph-scala&#x2F;shared&#x2F;src&#x2F;main&#x2F;scala&#x2F;_tutorial&#x2F;01_introduction.worksheet.sc" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;IRS-Public&#x2F;direct-file&#x2F;blob&#x2F;main&#x2F;direct-f...</a><p>The graph is xml.</div>
   
 </div>
 
@@ -410,6 +457,16 @@ As the “HTML”^1 and CSS^2 in fact it works so well I use it also reused it t
   
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Kwpolska">Kwpolska</a>
+  </div>
+  <div class="comment-text">XML is beloved by tax authorities. The Polish tax authorities really love their e-documents and online filing. Except their XML documents are completely human-unreadable, since the schemas are based on field numbers in paper forms. Even in the brand new National e-Invoicing System, designed from scratch, with no paper forms, most fields have names like ‹P_19N›1‹&#x2F;P_19N›. You read the XML schema to find out it is a &quot;Marker of lack of delivery of goods or provision of services exempt from tax under Article 43 paragraph 1 of the [VAT] Act, Article 113 paragraphs 1 and 9 of the Act or regulations issued under Article 82 paragraph 3 of the Act or under other provisions&quot; (Google Translated, because of course everything is in Polish). So my invoice is saying &quot;yes [1], I am not [N] exempt from tax under $allThatNonsense [P_19]&quot;.<p>In unrelated news, the main author of the VAT Act is offering tax consulting services, as Registered Tax Advisor #00001.</div>
+  
 </div>
 
     
@@ -452,17 +509,17 @@ As the “HTML”^1 and CSS^2 in fact it works so well I use it also reused it t
   
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=bob1029">bob1029</a>
+    <a href="https://news.ycombinator.com/user?id=AndrewDucker">AndrewDucker</a>
   </div>
-  <div class="comment-text">E.g.:<p>&gt; All consumers are required to meet schema validation. Schema validation is the verification that the operations inside the SOAP Body match the contract created by Jack Henry in the XSD documents. It should be noted, that the VER_x tags are required in the requests to meet schema.<p><a href="https:&#x2F;&#x2F;jackhenry.dev&#x2F;jxchange-soap&#x2F;getting-started&#x2F;development&#x2F;fintech-jx-req-readiness&#x2F;" rel="nofollow">https:&#x2F;&#x2F;jackhenry.dev&#x2F;jxchange-soap&#x2F;getting-started&#x2F;developm...</a></div>
+  <div class="comment-text">Anything that wants to be sure that the data passed to it is structurally valid.</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=AndrewDucker">AndrewDucker</a>
+    <a href="https://news.ycombinator.com/user?id=bob1029">bob1029</a>
   </div>
-  <div class="comment-text">Anything that wants to be sure that the data passed to it is structurally valid.</div>
+  <div class="comment-text">E.g.:<p>&gt; All consumers are required to meet schema validation. Schema validation is the verification that the operations inside the SOAP Body match the contract created by Jack Henry in the XSD documents. It should be noted, that the VER_x tags are required in the requests to meet schema.<p><a href="https:&#x2F;&#x2F;jackhenry.dev&#x2F;jxchange-soap&#x2F;getting-started&#x2F;development&#x2F;fintech-jx-req-readiness&#x2F;" rel="nofollow">https:&#x2F;&#x2F;jackhenry.dev&#x2F;jxchange-soap&#x2F;getting-started&#x2F;developm...</a></div>
   
 </div>
 
@@ -482,9 +539,9 @@ As the “HTML”^1 and CSS^2 in fact it works so well I use it also reused it t
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Kwpolska">Kwpolska</a>
+    <a href="https://news.ycombinator.com/user?id=cluckindan">cluckindan</a>
   </div>
-  <div class="comment-text">XML is beloved by tax authorities. The Polish tax authorities really love their e-documents and online filing. Except their XML documents are completely human-unreadable, since the schemas are based on field numbers in paper forms. Even in the brand new National e-Invoicing System, designed from scratch, with no paper forms, most fields have names like ‹P_19N›1‹&#x2F;P_19N›. You read the XML schema to find out it is a &quot;Marker of lack of delivery of goods or provision of services exempt from tax under Article 43 paragraph 1 of the [VAT] Act, Article 113 paragraphs 1 and 9 of the Act or regulations issued under Article 82 paragraph 3 of the Act or under other provisions&quot; (Google Translated, because of course everything is in Polish). So my invoice is saying &quot;yes [1], I am not [N] exempt from tax under $allThatNonsense [P_19]&quot;.<p>In unrelated news, the main author of the VAT Act is offering tax consulting services, as Registered Tax Advisor #00001.</div>
+  <div class="comment-text">”With a declarative graph representation, we get auditability and introspection for free, for every single calculation.”<p>No, you don’t. Those are dependent on the actual implementation.<p>The XML layer is a neat looking storefront hiding the crimes being committed in the back room.</div>
   
 </div>
 
@@ -501,6 +558,26 @@ and then in class Node (in the compiler):<p><pre><code>    def __sub__(self, oth
     return SubtractNode(minuent=self, subtrachents=[other])
 </code></pre>
 Values like total_nonrefundable_credits would be objects of class Node that &quot;know where they come from&quot;, not imperatively-calculated numbers. The __sub__ method (which is Python&#x27;s way of operator overloading) would return a new node when two nodes are subtracted.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=thelastgallon">thelastgallon</a>
+  </div>
+  <div class="comment-text">It is an ironic truth that those who seek to create systems which most assume the perfectibility of humans end up building the systems which are most soul destroying and most rigid, systems that rot from within until like great creaking rotten oak trees they collapse on top of themselves leaving a sour smell and decay. We saw it happen in 1989 with the astonishing fall of the USSR. Conversely, those systems which best take into account the complex, frail, brilliance of human nature and build in flexibility, checks and balances, and tolerance tend to survive beyond all hopes. -- Adam Bosworth, <a href="https:&#x2F;&#x2F;adambosworth.net&#x2F;2004&#x2F;11&#x2F;18&#x2F;iscoc04-talk&#x2F;" rel="nofollow">https:&#x2F;&#x2F;adambosworth.net&#x2F;2004&#x2F;11&#x2F;18&#x2F;iscoc04-talk&#x2F;</a></div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=omoikane">omoikane</a>
+  </div>
+  <div class="comment-text">I like how this article lists various alternatives.  Like I was thinking &quot;well, JSON is more compact&quot;, and they covered JSON.  And then &quot;well, s-expressions supports nesting too&quot;, and then they covered s-expressions as well.  The best documentation always include the things that weren&#x27;t done.</div>
   
 </div>
 
@@ -569,16 +646,6 @@ However, this means that your graph is now encoded into the prolog code itself, 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=elijahlucian">elijahlucian</a>
-  </div>
-  <div class="comment-text">I have also found this. started a project with the idea, but never finished, maybe someone can find the approach useful: <a href="https:&#x2F;&#x2F;github.com&#x2F;ELI7VH&#x2F;enzyme&#x2F;" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;ELI7VH&#x2F;enzyme&#x2F;</a></div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=Sharlin">Sharlin</a>
   </div>
   <div class="comment-text">&gt;  It evokes memories of SOAP configs and J2EE (it’s fine, even good, if those acronyms don’t mean anything to you).<p>Heh, a couple of years ago I walked past a cart of free-to-take discards at the uni, full of thousand-page tomes about exciting subjects like SOAP, J2EE and CORBA. I wonder how many of the current students even recognized any of those terms.</div>
@@ -597,30 +664,18 @@ However, this means that your graph is now encoded into the prolog code itself, 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=klysm">klysm</a>
-  </div>
-  <div class="comment-text">I hate everything about XML. I have lost weeks of my life to fixing whitespace sensitive bugs</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=SoftTalker">SoftTalker</a>
-  </div>
-  <div class="comment-text">Somehow I got to be nearly 60 years old and never heard the words &quot;minuend&quot; and &quot;subtrahend&quot; so I did learn something today.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=dale_glass">dale_glass</a>
   </div>
   <div class="comment-text">It kinda blows my mind that after XML we&#x27;ve managed to make a whole bunch of stuff that&#x27;s significantly worse for any serious usage.<p>JSON: No comments, no datatypes, no good system for validation.<p>YAML: Arcane nonsense like sexagesimal number literals, footguns with anchors, Norway problem, non-string keys, accidental conversion to a number, CODE INJECTION!<p>I don&#x27;t know why, but XML&#x27;s verbosity seems to cause such a visceral aversion in a lot of people that they&#x27;d rather write a bunch of boring code to make sure a JSON parses to something sensible, or spend a day scratching their head about why a minor change in YAML caused everything to explode.<p>Actually my own problem with XML was annoyance that back when I had the thought of doing a complex config format in XML, the idea of modifying it programmatically while retaining comments turned out to be absolutely non-trivial. In comparison with the mess one can make with YAML that&#x27;s just a trivial thing.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=catlifeonmars">catlifeonmars</a>
+  </div>
+  <div class="comment-text">&gt; Actually my own problem with XML was annoyance that back when I had the thought of doing a complex config format in XML, the idea of modifying it programmatically while retaining comments turned out to be absolutely non-trivial. In comparison with the mess one can make with YAML that&#x27;s just a trivial thing<p>Only relatively few parsing libraries preserve the token stream metadata in the AST, most don’t even expose the AST. For the former, I can understand why, it’s a cross-cutting concern and adds complexity to the AST parse, but is almost always worth it.</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=ACCount37">ACCount37</a>
@@ -659,9 +714,9 @@ However, this means that your graph is now encoded into the prolog code itself, 
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ddtaylor">ddtaylor</a>
+    <a href="https://news.ycombinator.com/user?id=elijahlucian">elijahlucian</a>
   </div>
-  <div class="comment-text">What a day when people are praising XML because it can be used to help calculate a bloated tax code.</div>
+  <div class="comment-text">I have also found this. started a project with the idea, but never finished, maybe someone can find the approach useful: <a href="https:&#x2F;&#x2F;github.com&#x2F;ELI7VH&#x2F;enzyme&#x2F;" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;ELI7VH&#x2F;enzyme&#x2F;</a></div>
   
 </div>
 
@@ -675,7 +730,7 @@ However, this means that your graph is now encoded into the prolog code itself, 
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-14 16:44 UTC &nbsp;|&nbsp;
+    Generated 2026-03-14 17:38 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
 </center>
