@@ -224,7 +224,8 @@ func main() {
 			}
 		}
 
-		if aiProvider == nil && !*prepareInput && story.URL != "" && story.Critique == nil {
+		shouldUsePlaceholder := aiProvider == nil && !*prepareInput && story.URL != "" && story.Critique == nil
+		if shouldUsePlaceholder {
 			if story.ArticleUnavailableReason != "" {
 				story.Critique = unavailableCritiqueForReason(story.ArticleUnavailableReason)
 			} else if story.ArticleText != "" {
