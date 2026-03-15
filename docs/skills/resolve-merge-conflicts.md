@@ -11,7 +11,7 @@ Provide a repeatable workflow for detecting and resolving merge conflicts betwee
    - `git merge-tree $(git merge-base HEAD origin/main) HEAD origin/main`
 3. Merge and resolve:
    - `git merge origin/main`
-   - Resolve conflicts, then `rg "<<<<<<<|=======|>>>>>>>"` to confirm no markers remain.
+   - Resolve conflicts, then `rg '<<<<<<<|=======|>>>>>>>'` to confirm no markers remain.
 4. Run the relevant tests and rebuild as needed.
 
 ## Reusable prompt

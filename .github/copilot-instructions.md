@@ -6,5 +6,5 @@ When completing a series of operations (especially after resolving conflicts or 
 2. Check for conflicts against main:
    - `git merge-base HEAD origin/main`
    - `git merge-tree $(git merge-base HEAD origin/main) HEAD origin/main`
-3. Scan for conflict markers in the working tree: `rg "<<<<<<<|=======|>>>>>>>"`.
+3. Scan for conflict markers in the working tree: `rg '<<<<<<<|=======|>>>>>>>'`.
 4. If conflicts are found, resolve them, re-run the checks above, and only then finalize.
