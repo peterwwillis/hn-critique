@@ -103,15 +103,21 @@ func TestDispatch_ToolsList(t *testing.T) {
 
 func TestDispatch_AnalyzeArticle(t *testing.T) {
 	p := &mockProvider{}
-	args, _ := json.Marshal(map[string]string{
+	args, err := json.Marshal(map[string]string{
 		"title":   "Test Article",
 		"url":     "https://example.com",
 		"content": "Some content",
 	})
-	params, _ := json.Marshal(toolCallParams{
+	if err != nil {
+		t.Fatalf("failed to marshal analyze_article args: %v", err)
+	}
+	params, err := json.Marshal(toolCallParams{
 		Name:      "analyze_article",
 		Arguments: args,
 	})
+	if err != nil {
+		t.Fatalf("failed to marshal toolCallParams: %v", err)
+	}
 	req := &rpcRequest{
 		JSONRPC: "2.0",
 		ID:      rawID(3),
