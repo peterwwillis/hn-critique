@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - 'docker/playwright/Dockerfile'
+      - 'docker/playwright/version.txt'
       - '.github/workflows/playwright-image.yml'
 
 permissions:
@@ -20,6 +21,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Read Playwright version
+        run: echo "PLAYWRIGHT_VERSION=$(cat docker/playwright/version.txt)" >> "$GITHUB_ENV"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -36,9 +40,11 @@ jobs:
         with:
           context: .
           file: docker/playwright/Dockerfile
+          build-args: |
+            PLAYWRIGHT_VERSION=${{ env.PLAYWRIGHT_VERSION }}
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/playwright:v1.50.1-jammy
+            ghcr.io/${{ github.repository }}/playwright:${{ env.PLAYWRIGHT_VERSION }}
             ghcr.io/${{ github.repository }}/playwright:${{ github.sha }}
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
