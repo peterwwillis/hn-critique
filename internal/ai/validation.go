@@ -102,7 +102,8 @@ func validateCommentsCritique(c *generator.CommentsCritique, expected []*generat
 
 	ranks := make(map[int]struct{}, len(expectedIDs))
 	seenIDs := make(map[int]struct{}, len(expectedIDs))
-	for _, comment := range c.Comments {
+	for i := range c.Comments {
+		comment := &c.Comments[i]
 		if comment.ID <= 0 {
 			return fmt.Errorf("comment id %d is invalid", comment.ID)
 		}
@@ -121,7 +122,10 @@ func validateCommentsCritique(c *generator.CommentsCritique, expected []*generat
 			return fmt.Errorf("comment id %d has empty text", comment.ID)
 		}
 		if utf8.RuneCountInString(text) > maxCommentSnippetChars {
-			return fmt.Errorf("comment id %d text exceeds %d characters", comment.ID, maxCommentSnippetChars)
+			// Truncate the AI-returned snippet. applyCommentText will replace
+			// this with the original HN comment text after validation anyway.
+			runes := []rune(text)
+			comment.Text = string(runes[:maxCommentSnippetChars])
 		}
 		if len(comment.Indicators) == 0 {
 			return fmt.Errorf("comment id %d is missing indicators", comment.ID)

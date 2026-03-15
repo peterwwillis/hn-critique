@@ -91,7 +91,13 @@ jobs:
           if [ -z "$PROVIDER" ]; then
             PROVIDER="github"
           fi
-          ./bin/crawler -provider "$PROVIDER" -analyze-input -out ./docs
+          ARGS="-provider \"$PROVIDER\""
+          # In PR smoke-test mode, treat any analysis warning as a hard failure
+          # so that broken pipeline changes are caught before merging to main.
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ARGS="$ARGS -strict"
+          fi
+          ./bin/crawler $ARGS -analyze-input -out ./docs
 
       # ── PR-only steps: screenshot & artifact upload ───────────────────────
       # These steps are skipped on scheduled/manual runs.  On PRs they capture

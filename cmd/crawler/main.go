@@ -40,6 +40,7 @@ func main() {
 		analyzeInput = flag.Bool("analyze-input", false, "load cached analysis input and run AI analysis/site generation")
 		configPath   = flag.String("config", "", "path to TOML config file (default: hn-critique.toml if present)")
 		providerFlag = flag.String("provider", "", "AI provider to use: openai, ollama, github (overrides config file)")
+		strict       = flag.Bool("strict", false, "exit non-zero if any AI analysis warning or error occurs")
 	)
 	flag.Parse()
 
@@ -99,6 +100,8 @@ func main() {
 	if err := os.MkdirAll(generator.CacheDir(*outputDir), 0o755); err != nil {
 		log.Printf("Warning: could not create cache directory: %v", err)
 	}
+
+	var analysisWarnings int
 
 	var stories []*generator.Story
 	if *analyzeInput {
@@ -205,6 +208,7 @@ func main() {
 				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
 				if err != nil {
 					log.Printf("  ⚠  article analysis failed: %v", err)
+					analysisWarnings++
 					analysisReason := "the AI assessment could not be completed because the AI provider returned an error. The analysis may be retried on the next run"
 					story.Critique = unavailableCritiqueForReason(analysisReason)
 				} else {
@@ -218,6 +222,7 @@ func main() {
 				cc, err := aiProvider.AnalyzeComments(story.Title, story.URL, story.Comments)
 				if err != nil {
 					log.Printf("  ⚠  comments analysis failed: %v", err)
+					analysisWarnings++
 					if cached != nil && cached.CommentsCritique != nil {
 						log.Printf("  Using cached comments analysis.")
 						story.CommentsCritique = cached.CommentsCritique
@@ -262,6 +267,9 @@ func main() {
 		log.Fatalf("Site generation failed: %v", err)
 	}
 	log.Println("Done.")
+	if *strict && analysisWarnings > 0 {
+		log.Fatalf("strict mode: %d analysis warning(s) encountered", analysisWarnings)
+	}
 }
 
 // fetchComments recursively fetches comments up to depth levels deep,
