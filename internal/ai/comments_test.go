@@ -5,16 +5,18 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/peterwwillis/hn-critique/internal/config"
 	"github.com/peterwwillis/hn-critique/internal/generator"
 )
 
 func TestBuildCommentTextKeepsFullComment(t *testing.T) {
-	longText := strings.Repeat("a", maxCommentChars-100)
+	limits := config.DefaultModelConfig().Limits
+	longText := strings.Repeat("a", limits.CommentPromptBytes-100)
 	comments := []*generator.Comment{
 		{ID: 1, Author: "alice", Text: template.HTML(longText)},
 	}
 
-	result := buildCommentText(comments)
+	result := buildCommentText(comments, limits.CommentPromptBytes)
 	if !strings.Contains(result, longText) {
 		t.Fatalf("expected full comment text to be included, length=%d", len(result))
 	}

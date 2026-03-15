@@ -12,19 +12,16 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/peterwwillis/hn-critique/internal/config"
 	"github.com/peterwwillis/hn-critique/internal/generator"
 )
 
-const (
-	maxCommentChars = 20000
-	maxArticleChars = 6000
-	httpTimeout     = 120 * time.Second
-)
+const httpTimeout = 120 * time.Second
 
 // articlePrompt builds the fact-checking prompt for an article.
-func articlePrompt(title, articleURL, content string) string {
-	if len(content) > maxArticleChars {
-		content = content[:maxArticleChars] + "…"
+func articlePrompt(title, articleURL, content string, maxBytes int) string {
+	if maxBytes > 0 && len(content) > maxBytes {
+		content = truncateWithEllipsis(content, maxBytes)
 	}
 	return fmt.Sprintf(`You are a critical fact-checker. Analyze the following article and respond with ONLY a valid JSON object — no markdown, no code fences, just raw JSON.
 
@@ -82,11 +79,11 @@ func sanitizeRating(r string) string {
 }
 
 // buildCommentText formats comments for the AI prompt.
-func buildCommentText(comments []*generator.Comment) string {
+func buildCommentText(comments []*generator.Comment, maxBytes int) string {
 	var sb strings.Builder
 	for _, c := range comments {
 		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
-		remaining := maxCommentChars - sb.Len()
+		remaining := maxBytes - sb.Len()
 		if remaining <= 0 {
 			break
 		}
@@ -192,6 +189,7 @@ type chatRequest struct {
 	Model          string              `json:"model"`
 	Messages       []map[string]string `json:"messages"`
 	Temperature    float64             `json:"temperature"`
+	MaxTokens      *int                `json:"max_tokens,omitempty"`
 	ResponseFormat *responseFormat     `json:"response_format,omitempty"`
 }
 
@@ -202,13 +200,20 @@ type responseFormat struct {
 // callChatCompletions sends a POST to an OpenAI-compatible chat completions
 // endpoint and returns the first choice's content text.
 // endpoint must be the full URL including path (e.g. ".../v1/chat/completions").
-func callChatCompletions(httpClient *http.Client, endpoint, authHeader, model, prompt string, jsonMode bool) (string, error) {
+func callChatCompletions(httpClient *http.Client, endpoint, authHeader, model, prompt string, jsonMode bool, inference config.InferenceConfig) (string, error) {
+	temperature := 0.3
+	if inference.Temperature != nil {
+		temperature = *inference.Temperature
+	}
 	req := chatRequest{
 		Model: model,
 		Messages: []map[string]string{
 			{"role": "user", "content": prompt},
 		},
-		Temperature: 0.3,
+		Temperature: temperature,
+	}
+	if inference.MaxOutputTokens != nil {
+		req.MaxTokens = inference.MaxOutputTokens
 	}
 	if jsonMode {
 		req.ResponseFormat = &responseFormat{Type: "json_object"}
@@ -265,7 +270,8 @@ type Analyzer struct {
 // NewAnalyzer creates an Analyzer backed by the OpenAI provider.
 // Deprecated: use NewProvider with a config.Config instead.
 func NewAnalyzer(apiKey string) *Analyzer {
-	p := newOpenAIProvider(openAIConfig(apiKey))
+	settings := config.DefaultModelConfig()
+	p := newOpenAIProvider(openAIConfig(apiKey), settings, settings)
 	return &Analyzer{p: p}
 }
 

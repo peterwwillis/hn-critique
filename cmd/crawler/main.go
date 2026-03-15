@@ -19,10 +19,7 @@ import (
 )
 
 const (
-	defaultStoryCount   = 30
-	defaultCommentDepth = 3
-	maxTopComments      = 20
-	maxChildComments    = 5
+	defaultStoryCount = 30
 	// Pause between HN API calls to be a good citizen.
 	hnDelay = 100 * time.Millisecond
 	// Pause between full story fetches (article + AI) to avoid rate limiting.
@@ -56,8 +53,14 @@ func main() {
 		cfg.Provider = config.ProviderName(*providerFlag)
 	}
 
+	modelConfig := cfg.SelectedModelConfig()
+	limits := modelConfig.Limits
+
 	hnClient := hn.NewClient()
-	articleFetcher := article.NewFetcher()
+	articleFetcher := article.NewFetcherWithLimits(article.Limits{
+		MaxBodyBytes: limits.ArticleBodyBytes,
+		MaxTextLen:   limits.ArticleTextChars,
+	})
 
 	var aiProvider ai.Provider
 	if !*skipAI {
@@ -119,7 +122,7 @@ func main() {
 		// Fetch comments.
 		if len(item.Kids) > 0 {
 			log.Printf("  Fetching comments…")
-			story.Comments = fetchComments(hnClient, item.Kids, defaultCommentDepth, maxTopComments)
+			story.Comments = fetchComments(hnClient, item.Kids, limits.CommentDepth, limits.TopComments, limits.ChildComments)
 		}
 
 		// Fetch article content (only for stories with external URLs).
@@ -200,11 +203,11 @@ func main() {
 
 // fetchComments recursively fetches comments up to depth levels deep,
 // stopping after maxCount top-level comments.
-func fetchComments(client *hn.Client, kids []int, depth, maxCount int) []*generator.Comment {
-	return fetchCommentsAtDepth(client, kids, depth, maxCount, 0)
+func fetchComments(client *hn.Client, kids []int, depth, maxCount, maxChildCount int) []*generator.Comment {
+	return fetchCommentsAtDepth(client, kids, depth, maxCount, maxChildCount, 0)
 }
 
-func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, currentDepth int) []*generator.Comment {
+func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, maxChildCount, currentDepth int) []*generator.Comment {
 	if depth == 0 || len(kids) == 0 {
 		return nil
 	}
@@ -230,7 +233,7 @@ func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, curren
 		}
 
 		if len(item.Kids) > 0 {
-			comment.Kids = fetchCommentsAtDepth(client, item.Kids, depth-1, maxChildComments, currentDepth+1)
+			comment.Kids = fetchCommentsAtDepth(client, item.Kids, depth-1, maxChildCount, maxChildCount, currentDepth+1)
 		}
 
 		comments = append(comments, comment)

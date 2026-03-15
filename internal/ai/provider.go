@@ -31,18 +31,24 @@ func NewProvider(cfg *config.Config) (Provider, error) {
 
 	switch cfg.Provider {
 	case config.ProviderOpenAI:
-		return newOpenAIProvider(cfg.OpenAI), nil
+		return newOpenAIProvider(
+			cfg.OpenAI,
+			cfg.ModelConfigFor(cfg.OpenAI.ChatModel),
+			cfg.ModelConfigFor(cfg.OpenAI.SearchModel),
+		), nil
 	case config.ProviderOllama:
 		// Ollama exposes an OpenAI-compatible /v1/chat/completions endpoint.
 		// Route through the unified openai provider using the Ollama base URL
 		// and model, without an API key (Ollama does not require authentication).
+		modelSettings := cfg.ModelConfigFor(cfg.Ollama.Model)
 		return newOpenAIProvider(config.OpenAIConfig{
 			BaseURL:         cfg.Ollama.BaseURL,
 			ChatModel:       cfg.Ollama.Model,
+			SearchModel:     cfg.Ollama.Model,
 			UseResponsesAPI: false,
-		}), nil
+		}, modelSettings, modelSettings), nil
 	case config.ProviderGitHub:
-		return newGitHubProvider(cfg.GitHub), nil
+		return newGitHubProvider(cfg.GitHub, cfg.ModelConfigFor(cfg.GitHub.Model)), nil
 	default:
 		return nil, fmt.Errorf("unknown provider %q", cfg.Provider)
 	}
