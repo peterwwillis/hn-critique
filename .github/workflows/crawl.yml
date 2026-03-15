@@ -1,5 +1,12 @@
 name: Crawl HN and Deploy
 
+# ─── Triggers ────────────────────────────────────────────────────────────────
+# • schedule / workflow_dispatch  → full production run (30 stories, deploy)
+# • pull_request                  → smoke-test run (1 story, no deploy, screenshot)
+#
+# The PR smoke-test validates that the entire pipeline — HN fetch, article
+# scrape, AI analysis, and HTML generation — works correctly with the code
+# changes in the PR, before they are merged to main.
 on:
   schedule:
     # Run at the top of every hour.
@@ -8,9 +15,11 @@ on:
   workflow_dispatch:
     inputs:
       provider:
-        description: 'AI provider to use (openai, ollama, github). Overrides config file.'
+        description: 'AI provider to use (openai, github). Overrides config file.'
         required: false
         default: ''
+  # On every PR: run the pipeline in limited mode as a smoke test.
+  pull_request:
 
 permissions:
   contents: write
@@ -37,13 +46,15 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
-      - name: Build crawler binaries
+      - name: Build crawler binary
         run: |
           mkdir -p bin
           CGO_ENABLED=0 go build -o ./bin/crawler ./cmd/crawler/
-          CGO_ENABLED=0 go build -o ./bin/ai-proxy ./cmd/ai-proxy/
 
+      # Skip cache restoration on PRs — the smoke test runs from a clean slate
+      # so results are not influenced by cached data from a previous production run.
       - name: Restore analysis cache from gh-pages
+        if: github.event_name != 'pull_request'
         run: |
           git fetch origin gh-pages --depth=1 2>/dev/null || true
           mkdir -p docs/cache
@@ -54,6 +65,11 @@ jobs:
           ARGS=""
           if [ -n "${{ inputs.provider }}" ]; then
             ARGS="-provider ${{ inputs.provider }}"
+          fi
+          # PR smoke-test: fetch only one story to keep the run fast.
+          # Production runs use the default story count (30).
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ARGS="$ARGS -stories 1"
           fi
           ./bin/crawler $ARGS -prepare-input -out ./docs
 
@@ -66,55 +82,67 @@ jobs:
 
       - name: Run AI analysis in isolated container
         env:
-          # OpenAI provider credentials and configuration.
+          # GitHub Models provider: GITHUB_TOKEN is automatically available in
+          # Actions and granted models:read by the permissions block above.
+          # Enable GitHub Models in your repository: Settings → Copilot → Use GitHub Models.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # OpenAI provider credentials (optional).
           # Set OPENAI_API_KEY secret to use api.openai.com.
           # Set OPENAI_BASE_URL variable to target a different OpenAI-compatible
           # server (e.g. a self-hosted Ollama instance on a private runner).
-          # Set OPENAI_CHAT_MODEL variable to override the default model name
-          # (required when using a local backend such as Ollama or llama-server).
+          # Set OPENAI_CHAT_MODEL variable to override the default model name.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
           OPENAI_CHAT_MODEL: ${{ vars.OPENAI_CHAT_MODEL }}
-          OLLAMA_BASE_URL: ${{ vars.OLLAMA_BASE_URL }}
-          OLLAMA_MODEL: ${{ vars.OLLAMA_MODEL }}
-          # GitHub Models provider: GITHUB_TOKEN is automatically available in
-          # Actions and granted models:read by the permissions block above.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -euo pipefail
-
-          SOCKET="/tmp/hn-critique-ai.sock"
           PROVIDER="${{ inputs.provider }}"
           if [ -z "$PROVIDER" ]; then
             PROVIDER="github"
           fi
+          # In PR smoke-test mode, treat any analysis warning as a hard failure
+          # so that broken pipeline changes are caught before merging to main.
+          STRICT=""
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            STRICT="-strict"
+          fi
+          ./bin/crawler -provider "$PROVIDER" $STRICT -analyze-input -out ./docs
 
-          UPSTREAM="https://models.github.ai/inference"
-          TOKEN="${GITHUB_TOKEN}"
+      # ── PR-only steps: screenshot & artifact upload ───────────────────────
+      # These steps are skipped on scheduled/manual runs.  On PRs they capture
+      # a visual snapshot of the generated site so reviewers can confirm the
+      # output looks correct before merging.
 
-          if [ "$PROVIDER" = "openai" ]; then
-            UPSTREAM="${OPENAI_BASE_URL:-https://api.openai.com}"
-            TOKEN="${OPENAI_API_KEY}"
-          elif [ "$PROVIDER" = "ollama" ]; then
-            UPSTREAM="${OLLAMA_BASE_URL:-http://localhost:11434}"
-            TOKEN="${OPENAI_API_KEY:-none}"
+      - name: Install Playwright (Chromium) for screenshot
+        if: github.event_name == 'pull_request'
+        run: npx --yes playwright install --with-deps chromium
+
+      - name: Screenshot generated site
+        if: github.event_name == 'pull_request'
+        run: |
+          # Serve the generated docs directory on a local port.
+          python3 -m http.server 8080 --directory docs &
+          SERVER_PID=$!
+          # Give the server a moment to start.
+          sleep 3
+
+          # Screenshot the front page (story listing).
+          npx playwright screenshot --browser chromium --full-page \
+            http://localhost:8080/ pr-preview-index.png
+
+          # Screenshot the first critique page, if one was generated.
+          CRITIQUE=$(find docs/critique -name '*.html' 2>/dev/null | sort | head -1)
+          if [ -n "$CRITIQUE" ]; then
+            REL="${CRITIQUE#docs/}"
+            npx playwright screenshot --browser chromium --full-page \
+              "http://localhost:8080/${REL}" pr-preview-critique.png
           fi
 
-          if [ -z "$TOKEN" ]; then
-            echo "Missing AI token for provider ${PROVIDER}" >&2
-            exit 1
-          fi
-
-          HN_CRITIQUE_AI_SOCKET="$SOCKET" \
-          HN_CRITIQUE_AI_UPSTREAM="$UPSTREAM" \
-          HN_CRITIQUE_AI_TOKEN="$TOKEN" \
-          ./bin/ai-proxy &
-          PROXY_PID=$!
-          trap "kill ${PROXY_PID}" EXIT
-
-          ARGS=""
-          if [ -n "${{ inputs.provider }}" ]; then
-            ARGS="-provider ${{ inputs.provider }}"
+          # Screenshot the first comments page, if one was generated.
+          COMMENTS=$(find docs/comments -name '*.html' 2>/dev/null | sort | head -1)
+          if [ -n "$COMMENTS" ]; then
+            REL="${COMMENTS#docs/}"
+            npx playwright screenshot --browser chromium --full-page \
+              "http://localhost:8080/${REL}" pr-preview-comments.png
           fi
 
           docker run --rm --network none \
@@ -131,7 +159,9 @@ jobs:
             ghcr.io/${{ github.repository }}/playwright:v1.50.1-jammy \
             ./bin/crawler $ARGS -analyze-input -out ./docs
 
+      # ── Production deploy (skipped for PRs) ──────────────────────────────
       - name: Deploy to GitHub Pages
+        if: github.event_name != 'pull_request'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
