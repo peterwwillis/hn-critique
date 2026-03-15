@@ -157,7 +157,9 @@ func main() {
 			}
 
 			stories = append(stories, story)
-			time.Sleep(storyDelay)
+			if *prepareInput {
+				time.Sleep(storyDelay)
+			}
 		}
 	}
 
@@ -231,7 +233,9 @@ func main() {
 			}
 		}
 
-		time.Sleep(storyDelay)
+		if !*analyzeInput {
+			time.Sleep(storyDelay)
+		}
 	}
 
 	log.Printf("Generating static site in %s/ (%d stories)…", *outputDir, len(stories))

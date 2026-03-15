@@ -67,6 +67,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
           OPENAI_CHAT_MODEL: ${{ vars.OPENAI_CHAT_MODEL }}
+          OLLAMA_BASE_URL: ${{ vars.OLLAMA_BASE_URL }}
+          OLLAMA_MODEL: ${{ vars.OLLAMA_MODEL }}
           # GitHub Models provider: GITHUB_TOKEN is automatically available in
           # Actions and granted models:read by the permissions block above.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -86,7 +88,7 @@ jobs:
             UPSTREAM="${OPENAI_BASE_URL:-https://api.openai.com}"
             TOKEN="${OPENAI_API_KEY}"
           elif [ "$PROVIDER" = "ollama" ]; then
-            UPSTREAM="${OPENAI_BASE_URL:-http://localhost:11434}"
+            UPSTREAM="${OLLAMA_BASE_URL:-http://localhost:11434}"
             TOKEN="${OPENAI_API_KEY:-none}"
           fi
 
@@ -117,7 +119,7 @@ jobs:
             -e OPENAI_BASE_URL="http://unix" \
             -e OPENAI_CHAT_MODEL="${OPENAI_CHAT_MODEL}" \
             -e OLLAMA_BASE_URL="http://unix" \
-            -e OLLAMA_MODEL="${OPENAI_CHAT_MODEL}" \
+            -e OLLAMA_MODEL="${OLLAMA_MODEL}" \
             ubuntu:22.04 \
             ./bin/crawler $ARGS -analyze-input -out ./docs
 

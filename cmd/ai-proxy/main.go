@@ -51,9 +51,7 @@ func main() {
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
-	proxy.Transport = &http.Transport{
-		Proxy: nil,
-	}
+	proxy.Transport = &http.Transport{}
 	originalDirector := proxy.Director
 	proxy.Director = func(req *http.Request) {
 		originalDirector(req)
@@ -82,7 +80,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen on %s: %v", socketPath, err)
 	}
-	if err := os.Chmod(socketPath, 0o666); err != nil {
+	if err := os.Chmod(socketPath, 0o600); err != nil {
 		log.Fatalf("Failed to chmod socket %s: %v", socketPath, err)
 	}
 
