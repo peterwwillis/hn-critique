@@ -74,7 +74,7 @@ jobs:
           ./bin/crawler $ARGS -prepare-input -out ./docs
 
       - name: Read Playwright image tag
-        run: echo "PLAYWRIGHT_VERSION=$(cat docker/playwright/version.txt)" >> "$GITHUB_ENV"
+        run: echo "PLAYWRIGHT_VERSION=$(tr -d '\n' < docker/playwright/version.txt)" >> "$GITHUB_ENV"
 
       - name: Log in to GitHub Container Registry
         # GHCR packages are private by default unless explicitly set to public.
@@ -123,12 +123,25 @@ jobs:
           python3 -m http.server 8080 --directory docs &
           SERVER_PID=$!
           trap "kill ${SERVER_PID}" EXIT
-          # Give the server a moment to start.
-          sleep 3
+          # Wait for the server to start responding.
+          for _ in $(seq 1 15); do
+            if curl -fsS --max-time 2 http://localhost:8080/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          if ! curl -fsS --max-time 2 http://localhost:8080/ >/dev/null; then
+            echo "Timed out waiting for preview server to start." >&2
+            exit 1
+          fi
 
           screenshot_page() {
             local url="$1"
             local output="$2"
+            if ! curl -fsS --max-time 2 "$url" >/dev/null; then
+              echo "Unable to reach ${url} for screenshot." >&2
+              return 1
+            fi
             docker run --rm --network host \
               -v "$PWD:/work" \
               -w /work \
