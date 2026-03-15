@@ -177,7 +177,8 @@ go run ./cmd/crawler/ -analyze-input -out ./docs
 
 ```
 cmd/crawler/          Main entry point
-cmd/ai-proxy/         Local Unix-socket proxy for AI inference
+cmd/mcp-server/       MCP server exposing AI analysis tools (analyze_article, analyze_comments)
+cmd/ai-proxy/         Local Unix-socket proxy for AI inference (self-hosted runner use)
 internal/hn/          Hacker News API client
 internal/article/     Article fetcher with paywall bypass
 internal/ai/          AI provider abstraction (OpenAI-compatible + GitHub Models)
@@ -187,3 +188,33 @@ internal/generator/   Static HTML generator
 .github/workflows/    Hourly GitHub Actions crawl + deploy
 hn-critique.toml.example  Annotated configuration reference
 ```
+
+## MCP server
+
+`cmd/mcp-server` implements the [Model Context Protocol](https://modelcontextprotocol.io/) over
+stdio, exposing the AI analysis functions as standard MCP tools. Any MCP-compatible client
+(Claude Desktop, GitHub Copilot, VS Code extensions, …) can call these tools directly.
+
+**Exposed tools:**
+
+| Tool | Description |
+|---|---|
+| `analyze_article` | Factual critique of a news article — summary, main points, truthfulness, rating |
+| `analyze_comments` | Ranked critique of a Hacker News comment section |
+
+**Usage:**
+
+```bash
+# Build the MCP server
+make build   # produces ./bin/mcp-server
+
+# Run with GitHub Models (default provider)
+GITHUB_TOKEN=ghp_… ./bin/mcp-server
+
+# Run with OpenAI
+OPENAI_API_KEY=sk-… ./bin/mcp-server -provider openai
+```
+
+The server reads newline-delimited JSON-RPC 2.0 from stdin and writes responses to stdout,
+following the standard MCP transport. All diagnostic logging goes to stderr.
+

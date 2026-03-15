@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       provider:
-        description: 'AI provider to use (openai, ollama, github). Overrides config file.'
+        description: 'AI provider to use (openai, github). Overrides config file.'
         required: false
         default: ''
 
@@ -36,11 +36,10 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
-      - name: Build crawler binaries
+      - name: Build crawler binary
         run: |
           mkdir -p bin
           CGO_ENABLED=0 go build -o ./bin/crawler ./cmd/crawler/
-          CGO_ENABLED=0 go build -o ./bin/ai-proxy ./cmd/ai-proxy/
 
       - name: Restore analysis cache from gh-pages
         run: |
@@ -56,72 +55,26 @@ jobs:
           fi
           ./bin/crawler $ARGS -prepare-input -out ./docs
 
-      - name: Run AI analysis in isolated container
+      - name: Run AI analysis
         env:
-          # OpenAI provider credentials and configuration.
+          # GitHub Models provider: GITHUB_TOKEN is automatically available in
+          # Actions and granted models:read by the permissions block above.
+          # Enable GitHub Models in your repository: Settings → Copilot → Use GitHub Models.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # OpenAI provider credentials (optional).
           # Set OPENAI_API_KEY secret to use api.openai.com.
           # Set OPENAI_BASE_URL variable to target a different OpenAI-compatible
           # server (e.g. a self-hosted Ollama instance on a private runner).
-          # Set OPENAI_CHAT_MODEL variable to override the default model name
-          # (required when using a local backend such as Ollama or llama-server).
+          # Set OPENAI_CHAT_MODEL variable to override the default model name.
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
           OPENAI_CHAT_MODEL: ${{ vars.OPENAI_CHAT_MODEL }}
-          OLLAMA_BASE_URL: ${{ vars.OLLAMA_BASE_URL }}
-          OLLAMA_MODEL: ${{ vars.OLLAMA_MODEL }}
-          # GitHub Models provider: GITHUB_TOKEN is automatically available in
-          # Actions and granted models:read by the permissions block above.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -euo pipefail
-
-          SOCKET="/tmp/hn-critique-ai.sock"
           PROVIDER="${{ inputs.provider }}"
           if [ -z "$PROVIDER" ]; then
             PROVIDER="github"
           fi
-
-          UPSTREAM="https://models.github.ai/inference"
-          TOKEN="${GITHUB_TOKEN}"
-
-          if [ "$PROVIDER" = "openai" ]; then
-            UPSTREAM="${OPENAI_BASE_URL:-https://api.openai.com}"
-            TOKEN="${OPENAI_API_KEY}"
-          elif [ "$PROVIDER" = "ollama" ]; then
-            UPSTREAM="${OLLAMA_BASE_URL:-http://localhost:11434}"
-            TOKEN="${OPENAI_API_KEY:-none}"
-          fi
-
-          if [ -z "$TOKEN" ]; then
-            echo "Missing AI token for provider ${PROVIDER}" >&2
-            exit 1
-          fi
-
-          HN_CRITIQUE_AI_SOCKET="$SOCKET" \
-          HN_CRITIQUE_AI_UPSTREAM="$UPSTREAM" \
-          HN_CRITIQUE_AI_TOKEN="$TOKEN" \
-          ./bin/ai-proxy &
-          PROXY_PID=$!
-          trap "kill ${PROXY_PID}" EXIT
-
-          ARGS=""
-          if [ -n "${{ inputs.provider }}" ]; then
-            ARGS="-provider ${{ inputs.provider }}"
-          fi
-
-          docker run --rm --network none \
-            -v "$PWD:/work" \
-            -w /work \
-            -v "$SOCKET:$SOCKET" \
-            -e HN_CRITIQUE_AI_SOCKET="$SOCKET" \
-            -e GITHUB_MODELS_ENDPOINT="http://unix" \
-            -e GITHUB_TOKEN="none" \
-            -e OPENAI_BASE_URL="http://unix" \
-            -e OPENAI_CHAT_MODEL="${OPENAI_CHAT_MODEL}" \
-            -e OLLAMA_BASE_URL="http://unix" \
-            -e OLLAMA_MODEL="${OLLAMA_MODEL}" \
-            ubuntu:22.04 \
-            ./bin/crawler $ARGS -analyze-input -out ./docs
+          ./bin/crawler -provider "$PROVIDER" -analyze-input -out ./docs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
