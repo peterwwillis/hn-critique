@@ -162,7 +162,7 @@ analysis may be affected:
 2 stories may have incomplete analysis due to content truncation.
 Review the following pages for potential inaccuracies:
   [3] "Some Long Article" (example.com)
-      Reasons: article text truncated, article prompt truncated
+      Reasons: article content truncated
       Critique: https://peterwwillis.github.io/hn-critique/critique/2024/01/15/12345.html
       Comments: https://peterwwillis.github.io/hn-critique/comments/2024/01/15/12345.html
 ```
