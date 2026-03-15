@@ -55,9 +55,20 @@ func NewFetcherWithLimits(limits Limits) *Fetcher {
 // Fetch attempts to retrieve readable text from url.
 // If the direct fetch appears paywalled or fails, it tries archive.ph and the
 // Wayback Machine before giving up.
+// This method preserves the original API and returns only the extracted text
+// and an error. To also know whether the text was truncated at the configured
+// character limit, use FetchWithTruncation instead.
+func (f *Fetcher) Fetch(rawURL string) (string, error) {
+	text, _, err := f.FetchWithTruncation(rawURL)
+	return text, err
+}
+
+// FetchWithTruncation attempts to retrieve readable text from url.
+// If the direct fetch appears paywalled or fails, it tries archive.ph and the
+// Wayback Machine before giving up.
 // The second return value is true when the extracted text was truncated at the
 // configured character limit, meaning the critique may be incomplete.
-func (f *Fetcher) Fetch(rawURL string) (string, bool, error) {
+func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 	candidates := []string{
 		rawURL,
 		"https://archive.ph/" + rawURL,
