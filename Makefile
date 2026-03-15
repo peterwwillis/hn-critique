@@ -1,7 +1,7 @@
 # HN Critique — development automation
 #
 # Usage:
-#   make build            Compile the crawler binary
+#   make build            Compile all binaries (crawler + mcp-server)
 #   make test             Run unit tests (fast, no network)
 #   make test-integration Run integration tests (requires network)
 #   make test-ai          Run AI integration tests (requires GITHUB_TOKEN or OPENAI_API_KEY)
@@ -11,7 +11,8 @@
 
 .DEFAULT_GOAL := help
 
-BINARY     := ./bin/crawler
+CRAWLER    := ./bin/crawler
+MCP_SERVER := ./bin/mcp-server
 TEST_FLAGS ?= -timeout 120s -count=1
 
 .PHONY: help build vet test test-unit test-integration test-ai test-all clean
@@ -19,9 +20,10 @@ TEST_FLAGS ?= -timeout 120s -count=1
 help: ## Show this help message
 	@awk 'BEGIN{FS=":.*?## "}/^[a-zA-Z_-]+:.*?## /{printf "  %-22s %s\n",$$1,$$2}' $(MAKEFILE_LIST)
 
-build: ## Compile the crawler binary to ./bin/crawler
+build: ## Compile all binaries to ./bin/ (crawler + mcp-server)
 	mkdir -p bin
-	go build -o $(BINARY) ./cmd/crawler/
+	go build -o $(CRAWLER) ./cmd/crawler/
+	go build -o $(MCP_SERVER) ./cmd/mcp-server/
 
 vet: ## Run go vet static analysis
 	go vet ./...

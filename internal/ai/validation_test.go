@@ -95,3 +95,39 @@ func TestValidateCommentsCritique(t *testing.T) {
 		t.Fatal("expected error for invalid indicator")
 	}
 }
+
+func TestValidateCommentsCritiqueTruncatesLongText(t *testing.T) {
+	expected := []*generator.Comment{
+		{ID: 101, Author: "a", Text: template.HTML("original text")},
+	}
+
+	// Build a text that is exactly maxCommentSnippetChars+10 runes long.
+	longText := ""
+	for i := 0; i < maxCommentSnippetChars+10; i++ {
+		longText += "x"
+	}
+	if len([]rune(longText)) <= maxCommentSnippetChars {
+		t.Fatalf("test setup error: long text is not long enough")
+	}
+
+	c := &generator.CommentsCritique{
+		Summary: "Summary",
+		Comments: []generator.AnalyzedComment{
+			{
+				ID:           101,
+				Author:       "a",
+				Text:         longText,
+				Indicators:   []string{"thoughtful"},
+				AccuracyRank: 1,
+				Analysis:     "Analysis",
+			},
+		},
+	}
+
+	if err := validateCommentsCritique(c, expected); err != nil {
+		t.Fatalf("expected truncation, got error: %v", err)
+	}
+	if got := len([]rune(c.Comments[0].Text)); got != maxCommentSnippetChars {
+		t.Errorf("expected text truncated to %d runes, got %d", maxCommentSnippetChars, got)
+	}
+}
