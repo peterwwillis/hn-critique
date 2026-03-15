@@ -147,7 +147,7 @@ func main() {
 
 		if aiProvider != nil {
 			// Load any previously cached analysis as a fallback.
-			cached, cacheErr := generator.LoadCache(*outputDir, story.ID)
+			cached, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
 			if cacheErr != nil {
 				log.Printf("  ⚠  cache load failed: %v", cacheErr)
 			}
@@ -191,7 +191,7 @@ func main() {
 					Critique:         story.Critique,
 					CommentsCritique: story.CommentsCritique,
 				}
-				if saveErr := generator.SaveCache(*outputDir, story.ID, newCache); saveErr != nil {
+				if saveErr := generator.SaveCache(*outputDir, story.ID, story.Time, newCache); saveErr != nil {
 					log.Printf("  ⚠  cache save failed: %v", saveErr)
 				}
 			}

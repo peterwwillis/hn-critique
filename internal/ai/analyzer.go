@@ -25,6 +25,7 @@ func articlePrompt(title, articleURL, content string, maxBytes int) string {
 	if maxBytes > 0 && len(content) > maxBytes {
 		content = truncateWithEllipsis(content, maxBytes)
 	}
+	// Prompt content below is sent to the AI model as instructions.
 	return fmt.Sprintf(`You are a critical fact-checker. Analyze the following article and respond with ONLY a valid JSON object — no markdown, no code fences, just raw JSON.
 
 The JSON must have exactly these keys:

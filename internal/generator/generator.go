@@ -7,7 +7,9 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"golang.org/x/text/cases"
@@ -33,9 +35,7 @@ func (g *Generator) Generate(stories []*Story) error {
 
 	for _, dir := range []string{
 		g.outputDir,
-		filepath.Join(g.outputDir, "critique"),
-		filepath.Join(g.outputDir, "comments"),
-		filepath.Join(g.outputDir, "cache"),
+		CacheDir(g.outputDir),
 	} {
 		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return err
@@ -55,20 +55,35 @@ func (g *Generator) Generate(stories []*Story) error {
 
 	generatedAt := time.Now().UTC().Format("2006-01-02 15:04 UTC")
 
+	for _, s := range stories {
+		datePath := storyDatePath(s.Time)
+		s.CritiquePath = path.Join("critique", datePath, fmt.Sprintf("%d.html", s.ID))
+		s.CommentsPath = path.Join("comments", datePath, fmt.Sprintf("%d.html", s.ID))
+	}
+
 	if err := g.writeTemplate("index.html", filepath.Join(g.outputDir, "index.html"),
 		IndexData{Stories: stories, GeneratedAt: generatedAt, RootPath: ""}); err != nil {
 		return err
 	}
 
 	for _, s := range stories {
-		data := PageData{Story: s, GeneratedAt: generatedAt, RootPath: "../"}
+		datePath := storyDatePath(s.Time)
+		rootPath := rootPathForDatePath(datePath)
+		data := PageData{Story: s, GeneratedAt: generatedAt, RootPath: rootPath}
 
-		if err := g.writeTemplate("critique.html",
-			filepath.Join(g.outputDir, "critique", fmt.Sprintf("%d.html", s.ID)), data); err != nil {
+		critiquePath := filepath.Join(g.outputDir, filepath.FromSlash(s.CritiquePath))
+		if err := os.MkdirAll(filepath.Dir(critiquePath), 0o755); err != nil {
+			return fmt.Errorf("critique dir %d: %w", s.ID, err)
+		}
+		if err := g.writeTemplate("critique.html", critiquePath, data); err != nil {
 			return fmt.Errorf("critique page %d: %w", s.ID, err)
 		}
-		if err := g.writeTemplate("comments.html",
-			filepath.Join(g.outputDir, "comments", fmt.Sprintf("%d.html", s.ID)), data); err != nil {
+
+		commentsPath := filepath.Join(g.outputDir, filepath.FromSlash(s.CommentsPath))
+		if err := os.MkdirAll(filepath.Dir(commentsPath), 0o755); err != nil {
+			return fmt.Errorf("comments dir %d: %w", s.ID, err)
+		}
+		if err := g.writeTemplate("comments.html", commentsPath, data); err != nil {
 			return fmt.Errorf("comments page %d: %w", s.ID, err)
 		}
 	}
@@ -195,4 +210,14 @@ func joinStrings(sep string, s []string) string {
 		result += v
 	}
 	return result
+}
+
+func storyDatePath(storyTime int64) string {
+	return time.Unix(storyTime, 0).UTC().Format("2006/01/02")
+}
+
+func rootPathForDatePath(datePath string) string {
+	parts := strings.Split(datePath, "/")
+	depth := 1 + len(parts)
+	return strings.Repeat("../", depth)
 }
