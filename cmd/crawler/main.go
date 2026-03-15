@@ -67,6 +67,14 @@ func main() {
 	if *prepareInput {
 		*skipAI = true
 	}
+	modelConfig := cfg.SelectedModelConfig()
+	limits := modelConfig.Limits
+
+	hnClient := hn.NewClient()
+	articleFetcher := article.NewFetcherWithLimits(article.Limits{
+		MaxBodyBytes: limits.ArticleBodyBytes,
+		MaxTextLen:   limits.ArticleTextChars,
+	})
 
 	var aiProvider ai.Provider
 	if !*skipAI {
@@ -101,13 +109,23 @@ func main() {
 		}
 		stories = loaded
 	} else {
-		hnClient := hn.NewClient()
-		articleFetcher := article.NewFetcher()
-
 		log.Printf("Fetching top %d stories…", *storyCount)
 		storyIDs, err := hnClient.GetTopStories(*storyCount)
 		if err != nil {
 			log.Fatalf("Failed to fetch top stories: %v", err)
+		}
+
+		commentDepth := limits.CommentDepth
+		if commentDepth == 0 {
+			commentDepth = defaultCommentDepth
+		}
+		topComments := limits.TopComments
+		if topComments == 0 {
+			topComments = maxTopComments
+		}
+		childComments := limits.ChildComments
+		if childComments == 0 {
+			childComments = maxChildComments
 		}
 
 		stories = make([]*generator.Story, 0, len(storyIDs))
@@ -139,7 +157,7 @@ func main() {
 			// Fetch comments.
 			if len(item.Kids) > 0 {
 				log.Printf("  Fetching comments…")
-				story.Comments = fetchComments(hnClient, item.Kids, defaultCommentDepth, maxTopComments)
+				story.Comments = fetchComments(hnClient, item.Kids, commentDepth, topComments, childComments)
 			}
 
 			// Fetch article content (only for stories with external URLs).
@@ -174,7 +192,7 @@ func main() {
 	for _, story := range stories {
 		if aiProvider != nil {
 			// Load any previously cached analysis as a fallback.
-			cached, cacheErr := generator.LoadCache(*outputDir, story.ID)
+			cached, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
 			if cacheErr != nil {
 				log.Printf("  ⚠  cache load failed: %v", cacheErr)
 			}
@@ -218,7 +236,7 @@ func main() {
 					Critique:         story.Critique,
 					CommentsCritique: story.CommentsCritique,
 				}
-				if saveErr := generator.SaveCache(*outputDir, story.ID, newCache); saveErr != nil {
+				if saveErr := generator.SaveCache(*outputDir, story.ID, story.Time, newCache); saveErr != nil {
 					log.Printf("  ⚠  cache save failed: %v", saveErr)
 				}
 			}
@@ -248,11 +266,11 @@ func main() {
 
 // fetchComments recursively fetches comments up to depth levels deep,
 // stopping after maxCount top-level comments.
-func fetchComments(client *hn.Client, kids []int, depth, maxCount int) []*generator.Comment {
-	return fetchCommentsAtDepth(client, kids, depth, maxCount, 0)
+func fetchComments(client *hn.Client, kids []int, depth, maxCount, maxChildCount int) []*generator.Comment {
+	return fetchCommentsAtDepth(client, kids, depth, maxCount, maxChildCount, 0)
 }
 
-func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, currentDepth int) []*generator.Comment {
+func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, maxChildCount, currentDepth int) []*generator.Comment {
 	if depth == 0 || len(kids) == 0 {
 		return nil
 	}
@@ -278,7 +296,7 @@ func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, curren
 		}
 
 		if len(item.Kids) > 0 {
-			comment.Kids = fetchCommentsAtDepth(client, item.Kids, depth-1, maxChildComments, currentDepth+1)
+			comment.Kids = fetchCommentsAtDepth(client, item.Kids, depth-1, maxChildCount, maxChildCount, currentDepth+1)
 		}
 
 		comments = append(comments, comment)

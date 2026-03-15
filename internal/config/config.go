@@ -27,6 +27,10 @@ type Config struct {
 	OpenAI OpenAIConfig `toml:"openai"`
 	Ollama OllamaConfig `toml:"ollama"`
 	GitHub GitHubConfig `toml:"github"`
+
+	// Models holds per-model overrides for inference parameters and application limits.
+	// Keys should match the model name exactly (e.g. "gpt-4o-mini", "openai/gpt-4.1-mini").
+	Models map[string]ModelConfig `toml:"models"`
 }
 
 // OpenAIConfig holds settings for the OpenAI provider.
@@ -81,8 +85,40 @@ type GitHubConfig struct {
 	// Defaults to https://models.github.ai/inference.
 	Endpoint string `toml:"endpoint"`
 	// Model is the model identifier in the format "provider/model-name"
-	// (e.g. "openai/gpt-4o-mini", "openai/gpt-4.1").
+	// (e.g. "openai/gpt-4.1-mini", "openai/gpt-4o-mini").
 	Model string `toml:"model"`
+}
+
+// InferenceConfig holds per-model inference tuning parameters.
+type InferenceConfig struct {
+	// Temperature controls creativity vs. determinism. When nil, defaults apply.
+	Temperature *float64 `toml:"temperature"`
+	// MaxOutputTokens caps the number of output tokens. When nil, provider defaults apply.
+	MaxOutputTokens *int `toml:"max_output_tokens"`
+}
+
+// LimitsConfig defines application limits that can vary by model.
+type LimitsConfig struct {
+	// CommentPromptBytes caps the comment prompt payload in bytes.
+	CommentPromptBytes int `toml:"comment_prompt_bytes"`
+	// ArticlePromptBytes caps the article prompt payload in bytes.
+	ArticlePromptBytes int `toml:"article_prompt_bytes"`
+	// ArticleTextChars caps extracted article text length in characters.
+	ArticleTextChars int `toml:"article_text_chars"`
+	// ArticleBodyBytes caps the fetched HTML response body size in bytes.
+	ArticleBodyBytes int64 `toml:"article_body_bytes"`
+	// CommentDepth caps recursive comment depth.
+	CommentDepth int `toml:"comment_depth"`
+	// TopComments caps the number of top-level comments fetched.
+	TopComments int `toml:"top_comments"`
+	// ChildComments caps the number of child comments fetched per parent.
+	ChildComments int `toml:"child_comments"`
+}
+
+// ModelConfig defines per-model inference parameters and application limits.
+type ModelConfig struct {
+	Inference InferenceConfig `toml:"inference"`
+	Limits    LimitsConfig    `toml:"limits"`
 }
 
 // Defaults returns a Config pre-filled with sensible default values.
@@ -100,8 +136,55 @@ func Defaults() *Config {
 		},
 		GitHub: GitHubConfig{
 			Endpoint: "https://models.github.ai/inference",
-			Model:    "openai/gpt-4o-mini",
+			Model:    "openai/gpt-4.1-mini",
 		},
+		Models: DefaultModelOverrides(),
+	}
+}
+
+// DefaultInference returns the default inference parameters.
+func DefaultInference() InferenceConfig {
+	temperature := 0.3
+	return InferenceConfig{Temperature: &temperature}
+}
+
+// DefaultLimits returns the default application limits.
+func DefaultLimits() LimitsConfig {
+	return LimitsConfig{
+		CommentPromptBytes: 20000,
+		ArticlePromptBytes: 6000,
+		ArticleTextChars:   8000,
+		ArticleBodyBytes:   2 << 20,
+		CommentDepth:       3,
+		TopComments:        20,
+		ChildComments:      5,
+	}
+}
+
+// DefaultModelConfig returns a complete model configuration using defaults.
+func DefaultModelConfig() ModelConfig {
+	return ModelConfig{
+		Inference: DefaultInference(),
+		Limits:    DefaultLimits(),
+	}
+}
+
+// DefaultModelOverrides defines built-in model-specific overrides.
+func DefaultModelOverrides() map[string]ModelConfig {
+	gpt41 := DefaultModelConfig()
+	gpt41.Limits = LimitsConfig{
+		CommentPromptBytes: 200000,
+		ArticlePromptBytes: 50000,
+		ArticleTextChars:   50000,
+		ArticleBodyBytes:   4 << 20,
+		CommentDepth:       4,
+		TopComments:        40,
+		ChildComments:      10,
+	}
+
+	return map[string]ModelConfig{
+		"openai/gpt-4.1-mini": gpt41,
+		"gpt-4.1-mini":        gpt41,
 	}
 }
 
@@ -113,6 +196,16 @@ func Load(path string) (*Config, error) {
 	if path != "" {
 		if _, err := toml.DecodeFile(path, cfg); err != nil {
 			return nil, fmt.Errorf("loading config %q: %w", path, err)
+		}
+	}
+
+	if cfg.Models == nil {
+		cfg.Models = DefaultModelOverrides()
+	} else {
+		for key, override := range DefaultModelOverrides() {
+			if _, ok := cfg.Models[key]; !ok {
+				cfg.Models[key] = override
+			}
 		}
 	}
 
@@ -143,6 +236,81 @@ func Load(path string) (*Config, error) {
 	}
 
 	return cfg, nil
+}
+
+// SelectedModelName returns the model name associated with the active provider.
+func (c *Config) SelectedModelName() string {
+	if c == nil {
+		return ""
+	}
+	switch c.Provider {
+	case ProviderOpenAI:
+		return c.OpenAI.ChatModel
+	case ProviderOllama:
+		return c.Ollama.Model
+	case ProviderGitHub:
+		return c.GitHub.Model
+	default:
+		return ""
+	}
+}
+
+// SelectedModelConfig returns the merged model configuration for the active provider.
+func (c *Config) SelectedModelConfig() ModelConfig {
+	return c.ModelConfigFor(c.SelectedModelName())
+}
+
+// ModelConfigFor returns the merged model configuration for the given model name.
+func (c *Config) ModelConfigFor(model string) ModelConfig {
+	base := DefaultModelConfig()
+	if c == nil || model == "" {
+		return base
+	}
+	if override, ok := c.Models[model]; ok {
+		return mergeModelConfig(base, override)
+	}
+	return base
+}
+
+func mergeModelConfig(base, override ModelConfig) ModelConfig {
+	base.Inference = mergeInferenceConfig(base.Inference, override.Inference)
+	base.Limits = mergeLimitsConfig(base.Limits, override.Limits)
+	return base
+}
+
+func mergeInferenceConfig(base, override InferenceConfig) InferenceConfig {
+	if override.Temperature != nil {
+		base.Temperature = override.Temperature
+	}
+	if override.MaxOutputTokens != nil {
+		base.MaxOutputTokens = override.MaxOutputTokens
+	}
+	return base
+}
+
+func mergeLimitsConfig(base, override LimitsConfig) LimitsConfig {
+	if override.CommentPromptBytes != 0 {
+		base.CommentPromptBytes = override.CommentPromptBytes
+	}
+	if override.ArticlePromptBytes != 0 {
+		base.ArticlePromptBytes = override.ArticlePromptBytes
+	}
+	if override.ArticleTextChars != 0 {
+		base.ArticleTextChars = override.ArticleTextChars
+	}
+	if override.ArticleBodyBytes != 0 {
+		base.ArticleBodyBytes = override.ArticleBodyBytes
+	}
+	if override.CommentDepth != 0 {
+		base.CommentDepth = override.CommentDepth
+	}
+	if override.TopComments != 0 {
+		base.TopComments = override.TopComments
+	}
+	if override.ChildComments != 0 {
+		base.ChildComments = override.ChildComments
+	}
+	return base
 }
 
 // Validate checks that the selected provider has enough configuration to

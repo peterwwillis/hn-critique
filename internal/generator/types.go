@@ -19,6 +19,8 @@ type Story struct {
 	ArticleUnavailableReason string
 	Critique                 *ArticleCritique
 	CommentsCritique         *CommentsCritique
+	CritiquePath             string
+	CommentsPath             string
 }
 
 // Comment represents a single HN comment with its nested replies.

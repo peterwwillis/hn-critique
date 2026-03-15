@@ -78,14 +78,19 @@ func TestGenerate(t *testing.T) {
 		t.Fatalf("Generate failed: %v", err)
 	}
 
+	critiquePath := filepath.FromSlash(stories[0].CritiquePath)
+	commentsPath := filepath.FromSlash(stories[0].CommentsPath)
+	secondCritiquePath := filepath.FromSlash(stories[1].CritiquePath)
+	secondCommentsPath := filepath.FromSlash(stories[1].CommentsPath)
+
 	expectedFiles := []string{
 		"index.html",
 		"style.css",
 		".nojekyll",
-		filepath.Join("critique", "12345.html"),
-		filepath.Join("comments", "12345.html"),
-		filepath.Join("critique", "67890.html"),
-		filepath.Join("comments", "67890.html"),
+		critiquePath,
+		commentsPath,
+		secondCritiquePath,
+		secondCommentsPath,
 	}
 	for _, rel := range expectedFiles {
 		full := filepath.Join(outDir, rel)
@@ -105,8 +110,8 @@ func TestGenerate(t *testing.T) {
 		"go.dev",
 		"500 points",
 		"gopher",
-		"critique/12345.html",
-		"comments/12345.html",
+		stories[0].CritiquePath,
+		stories[0].CommentsPath,
 		"Questionable",
 		"rating-questionable",
 		"Unavailable",
@@ -121,9 +126,9 @@ func TestGenerate(t *testing.T) {
 	}
 
 	// Verify critique page contains expected content.
-	critiqueData, err := os.ReadFile(filepath.Join(outDir, "critique", "12345.html"))
+	critiqueData, err := os.ReadFile(filepath.Join(outDir, critiquePath))
 	if err != nil {
-		t.Fatalf("reading critique/12345.html: %v", err)
+		t.Fatalf("reading %s: %v", critiquePath, err)
 	}
 	critique := string(critiqueData)
 	for _, want := range []string{
@@ -135,14 +140,14 @@ func TestGenerate(t *testing.T) {
 		"Disclaimer: This website uses AI to generate automated critiques and ratings.",
 	} {
 		if !strings.Contains(critique, want) {
-			t.Errorf("critique/12345.html missing expected content: %q", want)
+			t.Errorf("%s missing expected content: %q", critiquePath, want)
 		}
 	}
 
 	// Verify comments page contains expected content.
-	commentsData, err := os.ReadFile(filepath.Join(outDir, "comments", "12345.html"))
+	commentsData, err := os.ReadFile(filepath.Join(outDir, commentsPath))
 	if err != nil {
-		t.Fatalf("reading comments/12345.html: %v", err)
+		t.Fatalf("reading %s: %v", commentsPath, err)
 	}
 	comments := string(commentsData)
 	for _, want := range []string{
@@ -153,7 +158,7 @@ func TestGenerate(t *testing.T) {
 		"#1",
 	} {
 		if !strings.Contains(comments, want) {
-			t.Errorf("comments/12345.html missing expected content: %q", want)
+			t.Errorf("%s missing expected content: %q", commentsPath, want)
 		}
 	}
 }

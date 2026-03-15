@@ -21,6 +21,8 @@ type openAIProvider struct {
 	chatModel         string
 	searchModel       string
 	useResponsesAPI   bool
+	chatSettings      config.ModelConfig
+	searchSettings    config.ModelConfig
 	http              *http.Client
 }
 
@@ -35,7 +37,7 @@ func openAIConfig(apiKey string) config.OpenAIConfig {
 	}
 }
 
-func newOpenAIProvider(cfg config.OpenAIConfig) *openAIProvider {
+func newOpenAIProvider(cfg config.OpenAIConfig, chatSettings, searchSettings config.ModelConfig) *openAIProvider {
 	base := strings.TrimRight(cfg.BaseURL, "/")
 	if base == "" {
 		base = defaultOpenAIBaseURL
@@ -47,6 +49,8 @@ func newOpenAIProvider(cfg config.OpenAIConfig) *openAIProvider {
 		chatModel:         cfg.ChatModel,
 		searchModel:       cfg.SearchModel,
 		useResponsesAPI:   cfg.UseResponsesAPI,
+		chatSettings:      chatSettings,
+		searchSettings:    searchSettings,
 		http:              newHTTPClient(),
 	}
 }
@@ -54,10 +58,22 @@ func newOpenAIProvider(cfg config.OpenAIConfig) *openAIProvider {
 func (p *openAIProvider) Name() string { return "openai" }
 
 func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
-	prompt := articlePrompt(title, articleURL, content)
-
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
-		text, err := p.articleCompletion(prompt)
+		var text string
+		var err error
+
+		if p.useResponsesAPI {
+			prompt := articlePrompt(title, articleURL, content, p.searchSettings.Limits.ArticlePromptBytes)
+			text, err = p.callResponsesAPI(prompt, p.searchSettings.Inference)
+			if err != nil {
+				// Fall back to Chat Completions when the Responses API is unavailable.
+				prompt = articlePrompt(title, articleURL, content, p.chatSettings.Limits.ArticlePromptBytes)
+				text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
+			}
+		} else {
+			prompt := articlePrompt(title, articleURL, content, p.chatSettings.Limits.ArticlePromptBytes)
+			text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
+		}
 		if err != nil {
 			return nil, fmt.Errorf("openai article analysis: %w", err)
 		}
@@ -80,16 +96,17 @@ func (p *openAIProvider) AnalyzeComments(title, articleURL string, comments []*g
 			Comments: []generator.AnalyzedComment{},
 		}, nil
 	}
-	prompt := commentsPrompt(title, articleURL, buildCommentText(comments))
+	prompt := commentsPrompt(title, articleURL, buildCommentText(comments, p.chatSettings.Limits.CommentPromptBytes))
 
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
-		text, err := callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true)
+		text, err := callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
 		if err != nil {
 			return nil, fmt.Errorf("openai comments analysis: %w", err)
 		}
 
 		critique, err := parseCommentsCritique(text, comments)
 		if err == nil {
+			applyCommentText(critique, comments)
 			return critique, nil
 		}
 		if attempt == maxOutputAttempts {
@@ -111,17 +128,17 @@ func bearerHeader(apiKey string) string {
 
 func (p *openAIProvider) articleCompletion(prompt string) (string, error) {
 	if p.useResponsesAPI {
-		text, err := p.callResponsesAPI(prompt)
+		text, err := p.callResponsesAPI(prompt, p.searchSettings.Inference)
 		if err == nil {
 			return text, nil
 		}
 		// Fall back to Chat Completions when the Responses API is unavailable.
 	}
-	return callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true)
+	return callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
 }
 
 // callResponsesAPI calls the OpenAI Responses API with the web_search_preview tool.
-func (p *openAIProvider) callResponsesAPI(input string) (string, error) {
+func (p *openAIProvider) callResponsesAPI(input string, inference config.InferenceConfig) (string, error) {
 	payload := map[string]any{
 		"model": p.searchModel,
 		"tools": []map[string]string{{"type": "web_search_preview"}},
@@ -129,6 +146,12 @@ func (p *openAIProvider) callResponsesAPI(input string) (string, error) {
 			{"role": "system", "content": systemPrompt},
 			{"role": "user", "content": input},
 		},
+	}
+	if inference.Temperature != nil {
+		payload["temperature"] = *inference.Temperature
+	}
+	if inference.MaxOutputTokens != nil {
+		payload["max_output_tokens"] = *inference.MaxOutputTokens
 	}
 	body, err := json.Marshal(payload)
 	if err != nil {

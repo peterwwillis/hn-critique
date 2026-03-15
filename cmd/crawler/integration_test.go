@@ -6,7 +6,6 @@
 package main_test
 
 import (
-	"fmt"
 	"html/template"
 	"os"
 	"path/filepath"
@@ -125,18 +124,21 @@ func TestIntegration_Pipeline(t *testing.T) {
 	}
 	// Check for the first story's ID rather than raw title text — the title
 	// may contain HTML-escaped characters in the output file.
-	firstStoryIDStr := fmt.Sprintf("critique/%d.html", stories[0].ID)
+	firstStoryIDStr := stories[0].CritiquePath
 	if !strings.Contains(index, firstStoryIDStr) {
 		t.Errorf("index.html does not contain link to first story %s", firstStoryIDStr)
 	}
 
 	// Verify per-story pages exist.
 	for _, s := range stories {
-		for _, sub := range []string{"critique", "comments"} {
-			p := filepath.Join(outDir, sub, fmt.Sprintf("%d.html", s.ID))
-			if _, err := os.Stat(p); err != nil {
-				t.Errorf("%s page missing for story %d: %v", sub, s.ID, err)
-			}
+		critiquePath := filepath.Join(outDir, filepath.FromSlash(s.CritiquePath))
+		if _, err := os.Stat(critiquePath); err != nil {
+			t.Errorf("critique page missing for story %d: %v", s.ID, err)
+		}
+
+		commentsPath := filepath.Join(outDir, filepath.FromSlash(s.CommentsPath))
+		if _, err := os.Stat(commentsPath); err != nil {
+			t.Errorf("comments page missing for story %d: %v", s.ID, err)
 		}
 	}
 
