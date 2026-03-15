@@ -137,7 +137,7 @@ jobs:
 
           PLAYWRIGHT_IMAGE="ghcr.io/${{ github.repository }}/playwright:${PLAYWRIGHT_VERSION}"
           if ! docker pull "$PLAYWRIGHT_IMAGE"; then
-            echo "Missing Playwright image ${PLAYWRIGHT_IMAGE}. Run the 'Build Playwright container' workflow first." >&2
+            echo "Failed to pull Playwright image ${PLAYWRIGHT_IMAGE}. Ensure the 'Build Playwright container' workflow has completed successfully and the image is available in GHCR." >&2
             exit 1
           fi
 
@@ -145,7 +145,7 @@ jobs:
             local url="$1"
             local output="$2"
             if ! curl -fsS --max-time 2 "$url" >/dev/null; then
-              echo "Unable to reach ${url} for screenshot." >&2
+              echo "Failed to reach ${url} for screenshot (server may not be ready or page is missing)." >&2
               return 1
             fi
             docker run --rm --network host \
