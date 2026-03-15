@@ -1,5 +1,12 @@
 name: Crawl HN and Deploy
 
+# ─── Triggers ────────────────────────────────────────────────────────────────
+# • schedule / workflow_dispatch  → full production run (30 stories, deploy)
+# • pull_request                  → smoke-test run (1 story, no deploy, screenshot)
+#
+# The PR smoke-test validates that the entire pipeline — HN fetch, article
+# scrape, AI analysis, and HTML generation — works correctly with the code
+# changes in the PR, before they are merged to main.
 on:
   schedule:
     # Run at the top of every hour.
@@ -11,6 +18,8 @@ on:
         description: 'AI provider to use (openai, github). Overrides config file.'
         required: false
         default: ''
+  # On every PR: run the pipeline in limited mode as a smoke test.
+  pull_request:
 
 permissions:
   contents: write
@@ -41,7 +50,10 @@ jobs:
           mkdir -p bin
           CGO_ENABLED=0 go build -o ./bin/crawler ./cmd/crawler/
 
+      # Skip cache restoration on PRs — the smoke test runs from a clean slate
+      # so results are not influenced by cached data from a previous production run.
       - name: Restore analysis cache from gh-pages
+        if: github.event_name != 'pull_request'
         run: |
           git fetch origin gh-pages --depth=1 2>/dev/null || true
           mkdir -p docs/cache
@@ -52,6 +64,11 @@ jobs:
           ARGS=""
           if [ -n "${{ inputs.provider }}" ]; then
             ARGS="-provider ${{ inputs.provider }}"
+          fi
+          # PR smoke-test: fetch only one story to keep the run fast.
+          # Production runs use the default story count (30).
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ARGS="$ARGS -stories 1"
           fi
           ./bin/crawler $ARGS -prepare-input -out ./docs
 
@@ -76,7 +93,57 @@ jobs:
           fi
           ./bin/crawler -provider "$PROVIDER" -analyze-input -out ./docs
 
+      # ── PR-only steps: screenshot & artifact upload ───────────────────────
+      # These steps are skipped on scheduled/manual runs.  On PRs they capture
+      # a visual snapshot of the generated site so reviewers can confirm the
+      # output looks correct before merging.
+
+      - name: Install Playwright (Chromium) for screenshot
+        if: github.event_name == 'pull_request'
+        run: npx --yes playwright install --with-deps chromium
+
+      - name: Screenshot generated site
+        if: github.event_name == 'pull_request'
+        run: |
+          # Serve the generated docs directory on a local port.
+          python3 -m http.server 8080 --directory docs &
+          SERVER_PID=$!
+          # Give the server a moment to start.
+          sleep 3
+
+          # Screenshot the front page (story listing).
+          npx playwright screenshot --browser chromium --full-page \
+            http://localhost:8080/ pr-preview-index.png
+
+          # Screenshot the first critique page, if one was generated.
+          CRITIQUE=$(find docs/critique -name '*.html' 2>/dev/null | sort | head -1)
+          if [ -n "$CRITIQUE" ]; then
+            REL="${CRITIQUE#docs/}"
+            npx playwright screenshot --browser chromium --full-page \
+              "http://localhost:8080/${REL}" pr-preview-critique.png
+          fi
+
+          # Screenshot the first comments page, if one was generated.
+          COMMENTS=$(find docs/comments -name '*.html' 2>/dev/null | sort | head -1)
+          if [ -n "$COMMENTS" ]; then
+            REL="${COMMENTS#docs/}"
+            npx playwright screenshot --browser chromium --full-page \
+              "http://localhost:8080/${REL}" pr-preview-comments.png
+          fi
+
+          kill $SERVER_PID || true
+
+      - name: Upload PR preview screenshots
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-preview
+          path: pr-preview-*.png
+          retention-days: 7
+
+      # ── Production deploy (skipped for PRs) ──────────────────────────────
       - name: Deploy to GitHub Pages
+        if: github.event_name != 'pull_request'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
