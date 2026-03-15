@@ -19,6 +19,8 @@ import (
 const httpTimeout = 120 * time.Second
 
 // articlePrompt builds the fact-checking prompt for an article.
+// It encodes the journalism-specific requirement that reliable ratings require
+// multiple sources and perspectives when the content is news reporting.
 func articlePrompt(title, articleURL, content string, maxBytes int) string {
 	if maxBytes > 0 && len(content) > maxBytes {
 		content = truncateWithEllipsis(content, maxBytes)
@@ -35,6 +37,10 @@ The JSON must have exactly these keys:
 }
 
 Use web search to verify factual claims where possible.
+
+If the article is journalism (news or investigative reporting, not tutorials, technical documentation, opinion pieces, or personal essays), it must cite at least two distinct sources of information and provide multiple perspectives to earn a "reliable" rating.
+If it lacks either requirement, do not rate it as "reliable" (use "questionable" or "misleading" instead).
+If it is unclear whether the piece is journalism, only apply this rule when the writing reads like reported news about events or public affairs.
 
 Article title: %s
 Article URL: %s
@@ -71,7 +77,7 @@ Comments:
 // sanitizeRating ensures the rating field has a valid value.
 func sanitizeRating(r string) string {
 	switch r {
-	case "reliable", "questionable", "misleading":
+	case "reliable", "questionable", "misleading", "unavailable":
 		return r
 	default:
 		return "questionable"

@@ -107,6 +107,8 @@ func (g *Generator) loadTemplates() error {
 				return "rating-reliable"
 			case "misleading":
 				return "rating-misleading"
+			case "unavailable":
+				return "rating-unavailable"
 			default:
 				return "rating-questionable"
 			}
