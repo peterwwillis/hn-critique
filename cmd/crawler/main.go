@@ -81,11 +81,17 @@ func main() {
 	if !*skipAI {
 		if err := cfg.Validate(); err != nil {
 			log.Printf("AI analysis disabled: %v", err)
+			if *strict {
+				log.Fatal("strict mode: AI provider is required but could not be configured")
+			}
 			*skipAI = true
 		} else {
 			p, err := ai.NewProvider(cfg)
 			if err != nil {
 				log.Printf("AI analysis disabled: %v", err)
+				if *strict {
+					log.Fatal("strict mode: AI provider is required but could not be configured")
+				}
 				*skipAI = true
 			} else {
 				aiProvider = p
