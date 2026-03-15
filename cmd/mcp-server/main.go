@@ -38,6 +38,11 @@ import (
 
 const mcpProtocolVersion = "2024-11-05"
 
+// initialScannerBufferSize controls the initial allocation bufio.Scanner uses
+// for reading messages. It is kept small to avoid unnecessary per-process
+// memory usage, while maxMessageSize still defines the maximum allowed size.
+const initialScannerBufferSize = 64 * 1024 // 64 KiB
+
 // maxMessageSize is the maximum size in bytes of a single MCP message.
 // 4 MiB accommodates large article content payloads.
 const maxMessageSize = 4 * 1024 * 1024
@@ -194,8 +199,9 @@ func main() {
 func run(in io.Reader, out io.Writer, provider ai.Provider) {
 	enc := json.NewEncoder(out)
 	scanner := bufio.NewScanner(in)
-	// Allow up to maxMessageSize per message (large article content).
-	scanner.Buffer(make([]byte, maxMessageSize), maxMessageSize)
+	// Allow up to maxMessageSize per message (large article content) while
+	// keeping the initial buffer small to avoid unnecessary memory use.
+	scanner.Buffer(make([]byte, initialScannerBufferSize), maxMessageSize)
 
 	for scanner.Scan() {
 		line := scanner.Bytes()
