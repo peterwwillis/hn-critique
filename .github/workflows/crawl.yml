@@ -124,7 +124,7 @@ jobs:
           SERVER_PID=$!
           trap "kill ${SERVER_PID}" EXIT
           # Wait for the server to start responding.
-          for _ in $(seq 1 15); do
+          for attempt in $(seq 1 15); do
             if curl -fsS --max-time 2 http://localhost:8080/ >/dev/null; then
               break
             fi
