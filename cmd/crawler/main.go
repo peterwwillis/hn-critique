@@ -11,6 +11,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/peterwwillis/hn-critique/internal/ai"
 	"github.com/peterwwillis/hn-critique/internal/article"
@@ -184,8 +185,9 @@ func main() {
 					story.ArticleText = text
 					if truncated {
 						story.ArticleTruncated = true
+						runeCount := utf8.RuneCountInString(text)
 						log.Printf("  ⚠  article text truncated: fetched %d chars (limit: %d); critique may be incomplete",
-							len(text), limits.ArticleTextChars)
+							runeCount, limits.ArticleTextChars)
 					}
 					// Check whether the text will be further truncated when
 					// inserted into the AI prompt.
