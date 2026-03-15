@@ -103,6 +103,7 @@ Comments:
 // sanitizeRating ensures the rating field has a valid value.
 func sanitizeRating(r string) string {
 	normalized := strings.ToLower(strings.TrimSpace(r))
+	normalized = strings.Trim(normalized, "\"'`.,:;!?")
 	switch normalized {
 	case "reliable", "questionable", "misleading", "unavailable":
 		return normalized
