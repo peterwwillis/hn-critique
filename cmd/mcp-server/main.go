@@ -120,7 +120,7 @@ var mcpTools = []toolDef{
 				"url":     map[string]string{"type": "string", "description": "Article URL"},
 				"content": map[string]string{"type": "string", "description": "Full text of the article to analyze"},
 			},
-			Required: []string{"title", "url"},
+			Required: []string{"title", "url", "content"},
 		},
 	},
 	{
