@@ -135,6 +135,12 @@ jobs:
             exit 1
           fi
 
+          PLAYWRIGHT_IMAGE="ghcr.io/${{ github.repository }}/playwright:${PLAYWRIGHT_VERSION}"
+          if ! docker pull "$PLAYWRIGHT_IMAGE"; then
+            echo "Missing Playwright image ${PLAYWRIGHT_IMAGE}. Run the build workflow first." >&2
+            exit 1
+          fi
+
           screenshot_page() {
             local url="$1"
             local output="$2"
@@ -145,7 +151,7 @@ jobs:
             docker run --rm --network host \
               -v "$PWD:/work" \
               -w /work \
-              ghcr.io/${{ github.repository }}/playwright:${PLAYWRIGHT_VERSION} \
+              "$PLAYWRIGHT_IMAGE" \
               npx playwright screenshot --browser chromium --full-page \
               "$url" "$output"
           }
