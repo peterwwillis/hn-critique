@@ -330,7 +330,7 @@ func toGeneratorComments(src []mcpComment) []*generator.Comment {
 		gc := &generator.Comment{
 			ID:     c.ID,
 			Author: c.Author,
-			Text:   template.HTML(c.Text), //nolint:gosec // text is provided by the caller, not from HN
+			Text:   template.HTML(template.HTMLEscapeString(c.Text)),
 			Time:   c.Time,
 			Depth:  c.Depth,
 		}
