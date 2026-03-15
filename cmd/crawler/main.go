@@ -20,6 +20,9 @@ import (
 
 const (
 	defaultStoryCount                = 30
+	defaultCommentDepth              = 3
+	maxTopComments                   = 20
+	maxChildComments                 = 5
 	articleRetrievalFailureReason    = "the article could not be retrieved"
 	articleInsufficientContentReason = "the article did not contain enough readable content to analyze"
 	// Pause between HN API calls to be a good citizen.
