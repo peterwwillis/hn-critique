@@ -84,7 +84,7 @@ func TestIntegration_Pipeline(t *testing.T) {
 
 		// Attempt to fetch article text (best-effort; skip on failure).
 		if item.URL != "" {
-			text, err := articleFetcher.Fetch(item.URL)
+			text, _, err := articleFetcher.Fetch(item.URL)
 			if err != nil {
 				t.Logf("  article fetch failed for %s: %v (continuing without article text)", item.URL, err)
 			} else {
