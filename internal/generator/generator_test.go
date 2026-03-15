@@ -40,7 +40,7 @@ func TestGenerate(t *testing.T) {
 				MainPoints:     []string{"Faster GC", "New crypto packages"},
 				Truthfulness:   "Claims appear accurate.",
 				Considerations: []string{"Performance varies by workload."},
-				Rating:         "questionable",
+				Rating:         "needs citation",
 			},
 			CommentsCritique: &generator.CommentsCritique{
 				Summary: "Discussion is mostly positive.",
@@ -72,6 +72,24 @@ func TestGenerate(t *testing.T) {
 				Rating:       "unavailable",
 			},
 		},
+		{
+			ID:           24680,
+			Rank:         3,
+			Title:        "Reliable Economic Report",
+			URL:          "https://example.com/report",
+			Domain:       "example.com",
+			Score:        150,
+			Author:       "reporter",
+			Time:         1741708800,
+			CommentCount: 12,
+			Critique: &generator.ArticleCritique{
+				Summary:        "The report summarizes recent economic indicators.",
+				MainPoints:     []string{"GDP growth slowed", "Inflation cooled"},
+				Truthfulness:   "The data aligns with published figures.",
+				Considerations: []string{"Regional differences were not covered."},
+				Rating:         "reliable",
+			},
+		},
 	}
 
 	if err := gen.Generate(stories); err != nil {
@@ -82,6 +100,8 @@ func TestGenerate(t *testing.T) {
 	commentsPath := filepath.FromSlash(stories[0].CommentsPath)
 	secondCritiquePath := filepath.FromSlash(stories[1].CritiquePath)
 	secondCommentsPath := filepath.FromSlash(stories[1].CommentsPath)
+	thirdCritiquePath := filepath.FromSlash(stories[2].CritiquePath)
+	thirdCommentsPath := filepath.FromSlash(stories[2].CommentsPath)
 
 	expectedFiles := []string{
 		"index.html",
@@ -91,6 +111,8 @@ func TestGenerate(t *testing.T) {
 		commentsPath,
 		secondCritiquePath,
 		secondCommentsPath,
+		thirdCritiquePath,
+		thirdCommentsPath,
 	}
 	for _, rel := range expectedFiles {
 		full := filepath.Join(outDir, rel)
@@ -112,8 +134,10 @@ func TestGenerate(t *testing.T) {
 		"gopher",
 		stories[0].CritiquePath,
 		stories[0].CommentsPath,
-		"Questionable",
-		"rating-questionable",
+		"Needs Citation",
+		"rating-needs-citation",
+		"Reliable",
+		"rating-reliable",
 		"Unavailable",
 		"rating-unavailable",
 		"Ask HN: Favorite tools?",
@@ -135,8 +159,8 @@ func TestGenerate(t *testing.T) {
 		"Go 1.24 Released",
 		"Go 1.24 introduces performance improvements.",
 		"Faster GC",
-		"questionable",
-		"rating-questionable",
+		"Needs Citation",
+		"rating-needs-citation",
 		"Disclaimer: This website uses AI to generate automated critiques and ratings.",
 	} {
 		if !strings.Contains(critique, want) {

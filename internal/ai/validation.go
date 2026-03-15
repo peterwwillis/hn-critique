@@ -23,9 +23,10 @@ var allowedIndicators = map[string]struct{}{
 }
 
 var allowedAIRatings = map[string]struct{}{
-	"reliable":     {},
-	"questionable": {},
-	"misleading":   {},
+	"reliable":       {},
+	"needs citation": {},
+	"questionable":   {},
+	"misleading":     {},
 }
 
 func parseArticleCritique(text string) (*generator.ArticleCritique, error) {
