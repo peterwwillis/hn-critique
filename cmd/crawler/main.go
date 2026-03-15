@@ -169,13 +169,19 @@ func main() {
 			// Fetch comments.
 			if len(item.Kids) > 0 {
 				log.Printf("  Fetching comments…")
-				story.Comments = fetchComments(hnClient, item.Kids, commentDepth, topComments, childComments)
+				comments, commentsCapped := fetchComments(hnClient, item.Kids, commentDepth, topComments, childComments)
+				story.Comments = comments
+				if commentsCapped {
+					story.CommentsTruncated = true
+					log.Printf("  ⚠  comment fetch capped: not all comments were retrieved (limits: top=%d, child=%d, depth=%d); comments critique may be incomplete",
+						topComments, childComments, commentDepth)
+				}
 			}
 
 			// Fetch article content (only for stories with external URLs).
 			if item.URL != "" {
 				log.Printf("  Fetching article: %s", item.URL)
-				text, truncated, err := articleFetcher.Fetch(item.URL)
+				text, truncated, err := articleFetcher.FetchWithTruncation(item.URL)
 				if err != nil {
 					log.Printf("  ⚠  article fetch failed: %v", err)
 					story.ArticleUnavailableReason = articleRetrievalFailureReason
@@ -186,8 +192,8 @@ func main() {
 					if truncated {
 						story.ArticleTruncated = true
 						runeCount := utf8.RuneCountInString(text)
-						log.Printf("  ⚠  article text truncated: fetched %d chars (limit: %d); critique may be incomplete",
-							runeCount, limits.ArticleTextChars)
+						log.Printf("  ⚠  article content truncated: fetched %d chars (text limit: %d chars, body limit: %d bytes); critique may be incomplete",
+							runeCount, limits.ArticleTextChars, limits.ArticleBodyBytes)
 					}
 					// Check whether the text will be further truncated when
 					// inserted into the AI prompt.
@@ -308,18 +314,21 @@ func main() {
 
 // fetchComments recursively fetches comments up to depth levels deep,
 // stopping after maxCount top-level comments.
-func fetchComments(client *hn.Client, kids []int, depth, maxCount, maxChildCount int) []*generator.Comment {
+// The second return value is true when any count or depth cap was hit.
+func fetchComments(client *hn.Client, kids []int, depth, maxCount, maxChildCount int) ([]*generator.Comment, bool) {
 	return fetchCommentsAtDepth(client, kids, depth, maxCount, maxChildCount, 0)
 }
 
-func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, maxChildCount, currentDepth int) []*generator.Comment {
+func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, maxChildCount, currentDepth int) ([]*generator.Comment, bool) {
 	if depth == 0 || len(kids) == 0 {
-		return nil
+		return nil, false
 	}
 
 	var comments []*generator.Comment
+	capped := false
 	for _, id := range kids {
 		if len(comments) >= maxCount {
+			capped = true
 			break
 		}
 
@@ -338,13 +347,22 @@ func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, maxChi
 		}
 
 		if len(item.Kids) > 0 {
-			comment.Kids = fetchCommentsAtDepth(client, item.Kids, depth-1, maxChildCount, maxChildCount, currentDepth+1)
+			if depth == 1 {
+				// Depth limit reached: this comment has children but we cannot go deeper.
+				capped = true
+			} else {
+				childComments, childCapped := fetchCommentsAtDepth(client, item.Kids, depth-1, maxChildCount, maxChildCount, currentDepth+1)
+				comment.Kids = childComments
+				if childCapped {
+					capped = true
+				}
+			}
 		}
 
 		comments = append(comments, comment)
 		time.Sleep(hnDelay)
 	}
-	return comments
+	return comments, capped
 }
 
 // extractDomain returns the bare hostname from a URL, stripping the www. prefix.

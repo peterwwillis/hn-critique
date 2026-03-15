@@ -108,9 +108,11 @@ func (f *Fetcher) fetchURL(u string) (string, bool, error) {
 	if err != nil {
 		return "", false, err
 	}
+	// Detect whether the response body was capped at the limit.
+	bodyTruncated := int64(len(body)) >= f.maxBodyBytes
 
-	text, truncated := extractTextWithLimit(string(body), f.maxTextLen)
-	return text, truncated, nil
+	text, textTruncated := extractTextWithLimit(string(body), f.maxTextLen)
+	return text, bodyTruncated || textTruncated, nil
 }
 
 // ExtractText parses HTML and returns the visible text content, up to the default limit.
