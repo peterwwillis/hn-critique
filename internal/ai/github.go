@@ -55,6 +55,12 @@ func (p *githubProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 }
 
 func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
+	if len(comments) == 0 {
+		return &generator.CommentsCritique{
+			Summary:  "No comments to analyze.",
+			Comments: []generator.AnalyzedComment{},
+		}, nil
+	}
 	prompt := commentsPrompt(title, articleURL, buildCommentText(comments))
 
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
