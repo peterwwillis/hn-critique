@@ -154,7 +154,7 @@ func main() {
 				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
 				if err != nil {
 					log.Printf("  ⚠  article analysis failed: %v", err)
-					analysisReason := "the AI assessment could not be completed because the AI provider returned an error. The analysis may be retried on the next run"
+					analysisReason := "the AI assessment failed due to a provider error and will be retried on the next run"
 					story.Critique = unavailableCritiqueForReason(analysisReason)
 				} else {
 					story.Critique = crit
