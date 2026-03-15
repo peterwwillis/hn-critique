@@ -116,52 +116,43 @@ jobs:
       # a visual snapshot of the generated site so reviewers can confirm the
       # output looks correct before merging.
 
-      - name: Install Playwright (Chromium) for screenshot
-        if: github.event_name == 'pull_request'
-        run: npx --yes playwright install --with-deps chromium
-
       - name: Screenshot generated site
         if: github.event_name == 'pull_request'
         run: |
           # Serve the generated docs directory on a local port.
           python3 -m http.server 8080 --directory docs &
           SERVER_PID=$!
+          trap "kill ${SERVER_PID}" EXIT
           # Give the server a moment to start.
           sleep 3
 
+          screenshot_page() {
+            local url="$1"
+            local output="$2"
+            docker run --rm --network host \
+              -v "$PWD:/work" \
+              -w /work \
+              ghcr.io/${{ github.repository }}/playwright:${PLAYWRIGHT_VERSION} \
+              npx playwright screenshot --browser chromium --full-page \
+              "$url" "$output"
+          }
+
           # Screenshot the front page (story listing).
-          npx playwright screenshot --browser chromium --full-page \
-            http://localhost:8080/ pr-preview-index.png
+          screenshot_page "http://localhost:8080/" "pr-preview-index.png"
 
           # Screenshot the first critique page, if one was generated.
           CRITIQUE=$(find docs/critique -name '*.html' 2>/dev/null | sort | head -1)
           if [ -n "$CRITIQUE" ]; then
             REL="${CRITIQUE#docs/}"
-            npx playwright screenshot --browser chromium --full-page \
-              "http://localhost:8080/${REL}" pr-preview-critique.png
+            screenshot_page "http://localhost:8080/${REL}" "pr-preview-critique.png"
           fi
 
           # Screenshot the first comments page, if one was generated.
           COMMENTS=$(find docs/comments -name '*.html' 2>/dev/null | sort | head -1)
           if [ -n "$COMMENTS" ]; then
             REL="${COMMENTS#docs/}"
-            npx playwright screenshot --browser chromium --full-page \
-              "http://localhost:8080/${REL}" pr-preview-comments.png
+            screenshot_page "http://localhost:8080/${REL}" "pr-preview-comments.png"
           fi
-
-          docker run --rm --network none \
-            -v "$PWD:/work" \
-            -w /work \
-            -v "$SOCKET:$SOCKET" \
-            -e HN_CRITIQUE_AI_SOCKET="$SOCKET" \
-            -e GITHUB_MODELS_ENDPOINT="http://unix" \
-            -e GITHUB_TOKEN="none" \
-            -e OPENAI_BASE_URL="http://unix" \
-            -e OPENAI_CHAT_MODEL="${OPENAI_CHAT_MODEL}" \
-            -e OLLAMA_BASE_URL="http://unix" \
-            -e OLLAMA_MODEL="${OLLAMA_MODEL}" \
-            ghcr.io/${{ github.repository }}/playwright:${PLAYWRIGHT_VERSION} \
-            ./bin/crawler $ARGS -analyze-input -out ./docs
 
       # ── Production deploy (skipped for PRs) ──────────────────────────────
       - name: Deploy to GitHub Pages
