@@ -1,0 +1,51 @@
+name: Build Playwright container
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker/playwright/Dockerfile'
+      - 'docker/playwright/version.txt'
+      - '.github/workflows/playwright-image.yml'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read Playwright version
+        run: echo "PLAYWRIGHT_VERSION=$(tr -d '\r\n' < docker/playwright/version.txt)" >> "$GITHUB_ENV"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Playwright image
+        uses: docker/build-push-action@v5
+        with:
+          context: docker/playwright
+          file: Dockerfile
+          build-args: |
+            PLAYWRIGHT_VERSION=${{ env.PLAYWRIGHT_VERSION }}
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/playwright:${{ env.PLAYWRIGHT_VERSION }}
+            ghcr.io/${{ github.repository }}/playwright:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}

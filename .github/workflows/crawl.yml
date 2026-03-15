@@ -27,6 +27,7 @@ permissions:
   id-token: write
   # Required for the GitHub Models provider (GITHUB_TOKEN auth).
   models: read
+  packages: read
 
 jobs:
   crawl-and-deploy:
@@ -72,7 +73,19 @@ jobs:
           fi
           ./bin/crawler $ARGS -prepare-input -out ./docs
 
-      - name: Run AI analysis
+      - name: Read Playwright image tag
+        run: echo "PLAYWRIGHT_VERSION=$(tr -d '\r\n' < docker/playwright/version.txt)" >> "$GITHUB_ENV"
+
+      - name: Log in to GitHub Container Registry
+        # GHCR packages are private by default unless explicitly set to public.
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run AI analysis in isolated container
         env:
           # GitHub Models provider: GITHUB_TOKEN is automatically available in
           # Actions and granted models:read by the permissions block above.
@@ -104,48 +117,70 @@ jobs:
       # a visual snapshot of the generated site so reviewers can confirm the
       # output looks correct before merging.
 
-      - name: Install Playwright (Chromium) for screenshot
-        if: github.event_name == 'pull_request'
-        run: npx --yes playwright install --with-deps chromium
-
       - name: Screenshot generated site
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
         run: |
           # Serve the generated docs directory on a local port.
           python3 -m http.server 8080 --directory docs &
           SERVER_PID=$!
-          # Give the server a moment to start.
-          sleep 3
+          trap "kill ${SERVER_PID}" EXIT
+          # Wait for the server to start responding (15 attempts × 1s).
+          for attempt in $(seq 1 15); do
+            if curl -fsS --max-time 2 http://localhost:8080/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          if ! curl -fsS --max-time 2 http://localhost:8080/ >/dev/null; then
+            echo "Timed out waiting for preview server to start." >&2
+            exit 1
+          fi
+
+          PLAYWRIGHT_IMAGE="ghcr.io/${{ github.repository }}/playwright:${PLAYWRIGHT_VERSION}"
+          if ! docker pull "$PLAYWRIGHT_IMAGE"; then
+            echo "Failed to pull Playwright image ${PLAYWRIGHT_IMAGE}. Ensure the 'Build Playwright container' workflow has completed successfully and the image is available in GHCR." >&2
+            exit 1
+          fi
+
+          screenshot_page() {
+            local url="$1"
+            local output="$2"
+            if ! curl -fsS --max-time 2 "$url" >/dev/null; then
+              echo "Failed to reach ${url} for screenshot (server may not be ready or page is missing)." >&2
+              return 1
+            fi
+            docker run --rm --network host \
+              -v "$PWD:/work" \
+              -w /work \
+              "$PLAYWRIGHT_IMAGE" \
+              npx playwright screenshot --browser chromium --full-page \
+              "$url" "$output"
+          }
 
           # Screenshot the front page (story listing).
-          npx playwright screenshot --browser chromium --full-page \
-            http://localhost:8080/ pr-preview-index.png
+          screenshot_page "http://localhost:8080/" "pr-preview-index.png"
 
           # Screenshot the first critique page, if one was generated.
           CRITIQUE=$(find docs/critique -name '*.html' 2>/dev/null | sort | head -1)
           if [ -n "$CRITIQUE" ]; then
             REL="${CRITIQUE#docs/}"
-            npx playwright screenshot --browser chromium --full-page \
-              "http://localhost:8080/${REL}" pr-preview-critique.png
+            screenshot_page "http://localhost:8080/${REL}" "pr-preview-critique.png"
           fi
 
           # Screenshot the first comments page, if one was generated.
           COMMENTS=$(find docs/comments -name '*.html' 2>/dev/null | sort | head -1)
           if [ -n "$COMMENTS" ]; then
             REL="${COMMENTS#docs/}"
-            npx playwright screenshot --browser chromium --full-page \
-              "http://localhost:8080/${REL}" pr-preview-comments.png
+            screenshot_page "http://localhost:8080/${REL}" "pr-preview-comments.png"
           fi
 
-          kill $SERVER_PID || true
-
       - name: Upload PR preview screenshots
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
         uses: actions/upload-artifact@v4
         with:
-          name: pr-preview
+          name: pr-preview-screenshots
           path: pr-preview-*.png
-          retention-days: 7
+          if-no-files-found: warn
 
       # ── Production deploy (skipped for PRs) ──────────────────────────────
       - name: Deploy to GitHub Pages
