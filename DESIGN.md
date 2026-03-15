@@ -8,10 +8,10 @@ their impact on output quality, and recommendations for improving coverage.
 ## Overview of Limits
 
 The crawler applies several size caps at different stages of processing. When
-content exceeds a cap it is **silently truncated**, which can result in
-incomplete or less accurate AI critiques. The limits are defined in
-`internal/config/config.go` and can be overridden per-model in
-`hn-critique.toml`.
+content exceeds a cap it is truncated, and the run emits explicit truncation
+warnings and an end-of-run summary to highlight any affected content. The
+limits are defined in `internal/config/config.go` and can be overridden
+per-model in `hn-critique.toml`.
 
 ### Default limits (all models except `openai/gpt-4.1-mini`)
 
