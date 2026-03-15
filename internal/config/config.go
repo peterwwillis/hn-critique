@@ -129,8 +129,17 @@ func Load(path string) (*Config, error) {
 	if v := os.Getenv("OPENAI_CHAT_MODEL"); v != "" {
 		cfg.OpenAI.ChatModel = v
 	}
+	if v := os.Getenv("OLLAMA_BASE_URL"); v != "" {
+		cfg.Ollama.BaseURL = v
+	}
+	if v := os.Getenv("OLLAMA_MODEL"); v != "" {
+		cfg.Ollama.Model = v
+	}
 	if cfg.GitHub.Token == "" {
 		cfg.GitHub.Token = os.Getenv("GITHUB_TOKEN")
+	}
+	if v := os.Getenv("GITHUB_MODELS_ENDPOINT"); v != "" {
+		cfg.GitHub.Endpoint = v
 	}
 
 	return cfg, nil

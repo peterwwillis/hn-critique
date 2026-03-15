@@ -28,7 +28,7 @@ func newGitHubProvider(cfg config.GitHubConfig) *githubProvider {
 		endpoint: base + "/chat/completions",
 		token:    cfg.Token,
 		model:    cfg.Model,
-		http:     &http.Client{Timeout: httpTimeout},
+		http:     newHTTPClient(),
 	}
 }
 
@@ -37,30 +37,39 @@ func (p *githubProvider) Name() string { return "github" }
 func (p *githubProvider) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
 	prompt := articlePrompt(title, articleURL, content)
 
-	text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true)
-	if err != nil {
-		return nil, fmt.Errorf("github models article analysis: %w", err)
-	}
+	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
+		text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true)
+		if err != nil {
+			return nil, fmt.Errorf("github models article analysis: %w", err)
+		}
 
-	var critique generator.ArticleCritique
-	if err := parseJSON(text, &critique); err != nil {
-		return nil, fmt.Errorf("github models: parsing article critique: %w", err)
+		critique, err := parseArticleCritique(text)
+		if err == nil {
+			return critique, nil
+		}
+		if attempt == maxOutputAttempts {
+			return nil, fmt.Errorf("github models: invalid article critique output: %w", err)
+		}
 	}
-	critique.Rating = sanitizeRating(critique.Rating)
-	return &critique, nil
+	return nil, fmt.Errorf("github models: article critique unavailable after retries")
 }
 
 func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
 	prompt := commentsPrompt(title, articleURL, buildCommentText(comments))
 
-	text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true)
-	if err != nil {
-		return nil, fmt.Errorf("github models comments analysis: %w", err)
-	}
+	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
+		text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true)
+		if err != nil {
+			return nil, fmt.Errorf("github models comments analysis: %w", err)
+		}
 
-	var critique generator.CommentsCritique
-	if err := parseJSON(text, &critique); err != nil {
-		return nil, fmt.Errorf("github models: parsing comments critique: %w", err)
+		critique, err := parseCommentsCritique(text, comments)
+		if err == nil {
+			return critique, nil
+		}
+		if attempt == maxOutputAttempts {
+			return nil, fmt.Errorf("github models: invalid comments critique output: %w", err)
+		}
 	}
-	return &critique, nil
+	return nil, fmt.Errorf("github models: comments critique unavailable after retries")
 }

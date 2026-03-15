@@ -36,13 +36,27 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
+      - name: Build crawler binaries
+        run: |
+          mkdir -p bin
+          CGO_ENABLED=0 go build -o ./bin/crawler ./cmd/crawler/
+          CGO_ENABLED=0 go build -o ./bin/ai-proxy ./cmd/ai-proxy/
+
       - name: Restore analysis cache from gh-pages
         run: |
           git fetch origin gh-pages --depth=1 2>/dev/null || true
           mkdir -p docs/cache
           git archive origin/gh-pages -- cache/ 2>/dev/null | tar -x -C docs/ || true
 
-      - name: Run crawler
+      - name: Prepare story inputs (no AI)
+        run: |
+          ARGS=""
+          if [ -n "${{ inputs.provider }}" ]; then
+            ARGS="-provider ${{ inputs.provider }}"
+          fi
+          ./bin/crawler $ARGS -prepare-input -out ./docs
+
+      - name: Run AI analysis in isolated container
         env:
           # OpenAI provider credentials and configuration.
           # Set OPENAI_API_KEY secret to use api.openai.com.
@@ -57,11 +71,55 @@ jobs:
           # Actions and granted models:read by the permissions block above.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
+
+          SOCKET="/tmp/hn-critique-ai.sock"
+          PROVIDER="${{ inputs.provider }}"
+          if [ -z "$PROVIDER" ]; then
+            PROVIDER="github"
+          fi
+
+          UPSTREAM="https://models.github.ai/inference"
+          TOKEN="${GITHUB_TOKEN}"
+
+          if [ "$PROVIDER" = "openai" ]; then
+            UPSTREAM="${OPENAI_BASE_URL:-https://api.openai.com}"
+            TOKEN="${OPENAI_API_KEY}"
+          elif [ "$PROVIDER" = "ollama" ]; then
+            UPSTREAM="${OPENAI_BASE_URL:-http://localhost:11434}"
+            TOKEN="${OPENAI_API_KEY:-none}"
+          fi
+
+          if [ -z "$TOKEN" ]; then
+            echo "Missing AI token for provider ${PROVIDER}" >&2
+            exit 1
+          fi
+
+          HN_CRITIQUE_AI_SOCKET="$SOCKET" \
+          HN_CRITIQUE_AI_UPSTREAM="$UPSTREAM" \
+          HN_CRITIQUE_AI_TOKEN="$TOKEN" \
+          ./bin/ai-proxy &
+          PROXY_PID=$!
+          trap "kill ${PROXY_PID}" EXIT
+
           ARGS=""
           if [ -n "${{ inputs.provider }}" ]; then
             ARGS="-provider ${{ inputs.provider }}"
           fi
-          go run ./cmd/crawler/... $ARGS
+
+          docker run --rm --network none \
+            -v "$PWD:/work" \
+            -w /work \
+            -v "$SOCKET:$SOCKET" \
+            -e HN_CRITIQUE_AI_SOCKET="$SOCKET" \
+            -e GITHUB_MODELS_ENDPOINT="http://unix" \
+            -e GITHUB_TOKEN="none" \
+            -e OPENAI_BASE_URL="http://unix" \
+            -e OPENAI_CHAT_MODEL="${OPENAI_CHAT_MODEL}" \
+            -e OLLAMA_BASE_URL="http://unix" \
+            -e OLLAMA_MODEL="${OPENAI_CHAT_MODEL}" \
+            ubuntu:22.04 \
+            ./bin/crawler $ARGS -analyze-input -out ./docs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
@@ -71,4 +129,3 @@ jobs:
           publish_branch: gh-pages
           allow_empty_commit: false
           commit_message: 'chore: update HN Critique site [${{ github.run_number }}]'
-

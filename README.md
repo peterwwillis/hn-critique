@@ -162,10 +162,22 @@ go run ./cmd/crawler/ -provider openai -stories 5 -out ./docs
 
 The `-skip-ai` flag skips all AI calls and generates placeholder pages — no API key or local server required.
 
+To support isolated AI workflows (such as the GitHub Actions job), the crawler can
+write and later re-use raw story inputs:
+
+```bash
+# Fetch stories + article text, save inputs to docs/cache/story-input.json
+go run ./cmd/crawler/ -prepare-input -out ./docs
+
+# Run AI analysis using the cached inputs
+go run ./cmd/crawler/ -analyze-input -out ./docs
+```
+
 ## Project layout
 
 ```
 cmd/crawler/          Main entry point
+cmd/ai-proxy/         Local Unix-socket proxy for AI inference
 internal/hn/          Hacker News API client
 internal/article/     Article fetcher with paywall bypass
 internal/ai/          AI provider abstraction (OpenAI-compatible + GitHub Models)
