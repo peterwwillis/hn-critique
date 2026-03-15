@@ -245,8 +245,10 @@ func TestToGeneratorComments(t *testing.T) {
 	if got[0].ID != 1 {
 		t.Errorf("ID = %d, want 1", got[0].ID)
 	}
-	if got[0].Text != template.HTML("<p>Hello</p>") {
-		t.Errorf("Text = %q, want %q", got[0].Text, "<p>Hello</p>")
+	// Caller-supplied text is HTML-escaped before being stored to prevent XSS.
+	wantText := template.HTML(template.HTMLEscapeString("<p>Hello</p>"))
+	if got[0].Text != wantText {
+		t.Errorf("Text = %q, want %q", got[0].Text, wantText)
 	}
 	if got[0].Time != 1234567890 {
 		t.Errorf("Time = %d, want 1234567890", got[0].Time)
