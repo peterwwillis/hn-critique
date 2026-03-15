@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"golang.org/x/net/html"
 )
@@ -118,6 +119,58 @@ func ExtractText(htmlContent string) string {
 	return text
 }
 
+// truncateWithEllipsisUTF8 truncates s so that the result is valid UTF-8 and
+// its byte length does not exceed max. When truncation occurs and there is
+// sufficient space, it appends an ellipsis ("…").
+func truncateWithEllipsisUTF8(s string, max int) (string, bool) {
+	if max <= 0 {
+		return "", len(s) > 0
+	}
+	if len(s) <= max {
+		return s, false
+	}
+
+	const ellipsis = "…"
+	ellipsisLen := len(ellipsis)
+
+	// If the ellipsis itself does not fit alongside any content, just return
+	// the largest valid UTF-8 prefix that fits within max bytes.
+	if ellipsisLen >= max {
+		byteCount := 0
+		lastGood := 0
+		for _, r := range s {
+			rLen := utf8.RuneLen(r)
+			if rLen < 0 {
+				// Should not happen for valid UTF-8, but be defensive.
+				rLen = 1
+			}
+			if byteCount+rLen > max {
+				break
+			}
+			byteCount += rLen
+			lastGood = byteCount
+		}
+		return s[:lastGood], true
+	}
+
+	limit := max - ellipsisLen
+	byteCount := 0
+	lastGood := 0
+	for _, r := range s {
+		rLen := utf8.RuneLen(r)
+		if rLen < 0 {
+			rLen = 1
+		}
+		if byteCount+rLen > limit {
+			break
+		}
+		byteCount += rLen
+		lastGood = byteCount
+	}
+
+	return s[:lastGood] + ellipsis, true
+}
+
 // extractTextWithLimit is the internal implementation with an explicit limit.
 // It returns the extracted text and a boolean that is true when the text was
 // truncated to fit within maxTextLen.
@@ -126,28 +179,19 @@ func extractTextWithLimit(htmlContent string, maxTextLen int) (string, bool) {
 	if err != nil {
 		// Treat as plain text
 		t := strings.TrimSpace(htmlContent)
-		if len(t) > maxTextLen {
-			return t[:maxTextLen] + "…", true
-		}
-		return t, false
+		return truncateWithEllipsisUTF8(t, maxTextLen)
 	}
 
 	// Prefer <article> or <main> content nodes for cleaner text.
 	if node := findContentNode(doc); node != nil {
 		text := nodeText(node)
 		if len(text) >= 300 {
-			if len(text) > maxTextLen {
-				return text[:maxTextLen] + "…", true
-			}
-			return text, false
+			return truncateWithEllipsisUTF8(text, maxTextLen)
 		}
 	}
 
 	text := nodeText(doc)
-	if len(text) > maxTextLen {
-		return text[:maxTextLen] + "…", true
-	}
-	return text, false
+	return truncateWithEllipsisUTF8(text, maxTextLen)
 }
 
 // findContentNode locates the best semantic content node in the document.
