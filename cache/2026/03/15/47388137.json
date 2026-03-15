@@ -1,0 +1,188 @@
+{
+  "story_id": 47388137,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article discusses the new approach taken by the river compositor to separate the Wayland compositor and window manager into distinct programs, breaking from the traditional monolithic architecture. It explains the design decisions behind the river-window-management-v1 protocol, which aims to provide window managers full control without sacrificing performance or frame perfection.",
+    "mainPoints": [
+      "Traditional Wayland compositors combine the compositor and window manager, which increases complexity for window manager developers.",
+      "The river 0.4.0 release introduces a protocol that separates the window manager from the compositor, allowing independent development and improved flexibility.",
+      "The river-window-management-v1 protocol ensures no input latency penalty and maintains frame perfection by batching state changes and minimizing roundtrips.",
+      "Separating the compositor and window manager lowers the barrier to entry for creating Wayland window managers and improves developer experience by allowing crashes and restarts without losing the Wayland session.",
+      "The protocol currently supports traditional 2D desktop paradigms but does not support VR or advanced visual effects like wobbly windows.",
+      "The river compositor and protocol are stable and ready for daily use, with plans for further UX improvements and a 1.0.0 release."
+    ],
+    "truthfulness": "The article's technical claims about Wayland architecture and the river compositor's design align with known facts from the Wayland and Linux graphics ecosystem. The distinction between display server, compositor, and window manager is accurate, as is the explanation of X11's limitations and how Wayland addresses them. The river compositor is a real project, and the described protocol and its benefits are consistent with the project's documentation and community discussions. However, the article is authored by the river developer and does not cite external sources or provide multiple perspectives, limiting its journalistic reliability.",
+    "considerations": [
+      "The article does not provide independent verification or perspectives from other Wayland developers or users.",
+      "Potential trade-offs or challenges in separating the compositor and window manager, such as complexity in protocol design or compatibility issues, are not deeply discussed.",
+      "The impact on performance and latency is claimed to be negligible but would benefit from benchmarks or third-party evaluations.",
+      "The article focuses on the river compositor, which is one of several Wayland compositors; the approach may not generalize to all Wayland environments.",
+      "The financial sustainability and community adoption of river and its protocol are uncertain and may affect its long-term viability."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers on the separation of the Wayland compositor and window manager, with users expressing optimism about the modular approach improving flexibility and usability. Some comments highlight Wayland's architectural challenges and security benefits, while others express skepticism about its complexity compared to X11.",
+    "comments": [
+      {
+        "id": 47391193,
+        "author": "hparadiz",
+        "text": "Lots of weird misinformation in the comments here. Wayland doesn\u0026#x27;t choose anything. It leaves the compositor to decide where to position a window and whether or not that window receives key presses or not. The program can\u0026#x27;t draw wherever it wants or receive system wide keystrokes or on behalf of another program. When appropriately implemented the screenshot system is built directly into the compositor. It\u0026#x27;s an API that let\u0026#x27;s a program request read access to a part of the screen and the compositor provides upon approval. It\u0026#x27;s much more secure that way and it works perfectly fine these days. Unfortunately not every compositor implements this.\u003cp\u003eHowever if you really really really wanna side step this you can look at keyd - \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;rvaiya\u0026#x2F;keyd\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;rvaiya\u0026#x2F;keyd\u003c/a\u003e\u003cp\u003eA project that has a daemon run in the background as a root service and that can provide an appropriate shim to pass key strokes to anything you want.\u003cp\u003eAnd just to be clear the appropriate secure model is to have a program request to register a \u0026quot;global\u0026quot; hot key and then the compositor passes it to the appropriate program once registered. This is already a thing in KDE Plasma 6 and works just fine.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment accurately explains Wayland's security model and architecture, clarifying misconceptions about input and screenshot handling, and provides relevant examples of existing implementations."
+      },
+      {
+        "id": 47389619,
+        "author": "jauntywundrkind",
+        "text": "super interested to hear more on this.\u003cp\u003ei\u0026#x27;m a little thrown, because the Wayland diagram doesn\u0026#x27;t feel quite right. the compositor does lie between the kernel and the apps, but IIRC the apps have their own graphics buffers from the kernel that they are drawing into directly. the compositor then composites them together. to me, that feels more like the kernel is at the center of the diagram here: the wayland compositor is between the kernel and the output \u0026#x2F; input.\u003cp\u003ei don\u0026#x27;t think it has a huge impact on the discussion here. but this is such a key difference versus X, that i think is hugely under-told: Wayland compositors all rely on lots of kernel facilities to do the job, where-as X is basically it\u0026#x27;s own kernel, has origins where it effectively was the device driver for the gpu, talking to it over pci, and doing just about everything. when people contrast wayland versus X as wayland compositors needing to do so much, i can\u0026#x27;t help but chuckle, because it feels like the kernel does \u0026gt;50% of what X used to have to do itself; it\u0026#x27;s a much simpler world, using the kernel\u0026#x27;s built-in abstractions, rather than being multiple stacked layers of abstractions (kernels + X\u0026#x27;s own).\u003cp\u003eit means that the task of writing the display-server \u0026#x2F; compositor is much much much simpler. it\u0026#x27;s still hard! but the kernel is helping so much. there\u0026#x27;s an assumed base of having working GPU drivers!\u003cp\u003eauthor appears to super know their stuff. alas the FOSDEM video they link to is not loading for me. :(\u003cp\u003eone major question, since this is a protocol, how viable is it to decompose the window management tasks? rather than have a monolithic window manager, does this facilitate multiple different programs working together to run a desktop? not entirely sure the use case, but a more pluggable desktop would be interesting!",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment provides a nuanced technical comparison between Wayland and X11 architectures, highlighting the kernel's role in Wayland and the simplification it brings, which is accurate and insightful."
+      },
+      {
+        "id": 47389729,
+        "author": "asveikau",
+        "text": "The fact that Wayland can\u0026#x27;t just substitute out pluggable WMs without changing a bunch of other unrelated infrastructure is IMO one of the biggest user-facing losses relative to X11. Anybody who is working to improve that is doing god\u0026#x27;s work as they say.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment correctly identifies a key limitation of Wayland compared to X11 regarding window manager flexibility, reflecting a common user concern."
+      },
+      {
+        "id": 47390131,
+        "author": "davispeck",
+        "text": "This is a really interesting direction.\u003cp\u003eSeparating the compositor and window manager feels like one of those ideas that seems obvious in hindsight, but the protocol\u0026#x2F;state-machine design here shows why it took real work to make it practical.\u003cp\u003eLowering the barrier for writing Wayland window managers without forcing everyone to build a full compositor seems like a big win.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment thoughtfully appreciates the technical challenge and benefits of separating compositor and window manager, aligning well with the article's theme."
+      },
+      {
+        "id": 47390865,
+        "author": "_flux",
+        "text": "To me, this is the first time Wayland feels like it\u0026#x27;s not a waste of time. The display server does not need to have the complexity of window managing on top the surface management. I certainly share the author\u0026#x27;s sentiment:\u003cp\u003e\u0026gt; Although, I do not know for sure why the original Wayland authors chose to combine the window manager and Wayland compositor, I assume it was simply the path of least resistance.\u003cp\u003eAlthough I\u0026#x27;m not sure if it was the least resistance per se (as a social phenomenon), but just that it\u0026#x27;s an easier problem to tackle. Or maybe the authors means the same thing.\u003cp\u003e(That and the remote access story needs to be fixed. It just works in X11. Last time I tried it with a system that had 90 degree display orientation, my input was 90 degrees off from the real one. Now, this is of course just a bug, but I have a strong feeling that the way architecture Wayland has been built makes these kind of bugs much easier to create than in X11.)",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment shares a personal perspective on Wayland's design evolution and notes a specific bug related to remote access, which is plausible but partly speculative."
+      },
+      {
+        "id": 47391780,
+        "author": "imiric",
+        "text": "I\u0026#x27;m very excited about river.\u003cp\u003eI switched to niri a few months ago, and while I like it for the most part, it feels too... busy for my taste. It defaults to a bunch of animations and decorations, all of which I\u0026#x27;ve turned off. I\u0026#x27;m happy with my current setup (aside from Wayland quirks[1]), but river\u0026#x27;s design and simplicity are very appealing. It reminds me of the philosophy of bspwm\u0026#x2F;sxhkd which I used for years on X11.\u003cp\u003eI do need scrollable tiling now that I\u0026#x27;ve tried it, and I\u0026#x27;m happy that there are a couple of options to choose from with river.\u003cp\u003e[1]: Seriously, why does copy\u0026#x2F;pasting sometimes simply doesn\u0026#x27;t work?? I often have to copy twice for it to succeed. It\u0026#x27;s not related to Xwayland -\u0026gt; Wayland apps, and viceversa, or with copying from closed windows, etc. I don\u0026#x27;t use nor want a clipboard \u0026quot;manager\u0026quot;. I just want my clipboard to work \u003ci\u003econsistently\u003c/i\u003e. I\u0026#x27;ve read many reports of this same bug on different distros and DEs, and nobody has figured it out. It\u0026#x27;s infuriating that such a basic feature is half-broken in a project that is 17 years old now!",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment provides a subjective user experience with Wayland compositors, including a known clipboard bug, which is a common user-reported issue."
+      },
+      {
+        "id": 47391523,
+        "author": "kyorochan",
+        "text": "River was really great even before this split, so I\u0026#x27;m very excited to see what happens in the space in the future. I switched to Niri while waiting for it to happen, and I\u0026#x27;ll probably switch back at some point.\u003cp\u003eIf you were an Xmonad user I feel pretty confident in saying River is the Wayland WM for you.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment expresses enthusiasm for River and its future, offering a positive but subjective viewpoint without technical detail."
+      },
+      {
+        "id": 47389972,
+        "author": "oofbaroomf",
+        "text": "I\u0026#x27;m currently using a fully vibe-coded, personal River window manager that works just how I want it to. I switched to it after I realized I couldn\u0026#x27;t do everything I wanted in Hyprland (e.g. tile windows to equal areas instead of BSP by default).\u003cp\u003eSimple example of how impactful this separation has been for me.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment shares a personal use case illustrating the benefits of the separation, but lacks broader technical analysis."
+      },
+      {
+        "id": 47392017,
+        "author": "sourcegrift",
+        "text": "At this point, take all the lessons of wayland, plan everything in advance rather than incrementally deciding basic things like screenshotting and then build something new, superseding wayland so that power users like me and app developers will stop clinging to X. Right now I have no confidence in wayland and I know I\u0026#x27;m not alone.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 9,
+        "analysis": "This comment voices frustration with Wayland's incremental development and suggests a fresh start, reflecting a common sentiment but without technical specifics."
+      },
+      {
+        "id": 47390122,
+        "author": "wild_egg",
+        "text": "I\u0026#x27;ve never used a system with Wayland (been on i3 for ~15 years) but every time a project like this comes up, I have to wonder why Wayland is even a thing. So many hoops to jump through for things that should be simple.\u003cp\u003eSure, X11 has warts but I can make it do basically anything I want. Wayland seems like it will always have too much friction to ever consider switching.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 10,
+        "analysis": "This comment expresses skepticism about Wayland's complexity and usefulness compared to X11, a valid perspective though lacking technical depth."
+      },
+      {
+        "id": 47389943,
+        "author": "mikkupikku",
+        "text": "If Wayland doesn\u0026#x27;t get this solved then I\u0026#x27;ll just use X11 forever, with coding agents to keep it running if I have to.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 11,
+        "analysis": "This comment reflects a pragmatic user stance favoring X11 due to unresolved Wayland issues, a common sentiment but not deeply analytical."
+      },
+      {
+        "id": 47390514,
+        "author": "SilentM68",
+        "text": "Insightful article. I don\u0026#x27;t recall ever viewing an easy-to-follow lesson, tutorial or book for that matter that clearly explained the various components of a Linux Desktop environment. Always had to follow complicated and obscure guides to do this and that, when solving issues, but seldom did any explain their functions clearly.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 12,
+        "analysis": "This comment praises the article's clarity and educational value, providing positive feedback but no technical critique."
+      },
+      {
+        "id": 47391144,
+        "author": "csb6",
+        "text": "Wasn\u0026#x27;t one of Wayland\u0026#x27;s key design features combining the window manager and compositor? I am not too familiar with its history but surely there have been presentations or papers about the Wayland designers\u0026#x27; reasoning for doing so.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 13,
+        "analysis": "This comment correctly recalls Wayland's original design combining compositor and window manager, showing some uncertainty but generally accurate."
+      },
+      {
+        "id": 47390650,
+        "author": "Lerc",
+        "text": "So that\u0026#x27;s a Wayland ex-window manager then?",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 14,
+        "analysis": "This comment is a brief, unclear question that adds little to the discussion or analysis."
+      }
+    ]
+  }
+}

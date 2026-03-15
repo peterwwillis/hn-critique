@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Show HN: Signet – Autonomous wildfire tracking from satellite and weather data | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://signet.watch" rel="noreferrer noopener">Show HN: Signet – Autonomous wildfire tracking from satellite and weather data</a>
+        <span class="sitebit"> (signet.watch)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">102 points</span>
+        by <a href="https://news.ycombinator.com/user?id=mapldx" class="hnuser">mapldx</a>
+        <span class="age">11 hours ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/15/47386581.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47386581" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion centers on the challenges and approaches to aggregating wildfire data from multiple sources, with emphasis on data quality, integration with existing systems, and potential improvements in user interface and alerting. Contributors share insights on technical difficulties, data filtering, and the role of deterministic versus AI-driven methods in wildfire tracking.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=chrisfosterelli" class="hnuser">chrisfosterelli</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">We do some similar work with hotspot analysis but (as a Canadian company) are more focused on Canadian data where the government already does a fair bit of false positive detection and filtering. It generally gives pretty clean data and we can scrub historical data over time like this: <a href="https:&#x2F;&#x2F;imgur.com&#x2F;a&#x2F;gCJGzqd" rel="nofollow">https:&#x2F;&#x2F;imgur.com&#x2F;a&#x2F;gCJGzqd</a><p>The dataset includes US coverage but it&#x27;s not filtered the same way and FAR more noisy, so I appreciate efforts like this. We haven&#x27;t got there yet but if you were looking for something deterministic and automatable the Canadian gov&#x27;s process is potentially worth learning about.<p>They also produce perimeter estimates based on the hotspots which we can extract and put into a physics-based fire growth model like Prometheus or FARSITE to estimate future fire behaviour based on forecasted weather. This gives very actionable and deterministic estimates of future fire behaviour. We also have worked on a risk model that determines the likelihood of that future fire growth interacting with various assets on the landscape (urban interface areas, power lines, fuel pipelines, forest inventory, etc) and calls out high risk areas. One thing we&#x27;ve been wondering if where LLMs fit into any of this (if at all) so appreciate seeing what others are doing.</div>
+      <div class="comment-analysis"><em>Provides detailed, knowledgeable insights on data filtering and modeling approaches, reflecting practical experience and realistic assessments.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=redgridtactical" class="hnuser">redgridtactical</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Really interesting approach. The multi-source fusion is where the real value is — any single satellite feed has too many false positives from industrial heat, sun glint, etc. Correlating FIRMS + weather + fuel models is what experienced fire analysts do mentally, so automating that loop makes sense.<p>On your question about deterministic vs LLM-driven: I&#x27;d lean toward keeping the spatial indexing, deduplication, and basic threshold logic deterministic. Those are well-defined problems with known-good algorithms. The LLM adds value where you&#x27;re synthesizing ambiguous evidence — &quot;is this cluster of weak FIRMS detections near a known industrial site, or is it a new start in timber?&quot; That kind of contextual reasoning is hard to codify as rules.<p>One operational question: have you thought about how this integrates with existing incident management workflows? Wildland fire teams run everything through ICS structures and often have limited connectivity on the fireline. Being able to push a structured alert (lat&#x2F;lon, confidence level, fuel type, weather conditions) into their existing tools would be a big deal for adoption.</div>
+      <div class="comment-analysis"><em>Offers a balanced view on technical methods and operational considerations, highlighting practical integration challenges.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=takahitoyoneda" class="hnuser">takahitoyoneda</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Aggregating disparate government feeds with completely out-of-phase polling schedules into a unified state machine is notoriously painful. I am curious how your Go service handles the rate limits of the NWS API, which historically drops connections right when usage spikes during actual emergencies. If you ever expose this via webhooks, it would make an incredible backend for building localized mobile push notifications where standard cell-broadcast alerts are too broad or slow.</div>
+      <div class="comment-analysis"><em>Raises valid technical challenges and suggests useful application scenarios, demonstrating understanding of real-world constraints.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=avabuildsdata" class="hnuser">avabuildsdata</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">the Go choice makes a lot of sense for this. i&#x27;ve been wiring up government data sources for a different project and honestly the format inconsistency between agencies is always the real headache, not the actual processing<p>curious about the 23 tools though -- are those all invoked through one Gemini orchestration pass or is there a routing layer picking which subset to call per detection? feels like that&#x27;d stack up fast latency-wise</div>
+      <div class="comment-analysis"><em>Highlights practical engineering concerns and questions system design, reflecting relevant experience.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=doodlebugging" class="hnuser">doodlebugging</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Interesting. I think there are other services doing the same thing including one linked by another commenter.<p>When checking the Evidence tab for data that supports the conclusion that there could be a fire in progress I found that it could be improved by excluding the evidence posts for all the mapped fire locations except the one that the user clicked. Presently, if you click that Evidence tab you get a roll of links to posts or mentions or whatever for every fire. I believe that a user would most appreciate data that pertains to the fire they are trying to monitor.<p>I am not a fan of grey text. It does not improve site navigability or usability and it can get lost in screen glare unless bold grey text is used. It would still be grey text though and I am still not a fan. Perhaps shades of blue or yellow to contrast with the black bar.<p>Example in case you are thinking of modifying the page - Your top frame has the ap name &quot;SIGNET&quot; in white capitals. Right next to that is an orange dot, probably to signify that something is happening or that the site is &quot;LIVE&quot;. Notice that &quot;LIVE&quot; is not only in grey text, beside an orange dot which will be the eyeball magnet, but it is also a smaller font than the ap name &quot;SIGNET&quot;.<p>From my perspective, the site would be improved by changing grey text to a more contrasting color and asking the question - &quot;What information should be the most important topic on this page?&quot; In that way you can optimize it for your users.<p>Before posting this comment I went back to check that the points I hoped to make were valid points. It turns out that not all &quot;Evidence&quot; links have evidence for every fire on the map. I randomly chose the Custer County Incident when I checked that and found all sorts of stuff pertaining to Texas fires. Perhaps this is not a huge problem for you to solve. I checked the Rapides Parish Incident in Lousyana and it only has data about that event.<p>Maybe some cleaning of links is in order.</div>
+      <div class="comment-analysis"><em>Provides constructive UI/UX feedback that could enhance user experience, though less technical in nature.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=rouanvde" class="hnuser">rouanvde</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Please add more of the world, and it would be great to see some of the imaging data overlayed to visually see where the fire is and scale</div>
+      <div class="comment-analysis"><em>Makes a reasonable feature request to improve geographic scope and data visualization.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=burntpineapple" class="hnuser">burntpineapple</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I’m confused, don’t existing systems like GLFF already incorporate this type of data?</div>
+      <div class="comment-analysis"><em>Raises a valid question about existing solutions, prompting clarification or differentiation.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=xnx" class="hnuser">xnx</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">You might be interested in <a href="https:&#x2F;&#x2F;research.google&#x2F;blog&#x2F;real-time-tracking-of-wildfire-boundaries-using-satellite-imagery&#x2F;" rel="nofollow">https:&#x2F;&#x2F;research.google&#x2F;blog&#x2F;real-time-tracking-of-wildfire-...</a></div>
+      <div class="comment-analysis"><em>Provides a relevant resource link that could complement or inform the project.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jonah" class="hnuser">jonah</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Super interesting thing to pursue. Will be neat to see where you go with this.<p>Small nit: don&#x27;t name incidents until you have the official name. It could cause confusion once it is named.<p>Instead, something like &quot;New detection near Colusa&quot; or &quot;New incident 10 mi NW of Colusa&quot;.</div>
+      <div class="comment-analysis"><em>Offers polite feedback on naming conventions to improve clarity and avoid user confusion.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=lordmoma" class="hnuser">lordmoma</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I did the similar thing on <a href="https:&#x2F;&#x2F;www.crimewatches.com&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.crimewatches.com&#x2F;</a>, the only pain point is how to aggregate sex offenders&#x27; profiles properly across US, too much legal risk there plus labor intensive manual work, you cannot pull the data out easily, CF CAPTCHA gated and short lived token, but will have huge impact on local communities.</div>
+      <div class="comment-analysis"><em>Shares relevant experience with data aggregation challenges, though in a different domain.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=quickrefio" class="hnuser">quickrefio</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Interesting project. Combining satellite detections with weather data seems really powerful.</div>
+      <div class="comment-analysis"><em>Brief but positive comment acknowledging the project&#39;s potential.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=nullora" class="hnuser">nullora</a>
+        &nbsp;|&nbsp;rank #12
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">How do you even code this, really nice.</div>
+      <div class="comment-analysis"><em>Expresses admiration but lacks technical depth.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=gorfian_robot" class="hnuser">gorfian_robot</a>
+        &nbsp;|&nbsp;rank #13
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">have you shared this with the WatchDuty folks?</div>
+      <div class="comment-analysis"><em>Suggests outreach to a relevant group, though without elaboration.</em></div>
+    </div>
+    
+    <div class="comment-row">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=gnerd00" class="hnuser">gnerd00</a>
+        &nbsp;|&nbsp;rank #14
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">the graphically slick intro suggests this is something that could appeal to &quot;investors&quot; or similar ...</div>
+      <div class="comment-analysis"><em>Speculates on presentation style and audience appeal without technical substance.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-15 22:49 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

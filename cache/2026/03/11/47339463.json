@@ -1,0 +1,88 @@
+{
+  "story_id": 47339463,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article introduces the new source-level inliner feature in Go 1.26, which allows automatic and safe inlining of function calls directly in source code to facilitate API migrations and code modernization. It explains the technical challenges the inliner addresses, such as parameter substitution, side effects, and shadowing, and illustrates its use with practical examples like replacing deprecated functions and fixing API design flaws.",
+    "mainPoints": [
+      "Go 1.26 introduces a new source-level inliner integrated with the go fix command to automate safe code transformations.",
+      "The inliner replaces function calls with the function body in source code, enabling API migrations such as replacing deprecated functions.",
+      "It handles complex issues like parameter elimination, side effects, constant expression evaluation, shadowing, unused variables, and defer statements to ensure correctness.",
+      "The inliner is used interactively in IDEs via gopls and can be triggered with //go:fix inline directives for batch automated fixes.",
+      "Google has successfully used similar inliners for years to modernize large codebases, and Go's inliner has already prepared thousands of changes in Google's monorepo.",
+      "Despite its sophistication, the inliner may produce conservative or stylistically suboptimal code that might require manual cleanup."
+    ],
+    "truthfulness": "The article accurately describes the source-level inliner feature introduced in Go 1.26, including its purpose, implementation challenges, and examples of use. The claims about the inliner's capabilities and integration with go fix and gopls align with official Go project documentation and blog posts from the Go team. The historical context regarding Google’s use of similar tools is consistent with publicly available information about large-scale code modernization practices. The technical explanations are detailed and plausible, reflecting known challenges in source code transformation tools. Overall, the article is factually sound and provides a reliable overview of the inliner feature.",
+    "considerations": [
+      "The article does not discuss potential performance impacts or limitations when applying large-scale inlining in very large codebases outside Google.",
+      "It does not address how the inliner handles concurrent development environments or version control conflicts that might arise from automated batch changes.",
+      "The article does not mention any fallback or undo mechanisms if the automated inlining introduces subtle bugs or stylistic issues.",
+      "There is no discussion of how this tool integrates with existing Go module or dependency management workflows.",
+      "The article assumes familiarity with Go tooling like gopls and go fix, which may limit accessibility for less experienced users."
+    ],
+    "rating": "reliable"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around the Go language's source-level inliner feature introduced via the `go fix` tool, with comments highlighting its complexity, intended use cases, and some concerns about code rewriting and syntax choices. Participants compare it to similar tools in other languages and question design decisions.",
+    "comments": [
+      {
+        "id": 47391984,
+        "author": "shoo",
+        "text": "If I follow, this isn\u0026#x27;t a compile time inline directive, it\u0026#x27;s a `go fix` time source transformation of client code calling the annotated function.\u003cp\u003ePer the post, it sounds like this is most effective in closed-ecosystem internal monorepo-like contexts where an organisation has control over every instance of client code \u0026amp; can `go fix` all of the call sites to completely eradicate all usage of a deprecated APIs:\u003cp\u003e\u0026gt; For many years now, our Google colleagues on the teams supporting Java, Kotlin, and C++ have been using source-level inliner tools like this. To date, these tools have eliminated millions of calls to deprecated functions in Google’s code base. Users simply add the directives, and wait. During the night, robots quietly prepare, test, and submit batches of code changes across a monorepo of billions of lines of code. If all goes well, by the morning the old code is no longer in use and can be safely deleted. Go’s inliner is a relative newcomer, but it has already been used to prepare more than 18,000 changelists to Google’s monorepo.\u003cp\u003eIt could still have some incremental benefit for public APIs where client code is not under centralised control, but would not allow deprecated APIs to be removed without breakage.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "Provides a detailed and accurate explanation of the feature's purpose and usage context, referencing the blog post and real-world application at Google."
+      },
+      {
+        "id": 47392724,
+        "author": "ansgri",
+        "text": "Good illustration that a seemingly simple feature could require a ton of functionality under the hood. Would be nice to have this in Python.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "Offers a reasonable observation about the complexity behind the feature and expresses a wish for similar functionality in another language, though less technical detail is provided."
+      },
+      {
+        "id": 47391964,
+        "author": "tapirl",
+        "text": "It looks the following code will be rewritten badly, but no ways to avoid it? If this is true, maybe the blog article should mention this.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    package main\n    \n    \u0026#x2F;\u0026#x2F;go:fix inline\n    func handle() {\n        recover()\n    }\n    \n    func foo() {\n        handle()\n    }\n    \n    func main() {\n        defer foo()\n        panic(\u0026quot;bye\u0026quot;)\n    }\u003c/code\u003e\u003c/pre\u003e",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Raises a valid concern about potential negative side effects in code rewriting, suggesting the blog post could address this issue for clarity."
+      },
+      {
+        "id": 47392259,
+        "author": "omoikane",
+        "text": "I wonder why they chose to add these directives as comments as opposed to adding new syntax for them.  It feels like a kludge.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;wiki.c2.com\u0026#x2F;?HotComments\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;wiki.c2.com\u0026#x2F;?HotComments\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Questions the design choice of using comments for directives, which is a reasonable critique though it lacks deeper technical context."
+      },
+      {
+        "id": 47391479,
+        "author": "measurablefunc",
+        "text": "\u003ca href=\"https:\u0026#x2F;\u0026#x2F;en.wikipedia.org\u0026#x2F;wiki\u0026#x2F;Hygienic_macro\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;en.wikipedia.org\u0026#x2F;wiki\u0026#x2F;Hygienic_macro\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Provides a relevant reference to hygienic macros which may relate to the discussion on inlining and source transformations, but does not elaborate further."
+      }
+    ]
+  }
+}
