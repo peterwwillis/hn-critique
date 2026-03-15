@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Read Playwright version
-        run: echo "PLAYWRIGHT_VERSION=$(tr -d '\n' < docker/playwright/version.txt)" >> "$GITHUB_ENV"
+        run: echo "PLAYWRIGHT_VERSION=$(tr -d '\r\n' < docker/playwright/version.txt)" >> "$GITHUB_ENV"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -38,8 +38,8 @@ jobs:
       - name: Build and push Playwright image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: docker/playwright/Dockerfile
+          context: docker/playwright
+          file: Dockerfile
           build-args: |
             PLAYWRIGHT_VERSION=${{ env.PLAYWRIGHT_VERSION }}
           push: true
