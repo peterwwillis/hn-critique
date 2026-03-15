@@ -17,10 +17,17 @@ type Story struct {
 	Comments                 []*Comment
 	ArticleText              string
 	ArticleUnavailableReason string
-	Critique                 *ArticleCritique
-	CommentsCritique         *CommentsCritique
-	CritiquePath             string
-	CommentsPath             string
+	// ArticleTruncated is true when the article text was cut short by a size
+	// limit, which means the AI critique may be incomplete or less accurate.
+	ArticleTruncated bool
+	// CommentsTruncated is true when the comment content exceeded the prompt
+	// size limit, meaning the AI comments critique may be based on only a
+	// subset of the fetched comments.
+	CommentsTruncated bool
+	Critique          *ArticleCritique
+	CommentsCritique  *CommentsCritique
+	CritiquePath      string
+	CommentsPath      string
 }
 
 // Comment represents a single HN comment with its nested replies.

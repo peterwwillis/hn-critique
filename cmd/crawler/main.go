@@ -4,6 +4,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/url"
@@ -41,6 +42,7 @@ func main() {
 		configPath   = flag.String("config", "", "path to TOML config file (default: hn-critique.toml if present)")
 		providerFlag = flag.String("provider", "", "AI provider to use: openai, ollama, github (overrides config file)")
 		strict       = flag.Bool("strict", false, "exit non-zero if any AI analysis warning or error occurs")
+		siteURL      = flag.String("site-url", "https://peterwwillis.github.io/hn-critique", "base URL of the published site, used in the end-of-run incomplete-results summary")
 	)
 	flag.Parse()
 
@@ -172,7 +174,7 @@ func main() {
 			// Fetch article content (only for stories with external URLs).
 			if item.URL != "" {
 				log.Printf("  Fetching article: %s", item.URL)
-				text, err := articleFetcher.Fetch(item.URL)
+				text, truncated, err := articleFetcher.Fetch(item.URL)
 				if err != nil {
 					log.Printf("  ⚠  article fetch failed: %v", err)
 					story.ArticleUnavailableReason = articleRetrievalFailureReason
@@ -180,6 +182,18 @@ func main() {
 					story.ArticleUnavailableReason = articleInsufficientContentReason
 				} else {
 					story.ArticleText = text
+					if truncated {
+						story.ArticleTruncated = true
+						log.Printf("  ⚠  article text truncated: fetched %d chars (limit: %d); critique may be incomplete",
+							len(text), limits.ArticleTextChars)
+					}
+					// Check whether the text will be further truncated when
+					// inserted into the AI prompt.
+					if limits.ArticlePromptBytes > 0 && len(text) > limits.ArticlePromptBytes {
+						story.ArticleTruncated = true
+						log.Printf("  ⚠  article prompt truncated: text is %d bytes, limit is %d; critique may be incomplete",
+							len(text), limits.ArticlePromptBytes)
+					}
 				}
 			}
 
@@ -224,6 +238,14 @@ func main() {
 
 			// Comments critique.
 			if len(story.Comments) > 0 {
+				// Warn if comment content will be truncated before sending to the AI.
+				if limits.CommentPromptBytes > 0 {
+					if total := totalCommentBytes(story.Comments); total > limits.CommentPromptBytes {
+						story.CommentsTruncated = true
+						log.Printf("  ⚠  comment prompt truncated: total comment text ~%d bytes exceeds limit of %d; comments critique may be incomplete",
+							total, limits.CommentPromptBytes)
+					}
+				}
 				log.Printf("  Analyzing comments…")
 				cc, err := aiProvider.AnalyzeComments(story.Title, story.URL, story.Comments)
 				if err != nil {
@@ -273,6 +295,10 @@ func main() {
 		log.Fatalf("Site generation failed: %v", err)
 	}
 	log.Println("Done.")
+
+	// Print a summary of stories whose analysis may be incomplete due to truncation.
+	printIncompleteResultsSummary(stories, strings.TrimRight(*siteURL, "/"))
+
 	if *strict && analysisWarnings > 0 {
 		log.Fatalf("strict mode: %d analysis warning(s) encountered", analysisWarnings)
 	}
@@ -351,4 +377,53 @@ func unavailableTruthfulness(reason string) string {
 
 func unavailableCritiqueForReason(reason string) *generator.ArticleCritique {
 	return unavailableCritique(unavailableSummary(reason), unavailableTruthfulness(reason))
+}
+
+// totalCommentBytes returns the approximate byte count of formatted comment
+// text that would be sent to the AI, used to predict prompt truncation.
+func totalCommentBytes(comments []*generator.Comment) int {
+	var total int
+	for _, c := range comments {
+		total += len(fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text))
+	}
+	return total
+}
+
+// printIncompleteResultsSummary logs a human-readable summary of stories that
+// may have incomplete or less accurate analysis due to content truncation.
+func printIncompleteResultsSummary(stories []*generator.Story, baseURL string) {
+	var incomplete []*generator.Story
+	for _, s := range stories {
+		if s.ArticleTruncated || s.CommentsTruncated {
+			incomplete = append(incomplete, s)
+		}
+	}
+	if len(incomplete) == 0 {
+		return
+	}
+
+	log.Printf("=== Incomplete Results Summary ===")
+	noun := "stories"
+	if len(incomplete) == 1 {
+		noun = "story"
+	}
+	log.Printf("%d %s may have incomplete analysis due to content truncation.", len(incomplete), noun)
+	log.Printf("Review the following pages for potential inaccuracies:")
+	for _, s := range incomplete {
+		var reasons []string
+		if s.ArticleTruncated {
+			reasons = append(reasons, "article content truncated")
+		}
+		if s.CommentsTruncated {
+			reasons = append(reasons, "comments content truncated")
+		}
+		log.Printf("  [%d] %q (%s)", s.Rank, s.Title, s.Domain)
+		log.Printf("      Reasons: %s", strings.Join(reasons, ", "))
+		if baseURL != "" && s.CritiquePath != "" {
+			log.Printf("      Critique: %s/%s", baseURL, s.CritiquePath)
+		}
+		if baseURL != "" && s.CommentsPath != "" {
+			log.Printf("      Comments: %s/%s", baseURL, s.CommentsPath)
+		}
+	}
 }

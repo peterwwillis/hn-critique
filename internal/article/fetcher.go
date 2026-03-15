@@ -55,7 +55,9 @@ func NewFetcherWithLimits(limits Limits) *Fetcher {
 // Fetch attempts to retrieve readable text from url.
 // If the direct fetch appears paywalled or fails, it tries archive.ph and the
 // Wayback Machine before giving up.
-func (f *Fetcher) Fetch(rawURL string) (string, error) {
+// The second return value is true when the extracted text was truncated at the
+// configured character limit, meaning the critique may be incomplete.
+func (f *Fetcher) Fetch(rawURL string) (string, bool, error) {
 	candidates := []string{
 		rawURL,
 		"https://archive.ph/" + rawURL,
@@ -63,18 +65,18 @@ func (f *Fetcher) Fetch(rawURL string) (string, error) {
 	}
 
 	for _, u := range candidates {
-		text, err := f.fetchURL(u)
+		text, truncated, err := f.fetchURL(u)
 		if err == nil && len(text) >= 300 {
-			return text, nil
+			return text, truncated, nil
 		}
 	}
-	return "", fmt.Errorf("could not retrieve article content for %s", rawURL)
+	return "", false, fmt.Errorf("could not retrieve article content for %s", rawURL)
 }
 
-func (f *Fetcher) fetchURL(u string) (string, error) {
+func (f *Fetcher) fetchURL(u string) (string, bool, error) {
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
@@ -82,38 +84,41 @@ func (f *Fetcher) fetchURL(u string) (string, error) {
 
 	resp, err := f.http.Do(req)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return "", fmt.Errorf("HTTP %d for %s", resp.StatusCode, u)
+		return "", false, fmt.Errorf("HTTP %d for %s", resp.StatusCode, u)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, f.maxBodyBytes))
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
-	text := extractTextWithLimit(string(body), f.maxTextLen)
-	return text, nil
+	text, truncated := extractTextWithLimit(string(body), f.maxTextLen)
+	return text, truncated, nil
 }
 
 // ExtractText parses HTML and returns the visible text content, up to the default limit.
 func ExtractText(htmlContent string) string {
-	return extractTextWithLimit(htmlContent, defaultMaxTextLen)
+	text, _ := extractTextWithLimit(htmlContent, defaultMaxTextLen)
+	return text
 }
 
 // extractTextWithLimit is the internal implementation with an explicit limit.
-func extractTextWithLimit(htmlContent string, maxTextLen int) string {
+// It returns the extracted text and a boolean that is true when the text was
+// truncated to fit within maxTextLen.
+func extractTextWithLimit(htmlContent string, maxTextLen int) (string, bool) {
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
 		// Treat as plain text
 		t := strings.TrimSpace(htmlContent)
 		if len(t) > maxTextLen {
-			t = t[:maxTextLen] + "…"
+			return t[:maxTextLen] + "…", true
 		}
-		return t
+		return t, false
 	}
 
 	// Prefer <article> or <main> content nodes for cleaner text.
@@ -121,17 +126,17 @@ func extractTextWithLimit(htmlContent string, maxTextLen int) string {
 		text := nodeText(node)
 		if len(text) >= 300 {
 			if len(text) > maxTextLen {
-				text = text[:maxTextLen] + "…"
+				return text[:maxTextLen] + "…", true
 			}
-			return text
+			return text, false
 		}
 	}
 
 	text := nodeText(doc)
 	if len(text) > maxTextLen {
-		text = text[:maxTextLen] + "…"
+		return text[:maxTextLen] + "…", true
 	}
-	return text
+	return text, false
 }
 
 // findContentNode locates the best semantic content node in the document.
