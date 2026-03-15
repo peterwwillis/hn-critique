@@ -51,54 +51,69 @@ func newOpenAIProvider(cfg config.OpenAIConfig, chatSettings, searchSettings con
 		useResponsesAPI:   cfg.UseResponsesAPI,
 		chatSettings:      chatSettings,
 		searchSettings:    searchSettings,
-		http:              &http.Client{Timeout: httpTimeout},
+		http:              newHTTPClient(),
 	}
 }
 
 func (p *openAIProvider) Name() string { return "openai" }
 
 func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
-	var text string
-	var err error
+	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
+		var text string
+		var err error
 
-	if p.useResponsesAPI {
-		prompt := articlePrompt(title, articleURL, content, p.searchSettings.Limits.ArticlePromptBytes)
-		text, err = p.callResponsesAPI(prompt, p.searchSettings.Inference)
-		if err != nil {
-			// Fall back to Chat Completions when the Responses API is unavailable.
-			prompt = articlePrompt(title, articleURL, content, p.chatSettings.Limits.ArticlePromptBytes)
+		if p.useResponsesAPI {
+			prompt := articlePrompt(title, articleURL, content, p.searchSettings.Limits.ArticlePromptBytes)
+			text, err = p.callResponsesAPI(prompt, p.searchSettings.Inference)
+			if err != nil {
+				// Fall back to Chat Completions when the Responses API is unavailable.
+				prompt = articlePrompt(title, articleURL, content, p.chatSettings.Limits.ArticlePromptBytes)
+				text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
+			}
+		} else {
+			prompt := articlePrompt(title, articleURL, content, p.chatSettings.Limits.ArticlePromptBytes)
 			text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
 		}
-	} else {
-		prompt := articlePrompt(title, articleURL, content, p.chatSettings.Limits.ArticlePromptBytes)
-		text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
-	}
-	if err != nil {
-		return nil, fmt.Errorf("openai article analysis: %w", err)
-	}
+		if err != nil {
+			return nil, fmt.Errorf("openai article analysis: %w", err)
+		}
 
-	var critique generator.ArticleCritique
-	if err := parseJSON(text, &critique); err != nil {
-		return nil, fmt.Errorf("openai: parsing article critique: %w", err)
+		critique, err := parseArticleCritique(text)
+		if err == nil {
+			return critique, nil
+		}
+		if attempt == maxOutputAttempts {
+			return nil, fmt.Errorf("openai: invalid article critique output: %w", err)
+		}
 	}
-	critique.Rating = sanitizeRating(critique.Rating)
-	return &critique, nil
+	return nil, fmt.Errorf("openai: article critique unavailable after retries")
 }
 
 func (p *openAIProvider) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
+	if len(comments) == 0 {
+		return &generator.CommentsCritique{
+			Summary:  "No comments to analyze.",
+			Comments: []generator.AnalyzedComment{},
+		}, nil
+	}
 	prompt := commentsPrompt(title, articleURL, buildCommentText(comments, p.chatSettings.Limits.CommentPromptBytes))
 
-	text, err := callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
-	if err != nil {
-		return nil, fmt.Errorf("openai comments analysis: %w", err)
-	}
+	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
+		text, err := callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
+		if err != nil {
+			return nil, fmt.Errorf("openai comments analysis: %w", err)
+		}
 
-	var critique generator.CommentsCritique
-	if err := parseJSON(text, &critique); err != nil {
-		return nil, fmt.Errorf("openai: parsing comments critique: %w", err)
+		critique, err := parseCommentsCritique(text, comments)
+		if err == nil {
+			applyCommentText(critique, comments)
+			return critique, nil
+		}
+		if attempt == maxOutputAttempts {
+			return nil, fmt.Errorf("openai: invalid comments critique output: %w", err)
+		}
 	}
-	applyCommentText(&critique, comments)
-	return &critique, nil
+	return nil, fmt.Errorf("openai: comments critique unavailable after retries")
 }
 
 // bearerHeader returns the value to use for the Authorization header.
@@ -111,12 +126,26 @@ func bearerHeader(apiKey string) string {
 	return "Bearer " + apiKey
 }
 
+func (p *openAIProvider) articleCompletion(prompt string) (string, error) {
+	if p.useResponsesAPI {
+		text, err := p.callResponsesAPI(prompt, p.searchSettings.Inference)
+		if err == nil {
+			return text, nil
+		}
+		// Fall back to Chat Completions when the Responses API is unavailable.
+	}
+	return callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
+}
+
 // callResponsesAPI calls the OpenAI Responses API with the web_search_preview tool.
 func (p *openAIProvider) callResponsesAPI(input string, inference config.InferenceConfig) (string, error) {
 	payload := map[string]any{
 		"model": p.searchModel,
 		"tools": []map[string]string{{"type": "web_search_preview"}},
-		"input": input,
+		"input": []map[string]string{
+			{"role": "system", "content": systemPrompt},
+			{"role": "user", "content": input},
+		},
 	}
 	if inference.Temperature != nil {
 		payload["temperature"] = *inference.Temperature

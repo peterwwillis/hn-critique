@@ -36,10 +36,16 @@ func main() {
 		storyCount   = flag.Int("stories", defaultStoryCount, "number of top stories to fetch")
 		outputDir    = flag.String("out", "docs", "output directory for the generated site")
 		skipAI       = flag.Bool("skip-ai", false, "skip AI analysis (useful for testing)")
+		prepareInput = flag.Bool("prepare-input", false, "fetch stories and cache analysis input, then exit without AI or site generation")
+		analyzeInput = flag.Bool("analyze-input", false, "load cached analysis input and run AI analysis/site generation")
 		configPath   = flag.String("config", "", "path to TOML config file (default: hn-critique.toml if present)")
 		providerFlag = flag.String("provider", "", "AI provider to use: openai, ollama, github (overrides config file)")
 	)
 	flag.Parse()
+
+	if *prepareInput && *analyzeInput {
+		log.Fatal("cannot use -prepare-input and -analyze-input together")
+	}
 
 	// Auto-detect config file if not specified.
 	if *configPath == "" {
@@ -58,6 +64,9 @@ func main() {
 		cfg.Provider = config.ProviderName(*providerFlag)
 	}
 
+	if *prepareInput {
+		*skipAI = true
+	}
 	modelConfig := cfg.SelectedModelConfig()
 	limits := modelConfig.Limits
 
@@ -91,60 +100,96 @@ func main() {
 		log.Printf("Warning: could not create cache directory: %v", err)
 	}
 
-	log.Printf("Fetching top %d stories…", *storyCount)
-	storyIDs, err := hnClient.GetTopStories(*storyCount)
-	if err != nil {
-		log.Fatalf("Failed to fetch top stories: %v", err)
-	}
-
-	stories := make([]*generator.Story, 0, len(storyIDs))
-
-	for rank, id := range storyIDs {
-		log.Printf("[%d/%d] Processing story %d…", rank+1, len(storyIDs), id)
-
-		item, err := hnClient.GetItem(id)
+	var stories []*generator.Story
+	if *analyzeInput {
+		log.Printf("Loading cached story inputs…")
+		loaded, err := generator.LoadStoryInputs(*outputDir)
 		if err != nil {
-			log.Printf("  ⚠  skip story %d: %v", id, err)
-			continue
+			log.Fatalf("Failed to load story inputs: %v", err)
 		}
-		if item.Deleted || item.Dead || item.Type != "story" {
-			log.Printf("  ⚠  skip story %d: deleted/dead/wrong type", id)
-			continue
-		}
-
-		story := &generator.Story{
-			ID:           item.ID,
-			Rank:         rank + 1,
-			Title:        item.Title,
-			URL:          item.URL,
-			Domain:       extractDomain(item.URL),
-			Score:        item.Score,
-			Author:       item.By,
-			Time:         item.Time,
-			CommentCount: item.Descendants,
+		stories = loaded
+	} else {
+		log.Printf("Fetching top %d stories…", *storyCount)
+		storyIDs, err := hnClient.GetTopStories(*storyCount)
+		if err != nil {
+			log.Fatalf("Failed to fetch top stories: %v", err)
 		}
 
-		// Fetch comments.
-		if len(item.Kids) > 0 {
-			log.Printf("  Fetching comments…")
-			story.Comments = fetchComments(hnClient, item.Kids, limits.CommentDepth, limits.TopComments, limits.ChildComments)
+		commentDepth := limits.CommentDepth
+		if commentDepth == 0 {
+			commentDepth = defaultCommentDepth
+		}
+		topComments := limits.TopComments
+		if topComments == 0 {
+			topComments = maxTopComments
+		}
+		childComments := limits.ChildComments
+		if childComments == 0 {
+			childComments = maxChildComments
 		}
 
-		// Fetch article content (only for stories with external URLs).
-		articleUnavailableReason := ""
-		if item.URL != "" {
-			log.Printf("  Fetching article: %s", item.URL)
-			text, err := articleFetcher.Fetch(item.URL)
+		stories = make([]*generator.Story, 0, len(storyIDs))
+		for rank, id := range storyIDs {
+			log.Printf("[%d/%d] Processing story %d…", rank+1, len(storyIDs), id)
+
+			item, err := hnClient.GetItem(id)
 			if err != nil {
-				log.Printf("  ⚠  article fetch failed: %v", err)
-				articleUnavailableReason = articleRetrievalFailureReason
-			} else if strings.TrimSpace(text) == "" {
-				articleUnavailableReason = articleInsufficientContentReason
-			} else {
-				story.ArticleText = text
+				log.Printf("  ⚠  skip story %d: %v", id, err)
+				continue
+			}
+			if item.Deleted || item.Dead || item.Type != "story" {
+				log.Printf("  ⚠  skip story %d: deleted/dead/wrong type", id)
+				continue
+			}
+
+			story := &generator.Story{
+				ID:           item.ID,
+				Rank:         rank + 1,
+				Title:        item.Title,
+				URL:          item.URL,
+				Domain:       extractDomain(item.URL),
+				Score:        item.Score,
+				Author:       item.By,
+				Time:         item.Time,
+				CommentCount: item.Descendants,
+			}
+
+			// Fetch comments.
+			if len(item.Kids) > 0 {
+				log.Printf("  Fetching comments…")
+				story.Comments = fetchComments(hnClient, item.Kids, commentDepth, topComments, childComments)
+			}
+
+			// Fetch article content (only for stories with external URLs).
+			if item.URL != "" {
+				log.Printf("  Fetching article: %s", item.URL)
+				text, err := articleFetcher.Fetch(item.URL)
+				if err != nil {
+					log.Printf("  ⚠  article fetch failed: %v", err)
+					story.ArticleUnavailableReason = articleRetrievalFailureReason
+				} else if strings.TrimSpace(text) == "" {
+					story.ArticleUnavailableReason = articleInsufficientContentReason
+				} else {
+					story.ArticleText = text
+				}
+			}
+
+			stories = append(stories, story)
+			if *prepareInput {
+				time.Sleep(storyDelay)
 			}
 		}
+	}
 
+	if *prepareInput {
+		if err := generator.SaveStoryInputs(*outputDir, stories); err != nil {
+			log.Fatalf("Failed to save story inputs: %v", err)
+		}
+		log.Printf("Saved story inputs to %s", generator.StoryInputPath(*outputDir))
+		return
+	}
+
+	for _, story := range stories {
 		if aiProvider != nil {
 			// Load any previously cached analysis as a fallback.
 			cached, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
@@ -153,8 +198,8 @@ func main() {
 			}
 
 			// Article critique.
-			if articleUnavailableReason != "" {
-				story.Critique = unavailableCritiqueForReason(articleUnavailableReason)
+			if story.ArticleUnavailableReason != "" {
+				story.Critique = unavailableCritiqueForReason(story.ArticleUnavailableReason)
 			} else if story.ArticleText != "" || story.URL != "" {
 				log.Printf("  Analyzing article…")
 				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
@@ -197,17 +242,19 @@ func main() {
 			}
 		}
 
-		if aiProvider == nil && item.URL != "" && story.Critique == nil {
-			if articleUnavailableReason != "" {
-				story.Critique = unavailableCritiqueForReason(articleUnavailableReason)
+		shouldUsePlaceholder := aiProvider == nil && !*prepareInput && story.URL != "" && story.Critique == nil
+		if shouldUsePlaceholder {
+			if story.ArticleUnavailableReason != "" {
+				story.Critique = unavailableCritiqueForReason(story.ArticleUnavailableReason)
 			} else if story.ArticleText != "" {
 				analysisReason := "the AI assessment is not available"
 				story.Critique = unavailableCritiqueForReason(analysisReason)
 			}
 		}
 
-		stories = append(stories, story)
-		time.Sleep(storyDelay)
+		if !*analyzeInput {
+			time.Sleep(storyDelay)
+		}
 	}
 
 	log.Printf("Generating static site in %s/ (%d stories)…", *outputDir, len(stories))

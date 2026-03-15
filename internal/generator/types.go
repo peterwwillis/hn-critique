@@ -5,21 +5,22 @@ import "html/template"
 
 // Story holds all data for a single HN story, including fetched article text and AI critiques.
 type Story struct {
-	ID               int
-	Rank             int
-	Title            string
-	URL              string
-	Domain           string
-	Score            int
-	Author           string
-	Time             int64
-	CommentCount     int
-	Comments         []*Comment
-	ArticleText      string
-	Critique         *ArticleCritique
-	CommentsCritique *CommentsCritique
-	CritiquePath     string
-	CommentsPath     string
+	ID                       int
+	Rank                     int
+	Title                    string
+	URL                      string
+	Domain                   string
+	Score                    int
+	Author                   string
+	Time                     int64
+	CommentCount             int
+	Comments                 []*Comment
+	ArticleText              string
+	ArticleUnavailableReason string
+	Critique                 *ArticleCritique
+	CommentsCritique         *CommentsCritique
+	CritiquePath             string
+	CommentsPath             string
 }
 
 // Comment represents a single HN comment with its nested replies.
