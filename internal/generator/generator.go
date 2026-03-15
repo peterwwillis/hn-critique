@@ -120,6 +120,8 @@ func (g *Generator) loadTemplates() error {
 			switch r {
 			case "reliable":
 				return "rating-reliable"
+			case "needs citation":
+				return "rating-needs-citation"
 			case "misleading":
 				return "rating-misleading"
 			case "unavailable":

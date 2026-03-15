@@ -23,6 +23,14 @@ func TestValidateArticleCritique(t *testing.T) {
 		t.Fatalf("expected normalized rating, got %q", critique.Rating)
 	}
 
+	critique.Rating = "needs citation"
+	if err := validateArticleCritique(critique); err != nil {
+		t.Fatalf("expected valid critique for needs citation, got error: %v", err)
+	}
+	if critique.Rating != "needs citation" {
+		t.Fatalf("expected normalized rating, got %q", critique.Rating)
+	}
+
 	critique.Rating = "unknown"
 	if err := validateArticleCritique(critique); err == nil {
 		t.Fatal("expected error for invalid rating")

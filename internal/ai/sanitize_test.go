@@ -10,6 +10,8 @@ func TestSanitizeRating(t *testing.T) {
 	}{
 		{name: "lowercase", in: "questionable", want: "questionable"},
 		{name: "uppercase", in: "Reliable", want: "reliable"},
+		{name: "needs-citation", in: "Needs Citation", want: "needs citation"},
+		{name: "needs-citation-hyphen", in: "needs-citation", want: "needs citation"},
 		{name: "trailing-space", in: "misleading ", want: "misleading"},
 		{name: "punctuation", in: "reliable.", want: "reliable"},
 		{name: "unavailable", in: "UNAVAILABLE", want: "unavailable"},
