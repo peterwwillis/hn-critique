@@ -1,4 +1,9 @@
-# Skill: Resolve merge conflicts with main
+---
+name: resolve-git-merge-conflicts
+description: A guide to resolve merge conflicts in a git branch or pull request.
+---
+
+# Skill: Resolve merge conflicts with main branch
 
 ## Purpose
 Provide a repeatable workflow for detecting and resolving merge conflicts between the current branch and `main`.
