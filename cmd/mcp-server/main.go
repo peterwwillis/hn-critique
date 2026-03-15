@@ -27,6 +27,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"os"
 
@@ -190,7 +191,7 @@ func main() {
 }
 
 // run is the main message loop, separated for testability.
-func run(in *os.File, out *os.File, provider ai.Provider) {
+func run(in io.Reader, out io.Writer, provider ai.Provider) {
 	enc := json.NewEncoder(out)
 	scanner := bufio.NewScanner(in)
 	// Allow up to maxMessageSize per message (large article content).
