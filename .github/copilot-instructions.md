@@ -30,15 +30,6 @@
 - `.github/workflows/crawl.yml` runs hourly to generate and deploy the site.
 - GitHub Pages deploy pushes to the `gh-pages` branch via `peaceiris/actions-gh-pages`.
 
-## Known errors encountered & workarounds
-- **GH013 repository rule violation when pushing** (observed in the `Crawl HN and Deploy` workflow and in a Copilot workflow).
-  - Error: `remote: error: GH013: Repository rule violations found... Changes must be made through a pull request.`
-  - Workaround: update repository rules to allow the workflow’s `GITHUB_TOKEN`
-    (or the `gh-pages` branch) to bypass the PR-only requirement, or switch
-    deployment to a PR-based flow.
-  - For Copilot updates, ensure changes are pushed through a PR branch (as this
-    agent does via `report_progress`).
-
 ## Mergeability check (required before closing tasks)
 When completing a series of operations (especially after resolving conflicts or rebasing), always verify mergeability before closing the task:
 
