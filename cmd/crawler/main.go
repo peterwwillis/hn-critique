@@ -381,12 +381,20 @@ func unavailableCritiqueForReason(reason string) *generator.ArticleCritique {
 	return unavailableCritique(unavailableSummary(reason), unavailableTruthfulness(reason))
 }
 
+// formatCommentForAI returns the formatted representation of a single comment
+// as it is sent to the AI. Keeping this logic in one place helps ensure that
+// any future changes to the prompt format are consistently reflected in
+// truncation calculations.
+func formatCommentForAI(c *generator.Comment) string {
+	return fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
+}
+
 // totalCommentBytes returns the approximate byte count of formatted comment
 // text that would be sent to the AI, used to predict prompt truncation.
 func totalCommentBytes(comments []*generator.Comment) int {
 	var total int
 	for _, c := range comments {
-		total += len(fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text))
+		total += len(formatCommentForAI(c))
 	}
 	return total
 }
