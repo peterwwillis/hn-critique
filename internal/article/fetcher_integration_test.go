@@ -13,7 +13,7 @@ import (
 func TestIntegration_Fetch(t *testing.T) {
 	f := article.NewFetcher()
 	// Use go.dev — a stable, content-rich page that returns >300 chars directly.
-	text, _, err := f.Fetch("https://go.dev")
+	text, err := f.Fetch("https://go.dev")
 	if err != nil {
 		t.Fatalf("Fetch(go.dev): %v", err)
 	}

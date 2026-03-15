@@ -2,11 +2,10 @@ name: Crawl HN and Deploy
 
 # ─── Triggers ────────────────────────────────────────────────────────────────
 # • schedule / workflow_dispatch  → full production run (30 stories, deploy)
-# • pull_request                  → smoke-test run (1 story, no deploy, screenshot)
+# • workflow_run (Test succeeded) → smoke-test run on PRs (1 story, no deploy, screenshot)
 #
-# The PR smoke-test validates that the entire pipeline — HN fetch, article
-# scrape, AI analysis, and HTML generation — works correctly with the code
-# changes in the PR, before they are merged to main.
+# The PR smoke-test only runs when the Test workflow completes successfully,
+# ensuring the crawl pipeline is not exercised with broken code.
 on:
   schedule:
     # Run at the top of every hour.
@@ -18,8 +17,11 @@ on:
         description: 'AI provider to use (openai, github). Overrides config file.'
         required: false
         default: ''
-  # On every PR: run the pipeline in limited mode as a smoke test.
-  pull_request:
+  # Run the PR smoke-test only after the Test workflow has completed
+  # successfully, so the crawl pipeline is not exercised with broken code.
+  workflow_run:
+    workflows: ["Test"]
+    types: [completed]
 
 permissions:
   contents: write
@@ -31,11 +33,21 @@ permissions:
 
 jobs:
   crawl-and-deploy:
+    # When triggered by workflow_run (PR smoke-test): only proceed if tests
+    # passed, and only for PRs from the same repository (not forks), to avoid
+    # executing untrusted code with privileged workflow_run permissions.
+    if: |
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-slim
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # When triggered by workflow_run, check out the PR's head commit.
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || '' }}
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -54,7 +66,7 @@ jobs:
       # Skip cache restoration on PRs — the smoke test runs from a clean slate
       # so results are not influenced by cached data from a previous production run.
       - name: Restore analysis cache from gh-pages
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'workflow_run' || github.event.workflow_run.event != 'pull_request'
         run: |
           git fetch origin gh-pages --depth=1 2>/dev/null || true
           mkdir -p docs/cache
@@ -68,7 +80,7 @@ jobs:
           fi
           # PR smoke-test: fetch only one story to keep the run fast.
           # Production runs use the default story count (30).
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "${{ github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' }}" = "true" ]; then
             ARGS="$ARGS -stories 1"
           fi
           ./bin/crawler $ARGS -prepare-input -out ./docs
@@ -78,7 +90,7 @@ jobs:
 
       - name: Log in to GitHub Container Registry
         # GHCR packages are private by default unless explicitly set to public.
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
+        if: github.event_name != 'workflow_run' || github.event.workflow_run.event != 'pull_request' || github.event.workflow_run.head_repository.full_name == github.repository
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -107,7 +119,7 @@ jobs:
           # In PR smoke-test mode, treat any analysis warning as a hard failure
           # so that broken pipeline changes are caught before merging to main.
           STRICT=""
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "${{ github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' }}" = "true" ]; then
             STRICT="-strict"
           fi
           ./bin/crawler -provider "$PROVIDER" $STRICT -analyze-input -out ./docs
@@ -118,7 +130,7 @@ jobs:
       # output looks correct before merging.
 
       - name: Screenshot generated site
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.head_repository.full_name == github.repository
         run: |
           # Serve the generated docs directory on a local port.
           python3 -m http.server 8080 --directory docs &
@@ -175,7 +187,7 @@ jobs:
           fi
 
       - name: Upload PR preview screenshots
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.head_repository.full_name == github.repository
         uses: actions/upload-artifact@v4
         with:
           name: pr-preview-screenshots
@@ -184,7 +196,7 @@ jobs:
 
       # ── Production deploy (skipped for PRs) ──────────────────────────────
       - name: Deploy to GitHub Pages
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'workflow_run' || github.event.workflow_run.event != 'pull_request'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
