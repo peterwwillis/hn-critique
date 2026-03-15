@@ -12,22 +12,43 @@ import (
 )
 
 const (
-	userAgent   = "Mozilla/5.0 (compatible; HNCritique/1.0; +https://github.com/peterwwillis/hn-critique)"
-	maxBodySize = 2 << 20 // 2 MB
-	maxTextLen  = 8000
+	userAgent          = "Mozilla/5.0 (compatible; HNCritique/1.0; +https://github.com/peterwwillis/hn-critique)"
+	defaultMaxBodySize = 2 << 20 // 2 MB
+	defaultMaxTextLen  = 8000
 )
+
+// Limits controls fetcher resource caps.
+type Limits struct {
+	MaxBodyBytes int64
+	MaxTextLen   int
+}
 
 // Fetcher retrieves article text from URLs, with paywall bypass fallbacks.
 type Fetcher struct {
-	http *http.Client
+	http         *http.Client
+	maxBodyBytes int64
+	maxTextLen   int
 }
 
 // NewFetcher returns a new Fetcher.
 func NewFetcher() *Fetcher {
+	return NewFetcherWithLimits(Limits{})
+}
+
+// NewFetcherWithLimits returns a Fetcher configured with custom limits.
+func NewFetcherWithLimits(limits Limits) *Fetcher {
+	if limits.MaxBodyBytes <= 0 {
+		limits.MaxBodyBytes = defaultMaxBodySize
+	}
+	if limits.MaxTextLen <= 0 {
+		limits.MaxTextLen = defaultMaxTextLen
+	}
 	return &Fetcher{
 		http: &http.Client{
 			Timeout: 30 * time.Second,
 		},
+		maxBodyBytes: limits.MaxBodyBytes,
+		maxTextLen:   limits.MaxTextLen,
 	}
 }
 
@@ -69,22 +90,22 @@ func (f *Fetcher) fetchURL(u string) (string, error) {
 		return "", fmt.Errorf("HTTP %d for %s", resp.StatusCode, u)
 	}
 
-	body, err := io.ReadAll(io.LimitReader(resp.Body, maxBodySize))
+	body, err := io.ReadAll(io.LimitReader(resp.Body, f.maxBodyBytes))
 	if err != nil {
 		return "", err
 	}
 
-	text := extractText(string(body))
+	text := extractTextWithLimit(string(body), f.maxTextLen)
 	return text, nil
 }
 
-// ExtractText parses HTML and returns the visible text content, up to maxTextLen characters.
+// ExtractText parses HTML and returns the visible text content, up to the default limit.
 func ExtractText(htmlContent string) string {
-	return extractText(htmlContent)
+	return extractTextWithLimit(htmlContent, defaultMaxTextLen)
 }
 
-// extractText is the internal implementation.
-func extractText(htmlContent string) string {
+// extractTextWithLimit is the internal implementation with an explicit limit.
+func extractTextWithLimit(htmlContent string, maxTextLen int) string {
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
 		// Treat as plain text

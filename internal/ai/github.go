@@ -19,15 +19,17 @@ type githubProvider struct {
 	endpoint string // full URL to the chat/completions endpoint
 	token    string
 	model    string
+	settings config.ModelConfig
 	http     *http.Client
 }
 
-func newGitHubProvider(cfg config.GitHubConfig) *githubProvider {
+func newGitHubProvider(cfg config.GitHubConfig, settings config.ModelConfig) *githubProvider {
 	base := strings.TrimRight(cfg.Endpoint, "/")
 	return &githubProvider{
 		endpoint: base + "/chat/completions",
 		token:    cfg.Token,
 		model:    cfg.Model,
+		settings: settings,
 		http:     &http.Client{Timeout: httpTimeout},
 	}
 }
@@ -35,9 +37,9 @@ func newGitHubProvider(cfg config.GitHubConfig) *githubProvider {
 func (p *githubProvider) Name() string { return "github" }
 
 func (p *githubProvider) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
-	prompt := articlePrompt(title, articleURL, content)
+	prompt := articlePrompt(title, articleURL, content, p.settings.Limits.ArticlePromptBytes)
 
-	text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true)
+	text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true, p.settings.Inference)
 	if err != nil {
 		return nil, fmt.Errorf("github models article analysis: %w", err)
 	}
@@ -51,9 +53,9 @@ func (p *githubProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 }
 
 func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
-	prompt := commentsPrompt(title, articleURL, buildCommentText(comments))
+	prompt := commentsPrompt(title, articleURL, buildCommentText(comments, p.settings.Limits.CommentPromptBytes))
 
-	text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true)
+	text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true, p.settings.Inference)
 	if err != nil {
 		return nil, fmt.Errorf("github models comments analysis: %w", err)
 	}
@@ -62,5 +64,6 @@ func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*g
 	if err := parseJSON(text, &critique); err != nil {
 		return nil, fmt.Errorf("github models: parsing comments critique: %w", err)
 	}
+	applyCommentText(&critique, comments)
 	return &critique, nil
 }

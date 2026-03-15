@@ -23,6 +23,15 @@ func TestDefaults(t *testing.T) {
 	if cfg.GitHub.Endpoint == "" {
 		t.Error("default GitHub.Endpoint is empty")
 	}
+	if cfg.GitHub.Model != "openai/gpt-4.1-mini" {
+		t.Errorf("default GitHub.Model = %q, want %q", cfg.GitHub.Model, "openai/gpt-4.1-mini")
+	}
+	if cfg.Models == nil || len(cfg.Models) == 0 {
+		t.Fatal("default Models map is empty")
+	}
+	if _, ok := cfg.Models["openai/gpt-4.1-mini"]; !ok {
+		t.Error("default Models missing openai/gpt-4.1-mini entry")
+	}
 }
 
 func TestLoadEmpty(t *testing.T) {
@@ -51,6 +60,10 @@ model = "mistral"
 api_key = "sk-test"
 chat_model = "gpt-4o"
 use_responses_api = false
+
+[models."gpt-4o"]
+  [models."gpt-4o".limits]
+  comment_prompt_bytes = 12345
 `
 	path := filepath.Join(t.TempDir(), "test.toml")
 	if err := os.WriteFile(path, []byte(toml), 0o600); err != nil {
@@ -79,6 +92,10 @@ use_responses_api = false
 	}
 	if cfg.OpenAI.UseResponsesAPI {
 		t.Error("OpenAI.UseResponsesAPI should be false")
+	}
+	modelConfig := cfg.ModelConfigFor("gpt-4o")
+	if modelConfig.Limits.CommentPromptBytes != 12345 {
+		t.Errorf("model limits comment_prompt_bytes = %d, want %d", modelConfig.Limits.CommentPromptBytes, 12345)
 	}
 }
 
@@ -141,7 +158,6 @@ chat_model = "gpt-4o"
 		t.Errorf("OpenAI.ChatModel = %q, want %q (env should override config file)", cfg.OpenAI.ChatModel, "mistral")
 	}
 }
-
 
 func TestValidateOpenAI(t *testing.T) {
 	cfg := config.Defaults()

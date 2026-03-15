@@ -10,22 +10,20 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"unicode/utf8"
 
+	"github.com/peterwwillis/hn-critique/internal/config"
 	"github.com/peterwwillis/hn-critique/internal/generator"
 )
 
-const (
-	maxCommentChars = 6000
-	maxArticleChars = 6000
-	httpTimeout     = 120 * time.Second
-)
+const httpTimeout = 120 * time.Second
 
 // articlePrompt builds the fact-checking prompt for an article.
 // It encodes the journalism-specific requirement that reliable ratings require
 // multiple sources and perspectives when the content is news reporting.
-func articlePrompt(title, articleURL, content string) string {
-	if len(content) > maxArticleChars {
-		content = content[:maxArticleChars] + "…"
+func articlePrompt(title, articleURL, content string, maxBytes int) string {
+	if maxBytes > 0 && len(content) > maxBytes {
+		content = truncateWithEllipsis(content, maxBytes)
 	}
 	return fmt.Sprintf(`You are a critical fact-checker. Analyze the following article and respond with ONLY a valid JSON object — no markdown, no code fences, just raw JSON.
 
@@ -52,9 +50,6 @@ Article content:
 
 // commentsPrompt builds the analysis prompt for a comment section.
 func commentsPrompt(title, articleURL, commentLines string) string {
-	if len(commentLines) > maxCommentChars {
-		commentLines = commentLines[:maxCommentChars] + "…"
-	}
 	return fmt.Sprintf(`You are a critical analyst. Analyze the following Hacker News comment section and respond with ONLY a valid JSON object — no markdown, no code fences, just raw JSON.
 
 The JSON must have exactly this shape:
@@ -64,7 +59,7 @@ The JSON must have exactly this shape:
     {
       "id": <comment id as integer>,
       "author": "<username>",
-      "text": "<first 120 chars of the comment, plain text>",
+      "text": "<comment text as provided above>",
       "indicators": ["<one or more of: emotional, intelligent, thoughtful, trolling, likely-true, likely-untrue, belligerent, constructive, useless>"],
       "accuracyRank": <integer starting at 1 for most accurate>,
       "analysis": "<1-2 sentence critique>"
@@ -92,12 +87,79 @@ func sanitizeRating(r string) string {
 }
 
 // buildCommentText formats comments for the AI prompt.
-func buildCommentText(comments []*generator.Comment) string {
+func buildCommentText(comments []*generator.Comment, maxBytes int) string {
 	var sb strings.Builder
 	for _, c := range comments {
-		sb.WriteString(fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text))
+		entry := fmt.Sprintf("[id:%d by:%s]\n%s\n\n", c.ID, c.Author, c.Text)
+		remaining := maxBytes - sb.Len()
+		if remaining <= 0 {
+			break
+		}
+		if len(entry) > remaining {
+			sb.WriteString(truncateWithEllipsis(entry, remaining))
+			break
+		}
+		sb.WriteString(entry)
 	}
 	return sb.String()
+}
+
+func truncateWithEllipsis(s string, maxBytes int) string {
+	if maxBytes == 0 {
+		return ""
+	}
+	if len(s) <= maxBytes {
+		return s
+	}
+	ellipsis := "…"
+	ellipsisBytes := len(ellipsis)
+	if maxBytes <= ellipsisBytes {
+		return truncateUTF8(s, maxBytes)
+	}
+	return truncateUTF8(s, maxBytes-ellipsisBytes) + ellipsis
+}
+
+func truncateUTF8(s string, maxBytes int) string {
+	if maxBytes == 0 {
+		return ""
+	}
+	if len(s) <= maxBytes {
+		return s
+	}
+	truncated := s[:maxBytes]
+	for !utf8.ValidString(truncated) && len(truncated) > 0 {
+		truncated = truncated[:len(truncated)-1]
+	}
+	return truncated
+}
+
+func applyCommentText(critique *generator.CommentsCritique, comments []*generator.Comment) {
+	if critique == nil || len(critique.Comments) == 0 || len(comments) == 0 {
+		return
+	}
+
+	commentByID := indexCommentsByID(comments)
+
+	for i := range critique.Comments {
+		if original, ok := commentByID[critique.Comments[i].ID]; ok {
+			critique.Comments[i].Text = string(original.Text)
+		}
+	}
+}
+
+func indexCommentsByID(comments []*generator.Comment) map[int]*generator.Comment {
+	commentByID := make(map[int]*generator.Comment, len(comments))
+	var walk func(list []*generator.Comment)
+	walk = func(list []*generator.Comment) {
+		for _, comment := range list {
+			commentByID[comment.ID] = comment
+			if len(comment.Kids) > 0 {
+				walk(comment.Kids)
+			}
+		}
+	}
+	walk(comments)
+	return commentByID
 }
 
 // parseJSON extracts JSON from the model response and decodes it into v.
@@ -135,6 +197,7 @@ type chatRequest struct {
 	Model          string              `json:"model"`
 	Messages       []map[string]string `json:"messages"`
 	Temperature    float64             `json:"temperature"`
+	MaxTokens      *int                `json:"max_tokens,omitempty"`
 	ResponseFormat *responseFormat     `json:"response_format,omitempty"`
 }
 
@@ -145,13 +208,20 @@ type responseFormat struct {
 // callChatCompletions sends a POST to an OpenAI-compatible chat completions
 // endpoint and returns the first choice's content text.
 // endpoint must be the full URL including path (e.g. ".../v1/chat/completions").
-func callChatCompletions(httpClient *http.Client, endpoint, authHeader, model, prompt string, jsonMode bool) (string, error) {
+func callChatCompletions(httpClient *http.Client, endpoint, authHeader, model, prompt string, jsonMode bool, inference config.InferenceConfig) (string, error) {
+	temperature := 0.3
+	if inference.Temperature != nil {
+		temperature = *inference.Temperature
+	}
 	req := chatRequest{
 		Model: model,
 		Messages: []map[string]string{
 			{"role": "user", "content": prompt},
 		},
-		Temperature: 0.3,
+		Temperature: temperature,
+	}
+	if inference.MaxOutputTokens != nil {
+		req.MaxTokens = inference.MaxOutputTokens
 	}
 	if jsonMode {
 		req.ResponseFormat = &responseFormat{Type: "json_object"}
@@ -208,7 +278,8 @@ type Analyzer struct {
 // NewAnalyzer creates an Analyzer backed by the OpenAI provider.
 // Deprecated: use NewProvider with a config.Config instead.
 func NewAnalyzer(apiKey string) *Analyzer {
-	p := newOpenAIProvider(openAIConfig(apiKey))
+	settings := config.DefaultModelConfig()
+	p := newOpenAIProvider(openAIConfig(apiKey), settings, settings)
 	return &Analyzer{p: p}
 }
 

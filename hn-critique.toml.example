@@ -122,4 +122,29 @@ endpoint = "https://models.github.ai/inference"
 #   openai/gpt-4.1
 #   openai/gpt-4o-mini
 #   ai21-labs/AI21-Jamba-1.6-Mini
-model = "openai/gpt-4o-mini"
+model = "openai/gpt-4.1-mini"
+
+# ──────────────────────────────────────────────────────────────
+# Model-specific overrides
+#
+# Define per-model inference parameters and application limits.
+# Keys should match the model name exactly.
+# ──────────────────────────────────────────────────────────────
+[models."openai/gpt-4.1-mini".inference]
+# Temperature controls creativity vs. determinism.
+temperature = 0.3
+# max_output_tokens = 8192
+
+[models."openai/gpt-4.1-mini".limits]
+# Cap prompt payload sizes.
+comment_prompt_bytes = 200000
+article_prompt_bytes = 50000
+
+# Cap article fetch/extraction.
+article_text_chars = 50000
+article_body_bytes = 4194304
+
+# Comment traversal limits.
+comment_depth = 4
+top_comments = 40
+child_comments = 10
