@@ -87,6 +87,10 @@ type GitHubConfig struct {
 	// Model is the model identifier in the format "provider/model-name"
 	// (e.g. "openai/gpt-4.1-mini", "openai/gpt-4o-mini").
 	Model string `toml:"model"`
+	// FallbackModels is a list of model identifiers to try in order when the
+	// primary model returns HTTP 429 (rate limited). Each model is looked up
+	// in the Models map for its per-model limits and inference settings.
+	FallbackModels []string `toml:"fallback_models"`
 }
 
 // InferenceConfig holds per-model inference tuning parameters.
@@ -135,8 +139,9 @@ func Defaults() *Config {
 			Model:   "llama3.2",
 		},
 		GitHub: GitHubConfig{
-			Endpoint: "https://models.github.ai/inference",
-			Model:    "openai/gpt-4.1-mini",
+			Endpoint:       "https://models.github.ai/inference",
+			Model:          "openai/gpt-4.1-mini",
+			FallbackModels: []string{"openai/gpt-4o-mini", "mistral-ai/mistral-small"},
 		},
 		Models: DefaultModelOverrides(),
 	}
@@ -170,9 +175,14 @@ func DefaultModelConfig() ModelConfig {
 }
 
 // DefaultModelOverrides defines built-in model-specific overrides.
+// Each entry sets input/output token limits appropriate for that model's
+// context window and rate limits.
 func DefaultModelOverrides() map[string]ModelConfig {
-	gpt41 := DefaultModelConfig()
-	gpt41.Limits = LimitsConfig{
+	// openai/gpt-4.1-mini: 1 M input tokens, 32 K output tokens.
+	maxOutputGPT41Mini := 4096
+	gpt41Mini := DefaultModelConfig()
+	gpt41Mini.Inference.MaxOutputTokens = &maxOutputGPT41Mini
+	gpt41Mini.Limits = LimitsConfig{
 		CommentPromptBytes: 200000,
 		ArticlePromptBytes: 50000,
 		ArticleTextChars:   50000,
@@ -182,9 +192,41 @@ func DefaultModelOverrides() map[string]ModelConfig {
 		ChildComments:      10,
 	}
 
+	// openai/gpt-4o-mini: 128 K input tokens (~96 K bytes), 16 K output tokens.
+	maxOutputGPT4oMini := 4096
+	gpt4oMini := DefaultModelConfig()
+	gpt4oMini.Inference.MaxOutputTokens = &maxOutputGPT4oMini
+	gpt4oMini.Limits = LimitsConfig{
+		CommentPromptBytes: 80000,
+		ArticlePromptBytes: 40000,
+		ArticleTextChars:   40000,
+		ArticleBodyBytes:   4 << 20,
+		CommentDepth:       4,
+		TopComments:        30,
+		ChildComments:      8,
+	}
+
+	// mistral-ai/mistral-small: 32 K input tokens (~24 K bytes), 8 K output tokens.
+	maxOutputMistralSmall := 2048
+	mistralSmall := DefaultModelConfig()
+	mistralSmall.Inference.MaxOutputTokens = &maxOutputMistralSmall
+	mistralSmall.Limits = LimitsConfig{
+		CommentPromptBytes: 16000,
+		ArticlePromptBytes: 8000,
+		ArticleTextChars:   8000,
+		ArticleBodyBytes:   2 << 20,
+		CommentDepth:       3,
+		TopComments:        20,
+		ChildComments:      5,
+	}
+
 	return map[string]ModelConfig{
-		"openai/gpt-4.1-mini": gpt41,
-		"gpt-4.1-mini":        gpt41,
+		"openai/gpt-4.1-mini":        gpt41Mini,
+		"gpt-4.1-mini":               gpt41Mini,
+		"openai/gpt-4o-mini":         gpt4oMini,
+		"gpt-4o-mini":                gpt4oMini,
+		"mistral-ai/mistral-small":   mistralSmall,
+		"mistral-small":              mistralSmall,
 	}
 }
 

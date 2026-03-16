@@ -48,7 +48,15 @@ func NewProvider(cfg *config.Config) (Provider, error) {
 			UseResponsesAPI: false,
 		}, modelSettings, modelSettings), nil
 	case config.ProviderGitHub:
-		return newGitHubProvider(cfg.GitHub, cfg.ModelConfigFor(cfg.GitHub.Model)), nil
+		settings := cfg.ModelConfigFor(cfg.GitHub.Model)
+		fallbacks := make([]githubFallback, 0, len(cfg.GitHub.FallbackModels))
+		for _, name := range cfg.GitHub.FallbackModels {
+			fallbacks = append(fallbacks, githubFallback{
+				model:    name,
+				settings: cfg.ModelConfigFor(name),
+			})
+		}
+		return newGitHubProvider(cfg.GitHub, settings, fallbacks), nil
 	default:
 		return nil, fmt.Errorf("unknown provider %q", cfg.Provider)
 	}
