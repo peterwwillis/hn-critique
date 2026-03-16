@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"golang.org/x/net/html"
 )
@@ -55,7 +56,20 @@ func NewFetcherWithLimits(limits Limits) *Fetcher {
 // Fetch attempts to retrieve readable text from url.
 // If the direct fetch appears paywalled or fails, it tries archive.ph and the
 // Wayback Machine before giving up.
+// This method preserves the original API and returns only the extracted text
+// and an error. To also know whether the text was truncated at the configured
+// character limit, use FetchWithTruncation instead.
 func (f *Fetcher) Fetch(rawURL string) (string, error) {
+	text, _, err := f.FetchWithTruncation(rawURL)
+	return text, err
+}
+
+// FetchWithTruncation attempts to retrieve readable text from url.
+// If the direct fetch appears paywalled or fails, it tries archive.ph and the
+// Wayback Machine before giving up.
+// The second return value is true when the extracted text was truncated at the
+// configured character limit, meaning the critique may be incomplete.
+func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 	candidates := []string{
 		rawURL,
 		"https://archive.ph/" + rawURL,
@@ -63,18 +77,18 @@ func (f *Fetcher) Fetch(rawURL string) (string, error) {
 	}
 
 	for _, u := range candidates {
-		text, err := f.fetchURL(u)
+		text, truncated, err := f.fetchURL(u)
 		if err == nil && len(text) >= 300 {
-			return text, nil
+			return text, truncated, nil
 		}
 	}
-	return "", fmt.Errorf("could not retrieve article content for %s", rawURL)
+	return "", false, fmt.Errorf("could not retrieve article content for %s", rawURL)
 }
 
-func (f *Fetcher) fetchURL(u string) (string, error) {
+func (f *Fetcher) fetchURL(u string) (string, bool, error) {
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
@@ -82,56 +96,104 @@ func (f *Fetcher) fetchURL(u string) (string, error) {
 
 	resp, err := f.http.Do(req)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return "", fmt.Errorf("HTTP %d for %s", resp.StatusCode, u)
+		return "", false, fmt.Errorf("HTTP %d for %s", resp.StatusCode, u)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, f.maxBodyBytes))
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
+	// Detect whether the response body was capped at the limit.
+	bodyTruncated := int64(len(body)) >= f.maxBodyBytes
 
-	text := extractTextWithLimit(string(body), f.maxTextLen)
-	return text, nil
+	text, textTruncated := extractTextWithLimit(string(body), f.maxTextLen)
+	return text, bodyTruncated || textTruncated, nil
 }
 
 // ExtractText parses HTML and returns the visible text content, up to the default limit.
 func ExtractText(htmlContent string) string {
-	return extractTextWithLimit(htmlContent, defaultMaxTextLen)
+	text, _ := extractTextWithLimit(htmlContent, defaultMaxTextLen)
+	return text
+}
+
+// truncateWithEllipsisUTF8 truncates s so that the result is valid UTF-8 and
+// its byte length does not exceed max. When truncation occurs and there is
+// sufficient space, it appends an ellipsis ("…").
+func truncateWithEllipsisUTF8(s string, max int) (string, bool) {
+	if max <= 0 {
+		return "", len(s) > 0
+	}
+	if len(s) <= max {
+		return s, false
+	}
+
+	const ellipsis = "…"
+	ellipsisLen := len(ellipsis)
+
+	// If the ellipsis itself does not fit alongside any content, just return
+	// the largest valid UTF-8 prefix that fits within max bytes.
+	if ellipsisLen >= max {
+		byteCount := 0
+		lastGood := 0
+		for _, r := range s {
+			rLen := utf8.RuneLen(r)
+			if rLen < 0 {
+				// Should not happen for valid UTF-8, but be defensive.
+				rLen = 1
+			}
+			if byteCount+rLen > max {
+				break
+			}
+			byteCount += rLen
+			lastGood = byteCount
+		}
+		return s[:lastGood], true
+	}
+
+	limit := max - ellipsisLen
+	byteCount := 0
+	lastGood := 0
+	for _, r := range s {
+		rLen := utf8.RuneLen(r)
+		if rLen < 0 {
+			rLen = 1
+		}
+		if byteCount+rLen > limit {
+			break
+		}
+		byteCount += rLen
+		lastGood = byteCount
+	}
+
+	return s[:lastGood] + ellipsis, true
 }
 
 // extractTextWithLimit is the internal implementation with an explicit limit.
-func extractTextWithLimit(htmlContent string, maxTextLen int) string {
+// It returns the extracted text and a boolean that is true when the text was
+// truncated to fit within maxTextLen.
+func extractTextWithLimit(htmlContent string, maxTextLen int) (string, bool) {
 	doc, err := html.Parse(strings.NewReader(htmlContent))
 	if err != nil {
 		// Treat as plain text
 		t := strings.TrimSpace(htmlContent)
-		if len(t) > maxTextLen {
-			t = t[:maxTextLen] + "…"
-		}
-		return t
+		return truncateWithEllipsisUTF8(t, maxTextLen)
 	}
 
 	// Prefer <article> or <main> content nodes for cleaner text.
 	if node := findContentNode(doc); node != nil {
 		text := nodeText(node)
 		if len(text) >= 300 {
-			if len(text) > maxTextLen {
-				text = text[:maxTextLen] + "…"
-			}
-			return text
+			return truncateWithEllipsisUTF8(text, maxTextLen)
 		}
 	}
 
 	text := nodeText(doc)
-	if len(text) > maxTextLen {
-		text = text[:maxTextLen] + "…"
-	}
-	return text
+	return truncateWithEllipsisUTF8(text, maxTextLen)
 }
 
 // findContentNode locates the best semantic content node in the document.
