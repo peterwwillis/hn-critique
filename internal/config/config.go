@@ -18,6 +18,19 @@ const (
 	ProviderGitHub ProviderName = "github"
 )
 
+// ModelMode controls how a provider selects a model when multiple models are configured.
+type ModelMode string
+
+const (
+	// ModelModeFallback tries the primary model first and falls back to the
+	// next model in the list only when the current one is rate-limited (HTTP 429).
+	ModelModeFallback ModelMode = "fallback"
+
+	// ModelModeRoundRobin distributes each request to a different model in
+	// sequence, cycling through all configured models regardless of errors.
+	ModelModeRoundRobin ModelMode = "round_robin"
+)
+
 // Config is the top-level configuration loaded from a TOML file.
 type Config struct {
 	// Provider selects which AI backend to use (openai, ollama, github).
@@ -53,12 +66,21 @@ type OpenAIConfig struct {
 	// ChatModel is the model used for chat completions.
 	// Falls back to the OPENAI_CHAT_MODEL environment variable when empty.
 	ChatModel string `toml:"chat_model"`
+	// ChatModels is a list of models to use for chat completions.
+	// When set, this list takes precedence over ChatModel.
+	// The first entry is the primary model; subsequent entries are used for
+	// fallback (ModelModeFallback) or round-robin (ModelModeRoundRobin).
+	ChatModels []string `toml:"chat_models"`
 	// SearchModel is the model used when web search is requested via the Responses API.
 	SearchModel string `toml:"search_model"`
 	// UseResponsesAPI enables the Responses API (with web_search_preview) for
 	// article analysis. Falls back to Chat Completions when false or unavailable.
 	// This feature is specific to api.openai.com and should be false for other backends.
 	UseResponsesAPI bool `toml:"use_responses_api"`
+	// ModelMode controls how models are selected when ChatModels has more than
+	// one entry. "fallback" tries models in order on rate-limit errors (default);
+	// "round_robin" cycles through models for each request.
+	ModelMode ModelMode `toml:"model_mode"`
 }
 
 // OllamaConfig holds settings for a local Ollama instance.
@@ -91,6 +113,10 @@ type GitHubConfig struct {
 	// primary model returns HTTP 429 (rate limited). Each model is looked up
 	// in the Models map for its per-model limits and inference settings.
 	FallbackModels []string `toml:"fallback_models"`
+	// ModelMode controls how models are selected when FallbackModels is set.
+	// "fallback" tries models in order on rate-limit errors (default);
+	// "round_robin" cycles through all configured models for each request.
+	ModelMode ModelMode `toml:"model_mode"`
 }
 
 // InferenceConfig holds per-model inference tuning parameters.

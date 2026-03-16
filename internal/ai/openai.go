@@ -3,10 +3,12 @@ package ai
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+	"sync/atomic"
 
 	"github.com/peterwwillis/hn-critique/internal/config"
 	"github.com/peterwwillis/hn-critique/internal/generator"
@@ -18,46 +20,103 @@ type openAIProvider struct {
 	chatEndpoint      string
 	responsesEndpoint string
 	apiKey            string
-	chatModel         string
-	searchModel       string
-	useResponsesAPI   bool
-	chatSettings      config.ModelConfig
-	searchSettings    config.ModelConfig
-	http              *http.Client
+	// chatModel is the primary (or only) model for chat completions.
+	chatModel string
+	// chatModels is the ordered list of models to use for chat completions.
+	// The first entry is the primary; subsequent entries are used for
+	// fallback or round-robin depending on mode.
+	chatModels     []string
+	searchModel    string
+	useResponsesAPI bool
+	mode            config.ModelMode
+	counter         atomic.Uint64
+	chatSettings    config.ModelConfig
+	searchSettings  config.ModelConfig
+	allChatSettings []config.ModelConfig // parallel to chatModels
+	http            *http.Client
 }
 
 // openAIConfig builds an OpenAIConfig from just an API key, using defaults for
 // other fields. Used by the backward-compat NewAnalyzer function.
 func openAIConfig(apiKey string) config.OpenAIConfig {
+	d := config.Defaults()
 	return config.OpenAIConfig{
 		APIKey:          apiKey,
-		ChatModel:       "gpt-4o-mini",
-		SearchModel:     "gpt-4o-mini",
-		UseResponsesAPI: true,
+		ChatModel:       d.OpenAI.ChatModel,
+		SearchModel:     d.OpenAI.SearchModel,
+		UseResponsesAPI: d.OpenAI.UseResponsesAPI,
 	}
 }
 
-func newOpenAIProvider(cfg config.OpenAIConfig, chatSettings, searchSettings config.ModelConfig) *openAIProvider {
+func newOpenAIProvider(cfg config.OpenAIConfig, chatSettings, searchSettings config.ModelConfig, extraChatModels []string, extraChatSettings []config.ModelConfig) *openAIProvider {
 	base := strings.TrimRight(cfg.BaseURL, "/")
 	if base == "" {
 		base = defaultOpenAIBaseURL
 	}
+
+	// Build the complete ordered list of chat models and their settings.
+	// The primary model always comes first.
+	chatModels := make([]string, 0, 1+len(extraChatModels))
+	chatModels = append(chatModels, cfg.ChatModel)
+	chatModels = append(chatModels, extraChatModels...)
+
+	allChatSettings := make([]config.ModelConfig, 0, 1+len(extraChatSettings))
+	allChatSettings = append(allChatSettings, chatSettings)
+	allChatSettings = append(allChatSettings, extraChatSettings...)
+
 	return &openAIProvider{
 		chatEndpoint:      base + "/v1/chat/completions",
 		responsesEndpoint: base + "/v1/responses",
 		apiKey:            cfg.APIKey,
 		chatModel:         cfg.ChatModel,
+		chatModels:        chatModels,
 		searchModel:       cfg.SearchModel,
 		useResponsesAPI:   cfg.UseResponsesAPI,
+		mode:              cfg.ModelMode,
 		chatSettings:      chatSettings,
 		searchSettings:    searchSettings,
+		allChatSettings:   allChatSettings,
 		http:              newHTTPClient(),
 	}
 }
 
 func (p *openAIProvider) Name() string { return "openai" }
 
+// pickChatModel returns the model and settings to use in round-robin mode.
+func (p *openAIProvider) pickChatModel() (string, config.ModelConfig) {
+	idx := p.counter.Add(1) - 1
+	i := int(idx % uint64(len(p.chatModels)))
+	return p.chatModels[i], p.allChatSettings[i]
+}
+
 func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
+	if p.mode == config.ModelModeRoundRobin {
+		model, settings := p.pickChatModel()
+		return p.analyzeArticleWithModel(model, settings, title, articleURL, content)
+	}
+
+	// Default: fallback mode — try each model in order, moving on for HTTP 429.
+	var lastRateLimitErr error
+	for i, model := range p.chatModels {
+		settings := p.allChatSettings[i]
+		critique, err := p.analyzeArticleWithModel(model, settings, title, articleURL, content)
+		if err == nil {
+			return critique, nil
+		}
+		var rateLimitErr *ErrRateLimit
+		if errors.As(err, &rateLimitErr) {
+			lastRateLimitErr = err
+			continue
+		}
+		return nil, err
+	}
+	if lastRateLimitErr != nil {
+		return nil, fmt.Errorf("openai article analysis: all models rate limited: %w", lastRateLimitErr)
+	}
+	return nil, fmt.Errorf("openai: article critique unavailable after retries")
+}
+
+func (p *openAIProvider) analyzeArticleWithModel(model string, settings config.ModelConfig, title, articleURL, content string) (*generator.ArticleCritique, error) {
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
 		var text string
 		var err error
@@ -67,12 +126,12 @@ func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 			text, err = p.callResponsesAPI(prompt, p.searchSettings.Inference)
 			if err != nil {
 				// Fall back to Chat Completions when the Responses API is unavailable.
-				prompt = articlePrompt(title, articleURL, content, p.chatSettings.Limits.ArticlePromptBytes)
-				text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
+				prompt = articlePrompt(title, articleURL, content, settings.Limits.ArticlePromptBytes)
+				text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), model, prompt, true, settings.Inference)
 			}
 		} else {
-			prompt := articlePrompt(title, articleURL, content, p.chatSettings.Limits.ArticlePromptBytes)
-			text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
+			prompt := articlePrompt(title, articleURL, content, settings.Limits.ArticlePromptBytes)
+			text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), model, prompt, true, settings.Inference)
 		}
 		if err != nil {
 			return nil, fmt.Errorf("openai article analysis: %w", err)
@@ -96,10 +155,38 @@ func (p *openAIProvider) AnalyzeComments(title, articleURL string, comments []*g
 			Comments: []generator.AnalyzedComment{},
 		}, nil
 	}
-	prompt := commentsPrompt(title, articleURL, buildCommentText(comments, p.chatSettings.Limits.CommentPromptBytes))
+
+	if p.mode == config.ModelModeRoundRobin {
+		model, settings := p.pickChatModel()
+		return p.analyzeCommentsWithModel(model, settings, title, articleURL, comments)
+	}
+
+	// Default: fallback mode — try each model in order, moving on for HTTP 429.
+	var lastRateLimitErr error
+	for i, model := range p.chatModels {
+		settings := p.allChatSettings[i]
+		critique, err := p.analyzeCommentsWithModel(model, settings, title, articleURL, comments)
+		if err == nil {
+			return critique, nil
+		}
+		var rateLimitErr *ErrRateLimit
+		if errors.As(err, &rateLimitErr) {
+			lastRateLimitErr = err
+			continue
+		}
+		return nil, err
+	}
+	if lastRateLimitErr != nil {
+		return nil, fmt.Errorf("openai comments analysis: all models rate limited: %w", lastRateLimitErr)
+	}
+	return nil, fmt.Errorf("openai: comments critique unavailable after retries")
+}
+
+func (p *openAIProvider) analyzeCommentsWithModel(model string, settings config.ModelConfig, title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
+	prompt := commentsPrompt(title, articleURL, buildCommentText(comments, settings.Limits.CommentPromptBytes))
 
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
-		text, err := callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
+		text, err := callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), model, prompt, true, settings.Inference)
 		if err != nil {
 			return nil, fmt.Errorf("openai comments analysis: %w", err)
 		}
@@ -124,17 +211,6 @@ func bearerHeader(apiKey string) string {
 		return "Bearer none"
 	}
 	return "Bearer " + apiKey
-}
-
-func (p *openAIProvider) articleCompletion(prompt string) (string, error) {
-	if p.useResponsesAPI {
-		text, err := p.callResponsesAPI(prompt, p.searchSettings.Inference)
-		if err == nil {
-			return text, nil
-		}
-		// Fall back to Chat Completions when the Responses API is unavailable.
-	}
-	return callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), p.chatModel, prompt, true, p.chatSettings.Inference)
 }
 
 // callResponsesAPI calls the OpenAI Responses API with the web_search_preview tool.

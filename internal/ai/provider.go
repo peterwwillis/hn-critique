@@ -31,10 +31,19 @@ func NewProvider(cfg *config.Config) (Provider, error) {
 
 	switch cfg.Provider {
 	case config.ProviderOpenAI:
+		// When ChatModels is set, use its first entry as the primary model.
+		// This lets users specify the full ordered list in one place.
+		if len(cfg.OpenAI.ChatModels) > 0 {
+			cfg.OpenAI.ChatModel = cfg.OpenAI.ChatModels[0]
+		}
+		// Build the ordered list of extra chat models (beyond the primary ChatModel).
+		extraModels, extraSettings := openAIExtraModels(cfg)
 		return newOpenAIProvider(
 			cfg.OpenAI,
 			cfg.ModelConfigFor(cfg.OpenAI.ChatModel),
 			cfg.ModelConfigFor(cfg.OpenAI.SearchModel),
+			extraModels,
+			extraSettings,
 		), nil
 	case config.ProviderOllama:
 		// Ollama exposes an OpenAI-compatible /v1/chat/completions endpoint.
@@ -46,7 +55,7 @@ func NewProvider(cfg *config.Config) (Provider, error) {
 			ChatModel:       cfg.Ollama.Model,
 			SearchModel:     cfg.Ollama.Model,
 			UseResponsesAPI: false,
-		}, modelSettings, modelSettings), nil
+		}, modelSettings, modelSettings, nil, nil), nil
 	case config.ProviderGitHub:
 		settings := cfg.ModelConfigFor(cfg.GitHub.Model)
 		fallbacks := make([]githubFallback, 0, len(cfg.GitHub.FallbackModels))
@@ -60,4 +69,26 @@ func NewProvider(cfg *config.Config) (Provider, error) {
 	default:
 		return nil, fmt.Errorf("unknown provider %q", cfg.Provider)
 	}
+}
+
+// openAIExtraModels builds the extra (non-primary) model list for the OpenAI
+// provider from cfg.OpenAI.ChatModels. When ChatModels is set, it is treated
+// as the complete ordered list of models: the first entry overrides ChatModel
+// as the primary, and subsequent entries are the additional models used for
+// fallback or round-robin selection.
+func openAIExtraModels(cfg *config.Config) ([]string, []config.ModelConfig) {
+	if len(cfg.OpenAI.ChatModels) == 0 {
+		return nil, nil
+	}
+	// When ChatModels is provided, it is the complete list. The first entry is
+	// the primary (already set via cfg.OpenAI.ChatModel or used directly), and
+	// everything after it is extra.
+	extra := cfg.OpenAI.ChatModels[1:]
+	models := make([]string, 0, len(extra))
+	settings := make([]config.ModelConfig, 0, len(extra))
+	for _, name := range extra {
+		models = append(models, name)
+		settings = append(settings, cfg.ModelConfigFor(name))
+	}
+	return models, settings
 }

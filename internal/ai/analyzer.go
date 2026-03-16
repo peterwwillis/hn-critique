@@ -321,8 +321,9 @@ type Analyzer struct {
 // NewAnalyzer creates an Analyzer backed by the OpenAI provider.
 // Deprecated: use NewProvider with a config.Config instead.
 func NewAnalyzer(apiKey string) *Analyzer {
+	cfg := openAIConfig(apiKey)
 	settings := config.DefaultModelConfig()
-	p := newOpenAIProvider(openAIConfig(apiKey), settings, settings)
+	p := newOpenAIProvider(cfg, settings, settings, nil, nil)
 	return &Analyzer{p: p}
 }
 

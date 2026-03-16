@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync/atomic"
 
 	"github.com/peterwwillis/hn-critique/internal/config"
 	"github.com/peterwwillis/hn-critique/internal/generator"
@@ -23,6 +24,8 @@ type githubProvider struct {
 	settings config.ModelConfig
 	// fallbacks are tried in order when the primary model returns HTTP 429.
 	fallbacks []githubFallback
+	mode      config.ModelMode
+	counter   atomic.Uint64
 	http      *http.Client
 }
 
@@ -41,6 +44,7 @@ func newGitHubProvider(cfg config.GitHubConfig, settings config.ModelConfig, fal
 		model:     cfg.Model,
 		settings:  settings,
 		fallbacks: fallbacks,
+		mode:      cfg.ModelMode,
 		http:      newHTTPClient(),
 	}
 }
@@ -53,6 +57,14 @@ func (p *githubProvider) allModels() []githubFallback {
 	models = append(models, githubFallback{model: p.model, settings: p.settings})
 	models = append(models, p.fallbacks...)
 	return models
+}
+
+// pickModel returns the single model to use for the current request in
+// round-robin mode, cycling through all configured models atomically.
+func (p *githubProvider) pickModel() githubFallback {
+	all := p.allModels()
+	idx := p.counter.Add(1) - 1
+	return all[idx%uint64(len(all))]
 }
 
 // tryArticleModel attempts article analysis with a specific model.
@@ -76,6 +88,16 @@ func (p *githubProvider) tryArticleModel(model string, settings config.ModelConf
 }
 
 func (p *githubProvider) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
+	if p.mode == config.ModelModeRoundRobin {
+		m := p.pickModel()
+		critique, err := p.tryArticleModel(m.model, m.settings, title, articleURL, content)
+		if err != nil {
+			return nil, fmt.Errorf("github models article analysis: %w", err)
+		}
+		return critique, nil
+	}
+
+	// Default: fallback mode — try each model in order, moving on for HTTP 429.
 	var lastRateLimitErr error
 	for _, m := range p.allModels() {
 		critique, err := p.tryArticleModel(m.model, m.settings, title, articleURL, content)
@@ -121,6 +143,16 @@ func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*g
 		}, nil
 	}
 
+	if p.mode == config.ModelModeRoundRobin {
+		m := p.pickModel()
+		critique, err := p.tryCommentsModel(m.model, m.settings, title, articleURL, comments)
+		if err != nil {
+			return nil, fmt.Errorf("github models comments analysis: %w", err)
+		}
+		return critique, nil
+	}
+
+	// Default: fallback mode — try each model in order, moving on for HTTP 429.
 	var lastRateLimitErr error
 	for _, m := range p.allModels() {
 		critique, err := p.tryCommentsModel(m.model, m.settings, title, articleURL, comments)
