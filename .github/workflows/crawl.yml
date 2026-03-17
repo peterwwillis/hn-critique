@@ -17,6 +17,10 @@ on:
         description: 'AI provider to use (openai, github). Overrides config file.'
         required: false
         default: ''
+      story_urls:
+        description: 'Optional semicolon-separated HN story URLs (or IDs) to reprocess without rebuilding the homepage index.'
+        required: false
+        default: ''
   # Run the PR smoke-test only after the Test workflow has completed
   # successfully, so the crawl pipeline is not exercised with broken code.
   workflow_run:
@@ -147,19 +151,33 @@ jobs:
           mkdir -p docs/cache
           git archive origin/gh-pages -- cache/ 2>/dev/null | tar -x -C docs/ || true
 
+      - name: Restore published site snapshot for story reruns
+        if: github.event_name == 'workflow_dispatch' && inputs.story_urls != ''
+        run: |
+          git fetch origin gh-pages --depth=1 2>/dev/null || true
+          mkdir -p docs
+          git archive origin/gh-pages 2>/dev/null | tar -x -C docs/ || true
+          if [ -f docs/index.html ]; then
+            cp docs/index.html /tmp/original-index.html
+          fi
+
       - name: Prepare story inputs (no AI)
         timeout-minutes: 30
+        shell: bash
         run: |
-          ARGS=""
+          declare -a ARGS=()
           if [ -n "${{ inputs.provider }}" ]; then
-            ARGS="-provider ${{ inputs.provider }}"
+            ARGS+=("-provider" "${{ inputs.provider }}")
+          fi
+          if [ -n "${{ inputs.story_urls }}" ]; then
+            ARGS+=("-story-urls" "${{ inputs.story_urls }}")
           fi
           # PR smoke-test: fetch only one story to keep the run fast.
           # Production runs use the default story count (30).
-          if [ "${{ github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' }}" = "true" ]; then
-            ARGS="$ARGS -stories 1"
+          if [ "${{ github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' }}" = "true" ] && [ -z "${{ inputs.story_urls }}" ]; then
+            ARGS+=("-stories" "1")
           fi
-          ./bin/crawler $ARGS -prepare-input -out ./docs
+          ./bin/crawler "${ARGS[@]}" -prepare-input -out ./docs
 
       - name: Read Playwright image tag
         run: echo "PLAYWRIGHT_VERSION=$(tr -d '\r\n' < docker/playwright/version.txt)" >> "$GITHUB_ENV"
@@ -200,6 +218,9 @@ jobs:
             STRICT="-strict"
           fi
           ./bin/crawler -provider "$PROVIDER" $STRICT -analyze-input -out ./docs
+          if [ -f /tmp/original-index.html ]; then
+            cp /tmp/original-index.html docs/index.html
+          fi
 
       # ── PR-only steps: screenshot & artifact upload ───────────────────────
       # These steps are skipped on scheduled/manual runs.  On PRs they capture

@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -44,6 +45,7 @@ func main() {
 		providerFlag = flag.String("provider", "", "AI provider to use: openai, ollama, github (overrides config file)")
 		strict       = flag.Bool("strict", false, "exit non-zero if any AI analysis warning or error occurs")
 		siteURL      = flag.String("site-url", "https://peterwwillis.github.io/hn-critique", "base URL of the published site, used in the end-of-run incomplete-results summary")
+		storyURLs    = flag.String("story-urls", "", "semicolon-separated Hacker News story URLs (or IDs) to process instead of fetching top stories")
 	)
 	flag.Parse()
 
@@ -121,10 +123,21 @@ func main() {
 		}
 		stories = loaded
 	} else {
-		log.Printf("Fetching top %d stories…", *storyCount)
-		storyIDs, err := hnClient.GetTopStories(*storyCount)
-		if err != nil {
-			log.Fatalf("Failed to fetch top stories: %v", err)
+		var storyIDs []int
+		if strings.TrimSpace(*storyURLs) != "" {
+			parsed, err := parseStoryIDs(*storyURLs)
+			if err != nil {
+				log.Fatalf("Failed to parse -story-urls: %v", err)
+			}
+			storyIDs = parsed
+			log.Printf("Fetching %d specified stories from -story-urls…", len(storyIDs))
+		} else {
+			log.Printf("Fetching top %d stories…", *storyCount)
+			ids, err := hnClient.GetTopStories(*storyCount)
+			if err != nil {
+				log.Fatalf("Failed to fetch top stories: %v", err)
+			}
+			storyIDs = ids
 		}
 
 		commentDepth := limits.CommentDepth
@@ -168,7 +181,7 @@ func main() {
 
 			// Fetch comments.
 			if len(item.Kids) > 0 {
-				log.Printf("  Fetching comments…")
+				log.Printf("  Fetching comments for story %d…", story.ID)
 				comments, commentsCapped := fetchComments(hnClient, item.Kids, commentDepth, topComments, childComments)
 				story.Comments = comments
 				if commentsCapped {
@@ -179,10 +192,10 @@ func main() {
 
 			// Fetch article content (only for stories with external URLs).
 			if item.URL != "" {
-				log.Printf("  Fetching article: %s", item.URL)
+				log.Printf("  Fetching article for story %d: %s", story.ID, item.URL)
 				text, truncated, err := articleFetcher.FetchWithTruncation(item.URL)
 				if err != nil {
-					log.Printf("  ⚠  article fetch failed: %v", err)
+					log.Printf("  ⚠  story %d article fetch failed: %v", story.ID, err)
 					story.ArticleUnavailableReason = articleRetrievalFailureReason
 				} else if strings.TrimSpace(text) == "" {
 					story.ArticleUnavailableReason = articleInsufficientContentReason
@@ -191,15 +204,15 @@ func main() {
 					if truncated {
 						story.ArticleTruncated = true
 						runeCount := utf8.RuneCountInString(text)
-						log.Printf("  ⚠  article content truncated: fetched %d chars (text limit: %d chars, body limit: %d bytes); critique may be incomplete",
-							runeCount, limits.ArticleTextChars, limits.ArticleBodyBytes)
+						log.Printf("  ⚠  story %d article content truncated: fetched %d chars (text limit: %d chars, body limit: %d bytes); critique may be incomplete",
+							story.ID, runeCount, limits.ArticleTextChars, limits.ArticleBodyBytes)
 					}
 					// Check whether the text will be further truncated when
 					// inserted into the AI prompt.
 					if limits.ArticlePromptBytes > 0 && len(text) > limits.ArticlePromptBytes {
 						story.ArticleTruncated = true
-						log.Printf("  ⚠  article prompt truncated: text is %d bytes, limit is %d; critique may be incomplete",
-							len(text), limits.ArticlePromptBytes)
+						log.Printf("  ⚠  story %d article prompt truncated: text is %d bytes, limit is %d; critique may be incomplete",
+							story.ID, len(text), limits.ArticlePromptBytes)
 					}
 				}
 			}
@@ -221,6 +234,7 @@ func main() {
 
 	for _, story := range stories {
 		if aiProvider != nil {
+			log.Printf("Processing AI analysis for story %d…", story.ID)
 			// Load any previously cached analysis as a fallback.
 			cached, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
 			if cacheErr != nil {
@@ -231,10 +245,10 @@ func main() {
 			if story.ArticleUnavailableReason != "" {
 				story.Critique = unavailableCritiqueForReason(story.ArticleUnavailableReason)
 			} else if story.ArticleText != "" || story.URL != "" {
-				log.Printf("  Analyzing article…")
+				log.Printf("  Analyzing article for story %d…", story.ID)
 				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
 				if err != nil {
-					log.Printf("  ⚠  article analysis failed: %v", err)
+					log.Printf("  ⚠  story %d article analysis failed: %v", story.ID, err)
 					analysisWarnings++
 					analysisReason := "the AI assessment could not be completed because the AI provider returned an error. The analysis may be retried on the next run"
 					story.Critique = unavailableCritiqueForReason(analysisReason)
@@ -249,14 +263,15 @@ func main() {
 				if limits.CommentPromptBytes > 0 {
 					if total := totalCommentBytes(story.Comments); total > limits.CommentPromptBytes {
 						story.CommentsTruncated = true
-						log.Printf("  ⚠  comment prompt truncated: total comment text ~%d bytes exceeds limit of %d; comments critique may be incomplete",
+						log.Printf("  ⚠  story %d comment prompt truncated: total comment text ~%d bytes exceeds limit of %d; comments critique may be incomplete",
+							story.ID,
 							total, limits.CommentPromptBytes)
 					}
 				}
-				log.Printf("  Analyzing comments…")
+				log.Printf("  Analyzing comments for story %d…", story.ID)
 				cc, err := aiProvider.AnalyzeComments(story.Title, story.URL, story.Comments)
 				if err != nil {
-					log.Printf("  ⚠  comments analysis failed: %v", err)
+					log.Printf("  ⚠  story %d comments analysis failed: %v", story.ID, err)
 					analysisWarnings++
 					if cached != nil && cached.CommentsCritique != nil {
 						log.Printf("  Using cached comments analysis.")
@@ -383,6 +398,50 @@ func extractDomain(rawURL string) string {
 	host := u.Hostname()
 	host = strings.TrimPrefix(host, "www.")
 	return host
+}
+
+func parseStoryIDs(raw string) ([]int, error) {
+	parts := strings.Split(raw, ";")
+	ids := make([]int, 0, len(parts))
+	for _, part := range parts {
+		token := strings.TrimSpace(part)
+		if token == "" {
+			continue
+		}
+		id, err := parseStoryID(token)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	if len(ids) == 0 {
+		return nil, fmt.Errorf("no valid story IDs provided")
+	}
+	return ids, nil
+}
+
+func parseStoryID(token string) (int, error) {
+	if id, err := strconv.Atoi(token); err == nil && id > 0 {
+		return id, nil
+	}
+	u, err := url.Parse(token)
+	if err != nil {
+		return 0, fmt.Errorf("invalid story URL %q: %w", token, err)
+	}
+	host := u.Hostname()
+	path := u.EscapedPath()
+	if !strings.EqualFold(host, "news.ycombinator.com") || !strings.HasPrefix(path, "/item") {
+		return 0, fmt.Errorf("story URL %q is not a Hacker News item link (expected https://news.ycombinator.com/item?id=...)", token)
+	}
+	idText := u.Query().Get("id")
+	if idText == "" {
+		return 0, fmt.Errorf("story URL %q is missing ?id=", token)
+	}
+	id, err := strconv.Atoi(idText)
+	if err != nil || id <= 0 {
+		return 0, fmt.Errorf("invalid story id in URL %q", token)
+	}
+	return id, nil
 }
 
 func unavailableCritique(summary, truthfulness string) *generator.ArticleCritique {
