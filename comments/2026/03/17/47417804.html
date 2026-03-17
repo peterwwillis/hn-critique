@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">26 points</span>
+        <span class="score">102 points</span>
         by <a href="https://news.ycombinator.com/user?id=stefankuehnel" class="hnuser">stefankuehnel</a>
-        <span class="age">58 minutes ago</span>
+        <span class="age">2 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47417804.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47417804" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around user experiences with the Get Shit Done (GSD) tool and comparisons with other frameworks. Users share their opinions on the effectiveness and efficiency of GSD in coding workflows.</p>
+      <p>The discussion revolves around the effectiveness and efficiency of the GSD framework compared to alternatives like Superpowers and vanilla Claude Code. Users highlight trade-offs such as token usage, review challenges, and practical productivity gains, with some skepticism about real-world production readiness and security concerns.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,79 +56,156 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=gbrindisi" class="hnuser">gbrindisi</a>
+        <a href="https://news.ycombinator.com/user?id=yoaviram" class="hnuser">yoaviram</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I like openspec, it lets you tune the workflow to your liking and doesn’t get in the way.<p>I started with all the standard spec flow and as I got more confident and opinionated I simplified it to my liking.<p>I think the point of any spec driven framework is that you want to eventually own the workflow yourself, so that you can constraint code generation on your own terms.</div>
-      <div class="comment-analysis"><em>This comment provides a constructive perspective on the flexibility of openspec, indicating a positive user experience and understanding of workflow customization.</em></div>
+      <div class="comment-text">I&#x27;ve been using GSD extensively over the past 3 months. I previously used speckit, which I found lacking. GSD consistently gets me 95% of the way there on complex tasks. That&#x27;s amazing. The last 5% is mostly &quot;manual&quot; testing. We&#x27;ve used GSD to build and launch a SaaS product including an agent-first CMS (whiteboar.it).<p>It&#x27;s hard to say why GSD worked so much better for us than other similar frameworks, because the underlying models also improved considerably during the same period. What is clear is that it&#x27;s a huge productivity boost over vanilla Claude Code.</div>
+      <div class="comment-analysis"><em>This comment provides a balanced and detailed user experience with GSD, noting both its strengths and limitations, making it a credible and useful perspective.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=maccam912" class="hnuser">maccam912</a>
+        <a href="https://news.ycombinator.com/user?id=Andrei_dev" class="hnuser">Andrei_dev</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I&#x27;ve had a good experience with <a href="https:&#x2F;&#x2F;github.com&#x2F;obra&#x2F;superpowers" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;obra&#x2F;superpowers</a>. At first glance this looks similar. Has anyone tried both who can offer a comparison?</div>
-      <div class="comment-analysis"><em>The request for comparison demonstrates a desire for informed discussion, although it lacks personal insight or experience.</em></div>
+      <div class="comment-text">250K lines in a month — okay, but what does review actually look like at that volume?<p>I&#x27;ve been poking at security issues in AI-generated repos and it&#x27;s the same thing: more generation means less review. Not just logic — checking what&#x27;s in your .env, whether API routes have auth middleware, whether debug endpoints made it to prod.<p>You can move that fast. But &quot;review&quot; means something different now. Humans make human mistakes. AI writes clean-looking code that ships with hardcoded credentials because some template had them and nobody caught it.<p>All these frameworks are racing to generate faster. Nobody&#x27;s solving the verification side at that speed.</div>
+      <div class="comment-analysis"><em>Raises valid concerns about the risks of rapid AI-generated code production, emphasizing the need for thorough review and verification.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=MeetingsBrowser" class="hnuser">MeetingsBrowser</a>
+        <a href="https://news.ycombinator.com/user?id=ibrahim_h" class="hnuser">ibrahim_h</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-untrue</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I&#x27;ve tried it, and I&#x27;m not convinced I got measurably better results than just prompting claude code directly.<p>It absolutely tore through tokens though. I don&#x27;t normally hit my session limits, but hit the 5-hour limits in ~30 minutes and my weekly limits by Tuesday with GSD.</div>
-      <div class="comment-analysis"><em>While the comment reflects skepticism about GSD&#39;s effectiveness, it could be seen as subjective and lacking broader context or evidence.</em></div>
+      <div class="comment-text">The README recommends --dangerously-skip-permissions as the intended workflow. Looking at gsd-executor.md you can see why — subagents run node gsd-tools.cjs, git checkout -b, eslint, test runners, all generated dynamically by the planner. Approving each one kills autonomous mode.<p>There is a gsd-plan-checker that runs before execution, but it only verifies logical completeness — requirement coverage, dependency graphs, context budget. It never looks at what commands will actually run. So if the planner generates something destructive, the plan-checker won&#x27;t catch it because that&#x27;s not what it checks for. The gsd-verifier runs after execution, checking whether the goal was achieved, not whether anything bad happened along the way. In &#x2F;gsd:autonomous this chains across all remaining phases unattended.<p>The granular permissions fallback in the README only covers safe reads and git ops — but the executor needs way more than that to actually function. Feels like there should be a permission profile scoped to what GSD actually needs without going full skip.</div>
+      <div class="comment-analysis"><em>Provides a technical critique of GSD&#39;s permission and verification system, highlighting potential security risks in autonomous execution.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=gtirloni" class="hnuser">gtirloni</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I was using this and superpowers but eventually, Plan mode became enough and I prefer to steer Claude Code myself. These frameworks are great for fire-and-forget tasks, especially when there is some research involved but they burn 10x more tokens, in my experience. I was always hitting the Max plan limits for no discernable benefit in the outcomes I was getting. But this will vary a lot depending on how people prefer to work.</div>
+      <div class="comment-analysis"><em>Offers a practical viewpoint on token consumption and user preference, which aligns with other comments about efficiency concerns.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=dfltr" class="hnuser">dfltr</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">GSD has a reputation for being a token burner compared to something like Superpowers. Has that changed lately? Always open to revisiting things as they improve.</div>
-      <div class="comment-analysis"><em>This comment provides a critical view of GSD&#39;s efficiency, referencing its reputation, but lacks personal experience or recent updates.</em></div>
+      <div class="comment-analysis"><em>Acknowledges known issues with GSD&#39;s token usage and expresses willingness to reassess, reflecting a balanced stance.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dhorthy" class="hnuser">dhorthy</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">it is very hard for me to take seriously any system that is not proven for shipping production code in complex codebases that have been around for a while.<p>I&#x27;ve been down the &quot;don&#x27;t read the code&quot; path and I can say it leads nowhere good.<p>I am perhaps talking my own book here, but I&#x27;d like to see more tools that brag about &quot;shipped N real features to production&quot; or &quot;solved Y problem in large-10-year-old-codebase&quot;<p>I&#x27;m not saying that coding agents can&#x27;t do these things and such tools don&#x27;t exist, I&#x27;m just afraid that counting 100k+ LOC that the author didn&#x27;t read kind of fuels the &quot;this is all hype-slop&quot; argument rather than helping people discover the ways that coding agents can solve real and valuable problems.</div>
+      <div class="comment-analysis"><em>Highlights the importance of real-world production validation, a critical perspective often missing in AI tool discussions.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=gbrindisi" class="hnuser">gbrindisi</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I like openspec, it lets you tune the workflow to your liking and doesn’t get in the way.<p>I started with all the standard spec flow and as I got more confident and opinionated I simplified it to my liking.<p>I think the point of any spec driven framework is that you want to eventually own the workflow yourself, so that you can constraint code generation on your own terms.</div>
+      <div class="comment-analysis"><em>Provides insight into the value of customizable spec-driven frameworks, supporting user control over code generation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=MeetingsBrowser" class="hnuser">MeetingsBrowser</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I&#x27;ve tried it, and I&#x27;m not convinced I got measurably better results than just prompting claude code directly.<p>It absolutely tore through tokens though. I don&#x27;t normally hit my session limits, but hit the 5-hour limits in ~30 minutes and my weekly limits by Tuesday with GSD.</div>
+      <div class="comment-analysis"><em>Shares a user experience that questions GSD&#39;s efficiency and effectiveness, consistent with other token consumption concerns.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=arjie" class="hnuser">arjie</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I could not produce useful output from this. It was useful as a rubber duck because it asks good motivating questions during the plan phase, but the actual implementation was lacklustre and not worth the effort. In the end, I just have Claude Opus create plans, and then I have it write them to memory and update it as it goes along and the output is better.</div>
+      <div class="comment-analysis"><em>Offers a nuanced critique focusing on the planning phase&#39;s value but dissatisfaction with implementation quality.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=prakashrj" class="hnuser">prakashrj</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
         <span class="indicator">likely-true</span> <span class="indicator">emotional</span> 
       </div>
       <div class="comment-text">With GSD, I was able to write 250K lines of code in less than a month, without prior knowledge of claude.</div>
-      <div class="comment-analysis"><em>While the claim is impressive, it lacks supporting details and could be seen as exaggerated without further context.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=greenchair" class="hnuser">greenchair</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">trolling</span> <span class="indicator">useless</span> 
-      </div>
-      <div class="comment-text">terrible name, DOA</div>
-      <div class="comment-analysis"><em>This comment is dismissive and does not contribute constructively to the discussion, focusing solely on a negative opinion.</em></div>
+      <div class="comment-analysis"><em>Claims high productivity but lacks detail on code quality or review, making it less informative than other comments.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=obsidianbases1" class="hnuser">obsidianbases1</a>
-        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;rank #11
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">&gt; If you know clearly what you want<p>This is the real challenge. The people I know that jump around to new tools have a tough time explaining what they want, and thus how new tool is better than last tool.</div>
-      <div class="comment-analysis"><em>This comment highlights a common issue in tool adoption but lacks specific examples or actionable insights.</em></div>
+      <div class="comment-analysis"><em>Highlights a fundamental challenge in tool adoption related to user clarity, a relevant but more general observation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=maccam912" class="hnuser">maccam912</a>
+        &nbsp;|&nbsp;rank #12
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">I&#x27;ve had a good experience with <a href="https:&#x2F;&#x2F;github.com&#x2F;obra&#x2F;superpowers" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;obra&#x2F;superpowers</a>. At first glance this looks similar. Has anyone tried both who can offer a comparison?</div>
+      <div class="comment-analysis"><em>Seeks comparative feedback but does not provide substantive information itself.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=thr0waway001" class="hnuser">thr0waway001</a>
+        &nbsp;|&nbsp;rank #13
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">At the risk of sounding stupid what does the author mean by: “I’m not a 50-person software company. I don’t want to play enterprise theatre.” ?</div>
+      <div class="comment-analysis"><em>Asks for clarification without contributing analysis or insight.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=greenchair" class="hnuser">greenchair</a>
+        &nbsp;|&nbsp;rank #14
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">trolling</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">terrible name, DOA</div>
+      <div class="comment-analysis"><em>Dismissive comment lacking constructive content or explanation.</em></div>
     </div>
     
 
@@ -140,7 +217,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-17 21:22 UTC &nbsp;|&nbsp;
+    Generated 2026-03-17 22:43 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

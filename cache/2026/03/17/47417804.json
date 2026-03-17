@@ -2,50 +2,114 @@
   "story_id": 47417804,
   "generated_at": "",
   "critique": {
-    "summary": "The article describes 'Get Shit Done' (GSD), a lightweight meta-prompting, context engineering, and spec-driven development system designed to improve the reliability and quality of AI-generated code using Claude Code and other AI runtimes. It outlines the system's workflow, features, commands, and benefits for solo developers seeking an efficient, low-overhead development process without enterprise complexity.",
+    "summary": "The article describes 'Get Shit Done' (GSD), a meta-prompting, context engineering, and spec-driven development system designed to improve the reliability and quality of AI-generated code using Claude Code and other AI runtimes. It outlines the system's workflow, features, commands, and technical design aimed at solo developers and small teams to efficiently build software without complex enterprise processes.",
     "mainPoints": [
-      "GSD addresses context rot in AI code generation by managing context windows effectively.",
-      "It provides a structured workflow including project initialization, phase discussion, planning, execution, verification, and milestone management.",
-      "The system uses multi-agent orchestration, atomic git commits per task, and XML prompt formatting for precise instructions and verification.",
-      "GSD supports multiple AI runtimes such as Claude Code, OpenCode, Gemini CLI, Codex, Copilot, and Antigravity.",
-      "It is designed for solo developers or small teams who want to avoid complex enterprise processes while maintaining high code quality.",
-      "The system includes commands for managing phases, sessions, UI design, and troubleshooting, with options for granular permissions and security measures.",
-      "GSD is open source, MIT licensed, and has a large user base with thousands of stars and forks on GitHub."
+      "GSD addresses context degradation in AI code generation by managing context windows and orchestrating multi-agent workflows.",
+      "It supports multiple AI runtimes including Claude Code, OpenCode, Gemini CLI, Codex, Copilot, and Antigravity.",
+      "The system uses a phased approach: initializing projects, discussing phases, planning, executing, verifying, and repeating until milestones are complete.",
+      "GSD emphasizes atomic git commits per task for traceability and debugging.",
+      "It provides commands for project management, UI design, codebase analysis, and session control.",
+      "The system is designed for solo developers or small teams who want to avoid complex enterprise software development methodologies.",
+      "Security features include denying AI read access to sensitive files to prevent accidental exposure of secrets."
     ],
-    "truthfulness": "The claims about GSD's features, workflow, and supported runtimes are consistent with the publicly available GitHub repository and documentation. The description of the system's design principles and commands matches the repository's README and usage instructions. The user testimonials and adoption claims by engineers at major companies are stated but not independently verified within the article. Overall, the technical details and functionality described are accurate based on the source repository, but some promotional claims lack external corroboration.",
+    "truthfulness": "The claims about GSD's functionality and design are consistent with the publicly available information on its GitHub repository, which is a real and active open-source project with thousands of stars and forks. The description of its features, workflow, and supported AI runtimes aligns with the documented README and usage instructions. There is no indication of false or exaggerated claims. However, the article is promotional and does not provide independent third-party evaluations or comparisons with other tools, which limits the assessment of its effectiveness beyond the author's statements and user testimonials.",
     "considerations": [
-      "The article does not provide independent third-party reviews or comparisons with other similar tools.",
-      "User testimonials and claims of adoption by engineers at major companies are unverified and anecdotal.",
-      "Potential limitations, challenges, or drawbacks of using GSD are not discussed.",
-      "Security recommendations are mentioned but the effectiveness of built-in protections is not independently evaluated.",
-      "The article assumes familiarity with AI code generation tools and may not address the learning curve for new users."
+      "The article does not provide independent reviews or benchmarks comparing GSD to other spec-driven development tools.",
+      "It lacks detailed discussion of potential limitations or challenges in using GSD, such as learning curve or integration complexity.",
+      "The security advice is general and users should still apply best practices beyond the tool's built-in protections.",
+      "The system relies heavily on Claude Code and similar AI models, so its performance depends on the capabilities and availability of these AI runtimes.",
+      "The promotional tone and user testimonials are not independently verified."
     ],
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around user experiences with the Get Shit Done (GSD) tool and comparisons with other frameworks. Users share their opinions on the effectiveness and efficiency of GSD in coding workflows.",
+    "summary": "The discussion revolves around the effectiveness and efficiency of the GSD framework compared to alternatives like Superpowers and vanilla Claude Code. Users highlight trade-offs such as token usage, review challenges, and practical productivity gains, with some skepticism about real-world production readiness and security concerns.",
     "comments": [
+      {
+        "id": 47418427,
+        "author": "yoaviram",
+        "text": "I\u0026#x27;ve been using GSD extensively over the past 3 months. I previously used speckit, which I found lacking. GSD consistently gets me 95% of the way there on complex tasks. That\u0026#x27;s amazing. The last 5% is mostly \u0026quot;manual\u0026quot; testing. We\u0026#x27;ve used GSD to build and launch a SaaS product including an agent-first CMS (whiteboar.it).\u003cp\u003eIt\u0026#x27;s hard to say why GSD worked so much better for us than other similar frameworks, because the underlying models also improved considerably during the same period. What is clear is that it\u0026#x27;s a huge productivity boost over vanilla Claude Code.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a balanced and detailed user experience with GSD, noting both its strengths and limitations, making it a credible and useful perspective."
+      },
+      {
+        "id": 47418650,
+        "author": "Andrei_dev",
+        "text": "250K lines in a month — okay, but what does review actually look like at that volume?\u003cp\u003eI\u0026#x27;ve been poking at security issues in AI-generated repos and it\u0026#x27;s the same thing: more generation means less review. Not just logic — checking what\u0026#x27;s in your .env, whether API routes have auth middleware, whether debug endpoints made it to prod.\u003cp\u003eYou can move that fast. But \u0026quot;review\u0026quot; means something different now. Humans make human mistakes. AI writes clean-looking code that ships with hardcoded credentials because some template had them and nobody caught it.\u003cp\u003eAll these frameworks are racing to generate faster. Nobody\u0026#x27;s solving the verification side at that speed.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "Raises valid concerns about the risks of rapid AI-generated code production, emphasizing the need for thorough review and verification."
+      },
+      {
+        "id": 47419048,
+        "author": "ibrahim_h",
+        "text": "The README recommends --dangerously-skip-permissions as the intended workflow. Looking at gsd-executor.md you can see why — subagents run node gsd-tools.cjs, git checkout -b, eslint, test runners, all generated dynamically by the planner. Approving each one kills autonomous mode.\u003cp\u003eThere is a gsd-plan-checker that runs before execution, but it only verifies logical completeness — requirement coverage, dependency graphs, context budget. It never looks at what commands will actually run. So if the planner generates something destructive, the plan-checker won\u0026#x27;t catch it because that\u0026#x27;s not what it checks for. The gsd-verifier runs after execution, checking whether the goal was achieved, not whether anything bad happened along the way. In \u0026#x2F;gsd:autonomous this chains across all remaining phases unattended.\u003cp\u003eThe granular permissions fallback in the README only covers safe reads and git ops — but the executor needs way more than that to actually function. Feels like there should be a permission profile scoped to what GSD actually needs without going full skip.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Provides a technical critique of GSD's permission and verification system, highlighting potential security risks in autonomous execution."
+      },
+      {
+        "id": 47418626,
+        "author": "gtirloni",
+        "text": "I was using this and superpowers but eventually, Plan mode became enough and I prefer to steer Claude Code myself. These frameworks are great for fire-and-forget tasks, especially when there is some research involved but they burn 10x more tokens, in my experience. I was always hitting the Max plan limits for no discernable benefit in the outcomes I was getting. But this will vary a lot depending on how people prefer to work.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Offers a practical viewpoint on token consumption and user preference, which aligns with other comments about efficiency concerns."
+      },
+      {
+        "id": 47418148,
+        "author": "dfltr",
+        "text": "GSD has a reputation for being a token burner compared to something like Superpowers. Has that changed lately? Always open to revisiting things as they improve.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Acknowledges known issues with GSD's token usage and expresses willingness to reassess, reflecting a balanced stance."
+      },
+      {
+        "id": 47418759,
+        "author": "dhorthy",
+        "text": "it is very hard for me to take seriously any system that is not proven for shipping production code in complex codebases that have been around for a while.\u003cp\u003eI\u0026#x27;ve been down the \u0026quot;don\u0026#x27;t read the code\u0026quot; path and I can say it leads nowhere good.\u003cp\u003eI am perhaps talking my own book here, but I\u0026#x27;d like to see more tools that brag about \u0026quot;shipped N real features to production\u0026quot; or \u0026quot;solved Y problem in large-10-year-old-codebase\u0026quot;\u003cp\u003eI\u0026#x27;m not saying that coding agents can\u0026#x27;t do these things and such tools don\u0026#x27;t exist, I\u0026#x27;m just afraid that counting 100k+ LOC that the author didn\u0026#x27;t read kind of fuels the \u0026quot;this is all hype-slop\u0026quot; argument rather than helping people discover the ways that coding agents can solve real and valuable problems.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Highlights the importance of real-world production validation, a critical perspective often missing in AI tool discussions."
+      },
       {
         "id": 47418296,
         "author": "gbrindisi",
         "text": "I like openspec, it lets you tune the workflow to your liking and doesn’t get in the way.\u003cp\u003eI started with all the standard spec flow and as I got more confident and opinionated I simplified it to my liking.\u003cp\u003eI think the point of any spec driven framework is that you want to eventually own the workflow yourself, so that you can constraint code generation on your own terms.",
         "indicators": [
           "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a constructive perspective on the flexibility of openspec, indicating a positive user experience and understanding of workflow customization."
-      },
-      {
-        "id": 47418177,
-        "author": "maccam912",
-        "text": "I\u0026#x27;ve had a good experience with \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;obra\u0026#x2F;superpowers\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;obra\u0026#x2F;superpowers\u003c/a\u003e. At first glance this looks similar. Has anyone tried both who can offer a comparison?",
-        "indicators": [
-          "thoughtful",
+          "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "The request for comparison demonstrates a desire for informed discussion, although it lacks personal insight or experience."
+        "accuracyRank": 7,
+        "analysis": "Provides insight into the value of customizable spec-driven frameworks, supporting user control over code generation."
       },
       {
         "id": 47418128,
@@ -53,21 +117,23 @@
         "text": "I\u0026#x27;ve tried it, and I\u0026#x27;m not convinced I got measurably better results than just prompting claude code directly.\u003cp\u003eIt absolutely tore through tokens though. I don\u0026#x27;t normally hit my session limits, but hit the 5-hour limits in ~30 minutes and my weekly limits by Tuesday with GSD.",
         "indicators": [
           "thoughtful",
-          "likely-untrue"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "While the comment reflects skepticism about GSD's effectiveness, it could be seen as subjective and lacking broader context or evidence."
+        "accuracyRank": 8,
+        "analysis": "Shares a user experience that questions GSD's efficiency and effectiveness, consistent with other token consumption concerns."
       },
       {
-        "id": 47418148,
-        "author": "dfltr",
-        "text": "GSD has a reputation for being a token burner compared to something like Superpowers. Has that changed lately? Always open to revisiting things as they improve.",
+        "id": 47418851,
+        "author": "arjie",
+        "text": "I could not produce useful output from this. It was useful as a rubber duck because it asks good motivating questions during the plan phase, but the actual implementation was lacklustre and not worth the effort. In the end, I just have Claude Opus create plans, and then I have it write them to memory and update it as it goes along and the output is better.",
         "indicators": [
+          "thoughtful",
           "likely-true",
-          "thoughtful"
+          "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment provides a critical view of GSD's efficiency, referencing its reputation, but lacks personal experience or recent updates."
+        "accuracyRank": 9,
+        "analysis": "Offers a nuanced critique focusing on the planning phase's value but dissatisfaction with implementation quality."
       },
       {
         "id": 47418071,
@@ -77,19 +143,8 @@
           "likely-true",
           "emotional"
         ],
-        "accuracyRank": 5,
-        "analysis": "While the claim is impressive, it lacks supporting details and could be seen as exaggerated without further context."
-      },
-      {
-        "id": 47418141,
-        "author": "greenchair",
-        "text": "terrible name, DOA",
-        "indicators": [
-          "trolling",
-          "useless"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment is dismissive and does not contribute constructively to the discussion, focusing solely on a negative opinion."
+        "accuracyRank": 10,
+        "analysis": "Claims high productivity but lacks detail on code quality or review, making it less informative than other comments."
       },
       {
         "id": 47418147,
@@ -99,8 +154,41 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment highlights a common issue in tool adoption but lacks specific examples or actionable insights."
+        "accuracyRank": 11,
+        "analysis": "Highlights a fundamental challenge in tool adoption related to user clarity, a relevant but more general observation."
+      },
+      {
+        "id": 47418177,
+        "author": "maccam912",
+        "text": "I\u0026#x27;ve had a good experience with \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;obra\u0026#x2F;superpowers\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;obra\u0026#x2F;superpowers\u003c/a\u003e. At first glance this looks similar. Has anyone tried both who can offer a comparison?",
+        "indicators": [
+          "constructive",
+          "useless"
+        ],
+        "accuracyRank": 12,
+        "analysis": "Seeks comparative feedback but does not provide substantive information itself."
+      },
+      {
+        "id": 47418860,
+        "author": "thr0waway001",
+        "text": "At the risk of sounding stupid what does the author mean by: “I’m not a 50-person software company. I don’t want to play enterprise theatre.” ?",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 13,
+        "analysis": "Asks for clarification without contributing analysis or insight."
+      },
+      {
+        "id": 47418141,
+        "author": "greenchair",
+        "text": "terrible name, DOA",
+        "indicators": [
+          "emotional",
+          "trolling",
+          "useless"
+        ],
+        "accuracyRank": 14,
+        "analysis": "Dismissive comment lacking constructive content or explanation."
       }
     ]
   }

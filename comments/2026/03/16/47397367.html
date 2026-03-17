@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">59 points</span>
+        <span class="score">73 points</span>
         by <a href="https://news.ycombinator.com/user?id=peterlavigne" class="hnuser">peterlavigne</a>
         <span class="age">1 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/16/47397367.html">critique article</a>
@@ -47,12 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the challenges and limitations of automated verification and testing of AI-generated code, especially beyond trivial examples like FizzBuzz. Commenters emphasize the importance of human review, the complexity of software systems, and the need for advanced testing methods such as property-based and mutation testing.</p>
+      <p>The discussion centers on the challenges and limitations of automated verification of AI-generated code, especially beyond trivial examples like FizzBuzz. Commenters emphasize the importance of human oversight, the difficulty of testing complex software systems, and the need for improved testing methodologies such as property-based testing and mutation testing.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 19 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47397367" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 26 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47397367" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -61,10 +61,10 @@
         <a href="https://news.ycombinator.com/user?id=jryio" class="hnuser">jryio</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">This is a naïve approach, not just because it uses FizzBuzz, but because it ignores the fundamental complexity of software as a system of abstractions. Testing often involves understanding these abstractions and testing for&#x2F;against them.<p>For those of us with decades of experience and who use coding agents for hours per-day, we learned that even with extended context engineering these models are not magically covering the testing space more than 50%.<p>If you asked your coding agent to develop a memory allocator, it would not also &#x27;automatically verify&#x27; the memory allocator against all failure modes. It is your responsibility as an engineer to have long-term learning and regular contact with the world to inform the testing approach.</div>
-      <div class="comment-analysis"><em>Provides a nuanced critique highlighting the complexity of software testing and the limitations of AI models, emphasizing the ongoing responsibility of engineers.</em></div>
+      <div class="comment-analysis"><em>Provides a nuanced critique emphasizing the complexity of software testing and the limitations of AI in covering testing space, making it a highly accurate and insightful comment.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -72,98 +72,98 @@
         <a href="https://news.ycombinator.com/user?id=wei03288" class="hnuser">wei03288</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The core insight here is right: AI-generated code needs different review approaches than human-written code. Humans make predictable mistakes (typos, off-by-one, forgetting edge cases). AI makes unpredictable mistakes that look plausible on the surface.<p>The trickiest part in my experience isn&#x27;t catching obviously wrong code - it&#x27;s catching code that works for all the common cases but fails on edge cases the AI never considered. Traditional code review catches these through reviewer experience, but automated verification needs to somehow enumerate edge cases it hasn&#x27;t seen.<p>Property-based testing (Hypothesis for Python, fast-check for JS) is probably the closest existing tool for this. Instead of writing specific test cases, you describe properties the code should satisfy, and the framework generates thousands of random inputs. It&#x27;s remarkably good at finding the kind of boundary bugs AI tends to produce.</div>
-      <div class="comment-analysis"><em>Insightfully identifies the unique error patterns of AI code and promotes property-based testing as a practical method to catch edge cases.</em></div>
+      <div class="comment-analysis"><em>Accurately highlights the unique challenges AI code presents and suggests property-based testing as a promising approach, reflecting a well-informed perspective.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=tedivm" class="hnuser">tedivm</a>
+        <a href="https://news.ycombinator.com/user?id=Andrei_dev" class="hnuser">Andrei_dev</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
+      <div class="comment-text">The testing angle keeps coming up but it&#x27;s sort of missing the point. I spent a few weeks poking through public repos built with AI tools — about 100 projects. 41% had secrets sitting raw in the source. Not in env files. In the code itself. Supabase service_role keys committed to GitHub, .env.example files with actual credentials, API keys hardcoded in client-side fetch calls.<p>No test catches any of that. Code works, tests pass, database is wide open.<p>It&#x27;s not even a correctness problem. It&#x27;s that the LLM never thought about rate limiting, CORS headers, CSRF tokens, a sane .gitignore — because nobody asked it to. Those are things devs add from muscle memory, from getting burned. The AI has no scars.</div>
+      <div class="comment-analysis"><em>Raises a critical security concern often overlooked by automated testing, underscoring the limitations of current AI-generated code verification.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=vicchenai" class="hnuser">vicchenai</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">the part that breaks down for me is the property test loop. if the agent writes the code AND the properties, it&#x27;s just bootstrapping from the same mental model that produced the bug. i&#x27;ve had it pass all self-generated tests and still ship logic that was wrong in ways i only caught by accident. review the spec&#x2F;properties carefully, not the code, seems like the right frame.</div>
+      <div class="comment-analysis"><em>Insightfully points out the risk of self-referential testing when AI generates both code and tests, highlighting a fundamental verification challenge.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=tedivm" class="hnuser">tedivm</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
       <div class="comment-text">While I understand why people want to skip code reviews, I think it is an absolute mistake at this point in time. I think AI coding assistants are great, but I&#x27;ve seen them fail or go down the wrong path enough times (even with things like spec driven development) where I don&#x27;t think it&#x27;s reasonable to not review code. Everything from development paths in production code, improper implementations, security risks: all of those are just as likely to happen with an AI as a Human, and any team that let&#x27;s humans push to production without a review would absolutely be ridiculed for it.<p>Again, I&#x27;m not opposed to AI coding. I know a lot of people are. I have multiple open source projects that were 100% created with AI assistants, and wrote a blog post about it you can see in my post history. I&#x27;m not anti-ai, but I do think that developers have some responsibility for the code they create with those tools.</div>
-      <div class="comment-analysis"><em>Balances enthusiasm for AI tools with caution, underscoring the necessity of code reviews to mitigate risks and ensure quality.</em></div>
+      <div class="comment-analysis"><em>Provides a balanced view advocating for continued human code review despite AI assistance, grounded in practical experience.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=davemp" class="hnuser">davemp</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">So often these AI articles mis or ignore the Test Oracle Problem. Generating correct tests is at least as hard as generating the correct answers (often harder).<p>I’m actually starting to get annoyed about how much material is getting spread around about software analysis &#x2F; formal methods by folks ignorant about the basics of the field.</div>
-      <div class="comment-analysis"><em>Accurately points out a fundamental challenge in automated testing that is often overlooked, reinforcing the complexity of test generation.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=pron" class="hnuser">pron</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">&gt; The code must pass property-based tests<p>Who writes the tests? It can be ok to trust code that passes tests <i>if</i> you can trust the tests.<p>There are, however, other problems. I frequently see agents write code that&#x27;s functionally correct but that they won&#x27;t be able to evolve for long. That&#x27;s also what happened with Anthropic&#x27;s failed attempt to have agents write a C compiler (not a trivial task, but far from an exceptionally difficult one). They had thousands of good human-written tests, but the agents couldn&#x27;t get the software to converge. They fixed one bug only to create another.</div>
-      <div class="comment-analysis"><em>Raises a critical question about the reliability of tests themselves, illustrating the difficulty in evolving AI-generated software.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jerf" class="hnuser">jerf</a>
         &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">&quot;However, I&#x27;m starting to think that maintainability and readability aren&#x27;t relevant in this context. We should treat the output like compiled code.&quot;<p>I would like to put my marker out here as <i>vigorously</i> disagreeing with this. I will quote my post [1] again, which given that this is the third time I&#x27;ve referred to a footnote via link rather suggests this should be lifted out of the footnote:<p>&quot;It has been lost in AI money-grabbing frenzy but a few years ago we were talking a lot about AIs being “legible”, that they could explain their actions in human-comprehensible terms. “Running code we can examine” is the highest grade of legibility any AI system has produced to date. We should not give that away.<p>&quot;We will, of course. The Number Must Go Up. We aren’t very good at this sort of thinking.<p>&quot;But we shouldn’t.&quot;<p>Do not let go of human-readable code. Ask me 20 years ago whether we&#x27;d get &quot;unreadable code generation&quot; or &quot;readable code generation&quot; out of AIs and I would have guessed they&#x27;d generate completely opaque and unreadable code. Good news! I would have been completely wrong! They in fact produce perfectly readable code. It may be perfectly readable &quot;slop&quot; sometimes, but the slop-ness is a separate issue. Even the slop is still perfectly readable. Don&#x27;t let go of it.<p>[1]: <a href="https:&#x2F;&#x2F;jerf.org&#x2F;iri&#x2F;post&#x2F;2026&#x2F;what_value_code_in_ai_era&#x2F;" rel="nofollow">https:&#x2F;&#x2F;jerf.org&#x2F;iri&#x2F;post&#x2F;2026&#x2F;what_value_code_in_ai_era&#x2F;</a></div>
-      <div class="comment-analysis"><em>Advocates for maintaining code readability despite AI advances, emphasizing the value of human comprehension in software maintenance.</em></div>
+      <div class="comment-text">So often these AI articles mis or ignore the Test Oracle Problem. Generating correct tests is at least as hard as generating the correct answers (often harder).<p>I’m actually starting to get annoyed about how much material is getting spread around about software analysis &#x2F; formal methods by folks ignorant about the basics of the field.</div>
+      <div class="comment-analysis"><em>Correctly identifies a fundamental issue in automated testing, emphasizing the difficulty of generating valid test oracles.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=keithnz" class="hnuser">keithnz</a>
+        <a href="https://news.ycombinator.com/user?id=eggbrain" class="hnuser">eggbrain</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I&#x27;ve been working on a &quot;vibe coded&quot; project to create a open source TUI sql query tool a bit like DataGrip, with autocomplete, syntax highlighting, schema introspection, vim mode&#x2F;non vim, allows MCP mode so an agent can help with queries&#x2F;get results, editing rows, etc.   It&#x27;s mostly an experiment into how to build software from scratch via an Agent without looking at the code (other than to see what decisions its making) and I wanted something reasonably complicated so the requirements evolve &#x2F; change over time.  There are a couple of issues I find, many bugs are unspecified edge cases especially because many of the features &quot;combo&quot; together, and the other issue is it&#x27;s hard for it to maintain consistency across the UI.  You start setting up a lot more context for cross cutting concerns, reviewing itself, and testing.  The tool itself is actually really useful and it is my main tool for querying our dbs now.  Most of the problem I find are due to &quot;sloppy&quot; prompting (or just not thinking through the edge cases), and a lack of project wide guidance for dealing with the architecture of the system to maintain consistency across the same concerns.</div>
-      <div class="comment-analysis"><em>Provides practical experience with AI-assisted development, highlighting real-world challenges in consistency and edge case handling.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=agentultra" class="hnuser">agentultra</a>
-        &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">This might work on small, self contained projects.<p>No side effects is a hefty constraint.<p>Systems tend to have multiple processes all using side effects. There are global properties of the system that need specification and tests are hard to write for these situations. Especially when they are temporal properties that you care about (eg: if we enter the A state then eventually we must enter the B state).<p>When such guarantees involve multiple processes, even property tests aren’t going to cover you sufficiently.<p>Worse, when it falls over at 3am and you’ve never read the code… is the plan to vibe code a big fix right there? Will you also remember to modify the specifications first?<p>Good on the author for trying. Correctness is hard.</div>
-      <div class="comment-analysis"><em>Realistically addresses the limitations of property-based testing for complex systems with side effects and multi-process interactions.</em></div>
+      <div class="comment-text">I find people over-rotate on whether we should be reviewing AI-produced code. &quot;What if bad code gets into production!&quot; some programmers gasp, as if they themselves have never pushed bad code, or had coworkers do the same.<p>I&#x27;ve worked at places where I&#x27;ve trusted everyone on my team to the extent that most PRs got only a quick glance before getting a &quot;LGTM&quot;. On the flipside, I&#x27;ve also worked on teams where every person was a different kind of liability with the code that they pushed, and for those teams I implemented every linting &#x2F; pre-commit &#x2F; testing tool possible that all needed to pass inspection (including human review) before any code arrived on production.<p>A year ago, AI was like that latter team I mentioned -- something I had to check, double check, and correct until I was happy with what it produced. Over the past 6 months, it&#x27;s gotten closer (but still fairly far away) from the former team I mentioned -- I have to correct it about 10% of the time, whereas for most things it gets it right.<p>The fact that AI produces a much _larger_ volume of code than the average engineer is perhaps slightly concerning, but I don&#x27;t see it much differently than code at large companies. Does every Facebook engineer review every junior engineer&#x27;s pull request to make sure bad code doesn&#x27;t slip in?<p>That isn&#x27;t to say I&#x27;m for letting AI go wild with code -- but I think if at worse we consider AI to be a junior engineer we need to reign in with static analysis tools &#x2F; linters &#x2F; testers etc, we will probably be able to mitigate a lot of the downside.</div>
+      <div class="comment-analysis"><em>Offers a pragmatic perspective on AI code review, comparing AI to junior engineers and advocating for standard quality controls.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=phailhaus" class="hnuser">phailhaus</a>
-        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Using FizzBuzz as your proxy for &quot;unreviewed code&quot; is extremely misleading. It has practically no complexity, it&#x27;s completely self-contained and easy to verify. In any codebase of even modest complexity, the challenge shifts from &quot;does this produce the correct outputs&quot; to &quot;is this going to let me <i>grow</i> the way I need it to in the future&quot; and thornier questions like &quot;does this have the performance characteristics that I need&quot;.</div>
-      <div class="comment-analysis"><em>Correctly critiques the oversimplification of using trivial examples to represent the complexity of real-world code verification.</em></div>
+      <div class="comment-analysis"><em>Accurately critiques the oversimplification of using FizzBuzz as a benchmark for AI code verification challenges.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jghn" class="hnuser">jghn</a>
+        <a href="https://news.ycombinator.com/user?id=ventana" class="hnuser">ventana</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I might be missing the point of the article, but from what I understand, the TL;DR is, &quot;cover your code with tests&quot;, be it unit tests, functional tests, or mutants.<p>Each of these approaches is just fine and widely used, and none of them can be called &quot;automated verification&quot;, which, if my understanding of the term is correct, is more about mathematical proof that the program works as expected.<p>The article mostly talks about automatic test generation.</div>
+      <div class="comment-analysis"><em>Clarifies the distinction between automated test generation and formal verification, adding valuable context to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=keithnz" class="hnuser">keithnz</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I do think that GenAI will lead to a rise in mutation testing, property testing, and fuzzing. But it&#x27;s worth people keeping in mind that there are reasons why these aren&#x27;t already ubiquitous. Among other issues, they can be computationally expensive, especially mutation testing.</div>
-      <div class="comment-analysis"><em>Offers a balanced view on the adoption of advanced testing techniques, noting practical constraints like computational cost.</em></div>
+      <div class="comment-text">I&#x27;ve been working on a &quot;vibe coded&quot; project to create a open source TUI sql query tool a bit like DataGrip, with autocomplete, syntax highlighting, schema introspection, vim mode&#x2F;non vim, allows MCP mode so an agent can help with queries&#x2F;get results, editing rows, etc.   It&#x27;s mostly an experiment into how to build software from scratch via an Agent without looking at the code (other than to see what decisions its making) and I wanted something reasonably complicated so the requirements evolve &#x2F; change over time.  There are a couple of issues I find, many bugs are unspecified edge cases especially because many of the features &quot;combo&quot; together, and the other issue is it&#x27;s hard for it to maintain consistency across the UI.  You start setting up a lot more context for cross cutting concerns, reviewing itself, and testing.  The tool itself is actually really useful and it is my main tool for querying our dbs now.  Most of the problem I find are due to &quot;sloppy&quot; prompting (or just not thinking through the edge cases), and a lack of project wide guidance for dealing with the architecture of the system to maintain consistency across the same concerns.</div>
+      <div class="comment-analysis"><em>Shares practical experience with AI-assisted development, highlighting real-world challenges in maintaining consistency and handling edge cases.</em></div>
     </div>
     
 
@@ -175,7 +175,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-17 21:22 UTC &nbsp;|&nbsp;
+    Generated 2026-03-17 22:43 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

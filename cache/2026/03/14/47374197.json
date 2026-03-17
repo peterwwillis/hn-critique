@@ -2,24 +2,52 @@
   "story_id": 47374197,
   "generated_at": "",
   "critique": {
-    "summary": "The article explores the challenges of emulating higher-kinded types (HKTs) in Rust, detailing the author's attempts to work around Rust's lack of native HKT support using traits and wrappers. It delves into complex topics such as trait solver behavior, inductive and coinductive reasoning, and includes a detour into mathematical logic and theorem proving with Lean 4, ultimately highlighting current limitations and bugs in Rust's compiler related to these features.",
+    "summary": "The article explores the challenges of emulating higher-kinded types (HKTs) in Rust, illustrating the limitations of Rust's type system and trait solver through code examples and discussions on induction and coinduction. It also delves into mathematical logic and proof techniques using Lean 4 to better understand the underlying theoretical concepts related to Rust's compiler behavior.",
     "mainPoints": [
-      "Rust does not natively support higher-kinded types (HKTs), which are generics over generics or type constructors.",
-      "The author attempts to emulate HKTs in Rust using traits with associated generic types (GATs) and wrapper structs.",
-      "This emulation leads to compiler errors related to recursive trait bounds and trait solver overflows.",
-      "The article explains inductive and coinductive reasoning in the context of Rust's trait solver and how cycles in trait bounds cause issues.",
-      "The next-generation Rust trait solver aims to address some of these issues but currently has bugs and can cause internal compiler errors (ICEs).",
-      "The author includes a detailed detour into mathematical induction, structural induction, and the Curry-Howard correspondence, using Lean 4 to prove a theorem as an analogy.",
-      "The article concludes with a critical and humorous opinion on Rust's complexity and limitations regarding HKTs and trait solving."
+      "Rust does not natively support higher-kinded types (HKTs), which complicates generic programming involving type constructors.",
+      "Generic Associated Types (GATs) offer a partial workaround to emulate HKTs but introduce complexity and recursive type issues.",
+      "Rust's trait solver is inductive and cannot handle certain recursive trait bounds, leading to compiler errors or infinite proof trees.",
+      "Coinduction is necessary to handle infinite proof trees in trait resolution, but Rust currently supports coinductive traits only for auto traits, Sized, and well-formedness goals.",
+      "The next-generation Rust trait solver aims to address these limitations but currently has bugs, including internal compiler errors (ICEs) when handling coinductive cycles.",
+      "The author uses mathematical induction and coinduction concepts, along with Lean 4 theorem proving, to understand and explain Rust's trait system behavior.",
+      "The article is a mix of technical exploration, personal learning journey, and critique of Rust's type system limitations."
     ],
-    "truthfulness": "The technical explanations about Rust's lack of native higher-kinded types and the use of generic associated types (GATs) as a workaround are accurate and well-documented in Rust's RFCs and community discussions. The compiler errors described, such as trait requirement evaluation overflow and recursive trait bound issues, are consistent with known limitations of Rust's trait system. The discussion of inductive and coinductive reasoning aligns with the Rust compiler's trait solving approach as described in official rustc developer guides. The mention of bugs and internal compiler errors in the next-generation solver is corroborated by public issue trackers and developer conversations. The detour into mathematical induction and theorem proving with Lean 4 is a valid and accurate representation of those concepts, though it serves more as an educational analogy than a direct Rust feature explanation. The concluding opinions are subjective but reflect common frustrations within parts of the Rust community. Overall, the article is factually accurate in its technical content but mixes in personal opinions and humor.",
+    "truthfulness": "The article accurately describes Rust's lack of native higher-kinded types and the use of Generic Associated Types as a partial workaround, which aligns with Rust's current language design and RFC discussions. The explanation of Rust's inductive trait solver and the challenges with recursive trait bounds is consistent with documented compiler behavior and rustc-dev guide information. The discussion on coinduction and its limited support in Rust is also factual, as is the mention of ongoing work on the next-generation trait solver and existing bugs. The mathematical explanations and use of Lean 4 for theorem proving are valid and well-known approaches to understanding type theory and logic. However, the article includes informal language, humor, and subjective opinions that do not affect the factual accuracy of the technical content.",
     "considerations": [
-      "The article does not mention that Rust's lack of HKTs is a deliberate design choice balancing language complexity and usability.",
-      "It omits discussion of ongoing efforts and proposals in the Rust community to improve generic programming capabilities beyond GATs.",
-      "The complexity of trait solving and coinduction in Rust is a niche topic that may require more background for general readers.",
-      "The article's critical tone and humor may not represent the broader Rust community's views or the language's practical strengths.",
-      "The detour into Lean 4 and mathematical logic, while informative, may distract from the core Rust-related discussion for some readers."
+      "The article does not provide formal citations or references to official Rust documentation or RFCs, which would strengthen the technical claims.",
+      "The complexity and advanced nature of the topics (HKTs, coinduction, trait solving) may limit accessibility to readers without a strong background in type theory or Rust internals.",
+      "The article mixes technical exposition with personal opinions and informal commentary, which may affect the perceived professionalism but not the factual content.",
+      "The next-generation trait solver is under active development, so some information about its capabilities and bugs may become outdated as Rust evolves.",
+      "The critique of Rust as a language is subjective and not supported by objective evidence within the article."
     ],
     "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers on the challenges and complexity of using advanced Rust features like generic const expressions and trait resolution, with commenters sharing personal experiences and expressing admiration for the technical depth.",
+    "comments": [
+      {
+        "id": 47418846,
+        "author": "j-krieger",
+        "text": "I also hit a funny compiler end-of-the road last month when I wanted to try out generic_const_exprs for my RFC8366 implementation:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  pub struct VoucherDetails\u0026lt;C\u0026gt;\n    where\n      C: CapacityConfig,\n      [(); C::SERIAL_NUMBER_MAX]:,\n      [(); C::MANUFACTURER_PRIVATE_MAX]:,\n      [(); C::IDEVID_ISSUER_MAX]:,\n      \u0026#x2F;\u0026#x2F; \u0026lt;imagine a dozen more properties here\u0026gt;\n      [(); C::NONCE_B64_MAX]:,\n  { ... }\n\u003c/code\u003e\u003c/pre\u003e\nThe heavy const eval + trait resolution was too much even for my M2 Pro.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a concrete example of the limitations encountered with Rust's compiler on complex generic const expressions, reflecting a realistic and informed experience."
+      },
+      {
+        "id": 47418460,
+        "author": "cptroot",
+        "text": "This was incredible, even as it rapidly outpaced my PL and mathematics knowledge.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 2,
+        "analysis": "While less technical, this comment expresses genuine admiration and acknowledges the complexity of the topic, adding a personal perspective."
+      }
+    ]
   }
 }

@@ -2,28 +2,28 @@
   "story_id": 47416081,
   "generated_at": "",
   "critique": {
-    "summary": "The article announces the open source release of Edge.js, a JavaScript runtime designed to run Node.js applications safely inside a WebAssembly sandbox. Edge.js aims to provide full Node.js compatibility with improved startup times and security by isolating unsafe operations using WASIX, differentiating itself from other edge runtimes like Deno or Cloudflare Workers.",
+    "summary": "The article introduces Edge.js, an open-source JavaScript runtime designed to run Node.js applications safely inside a WebAssembly sandbox. It emphasizes full Node.js compatibility, improved startup times, and sandboxing without relying on containers, aiming to provide a secure and efficient environment for serverless and edge computing workloads.",
     "mainPoints": [
-      "Edge.js runs Node.js workloads safely using WebAssembly sandboxing, preserving full Node.js compatibility.",
-      "It isolates unsafe system calls and native code via WASIX while running the JavaScript engine natively.",
-      "Edge.js supports Node.js v24 APIs and native modules through NAPI, enabling unmodified execution of existing Node.js apps and frameworks.",
-      "The runtime offers startup times and density improvements over container-based approaches.",
-      "Performance is currently 5-30% slower than native Node.js but is expected to improve.",
-      "Edge.js was developed with significant assistance from AI tools like GPT-5.4 and OpenAI Codex.",
-      "The project aims to avoid fragmentation caused by alternative edge JS runtimes that require custom APIs or subsets of Node.js."
+      "Edge.js runs Node.js workloads safely using WebAssembly sandboxing, isolating unsafe system calls and native code via WASIX.",
+      "It preserves full Node.js compatibility (targeting Node.js v24) and supports native modules using NAPI.",
+      "Edge.js offers faster startup and higher density compared to container-based Node.js deployments.",
+      "The runtime supports multiple JavaScript engines (V8, JavaScriptCore, QuickJS) and focuses on correctness with plans to improve performance.",
+      "Edge.js addresses fragmentation issues caused by other edge runtimes like WinterCG by allowing unmodified Node.js apps and frameworks to run at the edge.",
+      "Performance benchmarks show Edge.js runs at about 80-95% of native Node.js speed, with some overhead when sandboxed.",
+      "The project leveraged AI tools like GPT-5.4 and Codex to accelerate development."
     ],
-    "truthfulness": "The claims in the article are largely accurate and consistent with current trends in WebAssembly and JavaScript runtimes. Wasmer is a known company specializing in WebAssembly runtimes, and the technical approach of sandboxing unsafe system calls via WASIX while running the JS engine natively is plausible and aligns with known WebAssembly capabilities. The performance figures and compatibility claims are supported by detailed test results comparing Edge.js to Node.js and other runtimes, which adds credibility. The mention of AI assistance in development is plausible but unverifiable. However, the article is a product announcement from the company's CEO and lacks independent third-party sources or critical perspectives, so some claims about superiority and future performance improvements should be viewed cautiously.",
+    "truthfulness": "The claims about Edge.js are largely accurate based on available information from Wasmer and related WebAssembly projects. Edge.js is a real open-source project by Wasmer, aiming to run Node.js workloads sandboxed via WebAssembly, which is a known approach in the WebAssembly and serverless community. The compatibility claims are supported by detailed test results comparing Edge.js with Node.js and other runtimes. Performance figures and architectural descriptions align with known technical challenges and solutions in sandboxing Node.js. The mention of AI-assisted development is plausible but unverifiable from external sources. However, the article is authored by the founder of Wasmer, which may introduce promotional bias. The article does not cite independent third-party evaluations or multiple perspectives, limiting its journalistic reliability.",
     "considerations": [
-      "The article does not provide independent benchmarks or third-party reviews to validate performance and compatibility claims.",
-      "Potential security implications of running native modules inside a WebAssembly sandbox are not deeply discussed.",
-      "The impact of Edge.js on existing cloud and edge computing ecosystems, including adoption challenges, is not addressed.",
-      "The article does not compare Edge.js in detail with other emerging runtimes beyond basic compatibility tables.",
-      "Long-term maintenance, community support, and ecosystem maturity of Edge.js remain uncertain."
+      "The article does not provide independent third-party benchmarks or reviews to validate performance and compatibility claims.",
+      "Potential security implications of sandboxing via WASIX versus traditional containerization are not deeply discussed.",
+      "The impact of Edge.js on existing Node.js ecosystem tools and workflows beyond compatibility is not explored.",
+      "Long-term maintenance and community adoption challenges for Edge.js compared to established runtimes like Deno or Bun are not addressed.",
+      "The article does not discuss licensing, governance, or potential commercial restrictions related to Edge.js."
     ],
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the introduction of Edge.js, a project enabling Node.js to run inside a WebAssembly sandbox. Commenters discuss its architecture, potential frontend use, and the development process involving AI assistance.",
+    "summary": "The discussion centers around Edge.js, a project enabling Node.js compatibility within a WebAssembly sandbox, with users expressing interest in its platform compatibility, sandboxing capabilities, and potential use cases such as running in browsers or Electron apps. The original developer provides technical details and invites questions, while commenters explore practical applications and technical clarifications.",
     "comments": [
       {
         "id": 47417202,
@@ -31,11 +31,11 @@
         "text": "Hi HN!\u003cp\u003eI\u0026#x27;m Syrus, from Wasmer. We built Edge.js in a few weeks after different trials trying to bring Node.js to the Edge. We used AI and Codex heavily for this project, as otherwise the timeline would have spanned to a year plus to develop.\u003cp\u003eThe summary of this announcement is that Edge.js:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  * Runs using WebAssembly when in `--safe` mode\n  * It\u0026#x27;s fully compatible with Node.js (passing all their spec tests for non-VM modules)\n  * It has a pluggable JS engine architecture: can work with V8, Javascript, SpiderMonkey, QuickJS, Hermes, etc.\n\u003c/code\u003e\u003c/pre\u003e\nSuper happy to answer any questions you may have!",
         "indicators": [
           "intelligent",
-          "likely-true",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "As the project creator, this comment provides accurate and detailed information about Edge.js's capabilities and development background."
+        "analysis": "As the project creator, this comment provides accurate and detailed information about Edge.js's capabilities and development process."
       },
       {
         "id": 47417727,
@@ -47,7 +47,29 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment offers a reasonable interpretation of the project architecture, adding useful context about its sandboxing approach."
+        "analysis": "This comment offers a clear technical summary and insight into the architecture, reflecting a good understanding of the project."
+      },
+      {
+        "id": 47418493,
+        "author": "pscanf",
+        "text": "Very cool project!\u003cp\u003eQuestion regarding the pluggable js engine: I have an electron app where I\u0026#x27;m currently using QuickJS to run LLM-generated code. Would edge.js be able (theoretically) to use electron\u0026#x27;s v8 to get a \u0026quot;sanboxed within electron\u0026quot; execution environment?",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The question is relevant and shows understanding of potential use cases, though it is speculative about integration specifics."
+      },
+      {
+        "id": 47418484,
+        "author": "MillionOClock",
+        "text": "Very interesting! On what platforms can this run? If it can run on iOS, how would you handle attempts to access to the file system or networking, is this already wired in somehow? If not is it easy to add custom handlers to handle these actions?",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment raises practical questions about platform support and security, indicating a user-focused perspective."
       },
       {
         "id": 47417906,
@@ -57,8 +79,8 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "This is a speculative but relevant question about potential frontend applications, showing engagement but lacking confirmed details."
+        "accuracyRank": 5,
+        "analysis": "The question explores a plausible use case but lacks detail on feasibility, reflecting curiosity rather than technical certainty."
       }
     ]
   }
