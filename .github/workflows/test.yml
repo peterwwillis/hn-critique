@@ -55,6 +55,7 @@ jobs:
     runs-on: ubuntu-slim
     permissions:
       contents: read
+      packages: read
 
     steps:
       - name: Checkout repository
@@ -69,7 +70,70 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Start Playwright fetch daemon
+        run: |
+          if [ ! -s docker/playwright/version.txt ]; then
+            echo "docker/playwright/version.txt is missing or empty. This file is required to determine the Playwright Docker image version." >&2
+            exit 1
+          fi
+          PLAYWRIGHT_VERSION=$(tr -d '\r\n' < docker/playwright/version.txt)
+          if ! printf '%s' "$PLAYWRIGHT_VERSION" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9._-]+)?$'; then
+            echo "Unexpected Playwright image version format: ${PLAYWRIGHT_VERSION}. Expected format: vX.Y.Z or vX.Y.Z-suffix." >&2
+            exit 1
+          fi
+          PLAYWRIGHT_NPM_VERSION=$(printf '%s' "$PLAYWRIGHT_VERSION" | sed 's/^v//; s/-.*$//')
+          PLAYWRIGHT_DAEMON_PORT=3000
+          PLAYWRIGHT_DAEMON_STARTUP_TIMEOUT=30
+          PLAYWRIGHT_IMAGE="ghcr.io/${{ github.repository }}/playwright:${PLAYWRIGHT_VERSION}"
+          if ! docker pull "$PLAYWRIGHT_IMAGE"; then
+            echo "Failed to pull Playwright image ${PLAYWRIGHT_IMAGE}. Ensure the Playwright image build workflow has completed successfully and the image is available in GHCR." >&2
+            exit 1
+          fi
+
+          docker rm -f playwright-fetch-daemon 2>/dev/null || true
+          docker run -d --rm --init --network host \
+            --name playwright-fetch-daemon \
+            -e HOME=/home/pwuser \
+            -e npm_config_cache=/home/pwuser/.npm \
+            -e npm_config_prefix=/home/pwuser/.npm-global \
+            -e PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 \
+            -e PLAYWRIGHT_NPM_VERSION="$PLAYWRIGHT_NPM_VERSION" \
+            -e PLAYWRIGHT_DAEMON_PORT="$PLAYWRIGHT_DAEMON_PORT" \
+            -v "$PWD:/work:ro" \
+            -w /work \
+            "$PLAYWRIGHT_IMAGE" \
+            /bin/sh -lc 'export PATH="$npm_config_prefix/bin:$PATH"; export NODE_PATH="$npm_config_prefix/lib/node_modules"; npm install -g "playwright@${PLAYWRIGHT_NPM_VERSION}" && node /work/docker/playwright/fetch-daemon.cjs'
+
+          daemon_ready=false
+          for attempt in $(seq 1 "$PLAYWRIGHT_DAEMON_STARTUP_TIMEOUT"); do
+            if curl -fsS --max-time 2 "http://127.0.0.1:${PLAYWRIGHT_DAEMON_PORT}/health" >/dev/null; then
+              daemon_ready=true
+              break
+            fi
+            if [ -z "$(docker ps -q --filter name=^/playwright-fetch-daemon$)" ]; then
+              docker logs playwright-fetch-daemon || true
+              echo "Playwright fetch daemon exited before becoming healthy. Check the logs above for error details." >&2
+              exit 1
+            fi
+            sleep 1
+          done
+
+          if [ "$daemon_ready" != "true" ]; then
+            docker logs playwright-fetch-daemon || true
+            echo "Timed out waiting for Playwright fetch daemon to become healthy." >&2
+            exit 1
+          fi
+
       - name: Integration tests
+        env:
+          PLAYWRIGHT_FETCH_URL: http://127.0.0.1:3000/fetch
         run: make test-integration
 
   # ────────────────────────────────────────────────────────────
