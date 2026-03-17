@@ -39,6 +39,9 @@
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
+    {{if and .Story.Comments (lt (len .Story.CommentsCritique.Comments) (len .Story.Comments))}}
+    <p class="no-critique">Only {{len .Story.CommentsCritique.Comments}} of {{len .Story.Comments}} top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id={{.Story.ID}}" rel="noopener">View the full thread on HN</a>.</p>
+    {{end}}
 
     {{range .Story.CommentsCritique.Comments}}
     <div class="comment-row {{commentHighlightClass .Indicators}}">

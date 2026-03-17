@@ -97,8 +97,11 @@ func validateCommentsCritique(c *generator.CommentsCritique, expected []*generat
 	for _, comment := range expected {
 		expectedIDs[comment.ID] = struct{}{}
 	}
-	if len(c.Comments) != len(expectedIDs) {
-		return fmt.Errorf("expected %d comments, got %d", len(expectedIDs), len(c.Comments))
+	if len(expectedIDs) > 0 && len(c.Comments) == 0 {
+		return fmt.Errorf("expected at least 1 comment, got 0")
+	}
+	if len(c.Comments) > len(expectedIDs) {
+		return fmt.Errorf("expected at most %d comments, got %d", len(expectedIDs), len(c.Comments))
 	}
 
 	ranks := make(map[int]struct{}, len(expectedIDs))
@@ -138,7 +141,7 @@ func validateCommentsCritique(c *generator.CommentsCritique, expected []*generat
 			}
 			comment.Indicators[i] = normalized
 		}
-		if comment.AccuracyRank < 1 || comment.AccuracyRank > len(expectedIDs) {
+		if comment.AccuracyRank < 1 || comment.AccuracyRank > len(c.Comments) {
 			return fmt.Errorf("comment id %d has accuracyRank %d out of range", comment.ID, comment.AccuracyRank)
 		}
 		if _, ok := ranks[comment.AccuracyRank]; ok {
@@ -149,10 +152,7 @@ func validateCommentsCritique(c *generator.CommentsCritique, expected []*generat
 			return fmt.Errorf("comment id %d has empty analysis", comment.ID)
 		}
 	}
-	if len(seenIDs) != len(expectedIDs) {
-		return fmt.Errorf("comment IDs are incomplete")
-	}
-	if len(ranks) != len(expectedIDs) {
+	if len(ranks) != len(c.Comments) {
 		return fmt.Errorf("accuracy ranks are incomplete")
 	}
 	return nil
