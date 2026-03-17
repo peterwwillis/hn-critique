@@ -10,14 +10,12 @@ Ensure UI screenshots shared during a Copilot session are visible to reviewers b
 
 ## Procedure
 1. Capture or generate the screenshot file locally.
-2. Add the image to a stable repo path (for example `docs/pr-screenshots/`) on the current branch.
-3. Push the branch update.
-4. Find the active PR for the branch.
-5. Post a PR comment that embeds the image using Markdown:
-   - `![Screenshot](https://raw.githubusercontent.com/<owner>/<repo>/<branch>/<path>)`
-6. Include a short caption explaining what the screenshot shows.
+2. Do **not** commit screenshot files to the repository.
+3. Open the active PR comment composer in the GitHub web UI and attach the local image file so GitHub uploads it as a PR attachment.
+4. Use the generated Markdown image link from the composer and post the comment.
+5. Include a short caption explaining what the screenshot shows.
 
 ## Reusable prompt
 ```
-Take a screenshot of the UI change, add it to docs/pr-screenshots on the current branch, and post a PR comment with an embedded Markdown image that reviewers can open in the browser.
+Take a screenshot of the UI change, attach it in the active PR comment composer so GitHub hosts it as an attachment, and post a comment with the embedded image. Do not commit the image file.
 ```
