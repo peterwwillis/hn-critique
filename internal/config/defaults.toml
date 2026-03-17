@@ -27,10 +27,10 @@ base_url = ""
 
 # Primary model for chat completions (article and comment analysis).
 # Override via OPENAI_CHAT_MODEL env var without editing any file.
-chat_model = "gpt-4o-mini"
+chat_model = "openai/gpt-4.1-mini"
 
 # Model used when the Responses API (web search) is requested.
-search_model = "gpt-4o-mini"
+search_model = "openai/gpt-4.1-mini"
 
 # Enable the Responses API with web_search_preview for article analysis.
 # Set false when base_url points to a local server that does not support it.
@@ -68,7 +68,7 @@ endpoint = "https://models.github.ai/inference"
 model = "openai/gpt-4.1-mini"
 
 # Additional models used for fallback or round-robin (see model_mode).
-fallback_models = ["openai/gpt-4o-mini", "mistral-ai/mistral-small"]
+fallback_models = ["openai/gpt-4.1-nano", "openai/gpt-4o-mini", "mistral-ai/mistral-small"]
 
 # Model selection mode.
 #   "fallback"    — use primary model; try next on HTTP 429 rate-limit (default)
@@ -111,16 +111,16 @@ comment_depth        = 4
 top_comments         = 40
 child_comments       = 10
 
-# Short alias so both "gpt-4.1-mini" and "openai/gpt-4.1-mini" resolve.
-[models."gpt-4.1-mini".inference]
+# ── openai/gpt-4.1-nano ── 1 M input tokens, 32 K output tokens ──────────────
+[models."openai/gpt-4.1-nano".inference]
 temperature        = 0.3
 max_output_tokens  = 4096
 
-[models."gpt-4.1-mini".limits]
+[models."openai/gpt-4.1-nano".limits]
 comment_prompt_bytes = 200000
 article_prompt_bytes = 50000
 article_text_chars   = 50000
-article_body_bytes   = 4194304
+article_body_bytes   = 4194304   # 4 MiB
 comment_depth        = 4
 top_comments         = 40
 child_comments       = 10
@@ -139,19 +139,6 @@ comment_depth        = 4
 top_comments         = 30
 child_comments       = 8
 
-[models."gpt-4o-mini".inference]
-temperature        = 0.3
-max_output_tokens  = 4096
-
-[models."gpt-4o-mini".limits]
-comment_prompt_bytes = 80000
-article_prompt_bytes = 40000
-article_text_chars   = 40000
-article_body_bytes   = 4194304
-comment_depth        = 4
-top_comments         = 30
-child_comments       = 8
-
 # ── mistral-ai/mistral-small ── 32 K input tokens (~24 K usable bytes) ───────
 [models."mistral-ai/mistral-small".inference]
 temperature        = 0.3
@@ -162,19 +149,6 @@ comment_prompt_bytes = 16000
 article_prompt_bytes = 8000
 article_text_chars   = 8000
 article_body_bytes   = 2097152   # 2 MiB
-comment_depth        = 3
-top_comments         = 20
-child_comments       = 5
-
-[models."mistral-small".inference]
-temperature        = 0.3
-max_output_tokens  = 2048
-
-[models."mistral-small".limits]
-comment_prompt_bytes = 16000
-article_prompt_bytes = 8000
-article_text_chars   = 8000
-article_body_bytes   = 2097152
 comment_depth        = 3
 top_comments         = 20
 child_comments       = 5

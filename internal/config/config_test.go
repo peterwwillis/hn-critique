@@ -34,6 +34,26 @@ func TestDefaults(t *testing.T) {
 	}
 }
 
+// TestModelConfigForNormalization verifies that ModelConfigFor resolves both
+// qualified ("openai/gpt-4.1-mini") and unqualified ("gpt-4.1-mini") model
+// names to the same configuration entry.
+func TestModelConfigForNormalization(t *testing.T) {
+	cfg := config.Defaults()
+
+	// Qualified name — direct key match.
+	qualified := cfg.ModelConfigFor("openai/gpt-4.1-mini")
+	if qualified.Limits.CommentPromptBytes == 0 {
+		t.Error("ModelConfigFor(\"openai/gpt-4.1-mini\") returned zero CommentPromptBytes")
+	}
+
+	// Unqualified name — should resolve via the "openai/" prefix fallback.
+	unqualified := cfg.ModelConfigFor("gpt-4.1-mini")
+	if unqualified.Limits.CommentPromptBytes != qualified.Limits.CommentPromptBytes {
+		t.Errorf("unqualified lookup CommentPromptBytes = %d, want %d (same as qualified)",
+			unqualified.Limits.CommentPromptBytes, qualified.Limits.CommentPromptBytes)
+	}
+}
+
 func TestLoadEmpty(t *testing.T) {
 	// Load with empty path — should return defaults.
 	cfg, err := config.Load("")
@@ -107,8 +127,8 @@ provider = "openai"
 
 [openai]
 api_key = "sk-test"
-chat_model = "gpt-4o-mini"
-chat_models = ["gpt-4o-mini", "gpt-4o", "gpt-4.1-mini"]
+chat_model = "openai/gpt-4.1-mini"
+chat_models = ["openai/gpt-4.1-mini", "openai/gpt-4o-mini", "openai/gpt-4.1-nano"]
 model_mode = "round_robin"
 `
 	path := filepath.Join(t.TempDir(), "model_mode_openai.toml")
@@ -127,11 +147,11 @@ model_mode = "round_robin"
 	if len(cfg.OpenAI.ChatModels) != 3 {
 		t.Errorf("OpenAI.ChatModels length = %d, want 3", len(cfg.OpenAI.ChatModels))
 	}
-	if cfg.OpenAI.ChatModels[0] != "gpt-4o-mini" {
-		t.Errorf("ChatModels[0] = %q, want %q", cfg.OpenAI.ChatModels[0], "gpt-4o-mini")
+	if cfg.OpenAI.ChatModels[0] != "openai/gpt-4.1-mini" {
+		t.Errorf("ChatModels[0] = %q, want %q", cfg.OpenAI.ChatModels[0], "openai/gpt-4.1-mini")
 	}
-	if cfg.OpenAI.ChatModels[2] != "gpt-4.1-mini" {
-		t.Errorf("ChatModels[2] = %q, want %q", cfg.OpenAI.ChatModels[2], "gpt-4.1-mini")
+	if cfg.OpenAI.ChatModels[2] != "openai/gpt-4.1-nano" {
+		t.Errorf("ChatModels[2] = %q, want %q", cfg.OpenAI.ChatModels[2], "openai/gpt-4.1-nano")
 	}
 }
 

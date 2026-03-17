@@ -122,6 +122,7 @@ func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 }
 
 func (p *openAIProvider) analyzeArticleWithModel(model string, settings config.ModelConfig, title, articleURL, content string) (*generator.ArticleCritique, error) {
+	apiModel := openAIModelID(model)
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
 		var text string
 		var err error
@@ -132,11 +133,11 @@ func (p *openAIProvider) analyzeArticleWithModel(model string, settings config.M
 			if err != nil {
 				// Fall back to Chat Completions when the Responses API is unavailable.
 				prompt = articlePrompt(title, articleURL, content, settings.Limits.ArticlePromptBytes)
-				text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), model, prompt, true, settings.Inference)
+				text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), apiModel, prompt, true, settings.Inference)
 			}
 		} else {
 			prompt := articlePrompt(title, articleURL, content, settings.Limits.ArticlePromptBytes)
-			text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), model, prompt, true, settings.Inference)
+			text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), apiModel, prompt, true, settings.Inference)
 		}
 		if err != nil {
 			return nil, fmt.Errorf("openai article analysis: %w", err)
@@ -193,9 +194,10 @@ func (p *openAIProvider) AnalyzeComments(title, articleURL string, comments []*g
 
 func (p *openAIProvider) analyzeCommentsWithModel(model string, settings config.ModelConfig, title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
 	prompt := commentsPrompt(title, articleURL, buildCommentText(comments, settings.Limits.CommentPromptBytes))
+	apiModel := openAIModelID(model)
 
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
-		text, err := callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), model, prompt, true, settings.Inference)
+		text, err := callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), apiModel, prompt, true, settings.Inference)
 		if err != nil {
 			return nil, fmt.Errorf("openai comments analysis: %w", err)
 		}
@@ -222,10 +224,20 @@ func bearerHeader(apiKey string) string {
 	return "Bearer " + apiKey
 }
 
+// openAIModelID strips any leading "provider/" prefix from a model name for
+// use with the OpenAI API, which expects bare model IDs (e.g. "gpt-4.1-mini")
+// rather than the GitHub Models-style qualified form ("openai/gpt-4.1-mini").
+func openAIModelID(model string) string {
+	if idx := strings.Index(model, "/"); idx >= 0 {
+		return model[idx+1:]
+	}
+	return model
+}
+
 // callResponsesAPI calls the OpenAI Responses API with the web_search_preview tool.
 func (p *openAIProvider) callResponsesAPI(input string, inference config.InferenceConfig) (string, error) {
 	payload := map[string]any{
-		"model": p.searchModel,
+		"model": openAIModelID(p.searchModel),
 		"tools": []map[string]string{{"type": "web_search_preview"}},
 		"input": []map[string]string{
 			{"role": "system", "content": systemPrompt},
