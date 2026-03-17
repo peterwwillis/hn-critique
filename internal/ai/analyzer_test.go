@@ -85,7 +85,9 @@ func TestNewProvider_OpenAI_RoundRobin(t *testing.T) {
 	cfg.Provider = config.ProviderOpenAI
 	cfg.OpenAI.APIKey = "sk-test"
 	cfg.OpenAI.ModelMode = config.ModelModeRoundRobin
-	cfg.OpenAI.ChatModels = []string{"gpt-4o-mini", "gpt-4o"}
+	// Build the model list from the default config values rather than hardcoding
+	// specific model names, so the test exercises the same models as real usage.
+	cfg.OpenAI.ChatModels = []string{cfg.OpenAI.ChatModel, cfg.OpenAI.SearchModel}
 
 	p, err := ai.NewProvider(cfg)
 	if err != nil {
@@ -103,7 +105,11 @@ func TestNewProvider_GitHub_RoundRobin(t *testing.T) {
 	cfg.Provider = config.ProviderGitHub
 	cfg.GitHub.Token = "ghp_test"
 	cfg.GitHub.ModelMode = config.ModelModeRoundRobin
-	cfg.GitHub.FallbackModels = []string{"openai/gpt-4o-mini", "mistral-ai/mistral-small"}
+	// Use fallback_models from the default config rather than hardcoding model
+	// names, so the test exercises the same model list as real usage.
+	if len(cfg.GitHub.FallbackModels) == 0 {
+		t.Fatal("defaults must include at least one fallback model for this test to be meaningful")
+	}
 
 	p, err := ai.NewProvider(cfg)
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -262,13 +263,29 @@ func (c *Config) SelectedModelConfig() ModelConfig {
 }
 
 // ModelConfigFor returns the merged model configuration for the given model name.
+// It first tries an exact key match. If not found, it also tries the unqualified
+// short name (stripping a "provider/" prefix) and the "openai/"-qualified name,
+// so that both "gpt-4.1-mini" and "openai/gpt-4.1-mini" resolve to the same
+// settings regardless of which style was used as the map key.
 func (c *Config) ModelConfigFor(model string) ModelConfig {
 	base := DefaultModelConfig()
 	if c == nil || model == "" {
 		return base
 	}
+	// Exact key match first.
 	if override, ok := c.Models[model]; ok {
 		return mergeModelConfig(base, override)
+	}
+	// For a qualified name ("provider/model"), try the bare model ID.
+	if idx := strings.Index(model, "/"); idx >= 0 {
+		if override, ok := c.Models[model[idx+1:]]; ok {
+			return mergeModelConfig(base, override)
+		}
+	} else {
+		// For an unqualified name, try the "openai/"-prefixed form.
+		if override, ok := c.Models["openai/"+model]; ok {
+			return mergeModelConfig(base, override)
+		}
 	}
 	return base
 }
