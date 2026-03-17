@@ -311,12 +311,17 @@ func (f *Fetcher) internetArchiveCDXSnapshotURL(rawURL string) (string, error) {
 	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&rows); err != nil {
 		return "", fmt.Errorf("decode wayback CDX response: %w", err)
 	}
-	if len(rows) < 2 || len(rows[1]) < 2 {
+	if len(rows) < 2 {
 		return "", fmt.Errorf("no archived snapshot available")
 	}
 
-	timestamp := strings.TrimSpace(rows[1][0])
-	original := strings.TrimSpace(rows[1][1])
+	last := rows[len(rows)-1]
+	if len(last) < 2 {
+		return "", fmt.Errorf("no archived snapshot available")
+	}
+
+	timestamp := strings.TrimSpace(last[0])
+	original := strings.TrimSpace(last[1])
 	if timestamp == "" || original == "" {
 		return "", fmt.Errorf("no archived snapshot available")
 	}
