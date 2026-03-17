@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -244,6 +245,35 @@ type responseFormat struct {
 	Type string `json:"type"`
 }
 
+// rateLimitHeaderNames are the HTTP response headers that GitHub (and other
+// OpenAI-compatible APIs) return with a 429 Too Many Requests response.
+// They describe why the request was rate-limited, how many requests remain,
+// when the quota resets, and how long to wait before retrying.
+var rateLimitHeaderNames = []string{
+	"X-RateLimit-Limit",
+	"X-RateLimit-Remaining",
+	"X-RateLimit-Reset",
+	"X-RateLimit-Type",
+	"Retry-After",
+	"X-Request-Id",
+}
+
+// logRateLimitHeaders logs the rate-limit diagnostic headers from a 429
+// response so that operators can tell why the request was rejected, which
+// quota bucket was hit, and when to retry.  It is a no-op when none of the
+// known headers are present in the response.
+func logRateLimitHeaders(h http.Header, endpoint, model string) {
+	var parts []string
+	for _, name := range rateLimitHeaderNames {
+		if v := h.Get(name); v != "" {
+			parts = append(parts, name+"="+v)
+		}
+	}
+	if len(parts) > 0 {
+		log.Printf("rate limit (HTTP 429) endpoint=%s model=%s %s", endpoint, model, strings.Join(parts, " "))
+	}
+}
+
 // callChatCompletions sends a POST to an OpenAI-compatible chat completions
 // endpoint and returns the first choice's content text.
 // endpoint must be the full URL including path (e.g. ".../v1/chat/completions").
@@ -290,6 +320,7 @@ func callChatCompletions(httpClient *http.Client, endpoint, authHeader, model, p
 		return "", err
 	}
 	if resp.StatusCode == http.StatusTooManyRequests {
+		logRateLimitHeaders(resp.Header, endpoint, model)
 		return "", &ErrRateLimit{StatusCode: resp.StatusCode, Message: string(respBody)}
 	}
 	if resp.StatusCode != http.StatusOK {
