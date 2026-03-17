@@ -144,7 +144,6 @@ jobs:
       - name: Capture screenshot
         run: |
           mkdir -p artifacts
-          chmod 0777 artifacts
           if [ ! -s docker/playwright/version.txt ]; then
             echo "docker/playwright/version.txt is missing or empty. This file is required to determine the Playwright Docker image version." >&2
             exit 1
@@ -173,6 +172,9 @@ jobs:
           fi
 
           docker run --rm --network host \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/work \
+            -e npm_config_cache=/work/.npm \
             -v "$PWD:/work" \
             -w /work \
             "$PLAYWRIGHT_IMAGE" \
