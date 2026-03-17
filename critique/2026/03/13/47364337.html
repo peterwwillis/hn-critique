@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Critique: Finding a CPU Design Bug in the Xbox 360 | HN Critique</title>
+  <title>Critique: Finding a CPU Design Bug in the Xbox 360 (2018) | HN Critique</title>
   <link rel="stylesheet" href="../../../../style.css"/>
 </head>
 <body>
@@ -30,15 +30,15 @@
     <div class="story-header">
       <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
       
-      <h2><a href="https://randomascii.wordpress.com/2018/01/07/finding-a-cpu-design-bug-in-the-xbox-360/" rel="noreferrer noopener">Finding a CPU Design Bug in the Xbox 360</a>
+      <h2><a href="https://randomascii.wordpress.com/2018/01/07/finding-a-cpu-design-bug-in-the-xbox-360/" rel="noreferrer noopener">Finding a CPU Design Bug in the Xbox 360 (2018)</a>
         <span class="sitebit"> (randomascii.wordpress.com)</span>
       </h2>
       
       <p class="meta">
-        <span class="score">89 points</span>
+        <span class="score">91 points</span>
         by <a href="https://news.ycombinator.com/user?id=mariuz" class="hnuser">mariuz</a>
         <span class="age">4 days ago</span>
-        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/13/47364337.html">17&nbsp;comments critique</a>
+        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/13/47364337.html">20&nbsp;comments critique</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47364337" rel="noopener">original on HN</a>
       </p>
     </div>
@@ -48,29 +48,29 @@
 
       <section class="critique-section">
         <h3>Summary</h3>
-        <p>The article discusses a CPU design bug found in the Xbox 360 related to a prefetch instruction that could lead to memory coherency issues. The author, who was involved in the Xbox 360&#39;s development, recounts the debugging process and the implications of speculative execution in the CPU&#39;s architecture.</p>
+        <p>The article recounts the author&#39;s experience discovering a CPU design bug in the Xbox 360 related to a special prefetch instruction (xdcbt) that bypassed the L2 cache, causing memory coherency issues and crashes. The bug was exacerbated by speculative execution via the branch predictor, similar in principle to the Meltdown and Spectre vulnerabilities, leading to unpredictable and unsafe behavior when the instruction was speculatively executed.</p>
       </section>
 
       <section class="critique-section">
         <h3>Main Points &amp; Arguments</h3>
         <ul>
-          <li>The Xbox 360 CPU had a design flaw involving the xdcbt instruction that could cause memory inconsistencies.</li><li>Speculative execution of prefetch instructions could lead to crashes in games due to incoherent memory views.</li>
+          <li>The Xbox 360 CPU is a three-core PowerPC chip with a 1-MB L2 cache shared among cores.</li><li>A new instruction, xdcbt, was added to prefetch data directly into L1 cache, bypassing L2 cache to improve performance but breaking memory coherency guarantees.</li><li>Using xdcbt incorrectly caused heap corruption crashes due to incoherent views of memory across cores.</li><li>The bug was initially thought to be caused by explicit use of xdcbt, but later found to also occur due to speculative execution of xdcbt instructions by the branch predictor.</li><li>Speculative execution of xdcbt could not be canceled, causing side effects identical to real execution, leading to crashes even when the instruction was not actually executed.</li><li>The bug was ultimately deemed too dangerous to allow xdcbt instructions in game code, and games shipped without using it.</li><li>This issue is related to the same class of vulnerabilities as Meltdown and Spectre, involving speculative execution side effects.</li>
         </ul>
       </section>
 
       <section class="critique-section">
         <h3>Truthfulness Assessment</h3>
-        <div class="rating-badge rating-questionable">
-          Questionable
+        <div class="rating-badge rating-needs-citation">
+          Needs Citation
         </div>
-        <p>The article appears to provide a personal account of a technical issue encountered during the development of the Xbox 360. While the author&#39;s expertise lends credibility to the claims, the lack of external sources or corroboration makes it difficult to fully assess the accuracy of the technical details presented.</p>
+        <p>The article is a first-person account by Bruce Dawson, a known and credible software engineer with experience at Microsoft and Google, describing a technical bug he personally investigated in the Xbox 360 CPU. The technical details about the PowerPC architecture, cache coherence protocols, the xdcbt instruction, and speculative execution align with established computer architecture knowledge. The connection to Meltdown and Spectre is conceptually accurate, as both involve speculative execution vulnerabilities. The article is consistent with publicly known information about the Xbox 360 CPU and speculative execution issues. However, it is a personal narrative and does not cite external sources or provide independent verification beyond the author&#39;s testimony and anecdotal evidence from colleagues and game developers. Overall, the claims are credible and technically plausible but would benefit from corroboration.</p>
       </section>
 
       
       <section class="critique-section">
         <h3>Additional Considerations</h3>
         <ul>
-          <li>The article does not provide any external references or sources to verify the claims made about the CPU design and its implications.</li><li>There is no mention of how the findings relate to broader industry practices or similar issues in other architectures.</li>
+          <li>The article does not provide external references or documentation from IBM or Microsoft confirming the bug or the exact behavior of xdcbt.</li><li>It focuses on a single instruction and scenario; broader implications for other instructions or CPUs are not discussed in depth.</li><li>The article is anecdotal and technical, potentially difficult for non-experts to fully verify or understand without specialized knowledge.</li><li>There is no discussion of whether later hardware revisions or patches addressed the issue.</li><li>The article does not explore alternative explanations or perspectives from hardware manufacturers or other engineers.</li>
         </ul>
       </section>
       
@@ -84,7 +84,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-17 17:18 UTC &nbsp;|&nbsp;
+    Generated 2026-03-17 17:31 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
