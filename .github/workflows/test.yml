@@ -36,6 +36,12 @@ jobs:
       - name: Static analysis (go vet)
         run: make vet
 
+      - name: Archive fallback regression tests
+        run: go test -v ./internal/article -run '^TestArchive(PHFallback_UsesSubmittedSnapshot|WaybackFallback_UsesExactReplay|PHResponseURL_UsesLocationHeader)$'
+
+      - name: Playwright fetch regression test
+        run: go test -v ./internal/article -run '^TestArchivePlaywrightFallback_UsesDaemon$'
+
       - name: Unit tests
         run: make test-unit
 
@@ -172,10 +178,13 @@ jobs:
           fi
 
           docker run --rm --network host \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/work \
+            -e npm_config_cache=/work/.npm \
             -v "$PWD:/work" \
             -w /work \
             "$PLAYWRIGHT_IMAGE" \
-            playwright screenshot --browser chromium --full-page \
+            npx playwright screenshot --browser chromium --full-page \
             "http://localhost:8080/" "artifacts/hn-critique-ui.png"
 
       - name: Upload screenshot artifact
