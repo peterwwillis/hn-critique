@@ -9,8 +9,8 @@ import (
 )
 
 func TestFetchWithTruncation_UsesArchivePHFallback(t *testing.T) {
-	const body = "<html><body><article>" + "archive-ph " + "</article></body></html>"
-	articleText := strings.Repeat(body, 40)
+	articleContent := strings.Repeat("archive-ph ", 40)
+	articleText := "<html><body><article>" + articleContent + "</article></body></html>"
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch {
