@@ -24,8 +24,7 @@ func TestFetchWithTruncation_UsesArchivePHFallback(t *testing.T) {
 	}))
 	defer server.Close()
 
-	reset := setTestFallbackPrefixes(server.URL+"/archive/", server.URL+"/wayback/")
-	defer reset()
+	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/")
 
 	fetcher := NewFetcher()
 	text, _, err := fetcher.FetchWithTruncation(server.URL + "/original")
@@ -54,8 +53,7 @@ func TestFetchWithTruncation_UsesInternetArchiveFallback(t *testing.T) {
 	}))
 	defer server.Close()
 
-	reset := setTestFallbackPrefixes(server.URL+"/archive/", server.URL+"/wayback/")
-	defer reset()
+	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/")
 
 	fetcher := NewFetcher()
 	text, _, err := fetcher.FetchWithTruncation(server.URL + "/original")
@@ -67,13 +65,14 @@ func TestFetchWithTruncation_UsesInternetArchiveFallback(t *testing.T) {
 	}
 }
 
-func setTestFallbackPrefixes(archivePH, wayback string) func() {
+func setTestFallbackPrefixes(t *testing.T, archivePH, wayback string) {
+	t.Helper()
 	oldArchive := archivePHPrefix
 	oldWayback := waybackPrefix
 	archivePHPrefix = archivePH
 	waybackPrefix = wayback
-	return func() {
+	t.Cleanup(func() {
 		archivePHPrefix = oldArchive
 		waybackPrefix = oldWayback
-	}
+	})
 }
