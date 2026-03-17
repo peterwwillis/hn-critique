@@ -45,6 +45,16 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const workflow_id = "crawl.yml";
+            const fullRunEvents = new Set(["schedule", "workflow_dispatch"]);
+            const isCurrentFullRun = fullRunEvents.has(context.eventName);
+
+            // PR smoke-test runs are intentionally excluded from this guard.
+            // They should be allowed to run even while a full crawl is active.
+            if (!isCurrentFullRun) {
+              core.setOutput("proceed", "true");
+              return;
+            }
+
             const currentRun = await github.rest.actions.getWorkflowRun({
               owner,
               repo,
@@ -63,6 +73,7 @@ jobs:
             const blockingRun = workflowRuns.find(
               (run) =>
                 run.id !== context.runId &&
+                fullRunEvents.has(run.event) &&
                 new Date(run.created_at).getTime() < currentCreatedAt
             );
 
