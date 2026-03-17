@@ -77,7 +77,8 @@ func (c *Client) GetTopStories(limit int) ([]int, error) {
 	if errors.Is(err, errPlaywrightNotConfigured) {
 		return nil, fmt.Errorf("fetching top stories: %w", lastErr)
 	}
-	return nil, fmt.Errorf("fetching top stories: direct API failed after %d attempts: %v; playwright fallback failed: %w", topStoriesFetchAttempts, lastErr, err)
+	joinedErr := errors.Join(lastErr, err)
+	return nil, fmt.Errorf("fetching top stories: direct API failed after %d attempts; playwright fallback failed: %w", topStoriesFetchAttempts, joinedErr)
 }
 
 func (c *Client) getTopStoriesDirect(limit int) ([]int, error) {
