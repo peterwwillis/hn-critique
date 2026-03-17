@@ -2,26 +2,27 @@
   "story_id": 47397367,
   "generated_at": "",
   "critique": {
-    "summary": "The article discusses an experiment exploring the use of unreviewed AI-generated code in production by shifting from manual code review to automated verification methods. The author uses property-based testing, mutation testing, side-effect checks, and type-checking to verify code correctness without human review, suggesting this approach could reduce the need for manual inspection as tooling improves.",
+    "summary": "The article discusses an experiment with using automated verification techniques to trust AI-generated code without manual review. It proposes verifying code correctness through property-based tests, mutation testing, and other constraints as a way to reduce the need for human review in production settings.",
     "mainPoints": [
-      "The author conducted an experiment generating AI code for a simplified FizzBuzz problem and verified it using automated tests instead of manual review.",
-      "Verification methods included property-based testing to ensure requirements are met, mutation testing to restrict code to only meet requirements, side-effect checks, and type-checking/linting in Python.",
-      "The author argues that maintainability and readability may be less relevant for AI-generated code treated like compiled code.",
-      "The current overhead of setting up these automated checks is higher than manual review but could decrease with improved tools and agents.",
-      "Related work includes formal verification, the JustHTML library's unit test grounding, and a 'Software Factory' approach with no human code review."
+      "The author shifted from manually reviewing AI-generated code to verifying it through automated checks.",
+      "Verification includes property-based testing, mutation testing, ensuring no side effects, and type-checking/linting.",
+      "These constraints help ensure correctness and reduce the risk of errors in unreviewed AI-generated code.",
+      "Maintainability and readability may be less relevant if code correctness can be guaranteed through verification.",
+      "The approach currently has overhead but could improve as AI and tooling advance.",
+      "Related work includes formal verification, large unit test suites, and projects aiming for no human code review."
     ],
-    "truthfulness": "The article accurately describes established software testing techniques such as property-based testing and mutation testing, which are well-documented methods for verifying code correctness. The claims about these techniques reducing the need for manual review are plausible and align with current software engineering practices. The mention of related projects like JustHTML and the concept of a Software Factory is consistent with publicly available information on efforts to automate code verification. However, the article is based on a personal experiment and perspective rather than comprehensive empirical studies, so while the technical descriptions are truthful, the broader claims about replacing human review with verification should be considered preliminary and context-dependent.",
+    "truthfulness": "The article accurately describes established software testing methods such as property-based testing and mutation testing, which are recognized techniques to improve software reliability. The claim that these methods can reduce the need for manual code review is plausible and aligns with current trends in software engineering and AI-assisted development. The article correctly notes that formal verification is resource-intensive and that a middle ground of automated verification could be practical. The references to existing projects and tools are consistent with publicly available information. However, the article is based on a personal experiment and perspective rather than extensive empirical studies, so some claims about trust and maintainability remain subjective and exploratory.",
     "considerations": [
-      "The article does not address potential limitations of automated verification in complex or safety-critical systems where human judgment remains crucial.",
-      "It does not discuss the risk of AI-generated code passing tests but still containing subtle bugs or security vulnerabilities not covered by the tests.",
-      "The scalability and generalizability of the approach beyond simple problems like FizzBuzz are not explored.",
-      "The article does not consider the implications for code maintainability and debugging when human review is minimized.",
-      "Potential biases or errors in the AI code generation process itself are not discussed."
+      "Automated verification may not catch all logical errors or security vulnerabilities in complex AI-generated code.",
+      "The approach depends heavily on the quality and coverage of the test suite and constraints defined.",
+      "Human review might still be necessary for critical or safety-sensitive applications.",
+      "The overhead of setting up verification frameworks could be prohibitive for smaller projects.",
+      "Maintainability and readability can impact long-term code quality and team collaboration, which verification alone does not address."
     ],
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion critiques the use of simple examples like FizzBuzz to evaluate AI-generated code verification, emphasizing the complexity of real-world software testing and the need for human oversight. Participants highlight the challenges AI faces with edge cases, the importance of readable code, and the limitations of automated testing approaches.",
+    "summary": "The discussion critically evaluates the feasibility of automated verification for AI-generated code, highlighting limitations of simple examples like FizzBuzz, the complexity of real-world software, and the challenges in testing AI code. Contributors emphasize the need for human review, property-based testing, and caution against ignoring maintainability and readability.",
     "comments": [
       {
         "id": 47416156,
@@ -34,7 +35,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "Provides a nuanced view on the limitations of AI in testing complex software, emphasizing human responsibility and the challenges of comprehensive verification."
+        "analysis": "This comment accurately highlights the complexity of software beyond simple test cases and stresses the engineer's responsibility in testing, reflecting real-world software development challenges."
       },
       {
         "id": 47417620,
@@ -47,45 +48,32 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Insightfully discusses the nature of AI errors and the potential of property-based testing to catch subtle bugs, highlighting practical verification challenges."
+        "analysis": "Provides a nuanced view on AI errors and suggests property-based testing as a practical tool, aligning well with current best practices in testing AI-generated code."
       },
       {
-        "id": 47417496,
-        "author": "jerf",
-        "text": "\u0026quot;However, I\u0026#x27;m starting to think that maintainability and readability aren\u0026#x27;t relevant in this context. We should treat the output like compiled code.\u0026quot;\u003cp\u003eI would like to put my marker out here as \u003ci\u003evigorously\u003c/i\u003e disagreeing with this. I will quote my post [1] again, which given that this is the third time I\u0026#x27;ve referred to a footnote via link rather suggests this should be lifted out of the footnote:\u003cp\u003e\u0026quot;It has been lost in AI money-grabbing frenzy but a few years ago we were talking a lot about AIs being “legible”, that they could explain their actions in human-comprehensible terms. “Running code we can examine” is the highest grade of legibility any AI system has produced to date. We should not give that away.\u003cp\u003e\u0026quot;We will, of course. The Number Must Go Up. We aren’t very good at this sort of thinking.\u003cp\u003e\u0026quot;But we shouldn’t.\u0026quot;\u003cp\u003eDo not let go of human-readable code. Ask me 20 years ago whether we\u0026#x27;d get \u0026quot;unreadable code generation\u0026quot; or \u0026quot;readable code generation\u0026quot; out of AIs and I would have guessed they\u0026#x27;d generate completely opaque and unreadable code. Good news! I would have been completely wrong! They in fact produce perfectly readable code. It may be perfectly readable \u0026quot;slop\u0026quot; sometimes, but the slop-ness is a separate issue. Even the slop is still perfectly readable. Don\u0026#x27;t let go of it.\u003cp\u003e[1]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;jerf.org\u0026#x2F;iri\u0026#x2F;post\u0026#x2F;2026\u0026#x2F;what_value_code_in_ai_era\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;jerf.org\u0026#x2F;iri\u0026#x2F;post\u0026#x2F;2026\u0026#x2F;what_value_code_in_ai_era\u0026#x2F;\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "Argues effectively for the importance of readable and maintainable code even in AI-generated outputs, countering the idea of treating code as opaque."
-      },
-      {
-        "id": 47417189,
-        "author": "davemp",
-        "text": "So often these AI articles mis or ignore the Test Oracle Problem. Generating correct tests is at least as hard as generating the correct answers (often harder).\u003cp\u003eI’m actually starting to get annoyed about how much material is getting spread around about software analysis \u0026#x2F; formal methods by folks ignorant about the basics of the field.",
+        "id": 47417792,
+        "author": "agentultra",
+        "text": "This might work on small, self contained projects.\u003cp\u003eNo side effects is a hefty constraint.\u003cp\u003eSystems tend to have multiple processes all using side effects. There are global properties of the system that need specification and tests are hard to write for these situations. Especially when they are temporal properties that you care about (eg: if we enter the A state then eventually we must enter the B state).\u003cp\u003eWhen such guarantees involve multiple processes, even property tests aren’t going to cover you sufficiently.\u003cp\u003eWorse, when it falls over at 3am and you’ve never read the code… is the plan to vibe code a big fix right there? Will you also remember to modify the specifications first?\u003cp\u003eGood on the author for trying. Correctness is hard.",
         "indicators": [
           "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "Highlights a fundamental challenge in automated testing, the Test Oracle Problem, stressing the difficulty in generating reliable tests."
+        "accuracyRank": 3,
+        "analysis": "Correctly points out the difficulty of verifying complex systems with side effects and temporal properties, underscoring the limitations of the proposed approach."
       },
       {
         "id": 47415756,
         "author": "tedivm",
         "text": "While I understand why people want to skip code reviews, I think it is an absolute mistake at this point in time. I think AI coding assistants are great, but I\u0026#x27;ve seen them fail or go down the wrong path enough times (even with things like spec driven development) where I don\u0026#x27;t think it\u0026#x27;s reasonable to not review code. Everything from development paths in production code, improper implementations, security risks: all of those are just as likely to happen with an AI as a Human, and any team that let\u0026#x27;s humans push to production without a review would absolutely be ridiculed for it.\u003cp\u003eAgain, I\u0026#x27;m not opposed to AI coding. I know a lot of people are. I have multiple open source projects that were 100% created with AI assistants, and wrote a blog post about it you can see in my post history. I\u0026#x27;m not anti-ai, but I do think that developers have some responsibility for the code they create with those tools.",
         "indicators": [
-          "emotional",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 5,
-        "analysis": "Emphasizes the necessity of human code reviews despite AI assistance, citing practical risks and shared responsibility."
+        "accuracyRank": 4,
+        "analysis": "Emphasizes the importance of human code review despite AI assistance, citing practical risks and responsibility, which is a widely accepted stance."
       },
       {
         "id": 47416503,
@@ -97,13 +85,25 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Raises a valid concern about the trustworthiness of tests themselves and the difficulty in evolving AI-generated software."
+        "accuracyRank": 5,
+        "analysis": "Raises a critical point about the trustworthiness of tests themselves and the difficulty of evolving AI-generated software, supported by real examples."
       },
       {
-        "id": 47415652,
-        "author": "jghn",
-        "text": "I do think that GenAI will lead to a rise in mutation testing, property testing, and fuzzing. But it\u0026#x27;s worth people keeping in mind that there are reasons why these aren\u0026#x27;t already ubiquitous. Among other issues, they can be computationally expensive, especially mutation testing.",
+        "id": 47417496,
+        "author": "jerf",
+        "text": "\u0026quot;However, I\u0026#x27;m starting to think that maintainability and readability aren\u0026#x27;t relevant in this context. We should treat the output like compiled code.\u0026quot;\u003cp\u003eI would like to put my marker out here as \u003ci\u003evigorously\u003c/i\u003e disagreeing with this. I will quote my post [1] again, which given that this is the third time I\u0026#x27;ve referred to a footnote via link rather suggests this should be lifted out of the footnote:\u003cp\u003e\u0026quot;It has been lost in AI money-grabbing frenzy but a few years ago we were talking a lot about AIs being “legible”, that they could explain their actions in human-comprehensible terms. “Running code we can examine” is the highest grade of legibility any AI system has produced to date. We should not give that away.\u003cp\u003e\u0026quot;We will, of course. The Number Must Go Up. We aren’t very good at this sort of thinking.\u003cp\u003e\u0026quot;But we shouldn’t.\u0026quot;\u003cp\u003eDo not let go of human-readable code. Ask me 20 years ago whether we\u0026#x27;d get \u0026quot;unreadable code generation\u0026quot; or \u0026quot;readable code generation\u0026quot; out of AIs and I would have guessed they\u0026#x27;d generate completely opaque and unreadable code. Good news! I would have been completely wrong! They in fact produce perfectly readable code. It may be perfectly readable \u0026quot;slop\u0026quot; sometimes, but the slop-ness is a separate issue. Even the slop is still perfectly readable. Don\u0026#x27;t let go of it.\u003cp\u003e[1]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;jerf.org\u0026#x2F;iri\u0026#x2F;post\u0026#x2F;2026\u0026#x2F;what_value_code_in_ai_era\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;jerf.org\u0026#x2F;iri\u0026#x2F;post\u0026#x2F;2026\u0026#x2F;what_value_code_in_ai_era\u0026#x2F;\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Argues convincingly for maintaining code readability and maintainability in AI-generated code, opposing the idea of treating it like opaque compiled code."
+      },
+      {
+        "id": 47417189,
+        "author": "davemp",
+        "text": "So often these AI articles mis or ignore the Test Oracle Problem. Generating correct tests is at least as hard as generating the correct answers (often harder).\u003cp\u003eI’m actually starting to get annoyed about how much material is getting spread around about software analysis \u0026#x2F; formal methods by folks ignorant about the basics of the field.",
         "indicators": [
           "intelligent",
           "thoughtful",
@@ -111,7 +111,31 @@
           "constructive"
         ],
         "accuracyRank": 7,
-        "analysis": "Provides a balanced perspective on the adoption of advanced testing techniques, noting computational costs as a barrier."
+        "analysis": "Highlights the fundamental challenge of the Test Oracle Problem in automated testing, a well-known issue in software testing and formal methods."
+      },
+      {
+        "id": 47415652,
+        "author": "jghn",
+        "text": "I do think that GenAI will lead to a rise in mutation testing, property testing, and fuzzing. But it\u0026#x27;s worth people keeping in mind that there are reasons why these aren\u0026#x27;t already ubiquitous. Among other issues, they can be computationally expensive, especially mutation testing.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Provides a realistic perspective on the adoption barriers of advanced testing techniques like mutation testing due to computational costs."
+      },
+      {
+        "id": 47416001,
+        "author": "phailhaus",
+        "text": "Using FizzBuzz as your proxy for \u0026quot;unreviewed code\u0026quot; is extremely misleading. It has practically no complexity, it\u0026#x27;s completely self-contained and easy to verify. In any codebase of even modest complexity, the challenge shifts from \u0026quot;does this produce the correct outputs\u0026quot; to \u0026quot;is this going to let me \u003ci\u003egrow\u003c/i\u003e the way I need it to in the future\u0026quot; and thornier questions like \u0026quot;does this have the performance characteristics that I need\u0026quot;.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Correctly criticizes the use of trivial examples like FizzBuzz to represent unreviewed code, emphasizing the complexity of real software challenges."
       },
       {
         "id": 47416403,
@@ -122,33 +146,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 8,
-        "analysis": "Clarifies the distinction between automated test generation and formal verification, pointing out the article's focus on testing rather than proofs."
-      },
-      {
-        "id": 47416001,
-        "author": "phailhaus",
-        "text": "Using FizzBuzz as your proxy for \u0026quot;unreviewed code\u0026quot; is extremely misleading. It has practically no complexity, it\u0026#x27;s completely self-contained and easy to verify. In any codebase of even modest complexity, the challenge shifts from \u0026quot;does this produce the correct outputs\u0026quot; to \u0026quot;is this going to let me \u003ci\u003egrow\u003c/i\u003e the way I need it to in the future\u0026quot; and thornier questions like \u0026quot;does this have the performance characteristics that I need\u0026quot;.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 9,
-        "analysis": "Critiques the simplification of using trivial examples to represent complex software challenges, emphasizing scalability issues."
-      },
-      {
-        "id": 47415865,
-        "author": "Ancalagon",
-        "text": "Even with mutation testing doesn’t this still require review of the testing code?",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 10,
-        "analysis": "Raises an important point about the necessity of reviewing test code itself, highlighting a potential oversight in automated testing."
+        "analysis": "Clarifies that the article focuses on automated test generation rather than formal verification, which is an important distinction."
       }
     ]
   }
