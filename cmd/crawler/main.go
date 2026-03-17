@@ -204,15 +204,15 @@ func main() {
 					if truncated {
 						story.ArticleTruncated = true
 						runeCount := utf8.RuneCountInString(text)
-						log.Printf("  ⚠  article content truncated: fetched %d chars (text limit: %d chars, body limit: %d bytes); critique may be incomplete",
-							runeCount, limits.ArticleTextChars, limits.ArticleBodyBytes)
+						log.Printf("  ⚠  story %d article content truncated: fetched %d chars (text limit: %d chars, body limit: %d bytes); critique may be incomplete",
+							story.ID, runeCount, limits.ArticleTextChars, limits.ArticleBodyBytes)
 					}
 					// Check whether the text will be further truncated when
 					// inserted into the AI prompt.
 					if limits.ArticlePromptBytes > 0 && len(text) > limits.ArticlePromptBytes {
 						story.ArticleTruncated = true
-						log.Printf("  ⚠  article prompt truncated: text is %d bytes, limit is %d; critique may be incomplete",
-							len(text), limits.ArticlePromptBytes)
+						log.Printf("  ⚠  story %d article prompt truncated: text is %d bytes, limit is %d; critique may be incomplete",
+							story.ID, len(text), limits.ArticlePromptBytes)
 					}
 				}
 			}
