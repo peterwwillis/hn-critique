@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">116 points</span>
+        <span class="score">130 points</span>
         by <a href="https://news.ycombinator.com/user?id=ingve" class="hnuser">ingve</a>
-        <span class="age">8 hours ago</span>
+        <span class="age">9 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47410532.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47410532" rel="noopener">original on HN</a>
       </p>
@@ -47,13 +47,13 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the challenges and learning experiences involved in building a Unix shell, particularly focusing on string parsing, pipe implementation, and job control. Several commenters share personal experiences, useful resources, and technical insights about the complexity hidden beneath the shell&#39;s simplicity.</p>
+      <p>The discussion revolves around the challenges and learning experiences of building a shell, highlighting the complexity of string parsing, job control, and process management. Contributors share personal projects, resources, and insights on the intricacies of shell implementation and Unix process handling.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
 
     
-    <div class="comment-row">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=wei03288" class="hnuser">wei03288</a>
         &nbsp;|&nbsp;rank #1
@@ -61,65 +61,65 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The pipe section is the part that changes how you think about processes. Once you&#x27;ve manually done the dup2 dance — close write-end in parent, close read-end in child, wire them up — it stops being magic and starts being obvious why `grep | sort | uniq` works at all. The thing that surprised me building a similar toy was how late in the process job control has to come: you can get a working pipe chain surprisingly fast, and then job control (SIGTSTP, tcsetpgrp, the whole mess) costs 5x more than everything else combined.</div>
-      <div class="comment-analysis"><em>This comment provides detailed technical insight into pipe implementation and job control, reflecting a deep understanding of Unix process management.</em></div>
+      <div class="comment-analysis"><em>This comment accurately describes the technical details of pipe implementation and job control in Unix shells, reflecting deep understanding and practical experience.</em></div>
     </div>
     
-    <div class="comment-row">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=rigorclaw" class="hnuser">rigorclaw</a>
+        <a href="https://news.ycombinator.com/user?id=rrampage" class="hnuser">rrampage</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">The pipe implementation section is really clean. Working through fork&#x2F;exec&#x2F;dup2 by hand like this is one of those exercises that makes you appreciate how much composability Unix got right. Processes that know nothing about each other just work together because they read stdin and write stdout. I built something similar years ago and the moment pipes actually worked felt like unlocking a cheat code.</div>
-      <div class="comment-analysis"><em>The comment accurately praises the pipe implementation and highlights the educational value of manually handling process communication.</em></div>
+      <div class="comment-text">Fun read! I built a minimal Linux shell [0] in c and Zig last year which does not depend on libc. It was a great way to learn about execve, the new-ish clone3 syscall and how Linux starts a process. Parsing strings is the least fun part of the building the shell.<p>[0] <a href="https:&#x2F;&#x2F;gist.github.com&#x2F;rrampage&#x2F;5046b60ca2d040bcffb49ee38e86041f" rel="nofollow">https:&#x2F;&#x2F;gist.github.com&#x2F;rrampage&#x2F;5046b60ca2d040bcffb49ee38e8...</a></div>
+      <div class="comment-analysis"><em>Provides a credible account of shell building with relevant technical details, emphasizing learning through system calls and process creation.</em></div>
     </div>
     
-    <div class="comment-row">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=hexer303" class="hnuser">hexer303</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Unix shells are conceptually simple but hide a surprising amount of complexity under the hood that we take for granted. I recently had build my own PTY controller. There were so many edge-cases to deal with. It took weeks of stress testing and writing many tests to get it right.</div>
-      <div class="comment-analysis"><em>This comment correctly points out the hidden complexity in shell components like PTY controllers, emphasizing the effort required to handle edge cases.</em></div>
-    </div>
-    
-    <div class="comment-row">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=lvales" class="hnuser">lvales</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Building a shell is a great exercise, but honestly having to deal with string parsing is such a bother that it robs like 2&#x2F;3 of the joy along the way. I once built a very simple one in Go [0] as a learning exercise and I stopped once I started getting frustrated with all the corner cases.<p>[0] <a href="https:&#x2F;&#x2F;github.com&#x2F;lourencovales&#x2F;codecrafters&#x2F;blob&#x2F;master&#x2F;shell-go&#x2F;shell-go.go" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;lourencovales&#x2F;codecrafters&#x2F;blob&#x2F;master&#x2F;sh...</a></div>
-      <div class="comment-analysis"><em>This comment provides a realistic perspective on the difficulties of string parsing in shell building, which is a common pain point.</em></div>
+      <div class="comment-analysis"><em>Offers a realistic perspective on the frustrations of string parsing in shell development, which aligns with common developer experiences.</em></div>
     </div>
     
-    <div class="comment-row">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=ratzkewatzke" class="hnuser">ratzkewatzke</a>
+        <a href="https://news.ycombinator.com/user?id=hexer303" class="hnuser">hexer303</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Unix shells are conceptually simple but hide a surprising amount of complexity under the hood that we take for granted. I recently had build my own PTY controller. There were so many edge-cases to deal with. It took weeks of stress testing and writing many tests to get it right.</div>
+      <div class="comment-analysis"><em>Highlights the hidden complexities in shell and PTY implementation, supported by personal experience with testing and edge cases.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=rigorclaw" class="hnuser">rigorclaw</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">There&#x27;s a very good exercise on Codecrafters (<a href="https:&#x2F;&#x2F;app.codecrafters.io&#x2F;courses&#x2F;shell&#x2F;overview">https:&#x2F;&#x2F;app.codecrafters.io&#x2F;courses&#x2F;shell&#x2F;overview</a>) to walk you through writing your own shell. I found it enlightening, as well as a good way to learn a new language.</div>
-      <div class="comment-analysis"><em>The comment offers a helpful resource for learning shell implementation, which is relevant and useful but less technically detailed.</em></div>
+      <div class="comment-text">The pipe implementation section is really clean. Working through fork&#x2F;exec&#x2F;dup2 by hand like this is one of those exercises that makes you appreciate how much composability Unix got right. Processes that know nothing about each other just work together because they read stdin and write stdout. I built something similar years ago and the moment pipes actually worked felt like unlocking a cheat code.</div>
+      <div class="comment-analysis"><em>Accurately praises the educational value of implementing pipes and process control, reflecting common understanding among Unix developers.</em></div>
     </div>
     
-    <div class="comment-row">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=emersion" class="hnuser">emersion</a>
         &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> <span class="indicator">intelligent</span> 
       </div>
       <div class="comment-text">Some time ago I&#x27;ve written an article about a particular aspect of shells, job control: <a href="https:&#x2F;&#x2F;emersion.fr&#x2F;blog&#x2F;2019&#x2F;job-control&#x2F;" rel="nofollow">https:&#x2F;&#x2F;emersion.fr&#x2F;blog&#x2F;2019&#x2F;job-control&#x2F;</a></div>
-      <div class="comment-analysis"><em>This comment shares an informative resource on job control, contributing useful background information.</em></div>
+      <div class="comment-analysis"><em>Provides a relevant resource on job control, contributing useful information to the discussion.</em></div>
     </div>
     
-    <div class="comment-row">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=mzs" class="hnuser">mzs</a>
         &nbsp;|&nbsp;rank #7
@@ -131,51 +131,84 @@
   job control
 </code></pre>
 The parser was easy in comparison.</div>
-      <div class="comment-analysis"><em>The comment reflects a common experience that job control and terminal management are more challenging than parsing.</em></div>
+      <div class="comment-analysis"><em>Concise reflection on the relative difficulty of shell components, accurately noting that job control and terminal management are challenging.</em></div>
     </div>
     
-    <div class="comment-row">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=zokier" class="hnuser">zokier</a>
+        <a href="https://news.ycombinator.com/user?id=ratzkewatzke" class="hnuser">ratzkewatzke</a>
         &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Bit of pedantry but I don&#x27;t think traditional unix shell (like this) follows repl model; the shell is not usually doing <i>printing</i> of the result of <i>evaluation</i>. Instead the printing happens more as a side effect of the commands.</div>
-      <div class="comment-analysis"><em>This comment correctly clarifies a conceptual distinction about shell behavior versus a REPL, showing attention to detail.</em></div>
-    </div>
-    
-    <div class="comment-row">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=dirk94018" class="hnuser">dirk94018</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Interesting. I wanted to do toast | bash to let the AI drive the computer but the bash shell really got in the way. Too much complexity. The things that annoy humans, $ expansion, special characters, etc don&#x27;t work for AI either. Ended up writing a custom shell for AI (and humans). When a tool gets in the way, sometimes it just time to change the tool.</div>
-      <div class="comment-analysis"><em>The comment shares an innovative use case and highlights limitations of traditional shells for AI interaction.</em></div>
-    </div>
-    
-    <div class="comment-row">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=lioeters" class="hnuser">lioeters</a>
-        &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
         <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">Link was previously posted by author: <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47398749">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47398749</a> There are other good quality articles on their site, and maybe deserves the imaginary points.</div>
-      <div class="comment-analysis"><em>This comment provides meta information about the link and endorses the quality of related articles, but adds little technical insight.</em></div>
+      <div class="comment-text">There&#x27;s a very good exercise on Codecrafters (<a href="https:&#x2F;&#x2F;app.codecrafters.io&#x2F;courses&#x2F;shell&#x2F;overview">https:&#x2F;&#x2F;app.codecrafters.io&#x2F;courses&#x2F;shell&#x2F;overview</a>) to walk you through writing your own shell. I found it enlightening, as well as a good way to learn a new language.</div>
+      <div class="comment-analysis"><em>Recommends a credible learning resource, adding practical value to the discussion.</em></div>
     </div>
     
-    <div class="comment-row">
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=lasgawe" class="hnuser">lasgawe</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Great article. There are many things every developer should do when starting to learn programming or when trying to improve their skills. This is one of them. I once built a shell-like programming language (not an interpreter). If anyone reading this wants to improve their skills, I strongly suggest building your own shell from scratch.</div>
+      <div class="comment-analysis"><em>Encouraging but general comment praising the article without technical depth.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=doe88" class="hnuser">doe88</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Is there a (real) shell whose code is relatively short and self contained and would be valuable to read? This was always something I wanted to do but never quite spent time to look for a good one to explore.</div>
+      <div class="comment-analysis"><em>A reasonable question seeking recommendations, though it does not add technical insight.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dirk94018" class="hnuser">dirk94018</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Interesting. I wanted to do toast | bash to let the AI drive the computer but the bash shell really got in the way. Too much complexity. The things that annoy humans, $ expansion, special characters, etc don&#x27;t work for AI either. Ended up writing a custom shell for AI (and humans). When a tool gets in the way, sometimes it just time to change the tool.</div>
+      <div class="comment-analysis"><em>Shares a personal project and critique of bash complexity, which is a valid perspective though somewhat anecdotal.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=austy69" class="hnuser">austy69</a>
-        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;rank #12
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Fun read. Wonder if you are able to edit text in the shell, or if you need to implement a gap buffer to allow it?</div>
-      <div class="comment-analysis"><em>The comment poses a relevant question about shell input editing but does not provide further information or analysis.</em></div>
+      <div class="comment-analysis"><em>Poses a relevant technical question about shell input editing, contributing to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=lioeters" class="hnuser">lioeters</a>
+        &nbsp;|&nbsp;rank #13
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">Link was previously posted by author: <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47398749">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47398749</a> There are other good quality articles on their site, and maybe deserves the imaginary points.</div>
+      <div class="comment-analysis"><em>Adds no new information or insight, merely pointing out a repeated link.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=zokier" class="hnuser">zokier</a>
+        &nbsp;|&nbsp;rank #14
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Bit of pedantry but I don&#x27;t think traditional unix shell (like this) follows repl model; the shell is not usually doing <i>printing</i> of the result of <i>evaluation</i>. Instead the printing happens more as a side effect of the commands.</div>
+      <div class="comment-analysis"><em>Provides a nuanced clarification about shell behavior, which is accurate but somewhat pedantic.</em></div>
     </div>
     
 
@@ -187,7 +220,7 @@ The parser was easy in comparison.</div>
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-17 17:31 UTC &nbsp;|&nbsp;
+    Generated 2026-03-17 19:16 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

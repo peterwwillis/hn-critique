@@ -35,10 +35,10 @@
       </h2>
       
       <p class="meta">
-        <span class="score">116 points</span>
+        <span class="score">130 points</span>
         by <a href="https://news.ycombinator.com/user?id=ingve" class="hnuser">ingve</a>
-        <span class="age">8 hours ago</span>
-        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/17/47410532.html">24&nbsp;comments critique</a>
+        <span class="age">9 hours ago</span>
+        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/17/47410532.html">29&nbsp;comments critique</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47410532" rel="noopener">original on HN</a>
       </p>
     </div>
@@ -48,13 +48,13 @@
 
       <section class="critique-section">
         <h3>Summary</h3>
-        <p>The article describes the author&#39;s process of building a simple Unix shell called &#39;andsh&#39; in C, explaining key shell features such as command execution, environment variable expansion, piping, and basic line editing with history and tab completion. It provides code snippets and explanations of how these features are implemented at a low level using Unix system calls.</p>
+        <p>The article describes the author&#39;s process of building a simple Unix shell called &#39;andsh&#39; in C, covering features like command execution, environment variable expansion, piping, and basic line editing with history and tab completion. It provides code snippets and explanations of key shell concepts such as process forking, execvp, and pipe management.</p>
       </section>
 
       <section class="critique-section">
         <h3>Main Points &amp; Arguments</h3>
         <ul>
-          <li>The author builds a toy shell named &#39;andsh&#39; that supports running commands, changing directories, environment variable expansion, and basic piping.</li><li>The shell uses a read-eval-print loop (REPL) to interactively read commands, tokenize input, expand environment variables, and execute commands using fork and execvp.</li><li>Built-in commands like &#39;cd&#39; must run in the shell process to affect the shell&#39;s state.</li><li>Pipes are implemented using the pipe() system call and dup2 to connect stdout and stdin between processes in a pipeline.</li><li>Line editing, command history, and tab completion are added using the readline library.</li><li>The shell is intentionally minimal and incomplete, lacking features like quoting, redirection, and advanced builtins.</li>
+          <li>The shell is implemented as a REPL that reads user input, tokenizes it, expands environment variables, and executes commands.</li><li>Commands are run in child processes created by fork, using execvp to replace the child process image, while the parent waits for completion.</li><li>Built-in commands like &#39;cd&#39; must run in the shell process itself to affect the shell&#39;s state.</li><li>Environment variable expansion is supported for simple cases like $HOME and $? but lacks full shell quoting or complex syntax.</li><li>Pipes are implemented using the pipe system call and dup2 to connect the stdout of one process to the stdin of the next.</li><li>Line editing, command history, and tab completion are added using the readline library.</li><li>The shell is intentionally minimal and incomplete, lacking features like quoting, redirection, and comprehensive built-in commands.</li>
         </ul>
       </section>
 
@@ -63,14 +63,14 @@
         <div class="rating-badge rating-reliable">
           Reliable
         </div>
-        <p>The article accurately describes the implementation of a basic Unix shell in C, correctly explaining the use of system calls like fork, execvp, pipe, dup2, and waitpid for process management and interprocess communication. The explanations of shell concepts such as built-in commands, environment variable expansion, and piping align with standard Unix shell behavior. The use of the readline library for line editing and history is also factual. The article does not make unsupported claims and provides code examples consistent with common shell implementation techniques.</p>
+        <p>The article accurately describes the implementation details and concepts involved in building a simple Unix shell in C. The use of fork, execvp, waitpid, pipe, and dup2 aligns with standard Unix shell programming practices. The explanations about why &#39;cd&#39; must be a builtin and how pipes work are correct. The limitations and missing features are honestly acknowledged. The code snippets and descriptions match typical shell implementation approaches, and no factual inaccuracies were found.</p>
       </section>
 
       
       <section class="critique-section">
         <h3>Additional Considerations</h3>
         <ul>
-          <li>The article does not address security implications of shell implementation, such as input sanitization or handling malicious commands.</li><li>It omits discussion of more advanced shell features like quoting, redirection, job control, and signal handling beyond basic interrupts.</li><li>Performance considerations of the readline-based completion and the potential overhead of system calls per prompt are only briefly mentioned.</li><li>The shell&#39;s limitations in handling complex command syntax and scripting capabilities are acknowledged but not deeply explored.</li>
+          <li>The shell lacks support for quoting, redirection, and complex shell syntax, which are essential for a fully functional shell.</li><li>Security considerations such as input sanitization and handling of malicious commands are not discussed.</li><li>Performance implications of the readline-based completion and history are briefly mentioned but not deeply analyzed.</li><li>The article does not compare this shell implementation to existing shells or discuss compatibility issues.</li><li>Error handling and edge cases in command parsing and execution are not fully covered.</li>
         </ul>
       </section>
       
@@ -84,7 +84,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-17 17:31 UTC &nbsp;|&nbsp;
+    Generated 2026-03-17 19:16 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

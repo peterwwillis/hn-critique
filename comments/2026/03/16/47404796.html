@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">680 points</span>
+        <span class="score">707 points</span>
         by <a href="https://news.ycombinator.com/user?id=Poudlardo" class="hnuser">Poudlardo</a>
-        <span class="age">21 hours ago</span>
+        <span class="age">22 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/16/47404796.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47404796" rel="noopener">original on HN</a>
       </p>
@@ -46,6 +46,16 @@
     
 
     <p class="no-critique">Analysis could not be generated. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=strujillo" class="hnuser">strujillo</a>
+  </div>
+  <div class="comment-text">Formal verification and code synthesis feel like natural companions for automated scientific discovery. I’ve been working on a small (~800‑line) Python agent that uses sparse regression to uncover governing equations directly from data; it’s managed to validate twelve physical laws, including deriving the Sun’s rotation rate from NASA plasma measurements and correcting Gemini’s plasma conservation. Having an agent like Leanstral that can reason about proofs and specifications would be a powerful complement to data‑driven model discovery — it closes the loop between experimentation and provable correctness.</div>
+  
+</div>
+
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -59,6 +69,23 @@
     <a href="https://news.ycombinator.com/user?id=bluGill" class="hnuser">bluGill</a>
   </div>
   <div class="comment-text">&gt; That’s because it encodes details, not intent.<p>Be careful here - make sure you encode the right details. I&#x27;ve seen many cases where the tests are encoding the details of how it was implemented and not what it is intended to do.  This means that you can&#x27;t refactor anything because your tests are enforcing a design.  (refactor is changing code without deleting tests, the trick is how can you make design changes without deleting tests - which means you have to test as much as possible at a point where changing that part of the design isn&#x27;t possible anyway)</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=necovek" class="hnuser">necovek</a>
+  </div>
+  <div class="comment-text">While you are right that you need to be encoding the right details, I disagree on the tests enforcing a design point.<p>As part of the proper testing strategy, you will have tests that cover individual behavior of a small block&#x2F;function (real &quot;unit&quot; tests), tests that cover integration points only up to the integration itself, and a small number of end-to-end or multi-component integration tests.<p>Only the last category should stay mostly idempotent under refactoring, depending on the type of refactor you are doing.<p>Integration tests will obviously be affected when you are refactoring the interfaces between components, and unit tests will be affected when you are refactoring the components themselves.  Yes, you should apply the strategy that keeps it under incremental reverse TDD approach (do the refactor and keep the old interface, potentially by calling into new API from the old; then in second step replace use of old API as well, including in tests).<p>Tests generally define behavior and implementation in a TDD approach: it&#x27;d be weird if they do not need changing at all when you are changing the implementation.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=phillipclapham" class="hnuser">phillipclapham</a>
+  </div>
+  <div class="comment-text">The formal verification angle is def compelling, but I keep running into a harder problem upstream: if the agent&#x27;s decision logic lives in a prompt, what exactly are you verifying exactly? You can check that the generated code satisfies a spec, but the reasoning that led to that code is opaque by design. You can&#x27;t write a Lean proof about &quot;the model thought this was the right trade-off.&quot;<p>What I&#x27;ve found in practice is that trustworthiness in agentic systems requires a separation of concerns that most architectures simply don&#x27;t enforce: keeping
+deterministic decision logic externalized from the model so it&#x27;s actually inspectable. Once you&#x27;ve got that, tools like this become a lot more powerful because you&#x27;ve got something concrete to verify against. Without it, you&#x27;re proving properties of outputs while the decision process remains a black box.<p>Curious how Leanstral handles cases where the agent&#x27;s architectural choices (not just the implementation) need to be auditable.</div>
   
 </div>
 
@@ -191,6 +218,14 @@
     <a href="https://news.ycombinator.com/user?id=rigorclaw" class="hnuser">rigorclaw</a>
   </div>
   <div class="comment-text">This matches my experience too. The bugs that survive every test suite and code review are always in the state space, not in any single code path. Cache invalidation, distributed coordination, anything with concurrent writes. TLA+ or Lean as a targeted debugging tool for those specific pain points is genuinely practical now, especially with models handling the translation. You don&#x27;t need to formally verify your whole codebase to get value from formal methods.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=refulgentis" class="hnuser">refulgentis</a>
+  </div>
+  <div class="comment-text">Thanks for following up on this: I was really surprised by how much air this paeon to, idk, TDD, took out of the comments by getting off-topic.<p>Before you commented, I started poking at what you described for 15 minutes, then forget about it and fell asleep. Now I remembered, <i>and</i> I know it&#x27;s viable and IIUC it&#x27;s almost certainly going to make a big difference in my work practice moving forward. Cheers.</div>
   
 </div>
 
@@ -366,6 +401,14 @@
   </div>
   <div class="comment-text">&gt; There aren&#x27;t good alternatives and what there is is too complex.<p>Sounds like a worth challenge for this community, mind giving actual examples and see what others can suggest?</div>
   
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=coffeebeqn" class="hnuser">coffeebeqn</a>
+  </div>
+  <div class="comment-text">Vertical integration and breadth and depth of offerings on the cloud and customer lock-in from dominating it for 20 years</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:40px">
@@ -515,24 +558,6 @@
     <a href="https://news.ycombinator.com/user?id=nimchimpsky" class="hnuser">nimchimpsky</a>
   </div>
   <div class="comment-text">the model is open source, you can run it locally. You don&#x27;t think thats significant ?</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=agentultra" class="hnuser">agentultra</a>
-  </div>
-  <div class="comment-text">Very cool but I haven’t been able to convince software developers in industry to write property based tests. I sometimes joke that we will start writing formal proofs until the tests improve. Just so that they will appreciate the difference a little more.<p>I can’t even convince most developers to use model checkers. Far more informal than a full proof in Lean. Still highly useful in many engineering tasks. People prefer boxes and arrows and waving their hands.<p>Anyway, I don’t know that I’d want to have a system vibe code a proof. These types of proofs, I suspect, aren’t going to be generated to be readable, elegant, and be well understood by people. Like programs they generate it will look plausible.<p>And besides, you will still need a human to review the proof and make sure it’s specifying the right things. This doesn’t solve that requirement.<p>Although I have thought that it would be useful to have a system that could prove trivial lemmas in the proof. That would be very neat.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=rowanG077" class="hnuser">rowanG077</a>
-  </div>
-  <div class="comment-text">The point is you just need to scrutinize the theorem. Not easy either, but still significantly less work than writing the proof.</div>
   
 </div>
 
@@ -741,6 +766,34 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=agentultra" class="hnuser">agentultra</a>
+  </div>
+  <div class="comment-text">Very cool but I haven’t been able to convince software developers in industry to write property based tests. I sometimes joke that we will start writing formal proofs until the tests improve. Just so that they will appreciate the difference a little more.<p>I can’t even convince most developers to use model checkers. Far more informal than a full proof in Lean. Still highly useful in many engineering tasks. People prefer boxes and arrows and waving their hands.<p>Anyway, I don’t know that I’d want to have a system vibe code a proof. These types of proofs, I suspect, aren’t going to be generated to be readable, elegant, and be well understood by people. Like programs they generate it will look plausible.<p>And besides, you will still need a human to review the proof and make sure it’s specifying the right things. This doesn’t solve that requirement.<p>Although I have thought that it would be useful to have a system that could prove trivial lemmas in the proof. That would be very neat.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=rowanG077" class="hnuser">rowanG077</a>
+  </div>
+  <div class="comment-text">The point is you just need to scrutinize the theorem. Not easy either, but still significantly less work than writing the proof.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=techcam" class="hnuser">techcam</a>
+  </div>
+  <div class="comment-text">The tricky part is that prompts can look “correct” but still behave unpredictably depending on phrasing.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=patall" class="hnuser">patall</a>
   </div>
   <div class="comment-text">Maybe a naive question: given that they see better performance with more passes but the effect hits a limit after a few passes, would performance increase if they used different models per pass, i.e leanstral, kimi, qwen and leanstral again instead of 4x leanstral?</div>
@@ -809,9 +862,9 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=wazHFsRy" class="hnuser">wazHFsRy</a>
+    <a href="https://news.ycombinator.com/user?id=flakiness" class="hnuser">flakiness</a>
   </div>
-  <div class="comment-text">Is anyone using this approach with lean to ship production code? Writing lean spec as human, implementation and proof by agent? And then shipping lean or exporting to C? Would be great to understand how you are actually using this.</div>
+  <div class="comment-text">FYI The Lean 4 paper: <a href="https:&#x2F;&#x2F;dl.acm.org&#x2F;doi&#x2F;10.1007&#x2F;978-3-030-79876-5_37" rel="nofollow">https:&#x2F;&#x2F;dl.acm.org&#x2F;doi&#x2F;10.1007&#x2F;978-3-030-79876-5_37</a></div>
   
 </div>
 
@@ -819,9 +872,9 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=flakiness" class="hnuser">flakiness</a>
+    <a href="https://news.ycombinator.com/user?id=wazHFsRy" class="hnuser">wazHFsRy</a>
   </div>
-  <div class="comment-text">FYI The Lean 4 paper: <a href="https:&#x2F;&#x2F;dl.acm.org&#x2F;doi&#x2F;10.1007&#x2F;978-3-030-79876-5_37" rel="nofollow">https:&#x2F;&#x2F;dl.acm.org&#x2F;doi&#x2F;10.1007&#x2F;978-3-030-79876-5_37</a></div>
+  <div class="comment-text">Is anyone using this approach with lean to ship production code? Writing lean spec as human, implementation and proof by agent? And then shipping lean or exporting to C? Would be great to understand how you are actually using this.</div>
   
 </div>
 
@@ -863,9 +916,9 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=maelito" class="hnuser">maelito</a>
+    <a href="https://news.ycombinator.com/user?id=piyh" class="hnuser">piyh</a>
   </div>
-  <div class="comment-text">I don&#x27;t understand how this can impact my JS (+yaml, css, etc) code writing in a complex app.</div>
+  <div class="comment-text">Automated theorem provers running on a $5k piece of hardware is a cool version of the future</div>
   
 </div>
 
@@ -873,9 +926,9 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=piyh" class="hnuser">piyh</a>
+    <a href="https://news.ycombinator.com/user?id=maelito" class="hnuser">maelito</a>
   </div>
-  <div class="comment-text">Automated theorem provers running on a $5k piece of hardware is a cool version of the future</div>
+  <div class="comment-text">I don&#x27;t understand how this can impact my JS (+yaml, css, etc) code writing in a complex app.</div>
   
 </div>
 
@@ -895,16 +948,6 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
   
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=blueTiger33" class="hnuser">blueTiger33</a>
-  </div>
-  <div class="comment-text">I read it as Lanestra, and thought of that story :D</div>
-  
 </div>
 
     
@@ -963,6 +1006,16 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
 
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=blueTiger33" class="hnuser">blueTiger33</a>
+  </div>
+  <div class="comment-text">I read it as Lanestra, and thought of that story :D</div>
+  
 </div>
 
     
@@ -1051,16 +1104,6 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ucsandman" class="hnuser">ucsandman</a>
-  </div>
-  <div class="comment-text">love the opensource push for agents, the fleet grows!</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=jasonjmcghee" class="hnuser">jasonjmcghee</a>
   </div>
   <div class="comment-text">Curious if pass@2 was tested for haiku and sonnet?</div>
@@ -1081,9 +1124,9 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=igravious" class="hnuser">igravious</a>
+    <a href="https://news.ycombinator.com/user?id=ucsandman" class="hnuser">ucsandman</a>
   </div>
-  <div class="comment-text">&quot;and continues to scale linearly&quot;<p>it clearly and demonstrably does not. in fact, from eyeballing their chart Qwen, Kimi, and GLM scale linearly whereas Leanstral does not. But this is not surprising because the Alibaba, Moonshot, and Zhipu have hundreds of employees each and hundreds of millions of dollars of investment each.</div>
+  <div class="comment-text">love the opensource push for agents, the fleet grows!</div>
   
 </div>
 
@@ -1091,10 +1134,9 @@ It is a spectrum. For cryptography, compression, error-correction, databases, et
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=xpe" class="hnuser">xpe</a>
+    <a href="https://news.ycombinator.com/user?id=igravious" class="hnuser">igravious</a>
   </div>
-  <div class="comment-text">Public service announcement to
-hopefully reduce unnecessary knife fights*:<p>There are <i>two</i> compatible and important (but different) questions in play:<p>1. Is a program correct relative to a formal specification?<p>2. Is the formal specification what we mean&#x2F;want?<p>*: Worth asking: “What that other person necessarily wrong? Or perhaps they are discussing a different aspect or framing?” AKA: “be curious and charitable” I’m not going to link to the specific threads, but they are happened &#x2F; are happening. Le Sigh.</div>
+  <div class="comment-text">&quot;and continues to scale linearly&quot;<p>it clearly and demonstrably does not. in fact, from eyeballing their chart Qwen, Kimi, and GLM scale linearly whereas Leanstral does not. But this is not surprising because the Alibaba, Moonshot, and Zhipu have hundreds of employees each and hundreds of millions of dollars of investment each.</div>
   
 </div>
 
@@ -1139,6 +1181,17 @@ hopefully reduce unnecessary knife fights*:<p>There are <i>two</i> compatible an
   
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=xpe" class="hnuser">xpe</a>
+  </div>
+  <div class="comment-text">Public service announcement to
+hopefully reduce unnecessary knife fights*:<p>There are <i>two</i> compatible and important (but different) questions in play:<p>1. Is a program correct relative to a formal specification?<p>2. Is the formal specification what we mean&#x2F;want?<p>*: Worth asking: “What that other person necessarily wrong? Or perhaps they are discussing a different aspect or framing?” AKA: “be curious and charitable” I’m not going to link to the specific threads, but they are happened &#x2F; are happening. Le Sigh.</div>
+  
 </div>
 
     
@@ -1199,7 +1252,7 @@ hopefully reduce unnecessary knife fights*:<p>There are <i>two</i> compatible an
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-17 17:31 UTC &nbsp;|&nbsp;
+    Generated 2026-03-17 19:16 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
