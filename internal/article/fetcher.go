@@ -19,7 +19,7 @@ const (
 	defaultMaxTextLen  = 8000
 )
 
-var (
+const (
 	archivePHPrefix = "https://archive.ph/"
 	waybackPrefix   = "https://web.archive.org/web/newest/"
 )
