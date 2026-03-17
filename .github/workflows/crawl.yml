@@ -152,7 +152,7 @@ jobs:
           fi
           PLAYWRIGHT_VERSION=$(tr -d '\r\n' < docker/playwright/version.txt)
           if ! printf '%s' "$PLAYWRIGHT_VERSION" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9._-]+)?$'; then
-            echo "Unexpected Playwright image version format: ${PLAYWRIGHT_VERSION}" >&2
+            echo "Unexpected Playwright image version format: ${PLAYWRIGHT_VERSION}. Expected format: vX.Y.Z or vX.Y.Z-suffix." >&2
             exit 1
           fi
           # Convert image tags like "v1.58.2-jammy" into the npm package version "1.58.2".
@@ -161,7 +161,7 @@ jobs:
           PLAYWRIGHT_DAEMON_STARTUP_TIMEOUT=30
           PLAYWRIGHT_IMAGE="ghcr.io/${{ github.repository }}/playwright:${PLAYWRIGHT_VERSION}"
           if ! docker pull "$PLAYWRIGHT_IMAGE"; then
-            echo "Failed to pull Playwright image ${PLAYWRIGHT_IMAGE}. Ensure the Build Playwright container workflow has completed successfully and the image is available in GHCR." >&2
+            echo "Failed to pull Playwright image ${PLAYWRIGHT_IMAGE}. Ensure the Playwright image build workflow has completed successfully and the image is available in GHCR." >&2
             exit 1
           fi
 
@@ -187,7 +187,7 @@ jobs:
             fi
             if [ -z "$(docker ps -q --filter name=^/playwright-fetch-daemon$)" ]; then
               docker logs playwright-fetch-daemon || true
-              echo "Playwright fetch daemon exited before becoming healthy." >&2
+              echo "Playwright fetch daemon exited before becoming healthy. Check the logs above for error details." >&2
               exit 1
             fi
             sleep 1

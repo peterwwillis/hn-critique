@@ -2,16 +2,16 @@ const http = require('node:http');
 const { chromium } = require('playwright');
 
 const port = Number(process.env.PLAYWRIGHT_DAEMON_PORT || '3000');
-let browserPromise;
+let browserInstancePromise;
 
 function getBrowser() {
-  if (!browserPromise) {
-    browserPromise = chromium.launch({ headless: true }).catch((err) => {
-      browserPromise = undefined;
+  if (!browserInstancePromise) {
+    browserInstancePromise = chromium.launch({ headless: true }).catch((err) => {
+      browserInstancePromise = undefined;
       throw err;
     });
   }
-  return browserPromise;
+  return browserInstancePromise;
 }
 
 async function readJSON(req) {
