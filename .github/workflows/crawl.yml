@@ -45,7 +45,14 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const workflow_id = "crawl.yml";
-            const { data } = await github.rest.actions.listWorkflowRuns({
+            const currentRun = await github.rest.actions.getWorkflowRun({
+              owner,
+              repo,
+              run_id: context.runId,
+            });
+            const currentCreatedAt = new Date(currentRun.data.created_at).getTime();
+
+            const workflowRuns = await github.paginate(github.rest.actions.listWorkflowRuns, {
               owner,
               repo,
               workflow_id,
@@ -53,8 +60,10 @@ jobs:
               per_page: 100,
             });
 
-            const blockingRun = data.workflow_runs.find(
-              (run) => run.id !== context.runId && run.id < context.runId
+            const blockingRun = workflowRuns.find(
+              (run) =>
+                run.id !== context.runId &&
+                new Date(run.created_at).getTime() < currentCreatedAt
             );
 
             if (blockingRun) {
