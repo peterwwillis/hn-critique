@@ -1,9 +1,11 @@
 package ai
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
+	"sync/atomic"
 
 	"github.com/peterwwillis/hn-critique/internal/config"
 	"github.com/peterwwillis/hn-critique/internal/generator"
@@ -20,31 +22,60 @@ type githubProvider struct {
 	token    string
 	model    string
 	settings config.ModelConfig
-	http     *http.Client
+	// fallbacks are tried in order when the primary model returns HTTP 429.
+	fallbacks []githubFallback
+	mode      config.ModelMode
+	counter   atomic.Uint64
+	http      *http.Client
 }
 
-func newGitHubProvider(cfg config.GitHubConfig, settings config.ModelConfig) *githubProvider {
+// githubFallback holds a model name and its settings to use when the primary
+// model is rate-limited.
+type githubFallback struct {
+	model    string
+	settings config.ModelConfig
+}
+
+func newGitHubProvider(cfg config.GitHubConfig, settings config.ModelConfig, fallbacks []githubFallback) *githubProvider {
 	base := strings.TrimRight(cfg.Endpoint, "/")
 	return &githubProvider{
-		endpoint: base + "/chat/completions",
-		token:    cfg.Token,
-		model:    cfg.Model,
-		settings: settings,
-		http:     newHTTPClient(),
+		endpoint:  base + "/chat/completions",
+		token:     cfg.Token,
+		model:     cfg.Model,
+		settings:  settings,
+		fallbacks: fallbacks,
+		mode:      cfg.ModelMode,
+		http:      newHTTPClient(),
 	}
 }
 
 func (p *githubProvider) Name() string { return "github" }
 
-func (p *githubProvider) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
-	prompt := articlePrompt(title, articleURL, content, p.settings.Limits.ArticlePromptBytes)
+// allModels returns the primary model followed by all fallback models.
+func (p *githubProvider) allModels() []githubFallback {
+	models := make([]githubFallback, 0, 1+len(p.fallbacks))
+	models = append(models, githubFallback{model: p.model, settings: p.settings})
+	models = append(models, p.fallbacks...)
+	return models
+}
 
+// pickModel returns the single model to use for the current request in
+// round-robin mode, cycling through all configured models atomically.
+func (p *githubProvider) pickModel() githubFallback {
+	all := p.allModels()
+	idx := p.counter.Add(1) - 1
+	return all[idx%uint64(len(all))]
+}
+
+// tryArticleModel attempts article analysis with a specific model.
+// It returns ErrRateLimit when the model is rate-limited.
+func (p *githubProvider) tryArticleModel(model string, settings config.ModelConfig, title, articleURL, content string) (*generator.ArticleCritique, error) {
+	prompt := articlePrompt(title, articleURL, content, settings.Limits.ArticlePromptBytes)
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
-		text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true, p.settings.Inference)
+		text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, model, prompt, true, settings.Inference)
 		if err != nil {
-			return nil, fmt.Errorf("github models article analysis: %w", err)
+			return nil, err
 		}
-
 		critique, err := parseArticleCritique(text)
 		if err == nil {
 			return critique, nil
@@ -56,21 +87,42 @@ func (p *githubProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 	return nil, fmt.Errorf("github models: article critique unavailable after retries")
 }
 
-func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
-	if len(comments) == 0 {
-		return &generator.CommentsCritique{
-			Summary:  "No comments to analyze.",
-			Comments: []generator.AnalyzedComment{},
-		}, nil
-	}
-	prompt := commentsPrompt(title, articleURL, buildCommentText(comments, p.settings.Limits.CommentPromptBytes))
-
-	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
-		text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, p.model, prompt, true, p.settings.Inference)
+func (p *githubProvider) AnalyzeArticle(title, articleURL, content string) (*generator.ArticleCritique, error) {
+	if p.mode == config.ModelModeRoundRobin {
+		m := p.pickModel()
+		critique, err := p.tryArticleModel(m.model, m.settings, title, articleURL, content)
 		if err != nil {
-			return nil, fmt.Errorf("github models comments analysis: %w", err)
+			return nil, fmt.Errorf("github models article analysis: %w", err)
 		}
+		return critique, nil
+	}
 
+	// Default: fallback mode — try each model in order, moving on for HTTP 429.
+	var lastRateLimitErr error
+	for _, m := range p.allModels() {
+		critique, err := p.tryArticleModel(m.model, m.settings, title, articleURL, content)
+		if err == nil {
+			return critique, nil
+		}
+		var rateLimitErr *ErrRateLimit
+		if errors.As(err, &rateLimitErr) {
+			lastRateLimitErr = err
+			continue // try next fallback model
+		}
+		return nil, fmt.Errorf("github models article analysis: %w", err)
+	}
+	return nil, fmt.Errorf("github models article analysis: all models rate limited: %w", lastRateLimitErr)
+}
+
+// tryCommentsModel attempts comments analysis with a specific model.
+// It returns ErrRateLimit when the model is rate-limited.
+func (p *githubProvider) tryCommentsModel(model string, settings config.ModelConfig, title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
+	prompt := commentsPrompt(title, articleURL, buildCommentText(comments, settings.Limits.CommentPromptBytes))
+	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
+		text, err := callChatCompletions(p.http, p.endpoint, "Bearer "+p.token, model, prompt, true, settings.Inference)
+		if err != nil {
+			return nil, err
+		}
 		critique, err := parseCommentsCritique(text, comments)
 		if err == nil {
 			applyCommentText(critique, comments)
@@ -81,4 +133,38 @@ func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*g
 		}
 	}
 	return nil, fmt.Errorf("github models: comments critique unavailable after retries")
+}
+
+func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*generator.Comment) (*generator.CommentsCritique, error) {
+	if len(comments) == 0 {
+		return &generator.CommentsCritique{
+			Summary:  "No comments to analyze.",
+			Comments: []generator.AnalyzedComment{},
+		}, nil
+	}
+
+	if p.mode == config.ModelModeRoundRobin {
+		m := p.pickModel()
+		critique, err := p.tryCommentsModel(m.model, m.settings, title, articleURL, comments)
+		if err != nil {
+			return nil, fmt.Errorf("github models comments analysis: %w", err)
+		}
+		return critique, nil
+	}
+
+	// Default: fallback mode — try each model in order, moving on for HTTP 429.
+	var lastRateLimitErr error
+	for _, m := range p.allModels() {
+		critique, err := p.tryCommentsModel(m.model, m.settings, title, articleURL, comments)
+		if err == nil {
+			return critique, nil
+		}
+		var rateLimitErr *ErrRateLimit
+		if errors.As(err, &rateLimitErr) {
+			lastRateLimitErr = err
+			continue // try next fallback model
+		}
+		return nil, fmt.Errorf("github models comments analysis: %w", err)
+	}
+	return nil, fmt.Errorf("github models comments analysis: all models rate limited: %w", lastRateLimitErr)
 }

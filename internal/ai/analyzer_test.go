@@ -78,6 +78,42 @@ func TestNewProvider_MissingCredentials(t *testing.T) {
 	}
 }
 
+// TestNewProvider_OpenAI_RoundRobin verifies that NewProvider accepts the
+// round_robin model_mode for the openai provider when chat_models is set.
+func TestNewProvider_OpenAI_RoundRobin(t *testing.T) {
+	cfg := config.Defaults()
+	cfg.Provider = config.ProviderOpenAI
+	cfg.OpenAI.APIKey = "sk-test"
+	cfg.OpenAI.ModelMode = config.ModelModeRoundRobin
+	cfg.OpenAI.ChatModels = []string{"gpt-4o-mini", "gpt-4o"}
+
+	p, err := ai.NewProvider(cfg)
+	if err != nil {
+		t.Fatalf("NewProvider error: %v", err)
+	}
+	if p.Name() != "openai" {
+		t.Errorf("Name() = %q, want %q", p.Name(), "openai")
+	}
+}
+
+// TestNewProvider_GitHub_RoundRobin verifies that NewProvider accepts the
+// round_robin model_mode for the github provider when fallback_models is set.
+func TestNewProvider_GitHub_RoundRobin(t *testing.T) {
+	cfg := config.Defaults()
+	cfg.Provider = config.ProviderGitHub
+	cfg.GitHub.Token = "ghp_test"
+	cfg.GitHub.ModelMode = config.ModelModeRoundRobin
+	cfg.GitHub.FallbackModels = []string{"openai/gpt-4o-mini", "mistral-ai/mistral-small"}
+
+	p, err := ai.NewProvider(cfg)
+	if err != nil {
+		t.Fatalf("NewProvider error: %v", err)
+	}
+	if p.Name() != "github" {
+		t.Errorf("Name() = %q, want %q", p.Name(), "github")
+	}
+}
+
 func TestParseJSON(t *testing.T) {
 	tests := []struct {
 		name    string

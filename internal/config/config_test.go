@@ -99,6 +99,85 @@ use_responses_api = false
 	}
 }
 
+// TestModelModeOpenAI verifies that model_mode and chat_models are parsed
+// correctly from a TOML config for the openai provider.
+func TestModelModeOpenAI(t *testing.T) {
+	tomlContent := `
+provider = "openai"
+
+[openai]
+api_key = "sk-test"
+chat_model = "gpt-4o-mini"
+chat_models = ["gpt-4o-mini", "gpt-4o", "gpt-4.1-mini"]
+model_mode = "round_robin"
+`
+	path := filepath.Join(t.TempDir(), "model_mode_openai.toml")
+	if err := os.WriteFile(path, []byte(tomlContent), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := config.Load(path)
+	if err != nil {
+		t.Fatalf("Load error: %v", err)
+	}
+
+	if cfg.OpenAI.ModelMode != config.ModelModeRoundRobin {
+		t.Errorf("OpenAI.ModelMode = %q, want %q", cfg.OpenAI.ModelMode, config.ModelModeRoundRobin)
+	}
+	if len(cfg.OpenAI.ChatModels) != 3 {
+		t.Errorf("OpenAI.ChatModels length = %d, want 3", len(cfg.OpenAI.ChatModels))
+	}
+	if cfg.OpenAI.ChatModels[0] != "gpt-4o-mini" {
+		t.Errorf("ChatModels[0] = %q, want %q", cfg.OpenAI.ChatModels[0], "gpt-4o-mini")
+	}
+	if cfg.OpenAI.ChatModels[2] != "gpt-4.1-mini" {
+		t.Errorf("ChatModels[2] = %q, want %q", cfg.OpenAI.ChatModels[2], "gpt-4.1-mini")
+	}
+}
+
+// TestModelModeGitHub verifies that model_mode is parsed correctly from a
+// TOML config for the github provider.
+func TestModelModeGitHub(t *testing.T) {
+	tomlContent := `
+provider = "github"
+
+[github]
+token = "ghp_test"
+endpoint = "https://models.github.ai/inference"
+model = "openai/gpt-4.1-mini"
+fallback_models = ["openai/gpt-4o-mini", "mistral-ai/mistral-small"]
+model_mode = "round_robin"
+`
+	path := filepath.Join(t.TempDir(), "model_mode_github.toml")
+	if err := os.WriteFile(path, []byte(tomlContent), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := config.Load(path)
+	if err != nil {
+		t.Fatalf("Load error: %v", err)
+	}
+
+	if cfg.GitHub.ModelMode != config.ModelModeRoundRobin {
+		t.Errorf("GitHub.ModelMode = %q, want %q", cfg.GitHub.ModelMode, config.ModelModeRoundRobin)
+	}
+	if len(cfg.GitHub.FallbackModels) != 2 {
+		t.Errorf("GitHub.FallbackModels length = %d, want 2", len(cfg.GitHub.FallbackModels))
+	}
+}
+
+// TestModelModeDefault verifies that the default model_mode is "fallback".
+func TestModelModeDefault(t *testing.T) {
+	cfg := config.Defaults()
+
+	if cfg.OpenAI.ModelMode != config.ModelModeFallback {
+		t.Errorf("default OpenAI.ModelMode = %q, want %q", cfg.OpenAI.ModelMode, config.ModelModeFallback)
+	}
+	if cfg.GitHub.ModelMode != config.ModelModeFallback {
+		t.Errorf("default GitHub.ModelMode = %q, want %q", cfg.GitHub.ModelMode, config.ModelModeFallback)
+	}
+}
+
 func TestLoadEnvFallback(t *testing.T) {
 	t.Setenv("OPENAI_API_KEY", "env-key")
 	t.Setenv("OPENAI_BASE_URL", "http://localhost:11434")

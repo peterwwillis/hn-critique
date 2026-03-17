@@ -2,12 +2,22 @@
 package config
 
 import (
+	"bytes"
+	_ "embed"
 	"errors"
 	"fmt"
 	"os"
 
 	"github.com/BurntSushi/toml"
 )
+
+// defaultsToml is the built-in factory-default configuration.
+// It is embedded at compile time from defaults.toml so that the binary can
+// run without any external config file.  Users override individual settings
+// by writing their own config file (specified with -config).
+//
+//go:embed defaults.toml
+var defaultsToml []byte
 
 // ProviderName is the identifier for an AI provider.
 type ProviderName string
@@ -16,6 +26,19 @@ const (
 	ProviderOpenAI ProviderName = "openai"
 	ProviderOllama ProviderName = "ollama"
 	ProviderGitHub ProviderName = "github"
+)
+
+// ModelMode controls how a provider selects a model when multiple models are configured.
+type ModelMode string
+
+const (
+	// ModelModeFallback tries the primary model first and falls back to the
+	// next model in the list only when the current one is rate-limited (HTTP 429).
+	ModelModeFallback ModelMode = "fallback"
+
+	// ModelModeRoundRobin distributes each request to a different model in
+	// sequence, cycling through all configured models regardless of errors.
+	ModelModeRoundRobin ModelMode = "round_robin"
 )
 
 // Config is the top-level configuration loaded from a TOML file.
@@ -53,12 +76,21 @@ type OpenAIConfig struct {
 	// ChatModel is the model used for chat completions.
 	// Falls back to the OPENAI_CHAT_MODEL environment variable when empty.
 	ChatModel string `toml:"chat_model"`
+	// ChatModels is a list of models to use for chat completions.
+	// When set, this list takes precedence over ChatModel.
+	// The first entry is the primary model; subsequent entries are used for
+	// fallback (ModelModeFallback) or round-robin (ModelModeRoundRobin).
+	ChatModels []string `toml:"chat_models"`
 	// SearchModel is the model used when web search is requested via the Responses API.
 	SearchModel string `toml:"search_model"`
 	// UseResponsesAPI enables the Responses API (with web_search_preview) for
 	// article analysis. Falls back to Chat Completions when false or unavailable.
 	// This feature is specific to api.openai.com and should be false for other backends.
 	UseResponsesAPI bool `toml:"use_responses_api"`
+	// ModelMode controls how models are selected when ChatModels has more than
+	// one entry. "fallback" tries models in order on rate-limit errors (default);
+	// "round_robin" cycles through models for each request.
+	ModelMode ModelMode `toml:"model_mode"`
 }
 
 // OllamaConfig holds settings for a local Ollama instance.
@@ -87,6 +119,14 @@ type GitHubConfig struct {
 	// Model is the model identifier in the format "provider/model-name"
 	// (e.g. "openai/gpt-4.1-mini", "openai/gpt-4o-mini").
 	Model string `toml:"model"`
+	// FallbackModels is a list of model identifiers to try in order when the
+	// primary model returns HTTP 429 (rate limited). Each model is looked up
+	// in the Models map for its per-model limits and inference settings.
+	FallbackModels []string `toml:"fallback_models"`
+	// ModelMode controls how models are selected when FallbackModels is set.
+	// "fallback" tries models in order on rate-limit errors (default);
+	// "round_robin" cycles through all configured models for each request.
+	ModelMode ModelMode `toml:"model_mode"`
 }
 
 // InferenceConfig holds per-model inference tuning parameters.
@@ -121,25 +161,15 @@ type ModelConfig struct {
 	Limits    LimitsConfig    `toml:"limits"`
 }
 
-// Defaults returns a Config pre-filled with sensible default values.
+// Defaults returns a Config pre-filled with sensible default values loaded
+// from the embedded defaults.toml file.  It panics when the embedded file is
+// malformed (this would be a programming error, not a user error).
 func Defaults() *Config {
-	return &Config{
-		Provider: ProviderGitHub,
-		OpenAI: OpenAIConfig{
-			ChatModel:       "gpt-4o-mini",
-			SearchModel:     "gpt-4o-mini",
-			UseResponsesAPI: true,
-		},
-		Ollama: OllamaConfig{
-			BaseURL: "http://localhost:11434",
-			Model:   "llama3.2",
-		},
-		GitHub: GitHubConfig{
-			Endpoint: "https://models.github.ai/inference",
-			Model:    "openai/gpt-4.1-mini",
-		},
-		Models: DefaultModelOverrides(),
+	cfg := &Config{}
+	if _, err := toml.NewDecoder(bytes.NewReader(defaultsToml)).Decode(cfg); err != nil {
+		panic("hn-critique: embedded defaults.toml is invalid: " + err.Error())
 	}
+	return cfg
 }
 
 // DefaultInference returns the default inference parameters.
@@ -169,25 +199,6 @@ func DefaultModelConfig() ModelConfig {
 	}
 }
 
-// DefaultModelOverrides defines built-in model-specific overrides.
-func DefaultModelOverrides() map[string]ModelConfig {
-	gpt41 := DefaultModelConfig()
-	gpt41.Limits = LimitsConfig{
-		CommentPromptBytes: 200000,
-		ArticlePromptBytes: 50000,
-		ArticleTextChars:   50000,
-		ArticleBodyBytes:   4 << 20,
-		CommentDepth:       4,
-		TopComments:        40,
-		ChildComments:      10,
-	}
-
-	return map[string]ModelConfig{
-		"openai/gpt-4.1-mini": gpt41,
-		"gpt-4.1-mini":        gpt41,
-	}
-}
-
 // Load reads the TOML file at path, merges it over the defaults, and resolves
 // credential fields from environment variables.
 func Load(path string) (*Config, error) {
@@ -196,16 +207,6 @@ func Load(path string) (*Config, error) {
 	if path != "" {
 		if _, err := toml.DecodeFile(path, cfg); err != nil {
 			return nil, fmt.Errorf("loading config %q: %w", path, err)
-		}
-	}
-
-	if cfg.Models == nil {
-		cfg.Models = DefaultModelOverrides()
-	} else {
-		for key, override := range DefaultModelOverrides() {
-			if _, ok := cfg.Models[key]; !ok {
-				cfg.Models[key] = override
-			}
 		}
 	}
 

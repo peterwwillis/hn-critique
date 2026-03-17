@@ -1,0 +1,180 @@
+# hn-critique built-in defaults
+#
+# This file is embedded in the binary at compile time and provides the factory
+# defaults for every supported setting.  Users override individual settings
+# either by writing their own config file (specified with -config) or by
+# setting environment variables.
+#
+# When a user-supplied config file is loaded its values are merged on top of
+# these defaults, so only the fields that appear in the user file change.
+#
+# ──────────────────────────────────────────────────────────────
+# Global settings
+# ──────────────────────────────────────────────────────────────
+
+# Default AI provider.  Allowed values: "openai", "ollama", "github".
+# Override with the -provider CLI flag.
+provider = "github"
+
+# ──────────────────────────────────────────────────────────────
+# OpenAI provider defaults
+# ──────────────────────────────────────────────────────────────
+[openai]
+# Credentials — empty by default; use OPENAI_API_KEY env var or set in your
+# own config file.  Not needed when base_url points to a local backend.
+api_key  = ""
+base_url = ""
+
+# Primary model for chat completions (article and comment analysis).
+# Override via OPENAI_CHAT_MODEL env var without editing any file.
+chat_model = "gpt-4o-mini"
+
+# Model used when the Responses API (web search) is requested.
+search_model = "gpt-4o-mini"
+
+# Enable the Responses API with web_search_preview for article analysis.
+# Set false when base_url points to a local server that does not support it.
+use_responses_api = true
+
+# Multi-model selection.
+# chat_models is the ordered list of models; the first entry overrides
+# chat_model as the primary.  Leave empty to use only chat_model.
+# Example: chat_models = ["gpt-4o-mini", "gpt-4o", "gpt-4.1-mini"]
+chat_models = []
+
+# Model selection mode when chat_models has more than one entry.
+#   "fallback"    — use the first model; try the next on HTTP 429 rate-limit
+#   "round_robin" — rotate through the list for each request
+model_mode = "fallback"
+
+# ──────────────────────────────────────────────────────────────
+# Ollama provider defaults (deprecated — use the openai provider instead)
+# ──────────────────────────────────────────────────────────────
+[ollama]
+base_url = "http://localhost:11434"
+model    = "llama3.2"
+
+# ──────────────────────────────────────────────────────────────
+# GitHub Models provider defaults
+# ──────────────────────────────────────────────────────────────
+[github]
+# Credentials — empty by default; use GITHUB_TOKEN env var or set in your
+# own config file.
+token    = ""
+endpoint = "https://models.github.ai/inference"
+
+# Primary model in "provider/model-name" format.
+# See https://github.com/marketplace/models for available models.
+model = "openai/gpt-4.1-mini"
+
+# Additional models used for fallback or round-robin (see model_mode).
+fallback_models = ["openai/gpt-4o-mini", "mistral-ai/mistral-small"]
+
+# Model selection mode.
+#   "fallback"    — use primary model; try next on HTTP 429 rate-limit (default)
+#   "round_robin" — rotate through primary + fallback_models each request
+model_mode = "fallback"
+
+# ──────────────────────────────────────────────────────────────
+# Per-model inference parameters and application limits
+#
+# Keys must match the model name exactly (e.g. "gpt-4o-mini",
+# "openai/gpt-4.1-mini").  Both the qualified form ("openai/gpt-4.1-mini")
+# and the short form ("gpt-4.1-mini") are provided so either naming style
+# works in provider configs.
+#
+# Inference settings
+#   temperature       — float between 0 and 2; lower = more deterministic
+#   max_output_tokens — maximum tokens the model may generate in one call
+#
+# Limit settings control how much data is sent to / fetched from the model:
+#   comment_prompt_bytes — max bytes of comments included in the prompt
+#   article_prompt_bytes — max bytes of article text included in the prompt
+#   article_text_chars   — max characters extracted from the article HTML
+#   article_body_bytes   — max bytes of the raw article HTTP response body
+#   comment_depth        — max recursive depth when traversing HN comments
+#   top_comments         — max top-level comments fetched per story
+#   child_comments       — max child comments fetched per parent comment
+# ──────────────────────────────────────────────────────────────
+
+# ── openai/gpt-4.1-mini ── 1 M input tokens, 32 K output tokens ──────────────
+[models."openai/gpt-4.1-mini".inference]
+temperature        = 0.3
+max_output_tokens  = 4096
+
+[models."openai/gpt-4.1-mini".limits]
+comment_prompt_bytes = 200000
+article_prompt_bytes = 50000
+article_text_chars   = 50000
+article_body_bytes   = 4194304   # 4 MiB
+comment_depth        = 4
+top_comments         = 40
+child_comments       = 10
+
+# Short alias so both "gpt-4.1-mini" and "openai/gpt-4.1-mini" resolve.
+[models."gpt-4.1-mini".inference]
+temperature        = 0.3
+max_output_tokens  = 4096
+
+[models."gpt-4.1-mini".limits]
+comment_prompt_bytes = 200000
+article_prompt_bytes = 50000
+article_text_chars   = 50000
+article_body_bytes   = 4194304
+comment_depth        = 4
+top_comments         = 40
+child_comments       = 10
+
+# ── openai/gpt-4o-mini ── 128 K input tokens (~96 K usable bytes) ────────────
+[models."openai/gpt-4o-mini".inference]
+temperature        = 0.3
+max_output_tokens  = 4096
+
+[models."openai/gpt-4o-mini".limits]
+comment_prompt_bytes = 80000
+article_prompt_bytes = 40000
+article_text_chars   = 40000
+article_body_bytes   = 4194304
+comment_depth        = 4
+top_comments         = 30
+child_comments       = 8
+
+[models."gpt-4o-mini".inference]
+temperature        = 0.3
+max_output_tokens  = 4096
+
+[models."gpt-4o-mini".limits]
+comment_prompt_bytes = 80000
+article_prompt_bytes = 40000
+article_text_chars   = 40000
+article_body_bytes   = 4194304
+comment_depth        = 4
+top_comments         = 30
+child_comments       = 8
+
+# ── mistral-ai/mistral-small ── 32 K input tokens (~24 K usable bytes) ───────
+[models."mistral-ai/mistral-small".inference]
+temperature        = 0.3
+max_output_tokens  = 2048
+
+[models."mistral-ai/mistral-small".limits]
+comment_prompt_bytes = 16000
+article_prompt_bytes = 8000
+article_text_chars   = 8000
+article_body_bytes   = 2097152   # 2 MiB
+comment_depth        = 3
+top_comments         = 20
+child_comments       = 5
+
+[models."mistral-small".inference]
+temperature        = 0.3
+max_output_tokens  = 2048
+
+[models."mistral-small".limits]
+comment_prompt_bytes = 16000
+article_prompt_bytes = 8000
+article_text_chars   = 8000
+article_body_bytes   = 2097152
+comment_depth        = 3
+top_comments         = 20
+child_comments       = 5

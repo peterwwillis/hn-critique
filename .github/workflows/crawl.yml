@@ -41,6 +41,7 @@ jobs:
       (github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-slim
+    timeout-minutes: 360
 
     steps:
       - name: Checkout repository
@@ -73,6 +74,7 @@ jobs:
           git archive origin/gh-pages -- cache/ 2>/dev/null | tar -x -C docs/ || true
 
       - name: Prepare story inputs (no AI)
+        timeout-minutes: 30
         run: |
           ARGS=""
           if [ -n "${{ inputs.provider }}" ]; then
@@ -98,6 +100,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run AI analysis in isolated container
+        timeout-minutes: 300
         env:
           # GitHub Models provider: GITHUB_TOKEN is automatically available in
           # Actions and granted models:read by the permissions block above.
@@ -197,6 +200,7 @@ jobs:
       # ── Production deploy (skipped for PRs) ──────────────────────────────
       - name: Deploy to GitHub Pages
         if: github.event_name != 'workflow_run' || github.event.workflow_run.event != 'pull_request'
+        timeout-minutes: 15
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
