@@ -3,6 +3,7 @@ package ai
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"sync/atomic"
@@ -99,13 +100,17 @@ func (p *githubProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 
 	// Default: fallback mode — try each model in order, moving on for HTTP 429.
 	var lastRateLimitErr error
-	for _, m := range p.allModels() {
+	for i, m := range p.allModels() {
 		critique, err := p.tryArticleModel(m.model, m.settings, title, articleURL, content)
 		if err == nil {
+			if i > 0 && lastRateLimitErr != nil {
+				log.Printf("github models article analysis: fallback model %q succeeded after earlier rate-limit", m.model)
+			}
 			return critique, nil
 		}
 		var rateLimitErr *ErrRateLimit
 		if errors.As(err, &rateLimitErr) {
+			log.Printf("github models article analysis: model %q rate-limited; trying next fallback model", m.model)
 			lastRateLimitErr = err
 			continue // try next fallback model
 		}
@@ -154,13 +159,17 @@ func (p *githubProvider) AnalyzeComments(title, articleURL string, comments []*g
 
 	// Default: fallback mode — try each model in order, moving on for HTTP 429.
 	var lastRateLimitErr error
-	for _, m := range p.allModels() {
+	for i, m := range p.allModels() {
 		critique, err := p.tryCommentsModel(m.model, m.settings, title, articleURL, comments)
 		if err == nil {
+			if i > 0 && lastRateLimitErr != nil {
+				log.Printf("github models comments analysis: fallback model %q succeeded after earlier rate-limit", m.model)
+			}
 			return critique, nil
 		}
 		var rateLimitErr *ErrRateLimit
 		if errors.As(err, &rateLimitErr) {
+			log.Printf("github models comments analysis: model %q rate-limited; trying next fallback model", m.model)
 			lastRateLimitErr = err
 			continue // try next fallback model
 		}

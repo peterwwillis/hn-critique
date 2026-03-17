@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"sync/atomic"
@@ -101,10 +102,14 @@ func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 		settings := p.allChatSettings[i]
 		critique, err := p.analyzeArticleWithModel(model, settings, title, articleURL, content)
 		if err == nil {
+			if i > 0 && lastRateLimitErr != nil {
+				log.Printf("openai article analysis: fallback model %q succeeded after earlier rate-limit", model)
+			}
 			return critique, nil
 		}
 		var rateLimitErr *ErrRateLimit
 		if errors.As(err, &rateLimitErr) {
+			log.Printf("openai article analysis: model %q rate-limited; trying next fallback model", model)
 			lastRateLimitErr = err
 			continue
 		}
@@ -167,10 +172,14 @@ func (p *openAIProvider) AnalyzeComments(title, articleURL string, comments []*g
 		settings := p.allChatSettings[i]
 		critique, err := p.analyzeCommentsWithModel(model, settings, title, articleURL, comments)
 		if err == nil {
+			if i > 0 && lastRateLimitErr != nil {
+				log.Printf("openai comments analysis: fallback model %q succeeded after earlier rate-limit", model)
+			}
 			return critique, nil
 		}
 		var rateLimitErr *ErrRateLimit
 		if errors.As(err, &rateLimitErr) {
+			log.Printf("openai comments analysis: model %q rate-limited; trying next fallback model", model)
 			lastRateLimitErr = err
 			continue
 		}

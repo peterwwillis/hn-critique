@@ -134,6 +134,7 @@ jobs:
 
       - name: Screenshot generated site
         if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.head_repository.full_name == github.repository
+        continue-on-error: true
         run: |
           # Serve the generated docs directory on a local port.
           python3 -m http.server 8080 --directory docs &
@@ -168,7 +169,7 @@ jobs:
               -v "$PWD:/work" \
               -w /work \
               "$PLAYWRIGHT_IMAGE" \
-              npx playwright screenshot --browser chromium --full-page \
+              playwright screenshot --browser chromium --full-page \
               "$url" "$output"
           }
 
@@ -190,7 +191,7 @@ jobs:
           fi
 
       - name: Upload PR preview screenshots
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.head_repository.full_name == github.repository
+        if: always() && github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.head_repository.full_name == github.repository
         uses: actions/upload-artifact@v4
         with:
           name: pr-preview-screenshots
