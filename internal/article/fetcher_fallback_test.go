@@ -259,7 +259,8 @@ func TestArchiveWaybackFallback_UsesCDXSnapshotWhenAvailabilityMissing(t *testin
 	if requestedSnapshotPath != "/web/20240102030405/"+originalURL {
 		t.Fatalf("expected CDX replay snapshot path %q, got %q", "/web/20240102030405/"+originalURL, requestedSnapshotPath)
 	}
-	if !strings.Contains(logs.String(), "article fetch attempt (internet archive): "+server.URL+"/web/20240102030405/"+originalURL) {
+	expectedLogURL := server.URL + "/web/20240102030405/" + originalURL
+	if !strings.Contains(logs.String(), "article fetch attempt (internet archive): "+expectedLogURL) {
 		t.Fatalf("expected internet archive log to include resolved replay URL, got logs:\n%s", logs.String())
 	}
 }

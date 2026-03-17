@@ -32,10 +32,3 @@ func TestIntegration_InternetArchiveSnapshotURL_Live(t *testing.T) {
 		t.Fatalf("expected archived article text to mention %q, got %q", "small web", text[:min(len(text), 200)])
 	}
 }
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}

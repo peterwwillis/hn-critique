@@ -303,6 +303,8 @@ func (f *Fetcher) internetArchiveCDXSnapshotURL(rawURL string) (string, error) {
 	}
 
 	var rows [][]string
+	// CDX responses are small metadata payloads; 1 MiB is ample for a single URL lookup
+	// while still avoiding unbounded reads on an external service response.
 	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&rows); err != nil {
 		return "", fmt.Errorf("decode wayback CDX response: %w", err)
 	}
