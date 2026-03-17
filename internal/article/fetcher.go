@@ -30,6 +30,7 @@ var (
 	waybackCDXAPIURL           = "https://web.archive.org/cdx/search/cdx"
 	waybackReplayBaseURL       = "https://web.archive.org/"
 	errPlaywrightNotConfigured = errors.New("playwright fetch service not configured")
+	articleLogger              = log.Default()
 )
 
 // Limits controls fetcher resource caps.
@@ -121,22 +122,22 @@ func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 		if targetURL == "" {
 			targetURL = rawURL
 		}
-		log.Printf("    article fetch attempt (%s): %s", candidate.source, targetURL)
+		articleLogger.Printf("    article fetch attempt (%s): %s", candidate.source, targetURL)
 		if err != nil {
 			if errors.Is(err, errPlaywrightNotConfigured) {
-				log.Printf("    article fetch skipped (%s): %v", candidate.source, err)
+				articleLogger.Printf("    article fetch skipped (%s): %v", candidate.source, err)
 			} else {
-				log.Printf("    article fetch failed (%s): %v", candidate.source, err)
+				articleLogger.Printf("    article fetch failed (%s): %v", candidate.source, err)
 			}
 			continue
 		}
 		if len(text) >= 300 {
 			if candidate.source != "direct" {
-				log.Printf("    article fetch succeeded via fallback: %s", candidate.source)
+				articleLogger.Printf("    article fetch succeeded via fallback: %s", candidate.source)
 			}
 			return text, truncated, nil
 		}
-		log.Printf("    article fetch produced insufficient content (%s): %d chars", candidate.source, utf8.RuneCountInString(text))
+		articleLogger.Printf("    article fetch produced insufficient content (%s): %d chars", candidate.source, utf8.RuneCountInString(text))
 	}
 	return "", false, fmt.Errorf("could not retrieve article content for %s", rawURL)
 }
@@ -286,7 +287,9 @@ func (f *Fetcher) internetArchiveCDXSnapshotURL(rawURL string) (string, error) {
 	query.Set("output", "json")
 	query.Set("fl", "timestamp,original")
 	query.Add("filter", "statuscode:200")
-	query.Set("limit", "-1")
+	query.Add("filter", "mimetype:text/html")
+	query.Set("limit", "1")
+	query.Set("sort", "reverse")
 	req.URL.RawQuery = query.Encode()
 	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("Accept", "application/json")

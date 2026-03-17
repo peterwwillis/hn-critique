@@ -10,9 +10,12 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 )
+
+var articleLogCaptureMu sync.Mutex
 
 func TestArchivePHFallback_UsesSubmittedSnapshot(t *testing.T) {
 	articleContent := strings.Repeat("archive-ph ", 40)
@@ -202,18 +205,10 @@ func TestArchiveWaybackFallback_UsesCDXSnapshotWhenAvailabilityMissing(t *testin
 	articleText := fmt.Sprintf("<html><body><main>%s</main></body></html>", strings.Repeat("wayback-cdx ", 80))
 	var requestedAvailabilityURL string
 	var requestedCDXURL string
+	var requestedCDXLimit string
+	var requestedCDXSort string
 	var requestedSnapshotPath string
 	var originalURL string
-	var logs bytes.Buffer
-
-	oldLogWriter := log.Writer()
-	oldLogFlags := log.Flags()
-	log.SetOutput(&logs)
-	log.SetFlags(0)
-	t.Cleanup(func() {
-		log.SetOutput(oldLogWriter)
-		log.SetFlags(oldLogFlags)
-	})
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch {
@@ -229,6 +224,8 @@ func TestArchiveWaybackFallback_UsesCDXSnapshotWhenAvailabilityMissing(t *testin
 			_, _ = w.Write([]byte(`{"archived_snapshots":{}}`))
 		case r.URL.Path == "/wayback/cdx":
 			requestedCDXURL = r.URL.Query().Get("url")
+			requestedCDXLimit = r.URL.Query().Get("limit")
+			requestedCDXSort = r.URL.Query().Get("sort")
 			_, _ = fmt.Fprintf(w, `[["timestamp","original"],["20240102030405","%s"]]`, originalURL)
 		case strings.HasPrefix(r.URL.Path, "/web/20240102030405/http://"):
 			requestedSnapshotPath = r.URL.Path
@@ -243,10 +240,14 @@ func TestArchiveWaybackFallback_UsesCDXSnapshotWhenAvailabilityMissing(t *testin
 	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available", server.URL+"/wayback/cdx", server.URL+"/")
 
 	fetcher := NewFetcher()
-	text, _, err := fetcher.FetchWithTruncation(originalURL)
-	if err != nil {
-		t.Fatalf("FetchWithTruncation returned error: %v", err)
-	}
+	var text string
+	logs := captureArticleLogs(t, func() {
+		var err error
+		text, _, err = fetcher.FetchWithTruncation(originalURL)
+		if err != nil {
+			t.Fatalf("FetchWithTruncation returned error: %v", err)
+		}
+	})
 	if !strings.Contains(text, "wayback-cdx") {
 		t.Fatalf("expected internet archive CDX fallback content in text, got %q", text)
 	}
@@ -256,12 +257,18 @@ func TestArchiveWaybackFallback_UsesCDXSnapshotWhenAvailabilityMissing(t *testin
 	if requestedCDXURL != originalURL {
 		t.Fatalf("expected CDX lookup for %q, got %q", originalURL, requestedCDXURL)
 	}
+	if requestedCDXLimit != "1" {
+		t.Fatalf("expected CDX lookup limit=1, got %q", requestedCDXLimit)
+	}
+	if requestedCDXSort != "reverse" {
+		t.Fatalf("expected CDX lookup sort=reverse, got %q", requestedCDXSort)
+	}
 	if requestedSnapshotPath != "/web/20240102030405/"+originalURL {
 		t.Fatalf("expected CDX replay snapshot path %q, got %q", "/web/20240102030405/"+originalURL, requestedSnapshotPath)
 	}
 	expectedLogURL := server.URL + "/web/20240102030405/" + originalURL
-	if !strings.Contains(logs.String(), "article fetch attempt (internet archive): "+expectedLogURL) {
-		t.Fatalf("expected internet archive log to include resolved replay URL, got logs:\n%s", logs.String())
+	if !strings.Contains(logs, "article fetch attempt (internet archive): "+expectedLogURL) {
+		t.Fatalf("expected internet archive log to include resolved replay URL, got logs:\n%s", logs)
 	}
 }
 
@@ -298,4 +305,20 @@ func setTestFallbackPrefixes(t *testing.T, archivePH, waybackAvailability, wayba
 		waybackCDXAPIURL = oldWaybackCDX
 		waybackReplayBaseURL = oldWaybackReplay
 	})
+}
+
+func captureArticleLogs(t *testing.T, fn func()) string {
+	t.Helper()
+	articleLogCaptureMu.Lock()
+	defer articleLogCaptureMu.Unlock()
+
+	origLogger := articleLogger
+	var buf bytes.Buffer
+	articleLogger = log.New(&buf, "", 0)
+	defer func() {
+		articleLogger = origLogger
+	}()
+
+	fn()
+	return buf.String()
 }
