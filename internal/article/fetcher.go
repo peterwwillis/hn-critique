@@ -27,6 +27,8 @@ const (
 var (
 	archivePHBaseURL           = "https://archive.ph/"
 	waybackAvailabilityAPIURL  = "https://archive.org/wayback/available"
+	waybackCDXAPIURL           = "https://web.archive.org/cdx/search/cdx"
+	waybackReplayBaseURL       = "https://web.archive.org/"
 	errPlaywrightNotConfigured = errors.New("playwright fetch service not configured")
 )
 
@@ -268,10 +270,68 @@ func (f *Fetcher) internetArchiveSnapshotURL(rawURL string) (string, error) {
 	}
 
 	closest := payload.ArchivedSnapshots.Closest
-	if !closest.Available || closest.URL == "" || (closest.Status != "" && closest.Status != "200") {
+	if closest.Available && closest.URL != "" && (closest.Status == "" || closest.Status == "200") {
+		return normalizeInternetArchiveSnapshotURL(closest.URL), nil
+	}
+	return f.internetArchiveCDXSnapshotURL(rawURL)
+}
+
+func (f *Fetcher) internetArchiveCDXSnapshotURL(rawURL string) (string, error) {
+	req, err := http.NewRequest("GET", waybackCDXAPIURL, nil)
+	if err != nil {
+		return "", err
+	}
+	query := req.URL.Query()
+	query.Set("url", rawURL)
+	query.Set("output", "json")
+	query.Set("fl", "timestamp,original")
+	query.Add("filter", "statuscode:200")
+	query.Set("limit", "-1")
+	req.URL.RawQuery = query.Encode()
+	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
+
+	resp, err := f.http.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("HTTP %d for wayback CDX lookup", resp.StatusCode)
+	}
+
+	var rows [][]string
+	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&rows); err != nil {
+		return "", fmt.Errorf("decode wayback CDX response: %w", err)
+	}
+	if len(rows) < 2 || len(rows[1]) < 2 {
 		return "", fmt.Errorf("no archived snapshot available")
 	}
-	return closest.URL, nil
+
+	timestamp := strings.TrimSpace(rows[1][0])
+	original := strings.TrimSpace(rows[1][1])
+	if timestamp == "" || original == "" {
+		return "", fmt.Errorf("no archived snapshot available")
+	}
+
+	return normalizeInternetArchiveSnapshotURL(internetArchiveReplayURL(timestamp, original)), nil
+}
+
+func internetArchiveReplayURL(timestamp, original string) string {
+	return strings.TrimRight(waybackReplayBaseURL, "/") + "/web/" + timestamp + "/" + original
+}
+
+func normalizeInternetArchiveSnapshotURL(snapshotURL string) string {
+	parsed, err := url.Parse(snapshotURL)
+	if err != nil {
+		return snapshotURL
+	}
+	if parsed.Host == "web.archive.org" && parsed.Scheme == "http" {
+		parsed.Scheme = "https"
+	}
+	return parsed.String()
 }
 
 func archivePHResponseURL(base *url.URL, headers http.Header) (string, bool) {
