@@ -84,6 +84,7 @@ jobs:
             exit 1
           fi
           PLAYWRIGHT_VERSION=$(tr -d '\r\n' < docker/playwright/version.txt)
+          # Validate format: vX.Y.Z or vX.Y.Z-suffix.
           if ! printf '%s' "$PLAYWRIGHT_VERSION" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9._-]+)?$'; then
             echo "Unexpected Playwright image version format: ${PLAYWRIGHT_VERSION}. Expected format: vX.Y.Z or vX.Y.Z-suffix." >&2
             exit 1
@@ -112,7 +113,7 @@ jobs:
             /bin/sh -lc 'export PATH="$npm_config_prefix/bin:$PATH"; export NODE_PATH="$npm_config_prefix/lib/node_modules"; npm install -g "playwright@${PLAYWRIGHT_NPM_VERSION}" && node /work/docker/playwright/fetch-daemon.cjs'
 
           daemon_ready=false
-          for attempt in $(seq 1 "$PLAYWRIGHT_DAEMON_STARTUP_TIMEOUT"); do
+          for wait_second in $(seq 1 "$PLAYWRIGHT_DAEMON_STARTUP_TIMEOUT"); do
             if curl -fsS --max-time 2 "http://127.0.0.1:${PLAYWRIGHT_DAEMON_PORT}/health" >/dev/null; then
               daemon_ready=true
               break

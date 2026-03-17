@@ -17,8 +17,9 @@ import (
 )
 
 const (
-	topStoriesPageURLDefault = "https://news.ycombinator.com/"
-	topStoriesFetchAttempts  = 3
+	topStoriesPageURLDefault   = "https://news.ycombinator.com/"
+	topStoriesFetchAttempts    = 3
+	maxPlaywrightResponseBytes = 2 << 20
 )
 
 var (
@@ -125,7 +126,7 @@ func (c *Client) getTopStoriesViaPlaywright(limit int) ([]int, error) {
 		return nil, fmt.Errorf("HTTP %d from playwright fetch service: %s", resp.StatusCode, strings.TrimSpace(string(msg)))
 	}
 
-	htmlBody, err := io.ReadAll(io.LimitReader(resp.Body, 2<<20))
+	htmlBody, err := io.ReadAll(io.LimitReader(resp.Body, maxPlaywrightResponseBytes))
 	if err != nil {
 		return nil, err
 	}
