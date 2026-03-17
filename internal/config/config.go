@@ -2,12 +2,22 @@
 package config
 
 import (
+	"bytes"
+	_ "embed"
 	"errors"
 	"fmt"
 	"os"
 
 	"github.com/BurntSushi/toml"
 )
+
+// defaultsToml is the built-in factory-default configuration.
+// It is embedded at compile time from defaults.toml so that the binary can
+// run without any external config file.  Users override individual settings
+// by writing their own config file (specified with -config).
+//
+//go:embed defaults.toml
+var defaultsToml []byte
 
 // ProviderName is the identifier for an AI provider.
 type ProviderName string
@@ -151,26 +161,15 @@ type ModelConfig struct {
 	Limits    LimitsConfig    `toml:"limits"`
 }
 
-// Defaults returns a Config pre-filled with sensible default values.
+// Defaults returns a Config pre-filled with sensible default values loaded
+// from the embedded defaults.toml file.  It panics when the embedded file is
+// malformed (this would be a programming error, not a user error).
 func Defaults() *Config {
-	return &Config{
-		Provider: ProviderGitHub,
-		OpenAI: OpenAIConfig{
-			ChatModel:       "gpt-4o-mini",
-			SearchModel:     "gpt-4o-mini",
-			UseResponsesAPI: true,
-		},
-		Ollama: OllamaConfig{
-			BaseURL: "http://localhost:11434",
-			Model:   "llama3.2",
-		},
-		GitHub: GitHubConfig{
-			Endpoint:       "https://models.github.ai/inference",
-			Model:          "openai/gpt-4.1-mini",
-			FallbackModels: []string{"openai/gpt-4o-mini", "mistral-ai/mistral-small"},
-		},
-		Models: DefaultModelOverrides(),
+	cfg := &Config{}
+	if _, err := toml.NewDecoder(bytes.NewReader(defaultsToml)).Decode(cfg); err != nil {
+		panic("hn-critique: embedded defaults.toml is invalid: " + err.Error())
 	}
+	return cfg
 }
 
 // DefaultInference returns the default inference parameters.
@@ -200,62 +199,6 @@ func DefaultModelConfig() ModelConfig {
 	}
 }
 
-// DefaultModelOverrides defines built-in model-specific overrides.
-// Each entry sets input/output token limits appropriate for that model's
-// context window and rate limits.
-func DefaultModelOverrides() map[string]ModelConfig {
-	// openai/gpt-4.1-mini: 1 M input tokens, 32 K output tokens.
-	maxOutputGPT41Mini := 4096
-	gpt41Mini := DefaultModelConfig()
-	gpt41Mini.Inference.MaxOutputTokens = &maxOutputGPT41Mini
-	gpt41Mini.Limits = LimitsConfig{
-		CommentPromptBytes: 200000,
-		ArticlePromptBytes: 50000,
-		ArticleTextChars:   50000,
-		ArticleBodyBytes:   4 << 20,
-		CommentDepth:       4,
-		TopComments:        40,
-		ChildComments:      10,
-	}
-
-	// openai/gpt-4o-mini: 128 K input tokens (~96 K bytes), 16 K output tokens.
-	maxOutputGPT4oMini := 4096
-	gpt4oMini := DefaultModelConfig()
-	gpt4oMini.Inference.MaxOutputTokens = &maxOutputGPT4oMini
-	gpt4oMini.Limits = LimitsConfig{
-		CommentPromptBytes: 80000,
-		ArticlePromptBytes: 40000,
-		ArticleTextChars:   40000,
-		ArticleBodyBytes:   4 << 20,
-		CommentDepth:       4,
-		TopComments:        30,
-		ChildComments:      8,
-	}
-
-	// mistral-ai/mistral-small: 32 K input tokens (~24 K bytes), 8 K output tokens.
-	maxOutputMistralSmall := 2048
-	mistralSmall := DefaultModelConfig()
-	mistralSmall.Inference.MaxOutputTokens = &maxOutputMistralSmall
-	mistralSmall.Limits = LimitsConfig{
-		CommentPromptBytes: 16000,
-		ArticlePromptBytes: 8000,
-		ArticleTextChars:   8000,
-		ArticleBodyBytes:   2 << 20,
-		CommentDepth:       3,
-		TopComments:        20,
-		ChildComments:      5,
-	}
-
-	return map[string]ModelConfig{
-		"openai/gpt-4.1-mini":        gpt41Mini,
-		"gpt-4.1-mini":               gpt41Mini,
-		"openai/gpt-4o-mini":         gpt4oMini,
-		"gpt-4o-mini":                gpt4oMini,
-		"mistral-ai/mistral-small":   mistralSmall,
-		"mistral-small":              mistralSmall,
-	}
-}
-
 // Load reads the TOML file at path, merges it over the defaults, and resolves
 // credential fields from environment variables.
 func Load(path string) (*Config, error) {
@@ -264,16 +207,6 @@ func Load(path string) (*Config, error) {
 	if path != "" {
 		if _, err := toml.DecodeFile(path, cfg); err != nil {
 			return nil, fmt.Errorf("loading config %q: %w", path, err)
-		}
-	}
-
-	if cfg.Models == nil {
-		cfg.Models = DefaultModelOverrides()
-	} else {
-		for key, override := range DefaultModelOverrides() {
-			if _, ok := cfg.Models[key]; !ok {
-				cfg.Models[key] = override
-			}
 		}
 	}
 

@@ -166,16 +166,15 @@ model_mode = "round_robin"
 	}
 }
 
-// TestModelModeDefault verifies that an empty model_mode field defaults to
-// fallback behaviour (empty string is treated as ModelModeFallback).
+// TestModelModeDefault verifies that the default model_mode is "fallback".
 func TestModelModeDefault(t *testing.T) {
 	cfg := config.Defaults()
 
-	if cfg.OpenAI.ModelMode != "" {
-		t.Errorf("default OpenAI.ModelMode = %q, want empty (fallback)", cfg.OpenAI.ModelMode)
+	if cfg.OpenAI.ModelMode != config.ModelModeFallback {
+		t.Errorf("default OpenAI.ModelMode = %q, want %q", cfg.OpenAI.ModelMode, config.ModelModeFallback)
 	}
-	if cfg.GitHub.ModelMode != "" {
-		t.Errorf("default GitHub.ModelMode = %q, want empty (fallback)", cfg.GitHub.ModelMode)
+	if cfg.GitHub.ModelMode != config.ModelModeFallback {
+		t.Errorf("default GitHub.ModelMode = %q, want %q", cfg.GitHub.ModelMode, config.ModelModeFallback)
 	}
 }
 

@@ -150,24 +150,37 @@ model = "openai/gpt-4.1-mini"
 # ──────────────────────────────────────────────────────────────
 # Model-specific overrides
 #
-# Define per-model inference parameters and application limits.
-# Keys should match the model name exactly.
-# ──────────────────────────────────────────────────────────────
-[models."openai/gpt-4.1-mini".inference]
-# Temperature controls creativity vs. determinism.
-temperature = 0.3
+# Built-in defaults for all supported models are defined in the
+# embedded defaults.toml (compiled into the binary).  You only
+# need to add a section here when you want to change a value from
+# its built-in default.
+#
+# Keys must match the model name exactly (e.g. "gpt-4o-mini" or
+# "openai/gpt-4.1-mini").
+#
+# Available fields per model:
+#
+#   [models."<name>".inference]
+#     temperature        = 0.3    # float 0–2; lower = more deterministic
+#     max_output_tokens  = 4096   # cap on generated tokens per call
+#
+#   [models."<name>".limits]
+#     comment_prompt_bytes = 20000   # max bytes of comments sent to the model
+#     article_prompt_bytes = 6000    # max bytes of article text in the prompt
+#     article_text_chars   = 8000    # max characters extracted from article HTML
+#     article_body_bytes   = 2097152 # max bytes of raw article HTTP response
+#     comment_depth        = 3       # max recursive depth for HN comment tree
+#     top_comments         = 20      # max top-level comments fetched per story
+#     child_comments       = 5       # max child comments per parent
+#
+# Example — raise the output token cap for gpt-4.1-mini:
+# [models."openai/gpt-4.1-mini".inference]
 # max_output_tokens = 8192
-
-[models."openai/gpt-4.1-mini".limits]
-# Cap prompt payload sizes.
-comment_prompt_bytes = 200000
-article_prompt_bytes = 50000
-
-# Cap article fetch/extraction.
-article_text_chars = 50000
-article_body_bytes = 4194304
-
-# Comment traversal limits.
-comment_depth = 4
-top_comments = 40
-child_comments = 10
+#
+# Example — override limits for a custom local model:
+# [models."my-local-model".inference]
+# temperature = 0.1
+# [models."my-local-model".limits]
+# comment_prompt_bytes = 8000
+# article_prompt_bytes = 4000
+# ──────────────────────────────────────────────────────────────
