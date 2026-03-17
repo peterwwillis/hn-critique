@@ -2,6 +2,7 @@ package hn
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -62,16 +63,28 @@ func TestGetTopStories_FallsBackToPlaywright(t *testing.T) {
 	}))
 	defer apiServer.Close()
 
+	errCh := make(chan error, 1)
+
 	var requestedURL string
 	playwrightServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			t.Fatalf("unexpected method: %s", r.Method)
+			select {
+			case errCh <- fmt.Errorf("unexpected method: %s", r.Method):
+			default:
+			}
+			http.Error(w, "unexpected method", http.StatusBadRequest)
+			return
 		}
 		var payload struct {
 			URL string `json:"url"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-			t.Fatalf("decode payload: %v", err)
+			select {
+			case errCh <- fmt.Errorf("decode payload: %v", err):
+			default:
+			}
+			http.Error(w, "invalid payload", http.StatusBadRequest)
+			return
 		}
 		requestedURL = payload.URL
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -95,6 +108,11 @@ func TestGetTopStories_FallsBackToPlaywright(t *testing.T) {
 	ids, err := client.GetTopStories(2)
 	if err != nil {
 		t.Fatalf("GetTopStories returned error: %v", err)
+	}
+	select {
+	case handlerErr := <-errCh:
+		t.Fatalf("playwright handler error: %v", handlerErr)
+	default:
 	}
 	if directAttempts != topStoriesFetchAttempts {
 		t.Fatalf("expected %d direct attempts, got %d", topStoriesFetchAttempts, directAttempts)
