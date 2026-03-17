@@ -1,0 +1,215 @@
+{
+  "story_id": 47398534,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article is a detailed personal account of transitioning from Google Home to a fully local, self-hosted voice assistant using Home Assistant and llama.cpp models. The author shares hardware setups, software configurations, challenges faced, and solutions implemented to improve reliability, privacy, and functionality of the voice assistant.",
+    "mainPoints": [
+      "The author replaced Google Home with a locally hosted voice assistant using Home Assistant, llama.cpp, and various hardware including GPUs and mini PCs.",
+      "Multiple models and speech-to-text/text-to-speech software were tested to optimize performance and accuracy.",
+      "Custom prompts and automations were developed to improve handling of weather queries, music playback, wake word detection, and unclear requests.",
+      "Privacy concerns and reliability issues with cloud-based assistants motivated the switch to a local solution.",
+      "The author emphasizes the importance of prompt engineering and tool integration for effective voice assistant behavior.",
+      "Community feedback and troubleshooting discussions highlight challenges like context window limits and entity exposure in models.",
+      "Additional features such as security camera analysis using AI tasks were integrated to enhance the assistant's capabilities."
+    ],
+    "truthfulness": "The article appears to be a genuine user experience report from a community forum dedicated to Home Assistant users. The technical details about hardware, software, and model performance align with known capabilities of local AI models like llama.cpp and the Home Assistant ecosystem. The challenges and solutions described are consistent with common issues in self-hosted voice assistant projects. However, the article is a personal narrative and does not cite external sources or provide independent verification of all claims. The information is plausible but would benefit from corroboration through official documentation or multiple expert perspectives.",
+    "considerations": [
+      "The article does not discuss the broader security implications of running local AI models, such as potential vulnerabilities or data leakage risks.",
+      "There is limited information on the scalability of the solution for users with different hardware capabilities or larger smart home setups.",
+      "The user experience and accessibility for non-technical users are not addressed, which may limit adoption.",
+      "The environmental impact and energy consumption of running high-end GPUs locally for voice assistants are not considered.",
+      "Potential legal or licensing issues related to using certain AI models or software components are not mentioned."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around experiences and challenges with locally hosted voice assistants, focusing on issues like wake word detection, text-to-speech quality, privacy, and hardware limitations. Several users share personal experiments and opinions on current solutions, highlighting both progress and ongoing shortcomings.",
+    "comments": [
+      {
+        "id": 47402966,
+        "author": "ljclifford",
+        "text": "actually the hardest part of a locally hosted voice assistant isn\u0026#x27;t the llm. it\u0026#x27;s making the tts tolerable to actually talk to every day.\u003cp\u003ethe core issue is prosody: kokoro and piper are trained on read speech, but conversational responses have shorter breath groups and different stress patterns on function words. that\u0026#x27;s why numbers, addresses, and hedged phrases sound off even when everything else works.\u003cp\u003ethe fix is training data composition. conversational and read speech have different prosody distributions and models don\u0026#x27;t generalize across them. for self-hosted, coqui xtts-v2 [1] is worth trying if you want more natural english output than kokoro.\u003cp\u003ebtw i\u0026#x27;m lily, cofounder of rime [2]. we\u0026#x27;re solving this for business voice agents at scale, not really the personal home assistant use case, but the underlying problem is the same.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;coqui-ai\u0026#x2F;TTS\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;coqui-ai\u0026#x2F;TTS\u003c/a\u003e \n[2] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;rime.ai\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;rime.ai\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed and technically accurate explanation of TTS challenges, supported by relevant links and expertise from a cofounder of a related company."
+      },
+      {
+        "id": 47404426,
+        "author": "kbuck",
+        "text": "I bought a Home Assistant Voice Preview Edition to try out. It\u0026#x27;s surprisingly good, but still falls short when compared to Google Home speakers:\u003cp\u003e- Wake word detection isn\u0026#x27;t as good as the Google Homes (more false positives, more false negatives - so I can\u0026#x27;t just tune sensitivity).\u003cp\u003e- Mic and speakers are both of poor quality in comparison to Google Home devices.\u003cp\u003e- Flow is awkward. On a Google Home device, you can say \u0026quot;Okay Google, turn on the lights\u0026quot; with no pause. On the Voice PE, you have to say \u0026quot;Hey Mycroft [awkward pause while you wait for the acknowledgement noise] turn on the lights\u0026quot; - it seems like the Google Home devices start buffering immediately after the wake word, but the Voice PE doesn\u0026#x27;t.\u003cp\u003e- Voice fingerprints don\u0026#x27;t exist, so this prevents the device from figuring out that two separate people are talking, or who is talking to it.\u003cp\u003e- The device has poor identification of background noise, so if you talk to it while there is a TV playing speech in the background, it will continue to listen to the speech from the TV. It will eventually transcribe everything you said + everything from the TV and get confused. (This probably folds into the voice print thing as well.)\u003cp\u003eOn the upside, though:\u003cp\u003e- Setting it up was really easy.\u003cp\u003e- All of the entities I want to control with it are already available, without needing to export them or set them up separately in Google Home.\u003cp\u003e- Despite all of the above complaints, the device is probably 80-90% of what I realistically need to use it day-to-day. If they throw a better speaker and mic array in, I\u0026#x27;d likely be comfortable replacing all of my Google Homes.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "A balanced user review highlighting specific technical shortcomings and positives, reflecting realistic user experience with the device."
+      },
+      {
+        "id": 47399332,
+        "author": "hamdingers",
+        "text": "If you\u0026#x27;re less concerned about privacy, I use Gemini 2.5 Flash for this and it\u0026#x27;s exceptionally good and fast as a HA assistant while being much cheaper than the electricity that would be needed to keep a 3090 awake.\u003cp\u003eThe thing that kills this for me (and they even mentioned it) is wake word detection. I have both the HA voice preview and FPH Satellite1 devices, plus have experimented with a few other options like a Raspberry Pi with a conference mic.\u003cp\u003eSomehow nothing is even 50% good as my Echo devices at picking up the wake word. The assistant itself is far better, but that doesn\u0026#x27;t matter if it takes 2-3 tries to get it to listen to you. If someone solves this problem with open hardware I\u0026#x27;ll be immediately buying several.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Provides a practical perspective on wake word detection challenges, consistent with other comments, emphasizing a key usability barrier."
+      },
+      {
+        "id": 47399680,
+        "author": "daveoc64",
+        "text": "I\u0026#x27;ve recently purchased a couple of the Home Assistant Voice Preview Edition devices, and they leave a lot to be desired.\u003cp\u003eThe wake word detection isn\u0026#x27;t great, and the audio quality is abysmal (for voice responses, not music).\u003cp\u003eAmazon has ruined their Alexa and Echo devices with ads and annoying nag messages.\u003cp\u003eI\u0026#x27;d really like an open alternative, but the basics are lacking right now.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "emotional",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Shares user experience with device limitations and expresses frustration with commercial alternatives, aligning with common critiques."
+      },
+      {
+        "id": 47401149,
+        "author": "tkems",
+        "text": "One that I have been experimenting with is using analog phones (including rotary ones!) to act as the satellites. I live in an older home and have phone jacks in most of the rooms already so I only had to use a single analog telephone adapter. [0] The downside is I don\u0026#x27;t have wake word support, but it makes it more private and I don\u0026#x27;t find myself missing my smart speakers that much. At some point I would like to also support other types of calls on the phones, but for now I need to get an LLM hooked up to it.\u003cp\u003e[0] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.home-assistant.io\u0026#x2F;voice_control\u0026#x2F;worlds-most-private-voice-assistant\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.home-assistant.io\u0026#x2F;voice_control\u0026#x2F;worlds-most-priv...\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "An innovative hardware approach that trades off convenience for privacy, offering a niche but valid solution."
+      },
+      {
+        "id": 47398980,
+        "author": "dewey",
+        "text": "Their first version is most likely already 10x better than Siri.\u003cp\u003e\u0026gt; Understands when it is in a particular area and does not ask “which light?” when there is only one light in the area, but does correctly ask when there are multiple of the device type in the given area.",
+        "indicators": [
+          "likely-true",
+          "emotional"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Optimistic claim that may be somewhat subjective but highlights useful contextual improvements over existing assistants."
+      },
+      {
+        "id": 47410709,
+        "author": "Slav_fixflex",
+        "text": "Great write-up. I\u0026#x27;ve been going down the self-hosted rabbit hole too – started with just a VPS, ended up building monitoring and security automation around it. The moment you start self-hosting seriously you realize how much \u0026#x27;invisible work\u0026#x27; managed services were doing for you.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Insightful comment about the hidden complexities of self-hosting, reflecting common experiences in the community."
+      },
+      {
+        "id": 47398992,
+        "author": "yanis_t",
+        "text": "I\u0026#x27;m still waiting till the promise of voice AI that was showed during the OpenAI demo in 2024 turn real somehow. It\u0026#x27;s not clear to me, why there has been zero progress since then.",
+        "indicators": [
+          "emotional",
+          "likely-untrue"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Expresses impatience and possibly misinformation, as voice AI has seen ongoing development despite perceived slow progress."
+      },
+      {
+        "id": 47399061,
+        "author": "voidUpdate",
+        "text": "Do people like talking to voice assistants? I\u0026#x27;ve used one occasionally (mostly for timers when I\u0026#x27;m cooking), but most of the time it would be faster for me to just do it myself, and feels much less awkward than talking to empty air, asking it to do things for me. It might be because I just really don\u0026#x27;t like making more noise than I have to\u003cp\u003e(Yes, I appreciate that some people may be disabled in such a way that it makes sense to use voice assistants, eg motor problems)",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Subjective user preference that highlights social and practical barriers to voice assistant adoption."
+      },
+      {
+        "id": 47408016,
+        "author": "jimmcslim",
+        "text": "I’m keen to see if Nabu Casa release an update to the Voice Assist hardware sometime soon. Something with the same fidelity and finish of the Amazon and Google options but open would be fantastic.",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Expresses hope for improved open-source hardware, a reasonable expectation but speculative."
+      },
+      {
+        "id": 47411142,
+        "author": "Gri22lyBear",
+        "text": "the tts thing is a legit pain, right? i tried a few different voices and they all sounded so robotic. kokoro is interesting, i\u0026#x27;ll have to check that out.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 11,
+        "analysis": "Reflects common user experience with TTS quality issues, supporting the technical points made by others."
+      },
+      {
+        "id": 47404453,
+        "author": "quirk",
+        "text": "The best fix I\u0026#x27;ve made to any voice-mode AI is giving it a \u0026quot;done\u0026quot; word. So it has to listen for \u0026quot;pineapple\u0026quot; before it\u0026#x27;s allowed to process what I said. Just like radio comms (over and out).",
+        "indicators": [
+          "constructive",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 12,
+        "analysis": "A practical workaround to improve voice command processing, showing creative problem-solving."
+      },
+      {
+        "id": 47403382,
+        "author": "xrd",
+        "text": "I\u0026#x27;ve been having a lot of fun using my old Mycroft AI device. Neon is the new software package. It didn\u0026#x27;t solve the issues highlighted in this thread, but it is a fun open device to hack on. I wrote a little web app that will speak in the standard voice and say things like \u0026quot;hey kids, I\u0026#x27;m AI and know everything, and your dad is really cool.\u0026quot; They love to yell at me when I do that.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 13,
+        "analysis": "Shares personal experience with an open device, acknowledging ongoing limitations."
+      },
+      {
+        "id": 47408095,
+        "author": "Animats",
+        "text": "Is there a locally hosted voice assistant for Android phones? One available through F-Droid, if possible.",
+        "indicators": [
+          "constructive",
+          "thoughtful"
+        ],
+        "accuracyRank": 14,
+        "analysis": "A genuine inquiry, but does not provide information or analysis."
+      },
+      {
+        "id": 47399162,
+        "author": "gausswho",
+        "text": "This is five months old now. Any substantial changes to the recommended setup?",
+        "indicators": [
+          "constructive",
+          "thoughtful"
+        ],
+        "accuracyRank": 15,
+        "analysis": "A request for updates, contributing little to the technical discussion."
+      },
+      {
+        "id": 47404543,
+        "author": "leeeeeep1012",
+        "text": "nice i run one dictatorflow.com that i open sourced lee101\u0026#x2F;voicetype",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 16,
+        "analysis": "Provides a resource but lacks detail or context to assess impact."
+      }
+    ]
+  }
+}

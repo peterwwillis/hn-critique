@@ -1,0 +1,157 @@
+{
+  "story_id": 47366435,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article details the development journey of adding multiplayer functionality to the game Teardown, highlighting the technical challenges of synchronizing a destructible voxel-based world over a network. It covers the evolution from early experiments and community mods to a hybrid deterministic and state synchronization approach, the integration challenges with existing codebases, and the solutions for scripting, UI, and join-in-progress features.",
+    "mainPoints": [
+      "Multiplayer was highly requested but considered unrealistic due to the complexity of synchronizing physics in a destructible voxel world.",
+      "Initial experiments and community mods demonstrated feasibility but had limitations like desynchronization and high bandwidth usage.",
+      "A hybrid approach was adopted using deterministic commands for destruction and reliable streams, combined with unreliable state synchronization for other object states.",
+      "Scripting and modding support was maintained with a unique shared client-server scripting model to accommodate multiplayer architecture.",
+      "UI elements like in-game terminals were synchronized by streaming draw command deltas from server to clients.",
+      "The multiplayer code was merged into the main game branch despite significant challenges, to unify the community and ease mod compatibility.",
+      "Backwards compatibility with existing mods was prioritized, though multiplayer disables scripts in old mods.",
+      "Late join-in-progress was implemented using a deterministic command stream replay with limits to avoid excessive load.",
+      "Development tools were adapted to ease multiplayer debugging, though some conveniences were lost due to merge complexity.",
+      "The author expresses pride in the achievement despite the implementation being complex and inelegant."
+    ],
+    "truthfulness": "The article appears to be a firsthand account from a developer involved in Teardown's multiplayer development, providing detailed technical explanations consistent with known challenges in multiplayer game development, especially for physics-heavy destructible environments. The mention of community mods like TDMP is verifiable and known within the Teardown community. The technical approaches described align with established multiplayer synchronization techniques. However, the article lacks citations or external sources and presents a single perspective from the developer's point of view. The factual claims about technical methods and development timeline are plausible and consistent with publicly available information about Teardown's multiplayer feature rollout.",
+    "considerations": [
+      "The article does not provide perspectives from other developers or the community regarding the multiplayer implementation's reception or performance.",
+      "There is no discussion of player experience issues such as latency, cheating, or server stability beyond technical synchronization details.",
+      "The impact of multiplayer on the game's modding community and any limitations imposed by the new architecture are only briefly mentioned.",
+      "No external validation or independent reviews of the multiplayer feature's quality or stability are cited.",
+      "The article does not address how the multiplayer implementation compares to other similar physics-based multiplayer games."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers on the technical achievements and challenges of implementing multiplayer in Teardown, particularly regarding deterministic simulation and data synchronization. Commenters express admiration for the engineering effort, raise questions about physics implementation, and discuss practical concerns like data transfer and platform performance.",
+    "comments": [
+      {
+        "id": 47410604,
+        "author": "jmgao",
+        "text": "\u0026gt; For the longest time (and for good reasons), floating point operations were considered unsafe for deterministic purposes. That is still true to some extent, but the picture is more nuanced than that. I have since learned a lot about floating point determinism, and these days I know it is mostly safe if you know how to navigate around the pitfalls.\u003cp\u003eIf you\u0026#x27;re only concerned about identical binaries on x86, it\u0026#x27;s not too bad because AMD and Intel tend to have intentionally identical implementations of most floating point operations, with the exception of a few of the approximate reciprocal SSE instructions (rcpps, rsqrtps, etc). Modern x86 instructions tend to have their exact results strictly defined to avoid this kind of inconsistency: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;software.intel.com\u0026#x2F;en-us\u0026#x2F;articles\u0026#x2F;reference-implementations-for-IA-approximation-instructions-vrcp14-vrsqrt14-vrcp28-vrsqrt28-vexp2\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;software.intel.com\u0026#x2F;en-us\u0026#x2F;articles\u0026#x2F;reference-implemen...\u003c/a\u003e\u003cp\u003eIf you want this to work across ARM and x86 (or even multiple ARM vendors), you are screwed, and need to restrict yourself to using only the basic arithmetic operations and reimplement everything else yourself.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a nuanced and technically accurate explanation of floating point determinism, supported by references to hardware specifics, making it the most reliable in the discussion."
+      },
+      {
+        "id": 47410537,
+        "author": "kajkojednojajko",
+        "text": "I enjoyed playing Teardown when it first came out. It was already a technological marvel back then, so it\u0026#x27;s even more impressive that they managed to make the simulation deterministic to add multiplayer several years after release. Clearly top tier engineers.\u003cp\u003eCool to see that the game is owned by Coffee Stain now, too. Satisfactory has been handled well by them, so I\u0026#x27;m optimistic about the future of Teardown as well.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment accurately praises the engineering effort and provides relevant context about the game's ownership, reflecting informed optimism without speculation."
+      },
+      {
+        "id": 47409830,
+        "author": "Sweepi",
+        "text": "\u0026quot;1.Serialize the entire scene, compress the data, and pass it to the joining client. We already do full scene serialization for quicksave and quickload, so this is possible, but the files are large: 30-50 MB is common, often more, so transfer would take a while.\u003cp\u003e[...]\u003cp\u003e3. Record the deterministic command stream, pass it to the joining client, and have that client apply all changes to the loaded scene before joining the game. The amount of data is much smaller than in option 2 since we’re not sending any voxel data, but applying the changes can take a while since it involves a lot computation.\u003cp\u003eOnce we started investigating option 3 we realized it was actually less data than we anticipated, but we still limit the buffer size and disable join-in-progress when it fills up. This allows late joins up to a certain amount of scene changes, beyond which applying the commands would simply take an unreasonably long time. \u0026quot;\u003cp\u003eSo [1] is not an option for players who want to do it that way?",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment offers a clear and plausible explanation of multiplayer synchronization strategies, showing understanding of technical constraints and design decisions."
+      },
+      {
+        "id": 47411837,
+        "author": "hannasanarion",
+        "text": "I feel like there\u0026#x27;s detail missing in the blog.\u003cp\u003eThe \u0026quot;Reliable vs Unreliable\u0026quot; section implies that different parts of the scene are sent using a strict-ordering protocol so that the transforms happen in the same order on every client, but other parts happen in a state update stream with per client queueing.\u003cp\u003eBut which is which? Which events are sent TCP and which are UDP (and is that literally what they\u0026#x27;re doing, or only a metaphor?)\u003cp\u003eReally the economy of the text in the blog seems backwards, this section has one short paragraph explaining the concept of deterministic event ordering as important for keeping things straight, and then 3 paragraphs about how player position and velocity are synced in the same way as any other game. I want read more about the part that makes teardown unique!",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Raises valid questions about the blog's technical explanations, indicating a desire for deeper understanding, though it is speculative about the exact protocols used."
+      },
+      {
+        "id": 47410910,
+        "author": "HexDecOctBin",
+        "text": "If someone from Teardown dev team is here, did you guys ever tried to do the physics in voxel space? If I understand correctly, Teardown convert each physics chunk into a mesh and feeds all the meshes into a traditional physics engine. But this means that the voxel models remain constrained to the voxel grid only locally but not globally.\u003cp\u003eI have been trying to figure out a way to do physics completely in voxel space to ensure a global grid. But I have not been able to find any theory of Newtonian Mechanics that would work in discretised space (Movable Cellular Automata was the closest). I wonder if anyone in the Teardown dev team tried to solve this problem?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Poses an insightful technical question about physics implementation, showing understanding of voxel-based simulation challenges, though it is speculative about dev approaches."
+      },
+      {
+        "id": 47409985,
+        "author": "tietjens",
+        "text": "In my opinion one of the most impressive independent games published on Steam in the last years.",
+        "indicators": [
+          "emotional"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Expresses a subjective opinion without technical detail, contributing positively but lacking analytical depth."
+      },
+      {
+        "id": 47411709,
+        "author": "Aeolun",
+        "text": "I really love Teardown, and I’m absolutely baffled at the bizarre performance that game manages to push on even very large worlds.\u003cp\u003eI’ve tried to load teardown levels in a homegrown engine and I always end up stuttering like hell as soon as GI becomes involved (or even before that).\u003cp\u003eI’m going to finally manage to replicate it, and then the new engine will be released and raise the bar again xD",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Shares enthusiasm and personal goals related to the game’s performance, but provides no technical verification or critique."
+      },
+      {
+        "id": 47409667,
+        "author": "bjord",
+        "text": "I highly respect the implicit decision to forgo repeat purchases by merging into the original game, considering how much work was clearly involved. I haven\u0026#x27;t played it, but I hope for sustainability\u0026#x27;s sake, there are sufficient (purely cosmetic) microtransactions to cover their development costs.",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Offers a reasonable business perspective but is speculative about monetization and sustainability without evidence."
+      },
+      {
+        "id": 47410314,
+        "author": "DimitriBouriez",
+        "text": "Wouldn\u0026#x27;t it have been simpler (even if technically heavy) to host the game on a single machine and just stream each player\u0026#x27;s camera? That way all the physics would be computed in real time on one computer, and each player would just receive a different video stream.",
+        "indicators": [
+          "thoughtful",
+          "likely-untrue"
+        ],
+        "accuracyRank": 9,
+        "analysis": "While conceptually interesting, this approach is impractical for multiplayer games due to latency, bandwidth, and interactivity constraints."
+      },
+      {
+        "id": 47410023,
+        "author": "xecaz",
+        "text": "Looking forward to play the MP version with my son who also loves the game. I worry that the game will get heavier and maybe no longer work of the steamdeck, will it?",
+        "indicators": [
+          "emotional",
+          "constructive"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Expresses a common user concern about hardware limitations, but does not provide technical insight or solutions."
+      },
+      {
+        "id": 47409863,
+        "author": "esperent",
+        "text": "Looks like someone needs a better web host.\u003cp\u003e\u0026gt; Due to protection of web servers from repeated attacks, we were forced to restrict access to administrative interface of web pages to selected countries. If you are currently in a foreign country, please sign in to WebAdmin, proceed to your domain management and disable this GeoIP filter in OneClick Installer section.",
+        "indicators": [
+          "useless",
+          "trolling"
+        ],
+        "accuracyRank": 11,
+        "analysis": "Irrelevant to the discussion about Teardown multiplayer, likely a misplaced or off-topic comment."
+      }
+    ]
+  }
+}
