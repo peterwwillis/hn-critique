@@ -153,7 +153,7 @@ and comment top/child count and depth:
 ```
   ⚠  article content truncated: fetched 8000 chars (text limit: 8000 chars, body limit: 2097152 bytes); critique may be incomplete
   ⚠  article prompt truncated: text is 9500 bytes, limit is 6000; critique may be incomplete
-  ⚠  comment fetch capped: not all comments were retrieved (limits: top=20, child=5, depth=3); comments critique may be incomplete
+  ⚠  comment fetch capped: retrieved 18 comments; not all comments were retrieved (limits: top=20, child=5, depth=3); comments critique may be incomplete
   ⚠  comment prompt truncated: total comment text ~25000 bytes exceeds limit of 20000; comments critique may be incomplete
 ```
 

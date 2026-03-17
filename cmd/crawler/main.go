@@ -173,8 +173,7 @@ func main() {
 				story.Comments = comments
 				if commentsCapped {
 					story.CommentsTruncated = true
-					log.Printf("  ⚠  comment fetch capped: not all comments were retrieved (limits: top=%d, child=%d, depth=%d); comments critique may be incomplete",
-						topComments, childComments, commentDepth)
+					log.Printf("  ⚠  %s", commentFetchCappedWarning(len(comments), topComments, childComments, commentDepth))
 				}
 			}
 
@@ -363,6 +362,13 @@ func fetchCommentsAtDepth(client *hn.Client, kids []int, depth, maxCount, maxChi
 		time.Sleep(hnDelay)
 	}
 	return comments, capped
+}
+
+func commentFetchCappedWarning(retrievedCount, topComments, childComments, commentDepth int) string {
+	return fmt.Sprintf(
+		"comment fetch capped: retrieved %d comments; not all comments were retrieved (limits: top=%d, child=%d, depth=%d); comments critique may be incomplete",
+		retrievedCount, topComments, childComments, commentDepth,
+	)
 }
 
 // extractDomain returns the bare hostname from a URL, stripping the www. prefix.
