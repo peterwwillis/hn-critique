@@ -67,7 +67,6 @@ jobs:
               owner,
               repo,
               workflow_id,
-              status: "in_progress",
               per_page: 100,
             });
 
@@ -75,6 +74,7 @@ jobs:
               (run) =>
                 run.id !== context.runId &&
                 fullRunEvents.has(run.event) &&
+                (run.status === "in_progress" || run.status === "queued") &&
                 new Date(run.created_at).getTime() < currentCreatedAt
             );
 
