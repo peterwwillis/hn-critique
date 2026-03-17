@@ -106,3 +106,109 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make test-ai
+
+  screenshot:
+    name: Capture UI screenshot
+    if: github.event_name == 'pull_request'
+    needs: [unit, integration]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      packages: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Generate docs for screenshot
+        run: go run ./cmd/crawler/ -skip-ai -stories 1 -out ./docs
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Capture screenshot
+        run: |
+          mkdir -p artifacts
+          PLAYWRIGHT_VERSION=$(tr -d '\r\n' < docker/playwright/version.txt)
+          PLAYWRIGHT_IMAGE="ghcr.io/${{ github.repository }}/playwright:${PLAYWRIGHT_VERSION}"
+          docker pull "$PLAYWRIGHT_IMAGE"
+
+          python3 -m http.server 8080 --directory docs &
+          SERVER_PID=$!
+          trap "kill ${SERVER_PID}" EXIT
+
+          for attempt in $(seq 1 15); do
+            if curl -fsS --max-time 2 http://localhost:8080/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+
+          curl -fsS --max-time 2 http://localhost:8080/ >/dev/null
+
+          docker run --rm --network host \
+            -v "$PWD:/work" \
+            -w /work \
+            "$PLAYWRIGHT_IMAGE" \
+            playwright screenshot --browser chromium --full-page \
+            "http://localhost:8080/" "artifacts/hn-critique-ui.png"
+
+      - name: Upload screenshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-screenshot
+          path: artifacts/hn-critique-ui.png
+          retention-days: 7
+
+      - name: Publish screenshot to branch
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          cp artifacts/hn-critique-ui.png /tmp/hn-critique-ui.png
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin ui-screenshots || true
+          if git show-ref --quiet refs/remotes/origin/ui-screenshots; then
+            git switch ui-screenshots
+            git reset --hard origin/ui-screenshots
+          else
+            git switch --orphan ui-screenshots
+            git rm -rf . || true
+          fi
+
+          mkdir -p "pr-${PR_NUMBER}"
+          cp /tmp/hn-critique-ui.png "pr-${PR_NUMBER}/hn-critique-ui.png"
+          git add "pr-${PR_NUMBER}/hn-critique-ui.png"
+
+          if git diff --cached --quiet; then
+            echo "No screenshot changes to commit."
+          else
+            git commit -m "Add UI screenshot for PR #${PR_NUMBER}"
+            git push origin ui-screenshots
+          fi
+
+      - name: Comment PR with screenshot
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: hn-critique-ui
+          message: |
+            ### UI Screenshot
+            ![hn-critique UI](https://raw.githubusercontent.com/${{ github.repository }}/ui-screenshots/pr-${{ github.event.pull_request.number }}/hn-critique-ui.png)
