@@ -61,6 +61,7 @@ jobs:
               repo,
               run_id: context.runId,
             });
+            const currentRunId = Number(context.runId);
             const currentCreatedAt = new Date(currentRun.data.created_at).getTime();
 
             const workflowRuns = await github.paginate(github.rest.actions.listWorkflowRuns, {
@@ -71,17 +72,27 @@ jobs:
             });
 
             const blockingRun = workflowRuns.find(
-              (run) =>
-                run.id !== context.runId &&
-                fullRunEvents.has(run.event) &&
-                (run.status === "in_progress" || run.status === "queued") &&
-                new Date(run.created_at).getTime() < currentCreatedAt
+              (run) => {
+                if (
+                  run.id === currentRunId ||
+                  !fullRunEvents.has(run.event) ||
+                  (run.status !== "in_progress" && run.status !== "queued")
+                ) {
+                  return false;
+                }
+
+                const runCreatedAt = new Date(run.created_at).getTime();
+                return (
+                  runCreatedAt < currentCreatedAt ||
+                  (runCreatedAt === currentCreatedAt && run.id < currentRunId)
+                );
+              }
             );
 
             if (blockingRun) {
               core.setOutput("proceed", "false");
               core.notice(
-                `Run ${blockingRun.id} is already in progress. Canceling run ${context.runId}.`
+                `Run ${blockingRun.id} is already active. Canceling run ${context.runId}.`
               );
               await github.rest.actions.cancelWorkflowRun({
                 owner,
