@@ -77,6 +77,24 @@ func TestValidateCommentsCritique(t *testing.T) {
 		t.Fatalf("expected valid comments critique, got error: %v", err)
 	}
 
+	partial := &generator.CommentsCritique{
+		Summary: "Summary",
+		Comments: []generator.AnalyzedComment{
+			{
+				ID:           101,
+				Author:       "a",
+				Text:         "Snippet",
+				Indicators:   []string{"thoughtful"},
+				AccuracyRank: 1,
+				Analysis:     "Analysis",
+			},
+		},
+	}
+
+	if err := validateCommentsCritique(partial, expected); err != nil {
+		t.Fatalf("expected partial comments critique to be valid, got error: %v", err)
+	}
+
 	invalid := &generator.CommentsCritique{
 		Summary: "Summary",
 		Comments: []generator.AnalyzedComment{
@@ -101,6 +119,14 @@ func TestValidateCommentsCritique(t *testing.T) {
 
 	if err := validateCommentsCritique(invalid, expected); err == nil {
 		t.Fatal("expected error for invalid indicator")
+	}
+
+	empty := &generator.CommentsCritique{
+		Summary:  "Summary",
+		Comments: []generator.AnalyzedComment{},
+	}
+	if err := validateCommentsCritique(empty, expected); err == nil {
+		t.Fatal("expected error for empty comments critique when comments are expected")
 	}
 }
 

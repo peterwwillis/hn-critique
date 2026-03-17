@@ -205,3 +205,57 @@ func TestGenerate(t *testing.T) {
 		}
 	}
 }
+
+func TestGenerateCommentsPageWarnsOnPartialAnalysis(t *testing.T) {
+	outDir := t.TempDir()
+	gen := generator.New(outDir)
+
+	stories := []*generator.Story{
+		{
+			ID:           11111,
+			Rank:         1,
+			Title:        "Partial analysis story",
+			URL:          "https://example.com/story",
+			Domain:       "example.com",
+			Score:        10,
+			Author:       "alice",
+			Time:         1741723200,
+			CommentCount: 2,
+			Comments: []*generator.Comment{
+				{ID: 20001, Author: "a", Text: template.HTML("<p>one</p>"), Depth: 0},
+				{ID: 20002, Author: "b", Text: template.HTML("<p>two</p>"), Depth: 0},
+			},
+			CommentsCritique: &generator.CommentsCritique{
+				Summary: "Only one comment analyzed.",
+				Comments: []generator.AnalyzedComment{
+					{
+						ID:           20001,
+						Author:       "a",
+						Text:         "one",
+						Indicators:   []string{"thoughtful"},
+						AccuracyRank: 1,
+						Analysis:     "Useful.",
+					},
+				},
+			},
+		},
+	}
+
+	if err := gen.Generate(stories); err != nil {
+		t.Fatalf("Generate failed: %v", err)
+	}
+
+	commentsPath := filepath.FromSlash(stories[0].CommentsPath)
+	commentsData, err := os.ReadFile(filepath.Join(outDir, commentsPath))
+	if err != nil {
+		t.Fatalf("reading %s: %v", commentsPath, err)
+	}
+	comments := string(commentsData)
+
+	if !strings.Contains(comments, "Only 1 of 2 top-level comments were analyzed.") {
+		t.Fatalf("%s missing partial-analysis warning", commentsPath)
+	}
+	if !strings.Contains(comments, "https://news.ycombinator.com/item?id=11111") {
+		t.Fatalf("%s missing HN thread link", commentsPath)
+	}
+}
