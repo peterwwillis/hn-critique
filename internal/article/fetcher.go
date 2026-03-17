@@ -141,9 +141,19 @@ func (f *Fetcher) archivePHSnapshotURL(rawURL string) (string, error) {
 	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	client := *f.http
-	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-		return http.ErrUseLastResponse
+	client := &http.Client{
+		Timeout: f.http.Timeout,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	if transport, ok := f.http.Transport.(*http.Transport); ok && transport != nil {
+		client.Transport = transport.Clone()
+	} else if f.http.Transport != nil {
+		client.Transport = f.http.Transport
+	}
+	if f.http.Jar != nil {
+		client.Jar = f.http.Jar
 	}
 
 	resp, err := client.Do(req)
@@ -222,9 +232,15 @@ func archivePHResponseURL(base *url.URL, headers http.Header) (string, bool) {
 }
 
 func archivePHNormalizeSnapshotURL(snapshotURL string) string {
-	snapshotURL = strings.Replace(snapshotURL, "/wip/", "/", 1)
-	snapshotURL = strings.Replace(snapshotURL, "/wip", "", 1)
-	return snapshotURL
+	parsed, err := url.Parse(snapshotURL)
+	if err != nil {
+		return snapshotURL
+	}
+	parsed.Path = strings.Replace(parsed.Path, "/wip/", "/", 1)
+	if parsed.Path == "/wip" {
+		parsed.Path = "/"
+	}
+	return parsed.String()
 }
 
 func waybackExactReplayURL(snapshotURL string) string {

@@ -8,9 +8,10 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 )
 
-func TestFetchWithTruncation_UsesArchivePHFallback(t *testing.T) {
+func TestArchivePHFallback_UsesSubmittedSnapshot(t *testing.T) {
 	articleContent := strings.Repeat("archive-ph ", 40)
 	articleText := "<html><body><article>" + articleContent + "</article></body></html>"
 	var submitMethod string
@@ -65,7 +66,7 @@ func TestFetchWithTruncation_UsesArchivePHFallback(t *testing.T) {
 	}
 }
 
-func TestFetchWithTruncation_UsesInternetArchiveFallback(t *testing.T) {
+func TestArchiveWaybackFallback_UsesExactReplay(t *testing.T) {
 	articleText := fmt.Sprintf("<html><body><main>%s</main></body></html>", strings.Repeat("wayback ", 80))
 	const stockLandingText = "Please Don't Scroll Past This"
 	var requestedAvailabilityURL string
@@ -114,6 +115,13 @@ func TestFetchWithTruncation_UsesInternetArchiveFallback(t *testing.T) {
 	}
 	if len(requestedAvailabilityTimestamp) != 14 {
 		t.Fatalf("expected 14-digit availability timestamp, got %q", requestedAvailabilityTimestamp)
+	}
+	timestamp, err := time.Parse("20060102150405", requestedAvailabilityTimestamp)
+	if err != nil {
+		t.Fatalf("expected parseable availability timestamp, got %q: %v", requestedAvailabilityTimestamp, err)
+	}
+	if delta := time.Since(timestamp.UTC()); delta < -time.Minute || delta > time.Minute {
+		t.Fatalf("expected recent availability timestamp, got %q (delta %v)", requestedAvailabilityTimestamp, delta)
 	}
 	if !strings.HasPrefix(requestedSnapshotPath, "/web/20240102030405id_/") {
 		t.Fatalf("expected exact replay snapshot request, got %q", requestedSnapshotPath)
