@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">468 points</span>
+        <span class="score">482 points</span>
         by <a href="https://news.ycombinator.com/user?id=hahahacorn" class="hnuser">hahahacorn</a>
-        <span class="age">21 hours ago</span>
+        <span class="age">23 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/16/47402640.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47402640" rel="noopener">original on HN</a>
       </p>
@@ -116,6 +116,15 @@
   </div>
   <div class="comment-text">What metrics were improved by your patches?</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=adsharma" class="hnuser">adsharma</a>
+  </div>
+  <div class="comment-text">Some more historical context. It wasn&#x27;t a random optimization idea that I thought about in the shower and implemented the next day. Previous work on company wide profiling, where my contribution was low level perf_events plumbing:<p><a href="https:&#x2F;&#x2F;research.google&#x2F;pubs&#x2F;google-wide-profiling-a-continuous-profiling-infrastructure-for-data-centers&#x2F;" rel="nofollow">https:&#x2F;&#x2F;research.google&#x2F;pubs&#x2F;google-wide-profiling-a-continu...</a>
+<a href="https:&#x2F;&#x2F;engineering.fb.com&#x2F;2025&#x2F;01&#x2F;21&#x2F;production-engineering&#x2F;strobelight-a-profiling-service-built-on-open-source-technology&#x2F;" rel="nofollow">https:&#x2F;&#x2F;engineering.fb.com&#x2F;2025&#x2F;01&#x2F;21&#x2F;production-engineering...</a><p>The profiling clearly showed kernel functions doing memzero at the top of the profiles which motivated the change. The performance impact (A&#x2F;B testing and measuring the throughput) also showed a benefit at the point the change was committed.<p>This was when &quot;facebook&quot; was a ~1GB ELF binary. <a href="https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;HipHop_for_PHP" rel="nofollow">https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;HipHop_for_PHP</a><p>The change stopped being impactful sometime after 2013, when a JIT replaced the transpiler. I&#x27;m guessing likely before 2016 when continuous deployment came into play. But that was continuously deploying PHP code, not HHVM itself.<p>By the time the patches were reevaluated I was working on a Graph Database, which sounded a lot more interesting than going back to my old job function and defending a patch that may or may not be relevant.<p>I&#x27;m still working on one. Guilty as charged of carrying ideas in my head for 10+ years and acting on them later. Link in my profile.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -177,17 +186,17 @@ tcmalloc was from github.com&#x2F;google&#x2F;tcmalloc&#x2F;tree&#x2F;24b3f29.<p
 
 <div class="comment-row" style="margin-left:60px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=skavi" class="hnuser">skavi</a>
+    <a href="https://news.ycombinator.com/user?id=jhalstead" class="hnuser">jhalstead</a>
   </div>
-  <div class="comment-text">also:<p>1. tcmalloc is actually the only allocator I tested which was not using thread local caches. even glibc malloc has tcache.<p>2. async executors typically shouldn’t have tasks jumping willy nilly between threads. i see the issue u describe more often with the use of thread pools (like rayon or tokio’s spawn_blocking). i’d argue that the use of thread pools isn’t necessarily an inherent feature of async executors. certainly tokio relies on its threadpool for fs operations, but io-uring (for example) makes that mostly unnecessary.</div>
+  <div class="comment-text">&gt; I’m surprised (unless they replaced the core tcmalloc algorithm but kept the name).<p>Indeed, it&#x27;s not the old gperftools version.<p>Blog: <a href="https:&#x2F;&#x2F;abseil.io&#x2F;blog&#x2F;20200212-tcmalloc" rel="nofollow">https:&#x2F;&#x2F;abseil.io&#x2F;blog&#x2F;20200212-tcmalloc</a><p>History &#x2F; Diffs: <a href="https:&#x2F;&#x2F;google.github.io&#x2F;tcmalloc&#x2F;gperftools.html" rel="nofollow">https:&#x2F;&#x2F;google.github.io&#x2F;tcmalloc&#x2F;gperftools.html</a></div>
   
 </div>
 
 <div class="comment-row" style="margin-left:60px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jhalstead" class="hnuser">jhalstead</a>
+    <a href="https://news.ycombinator.com/user?id=skavi" class="hnuser">skavi</a>
   </div>
-  <div class="comment-text">&gt; I’m surprised (unless they replaced the core tcmalloc algorithm but kept the name).<p>Indeed, it&#x27;s not the old gperftools version.<p>Blog: <a href="https:&#x2F;&#x2F;abseil.io&#x2F;blog&#x2F;20200212-tcmalloc" rel="nofollow">https:&#x2F;&#x2F;abseil.io&#x2F;blog&#x2F;20200212-tcmalloc</a><p>History &#x2F; Diffs: <a href="https:&#x2F;&#x2F;google.github.io&#x2F;tcmalloc&#x2F;gperftools.html" rel="nofollow">https:&#x2F;&#x2F;google.github.io&#x2F;tcmalloc&#x2F;gperftools.html</a></div>
+  <div class="comment-text">also:<p>1. tcmalloc is actually the only allocator I tested which was not using thread local caches. even glibc malloc has tcache.<p>2. async executors typically shouldn’t have tasks jumping willy nilly between threads. i see the issue u describe more often with the use of thread pools (like rayon or tokio’s spawn_blocking). i’d argue that the use of thread pools isn’t necessarily an inherent feature of async executors. certainly tokio relies on its threadpool for fs operations, but io-uring (for example) makes that mostly unnecessary.</div>
   
 </div>
 
@@ -678,16 +687,6 @@ Think 10x rather than 0.1x or 1x.</div>
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=robertlagrant" class="hnuser">robertlagrant</a>
-  </div>
-  <div class="comment-text">&gt; With the leverage jemalloc provides however, it can be tempting to realize some short-term benefit. It requires strong self-discipline as an organization to resist that temptation and adhere to the core engineering principles.<p>This doesn&#x27;t quite read properly to me. What does it actually mean, does anyone know?</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=jjuliano" class="hnuser">jjuliano</a>
   </div>
   <div class="comment-text">I remember I was a senior lead softeng of a worldbank funded startup project, and have deployed Ruby with jemalloc in prod. There&#x27;s a huge noticeable speed and memory efficiency. It did saved us a lot of AWS costs, compare to just using normal Ruby. This was 8 years ago, why haven&#x27;t projects adopt it yet as de facto.</div>
@@ -697,6 +696,24 @@ Think 10x rather than 0.1x or 1x.</div>
     <a href="https://news.ycombinator.com/user?id=kortex" class="hnuser">kortex</a>
   </div>
   <div class="comment-text">Usually lack of knowledge that such a thing exists, or just plain ol&#x27; momentum. Changing something long in production at established companies, even if there is a tangible benefit, can be a real challenge.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=robertlagrant" class="hnuser">robertlagrant</a>
+  </div>
+  <div class="comment-text">&gt; With the leverage jemalloc provides however, it can be tempting to realize some short-term benefit. It requires strong self-discipline as an organization to resist that temptation and adhere to the core engineering principles.<p>This doesn&#x27;t quite read properly to me. What does it actually mean, does anyone know?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gjm11" class="hnuser">gjm11</a>
+  </div>
+  <div class="comment-text">I&#x27;m pretty sure it means something like this: &quot;Because jemalloc is used all over the place in our systems that run at tremendous scale, some hack that improves its performance a little bit while degrading the longer-term maintainability of the code can look very appealing -- look, doing this thing will save us $X,000,000 per year! -- and it takes discipline to avoid giving in to that temptation and to insist on doing things properly even if sometimes it means passing up a chance to make the code 0.1% faster and 10% messier.&quot;</div>
   
 </div>
 
@@ -756,6 +773,16 @@ Think 10x rather than 0.1x or 1x.</div>
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Sarkie" class="hnuser">Sarkie</a>
+  </div>
+  <div class="comment-text">I nice use case too<p><a href="https:&#x2F;&#x2F;technology.blog.gov.uk&#x2F;2015&#x2F;12&#x2F;11&#x2F;using-jemalloc-to-get-to-the-bottom-of-a-memory-leak&#x2F;" rel="nofollow">https:&#x2F;&#x2F;technology.blog.gov.uk&#x2F;2015&#x2F;12&#x2F;11&#x2F;using-jemalloc-to-...</a></div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=openclaw01" class="hnuser">openclaw01</a>
   </div>
   <div class="comment-text">We migrated to jemalloc from glibc malloc two years ago and saw 15-20% memory reduction in our Python services. One thing that wasn&#x27;t obvious at first was the impact of oversize_threshold on containerized workloads - we had to tune it carefully to avoid OOM kills. Has anyone benchmarked jemalloc vs mimalloc for long-running services?</div>
@@ -776,26 +803,6 @@ Think 10x rather than 0.1x or 1x.</div>
 
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Sarkie" class="hnuser">Sarkie</a>
-  </div>
-  <div class="comment-text">I nice use case too<p><a href="https:&#x2F;&#x2F;technology.blog.gov.uk&#x2F;2015&#x2F;12&#x2F;11&#x2F;using-jemalloc-to-get-to-the-bottom-of-a-memory-leak&#x2F;" rel="nofollow">https:&#x2F;&#x2F;technology.blog.gov.uk&#x2F;2015&#x2F;12&#x2F;11&#x2F;using-jemalloc-to-...</a></div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=throwaway2046" class="hnuser">throwaway2046</a>
-  </div>
-  <div class="comment-text"><a href="https:&#x2F;&#x2F;archive.ph&#x2F;CFQBU" rel="nofollow">https:&#x2F;&#x2F;archive.ph&#x2F;CFQBU</a></div>
-  
 </div>
 
     
@@ -836,9 +843,19 @@ Think 10x rather than 0.1x or 1x.</div>
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=flippyhead" class="hnuser">flippyhead</a>
+    <a href="https://news.ycombinator.com/user?id=fhn" class="hnuser">fhn</a>
   </div>
-  <div class="comment-text">Jemalloc and Jalad at Tanagra!</div>
+  <div class="comment-text">this is just meta wanting people to test and fix. they don&#x27;t care about it but they want you to</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=throwaway2046" class="hnuser">throwaway2046</a>
+  </div>
+  <div class="comment-text"><a href="https:&#x2F;&#x2F;archive.ph&#x2F;CFQBU" rel="nofollow">https:&#x2F;&#x2F;archive.ph&#x2F;CFQBU</a></div>
   
 </div>
 
@@ -849,16 +866,6 @@ Think 10x rather than 0.1x or 1x.</div>
     <a href="https://news.ycombinator.com/user?id=wengo314" class="hnuser">wengo314</a>
   </div>
   <div class="comment-text">jemalloc saved my icinga2 installation that kept exploding in memory usage, when i (and agents from sub-zones) was hammering its api<p>when i preloaded jemalloc , memory remained at significantly lower levels, and - more importantly - it was stable.<p>there seems to be no single correct solution to memory allocation, depending on the workload</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mywacaday" class="hnuser">mywacaday</a>
-  </div>
-  <div class="comment-text">The only option for cookies is to accept these terms and conditions, I thought implied consent was explicitly not allowed due to GDPR?<p>&quot;To help personalize content, tailor and measure ads and provide a safer experience, we use cookies. By clicking or navigating the site, you agree to allow our collection of information on and off Facebook through cookies. Learn more, including about available controls:<p><a href="https:&#x2F;&#x2F;engineering.fb.com&#x2F;privacy" rel="nofollow">https:&#x2F;&#x2F;engineering.fb.com&#x2F;privacy</a>&quot;</div>
   
 </div>
 
@@ -896,6 +903,26 @@ Think 10x rather than 0.1x or 1x.</div>
 
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=flippyhead" class="hnuser">flippyhead</a>
+  </div>
+  <div class="comment-text">Jemalloc and Jalad at Tanagra!</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mywacaday" class="hnuser">mywacaday</a>
+  </div>
+  <div class="comment-text">The only option for cookies is to accept these terms and conditions, I thought implied consent was explicitly not allowed due to GDPR?<p>&quot;To help personalize content, tailor and measure ads and provide a safer experience, we use cookies. By clicking or navigating the site, you agree to allow our collection of information on and off Facebook through cookies. Learn more, including about available controls:<p><a href="https:&#x2F;&#x2F;engineering.fb.com&#x2F;privacy" rel="nofollow">https:&#x2F;&#x2F;engineering.fb.com&#x2F;privacy</a>&quot;</div>
+  
 </div>
 
     
@@ -1154,6 +1181,14 @@ Think 10x rather than 0.1x or 1x.</div>
   </div>
   <div class="comment-text">That&#x27;s a false dichotomy: you optimize both the application <i>and</i> the allocator.<p>A 0.5% improvement may not be a lot to you, but at hyperscaler scale it&#x27;s well worth staffing a team to work on it, with the added benefit of having people on hand that can investigate subtle bugs and pathological perf behaviors.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sumtechguy" class="hnuser">sumtechguy</a>
+  </div>
+  <div class="comment-text">exactly.  I can think of at least 5 different projects I have been on where a better allocator would made a world of difference.  I can also think of another 5 where it probably would have been a waste of time to even fiddle with.<p>but as usual there is an xkcd for that.  <a href="https:&#x2F;&#x2F;xkcd.com&#x2F;1205&#x2F;" rel="nofollow">https:&#x2F;&#x2F;xkcd.com&#x2F;1205&#x2F;</a><p>One project I spent a bunch of time optimizing the write path of I&#x2F;O.  It was just using standard fwrite.  But by staging items correctly it was an easy 10x speed win.  Those optimizations sometimes stack up and count big.  But it also had a few edges on it, so use with care.</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -1191,7 +1226,7 @@ Think 10x rather than 0.1x or 1x.</div>
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-17 14:49 UTC &nbsp;|&nbsp;
+    Generated 2026-03-17 17:18 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
