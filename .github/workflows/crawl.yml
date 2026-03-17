@@ -32,14 +32,88 @@ permissions:
   packages: read
 
 jobs:
+  single-run-guard:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    outputs:
+      proceed: ${{ steps.guard.outputs.proceed }}
+    steps:
+      - name: Cancel this run if another crawl run is already active
+        id: guard
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const workflow_id = "crawl.yml";
+            const fullRunEvents = new Set(["schedule", "workflow_dispatch"]);
+            const isCurrentFullRun = fullRunEvents.has(context.eventName);
+
+            // PR smoke-test runs are intentionally excluded from this guard.
+            // They should be allowed to run even while a full crawl is active.
+            if (!isCurrentFullRun) {
+              core.setOutput("proceed", "true");
+              return;
+            }
+
+            const currentRun = await github.rest.actions.getWorkflowRun({
+              owner,
+              repo,
+              run_id: context.runId,
+            });
+            const currentRunId = Number(context.runId);
+            const currentCreatedAt = new Date(currentRun.data.created_at).getTime();
+
+            const workflowRuns = await github.paginate(github.rest.actions.listWorkflowRuns, {
+              owner,
+              repo,
+              workflow_id,
+              per_page: 100,
+            });
+
+            const blockingRun = workflowRuns.find(
+              (run) => {
+                if (
+                  run.id === currentRunId ||
+                  !fullRunEvents.has(run.event) ||
+                  (run.status !== "in_progress" && run.status !== "queued")
+                ) {
+                  return false;
+                }
+
+                const runCreatedAt = new Date(run.created_at).getTime();
+                return (
+                  runCreatedAt < currentCreatedAt ||
+                  (runCreatedAt === currentCreatedAt && run.id < currentRunId)
+                );
+              }
+            );
+
+            if (blockingRun) {
+              core.setOutput("proceed", "false");
+              core.notice(
+                `Run ${blockingRun.id} is already active. Canceling run ${context.runId}.`
+              );
+              await github.rest.actions.cancelWorkflowRun({
+                owner,
+                repo,
+                run_id: context.runId,
+              });
+              return;
+            }
+
+            core.setOutput("proceed", "true");
+
   crawl-and-deploy:
+    needs: single-run-guard
     # When triggered by workflow_run (PR smoke-test): only proceed if tests
     # passed, and only for PRs from the same repository (not forks), to avoid
     # executing untrusted code with privileged workflow_run permissions.
     if: |
-      github.event_name != 'workflow_run' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_repository.full_name == github.repository)
+      needs.single-run-guard.outputs.proceed == 'true' &&
+      (github.event_name != 'workflow_run' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_repository.full_name == github.repository))
     runs-on: ubuntu-latest
     timeout-minutes: 360
 
