@@ -2,10 +2,12 @@
 package article
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -20,8 +22,8 @@ const (
 )
 
 var (
-	archivePHPrefix = "https://archive.ph/"
-	waybackPrefix   = "https://web.archive.org/web/newest/"
+	archivePHPrefix           = "https://archive.ph/"
+	waybackAvailabilityPrefix = "https://archive.org/wayback/available?url="
 )
 
 // Limits controls fetcher resource caps.
@@ -78,16 +80,21 @@ func (f *Fetcher) Fetch(rawURL string) (string, error) {
 func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 	candidates := []struct {
 		source string
-		url    string
+		url    func() (string, error)
 	}{
-		{source: "direct", url: rawURL},
-		{source: "archive.ph", url: archivePHPrefix + rawURL},
-		{source: "internet archive", url: waybackPrefix + rawURL},
+		{source: "direct", url: func() (string, error) { return rawURL, nil }},
+		{source: "archive.ph", url: func() (string, error) { return archivePHPrefix + rawURL, nil }},
+		{source: "internet archive", url: func() (string, error) { return f.internetArchiveSnapshotURL(rawURL) }},
 	}
 
 	for _, candidate := range candidates {
-		log.Printf("    article fetch attempt (%s): %s", candidate.source, candidate.url)
-		text, truncated, err := f.fetchURL(candidate.url)
+		candidateURL, err := candidate.url()
+		if err != nil {
+			log.Printf("    article fetch skipped (%s): %v", candidate.source, err)
+			continue
+		}
+		log.Printf("    article fetch attempt (%s): %s", candidate.source, candidateURL)
+		text, truncated, err := f.fetchURL(candidateURL)
 		if err != nil {
 			log.Printf("    article fetch failed (%s): %v", candidate.source, err)
 			continue
@@ -101,6 +108,73 @@ func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 		log.Printf("    article fetch produced insufficient content (%s): %d chars", candidate.source, utf8.RuneCountInString(text))
 	}
 	return "", false, fmt.Errorf("could not retrieve article content for %s", rawURL)
+}
+
+type waybackAvailabilityResponse struct {
+	ArchivedSnapshots struct {
+		Closest struct {
+			Available bool   `json:"available"`
+			URL       string `json:"url"`
+		} `json:"closest"`
+	} `json:"archived_snapshots"`
+}
+
+func (f *Fetcher) internetArchiveSnapshotURL(rawURL string) (string, error) {
+	req, err := http.NewRequest("GET", waybackAvailabilityPrefix+url.QueryEscape(rawURL), nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
+
+	resp, err := f.http.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("HTTP %d for wayback availability lookup", resp.StatusCode)
+	}
+
+	var payload waybackAvailabilityResponse
+	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&payload); err != nil {
+		return "", fmt.Errorf("decode wayback availability response: %w", err)
+	}
+
+	closest := payload.ArchivedSnapshots.Closest
+	if !closest.Available || closest.URL == "" {
+		return "", fmt.Errorf("no archived snapshot available")
+	}
+	return waybackExactReplayURL(closest.URL), nil
+}
+
+func waybackExactReplayURL(snapshotURL string) string {
+	const marker = "/web/"
+
+	idx := strings.Index(snapshotURL, marker)
+	if idx < 0 {
+		return snapshotURL
+	}
+
+	rest := snapshotURL[idx+len(marker):]
+	slash := strings.IndexByte(rest, '/')
+	if slash < 0 {
+		return snapshotURL
+	}
+
+	timestamp := rest[:slash]
+	if timestamp == "" || strings.HasSuffix(timestamp, "id_") {
+		return snapshotURL
+	}
+	for _, r := range timestamp {
+		if r < '0' || r > '9' {
+			return snapshotURL
+		}
+	}
+
+	return snapshotURL[:idx+len(marker)] + timestamp + "id_" + snapshotURL[idx+len(marker)+slash:]
 }
 
 func (f *Fetcher) fetchURL(u string) (string, bool, error) {
