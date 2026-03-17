@@ -22,8 +22,8 @@ const (
 )
 
 var (
-	archivePHPrefix           = "https://archive.ph/"
-	waybackAvailabilityPrefix = "https://archive.org/wayback/available?url="
+	archivePHBaseURL          = "https://archive.ph/"
+	waybackAvailabilityAPIURL = "https://archive.org/wayback/available"
 )
 
 // Limits controls fetcher resource caps.
@@ -83,7 +83,7 @@ func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 		url    func() (string, error)
 	}{
 		{source: "direct", url: func() (string, error) { return rawURL, nil }},
-		{source: "archive.ph", url: func() (string, error) { return archivePHPrefix + rawURL, nil }},
+		{source: "archive.ph", url: func() (string, error) { return f.archivePHSnapshotURL(rawURL) }},
 		{source: "internet archive", url: func() (string, error) { return f.internetArchiveSnapshotURL(rawURL) }},
 	}
 
@@ -114,16 +114,64 @@ type waybackAvailabilityResponse struct {
 	ArchivedSnapshots struct {
 		Closest struct {
 			Available bool   `json:"available"`
+			Status    string `json:"status"`
 			URL       string `json:"url"`
 		} `json:"closest"`
 	} `json:"archived_snapshots"`
 }
 
-func (f *Fetcher) internetArchiveSnapshotURL(rawURL string) (string, error) {
-	req, err := http.NewRequest("GET", waybackAvailabilityPrefix+url.QueryEscape(rawURL), nil)
+func (f *Fetcher) archivePHSnapshotURL(rawURL string) (string, error) {
+	submitURL, err := url.Parse(archivePHBaseURL)
 	if err != nil {
 		return "", err
 	}
+	submitURL = submitURL.ResolveReference(&url.URL{Path: "submit/"})
+
+	form := url.Values{
+		"url":    {rawURL},
+		"anyway": {"1"},
+	}
+
+	req, err := http.NewRequest("POST", submitURL.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	client := *f.http
+	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 400 {
+		return "", fmt.Errorf("HTTP %d for archive.ph submit", resp.StatusCode)
+	}
+
+	snapshotURL, ok := archivePHResponseURL(submitURL, resp.Header)
+	if !ok {
+		return "", fmt.Errorf("archive.ph submit response did not provide snapshot URL")
+	}
+	return archivePHNormalizeSnapshotURL(snapshotURL), nil
+}
+
+func (f *Fetcher) internetArchiveSnapshotURL(rawURL string) (string, error) {
+	req, err := http.NewRequest("GET", waybackAvailabilityAPIURL, nil)
+	if err != nil {
+		return "", err
+	}
+	query := req.URL.Query()
+	query.Set("url", rawURL)
+	query.Set("timestamp", time.Now().UTC().Format("20060102150405"))
+	req.URL.RawQuery = query.Encode()
 	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
@@ -144,10 +192,39 @@ func (f *Fetcher) internetArchiveSnapshotURL(rawURL string) (string, error) {
 	}
 
 	closest := payload.ArchivedSnapshots.Closest
-	if !closest.Available || closest.URL == "" {
+	if !closest.Available || closest.URL == "" || (closest.Status != "" && closest.Status != "200") {
 		return "", fmt.Errorf("no archived snapshot available")
 	}
 	return waybackExactReplayURL(closest.URL), nil
+}
+
+func archivePHResponseURL(base *url.URL, headers http.Header) (string, bool) {
+	for _, key := range []string{"Refresh", "Location"} {
+		value := strings.TrimSpace(headers.Get(key))
+		if value == "" {
+			continue
+		}
+		if key == "Refresh" {
+			lowerValue := strings.ToLower(value)
+			idx := strings.Index(lowerValue, ";url=")
+			if idx < 0 {
+				continue
+			}
+			value = strings.TrimSpace(value[idx+len(";url="):])
+		}
+		parsed, err := url.Parse(value)
+		if err != nil {
+			continue
+		}
+		return base.ResolveReference(parsed).String(), true
+	}
+	return "", false
+}
+
+func archivePHNormalizeSnapshotURL(snapshotURL string) string {
+	snapshotURL = strings.Replace(snapshotURL, "/wip/", "/", 1)
+	snapshotURL = strings.Replace(snapshotURL, "/wip", "", 1)
+	return snapshotURL
 }
 
 func waybackExactReplayURL(snapshotURL string) string {

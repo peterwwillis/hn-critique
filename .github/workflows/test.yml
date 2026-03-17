@@ -36,6 +36,9 @@ jobs:
       - name: Static analysis (go vet)
         run: make vet
 
+      - name: Archive fallback regression tests
+        run: go test -v ./internal/article -run 'TestFetchWithTruncation_UsesArchivePHFallback|TestFetchWithTruncation_UsesInternetArchiveFallback|TestArchivePHResponseURL_UsesLocationHeader'
+
       - name: Unit tests
         run: make test-unit
 
