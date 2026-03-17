@@ -27,6 +27,7 @@ var allowedAIRatings = map[string]struct{}{
 	"needs citation": {},
 	"questionable":   {},
 	"misleading":     {},
+	"opinion":        {},
 }
 
 func parseArticleCritique(text string) (*generator.ArticleCritique, error) {
