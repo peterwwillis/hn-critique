@@ -4,6 +4,7 @@ package article
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -16,6 +17,11 @@ const (
 	userAgent          = "Mozilla/5.0 (compatible; HNCritique/1.0; +https://github.com/peterwwillis/hn-critique)"
 	defaultMaxBodySize = 2 << 20 // 2 MB
 	defaultMaxTextLen  = 8000
+)
+
+var (
+	archivePHPrefix = "https://archive.ph/"
+	waybackPrefix   = "https://web.archive.org/web/newest/"
 )
 
 // Limits controls fetcher resource caps.
@@ -70,17 +76,29 @@ func (f *Fetcher) Fetch(rawURL string) (string, error) {
 // The second return value is true when the extracted text was truncated at the
 // configured character limit, meaning the critique may be incomplete.
 func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
-	candidates := []string{
-		rawURL,
-		"https://archive.ph/" + rawURL,
-		"https://web.archive.org/web/newest/" + rawURL,
+	candidates := []struct {
+		source string
+		url    string
+	}{
+		{source: "direct", url: rawURL},
+		{source: "archive.ph", url: archivePHPrefix + rawURL},
+		{source: "internet archive", url: waybackPrefix + rawURL},
 	}
 
-	for _, u := range candidates {
-		text, truncated, err := f.fetchURL(u)
-		if err == nil && len(text) >= 300 {
+	for _, candidate := range candidates {
+		log.Printf("    article fetch attempt (%s): %s", candidate.source, candidate.url)
+		text, truncated, err := f.fetchURL(candidate.url)
+		if err != nil {
+			log.Printf("    article fetch failed (%s): %v", candidate.source, err)
+			continue
+		}
+		if len(text) >= 300 {
+			if candidate.source != "direct" {
+				log.Printf("    article fetch succeeded via fallback: %s", candidate.source)
+			}
 			return text, truncated, nil
 		}
+		log.Printf("    article fetch produced insufficient content (%s): %d chars", candidate.source, utf8.RuneCountInString(text))
 	}
 	return "", false, fmt.Errorf("could not retrieve article content for %s", rawURL)
 }
