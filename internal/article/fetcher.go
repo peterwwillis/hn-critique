@@ -2,12 +2,15 @@
 package article
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -22,8 +25,9 @@ const (
 )
 
 var (
-	archivePHBaseURL          = "https://archive.ph/"
-	waybackAvailabilityAPIURL = "https://archive.org/wayback/available"
+	archivePHBaseURL           = "https://archive.ph/"
+	waybackAvailabilityAPIURL  = "https://archive.org/wayback/available"
+	errPlaywrightNotConfigured = errors.New("playwright fetch service not configured")
 )
 
 // Limits controls fetcher resource caps.
@@ -34,9 +38,10 @@ type Limits struct {
 
 // Fetcher retrieves article text from URLs, with paywall bypass fallbacks.
 type Fetcher struct {
-	http         *http.Client
-	maxBodyBytes int64
-	maxTextLen   int
+	http                 *http.Client
+	maxBodyBytes         int64
+	maxTextLen           int
+	playwrightServiceURL string
 }
 
 // NewFetcher returns a new Fetcher.
@@ -56,8 +61,9 @@ func NewFetcherWithLimits(limits Limits) *Fetcher {
 		http: &http.Client{
 			Timeout: 30 * time.Second,
 		},
-		maxBodyBytes: limits.MaxBodyBytes,
-		maxTextLen:   limits.MaxTextLen,
+		maxBodyBytes:         limits.MaxBodyBytes,
+		maxTextLen:           limits.MaxTextLen,
+		playwrightServiceURL: strings.TrimSpace(os.Getenv("PLAYWRIGHT_FETCH_URL")),
 	}
 }
 
@@ -80,23 +86,46 @@ func (f *Fetcher) Fetch(rawURL string) (string, error) {
 func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 	candidates := []struct {
 		source string
-		url    func() (string, error)
+		fetch  func() (string, string, bool, error)
 	}{
-		{source: "direct", url: func() (string, error) { return rawURL, nil }},
-		{source: "archive.ph", url: func() (string, error) { return f.archivePHSnapshotURL(rawURL) }},
-		{source: "internet archive", url: func() (string, error) { return f.internetArchiveSnapshotURL(rawURL) }},
+		{source: "direct", fetch: func() (string, string, bool, error) {
+			text, truncated, err := f.fetchURL(rawURL)
+			return rawURL, text, truncated, err
+		}},
+		{source: "playwright", fetch: func() (string, string, bool, error) {
+			text, truncated, err := f.fetchViaPlaywright(rawURL)
+			return f.playwrightServiceURL, text, truncated, err
+		}},
+		{source: "archive.ph", fetch: func() (string, string, bool, error) {
+			snapshotURL, err := f.archivePHSnapshotURL(rawURL)
+			if err != nil {
+				return "", "", false, err
+			}
+			text, truncated, err := f.fetchURL(snapshotURL)
+			return snapshotURL, text, truncated, err
+		}},
+		{source: "internet archive", fetch: func() (string, string, bool, error) {
+			snapshotURL, err := f.internetArchiveSnapshotURL(rawURL)
+			if err != nil {
+				return "", "", false, err
+			}
+			text, truncated, err := f.fetchURL(snapshotURL)
+			return snapshotURL, text, truncated, err
+		}},
 	}
 
 	for _, candidate := range candidates {
-		candidateURL, err := candidate.url()
-		if err != nil {
-			log.Printf("    article fetch skipped (%s): %v", candidate.source, err)
-			continue
+		targetURL, text, truncated, err := candidate.fetch()
+		if targetURL == "" {
+			targetURL = rawURL
 		}
-		log.Printf("    article fetch attempt (%s): %s", candidate.source, candidateURL)
-		text, truncated, err := f.fetchURL(candidateURL)
+		log.Printf("    article fetch attempt (%s): %s", candidate.source, targetURL)
 		if err != nil {
-			log.Printf("    article fetch failed (%s): %v", candidate.source, err)
+			if errors.Is(err, errPlaywrightNotConfigured) {
+				log.Printf("    article fetch skipped (%s): %v", candidate.source, err)
+			} else {
+				log.Printf("    article fetch failed (%s): %v", candidate.source, err)
+			}
 			continue
 		}
 		if len(text) >= 300 {
@@ -108,6 +137,43 @@ func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 		log.Printf("    article fetch produced insufficient content (%s): %d chars", candidate.source, utf8.RuneCountInString(text))
 	}
 	return "", false, fmt.Errorf("could not retrieve article content for %s", rawURL)
+}
+
+func (f *Fetcher) fetchViaPlaywright(rawURL string) (string, bool, error) {
+	if f.playwrightServiceURL == "" {
+		return "", false, errPlaywrightNotConfigured
+	}
+
+	body, err := json.Marshal(map[string]string{"url": rawURL})
+	if err != nil {
+		return "", false, err
+	}
+
+	req, err := http.NewRequest("POST", f.playwrightServiceURL, bytes.NewReader(body))
+	if err != nil {
+		return "", false, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "text/html")
+
+	resp, err := f.http.Do(req)
+	if err != nil {
+		return "", false, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		msg, _ := io.ReadAll(io.LimitReader(resp.Body, 1024))
+		return "", false, fmt.Errorf("HTTP %d from playwright fetch service: %s", resp.StatusCode, strings.TrimSpace(string(msg)))
+	}
+
+	htmlBody, err := io.ReadAll(io.LimitReader(resp.Body, f.maxBodyBytes))
+	if err != nil {
+		return "", false, err
+	}
+	bodyTruncated := int64(len(htmlBody)) >= f.maxBodyBytes
+	text, textTruncated := extractTextWithLimit(string(htmlBody), f.maxTextLen)
+	return text, bodyTruncated || textTruncated, nil
 }
 
 type waybackAvailabilityResponse struct {

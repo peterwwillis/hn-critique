@@ -1,6 +1,7 @@
 package article
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -63,6 +64,70 @@ func TestArchivePHFallback_UsesSubmittedSnapshot(t *testing.T) {
 	}
 	if requestedSnapshotPath != "/archive/latest" {
 		t.Fatalf("expected normalized archive.ph snapshot path %q, got %q", "/archive/latest", requestedSnapshotPath)
+	}
+}
+
+func TestArchivePlaywrightFallback_UsesDaemon(t *testing.T) {
+	const renderedText = "playwright rendered article"
+	var requestedURL string
+	var archiveSubmitCalled bool
+	var waybackCalled bool
+
+	playwrightServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/fetch" {
+			http.Error(w, "unexpected path", http.StatusNotFound)
+			return
+		}
+		if r.Method != http.MethodPost {
+			http.Error(w, "unexpected method", http.StatusMethodNotAllowed)
+			return
+		}
+		var payload struct {
+			URL string `json:"url"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			t.Fatalf("decode playwright request: %v", err)
+		}
+		requestedURL = payload.URL
+		_, _ = w.Write([]byte("<html><body><main>" + strings.Repeat(renderedText+" ", 40) + "</main></body></html>"))
+	}))
+	defer playwrightServer.Close()
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.URL.Path == "/original":
+			http.Error(w, "primary failed", http.StatusBadGateway)
+		case r.URL.Path == "/archive/submit/":
+			archiveSubmitCalled = true
+			http.Error(w, "archive should not be reached", http.StatusInternalServerError)
+		case r.URL.Path == "/wayback/available":
+			waybackCalled = true
+			http.Error(w, "wayback should not be reached", http.StatusInternalServerError)
+		default:
+			http.Error(w, "unexpected path", http.StatusNotFound)
+		}
+	}))
+	defer server.Close()
+
+	t.Setenv("PLAYWRIGHT_FETCH_URL", playwrightServer.URL+"/fetch")
+	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available")
+
+	fetcher := NewFetcher()
+	text, _, err := fetcher.FetchWithTruncation(server.URL + "/original")
+	if err != nil {
+		t.Fatalf("FetchWithTruncation returned error: %v", err)
+	}
+	if requestedURL != server.URL+"/original" {
+		t.Fatalf("expected playwright fetch for %q, got %q", server.URL+"/original", requestedURL)
+	}
+	if !strings.Contains(text, "playwright rendered article") {
+		t.Fatalf("expected playwright fallback content in text, got %q", text)
+	}
+	if archiveSubmitCalled {
+		t.Fatal("expected archive.ph fallback to be skipped after playwright success")
+	}
+	if waybackCalled {
+		t.Fatal("expected internet archive fallback to be skipped after playwright success")
 	}
 }
 
