@@ -237,9 +237,6 @@ func archivePHNormalizeSnapshotURL(snapshotURL string) string {
 		return snapshotURL
 	}
 	parsed.Path = strings.Replace(parsed.Path, "/wip/", "/", 1)
-	if parsed.Path == "/wip" {
-		parsed.Path = "/"
-	}
 	return parsed.String()
 }
 
