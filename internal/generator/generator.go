@@ -124,6 +124,8 @@ func (g *Generator) loadTemplates() error {
 				return "rating-needs-citation"
 			case "misleading":
 				return "rating-misleading"
+			case "opinion":
+				return "rating-opinion"
 			case "unavailable":
 				return "rating-unavailable"
 			default:
