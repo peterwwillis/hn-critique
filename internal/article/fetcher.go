@@ -271,7 +271,7 @@ func (f *Fetcher) internetArchiveSnapshotURL(rawURL string) (string, error) {
 	if !closest.Available || closest.URL == "" || (closest.Status != "" && closest.Status != "200") {
 		return "", fmt.Errorf("no archived snapshot available")
 	}
-	return waybackExactReplayURL(closest.URL), nil
+	return closest.URL, nil
 }
 
 func archivePHResponseURL(base *url.URL, headers http.Header) (string, bool) {
@@ -304,33 +304,6 @@ func archivePHNormalizeSnapshotURL(snapshotURL string) string {
 	}
 	parsed.Path = strings.Replace(parsed.Path, "/wip/", "/", 1)
 	return parsed.String()
-}
-
-func waybackExactReplayURL(snapshotURL string) string {
-	const marker = "/web/"
-
-	idx := strings.Index(snapshotURL, marker)
-	if idx < 0 {
-		return snapshotURL
-	}
-
-	rest := snapshotURL[idx+len(marker):]
-	slash := strings.IndexByte(rest, '/')
-	if slash < 0 {
-		return snapshotURL
-	}
-
-	timestamp := rest[:slash]
-	if timestamp == "" || strings.HasSuffix(timestamp, "id_") {
-		return snapshotURL
-	}
-	for _, r := range timestamp {
-		if r < '0' || r > '9' {
-			return snapshotURL
-		}
-	}
-
-	return snapshotURL[:idx+len(marker)] + timestamp + "id_" + snapshotURL[idx+len(marker)+slash:]
 }
 
 func (f *Fetcher) fetchURL(u string) (string, bool, error) {

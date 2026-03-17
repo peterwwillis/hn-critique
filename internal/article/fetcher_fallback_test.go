@@ -131,7 +131,7 @@ func TestArchivePlaywrightFallback_UsesDaemon(t *testing.T) {
 	}
 }
 
-func TestArchiveWaybackFallback_UsesExactReplay(t *testing.T) {
+func TestArchiveWaybackFallback_UsesAvailabilitySnapshotURL(t *testing.T) {
 	articleText := fmt.Sprintf("<html><body><main>%s</main></body></html>", strings.Repeat("wayback ", 80))
 	const stockLandingText = "Please Don't Scroll Past This"
 	var requestedAvailabilityURL string
@@ -151,9 +151,9 @@ func TestArchiveWaybackFallback_UsesExactReplay(t *testing.T) {
 			requestedAvailabilityURL = r.URL.Query().Get("url")
 			requestedAvailabilityTimestamp = r.URL.Query().Get("timestamp")
 			fmt.Fprintf(w, `{"archived_snapshots":{"closest":{"available":true,"status":"200","url":"http://%s/web/20240102030405/%s"}}}`, r.Host, requestedAvailabilityURL)
-		case strings.HasPrefix(r.URL.Path, "/web/20240102030405/"):
-			_, _ = w.Write([]byte("<html><body>" + strings.Repeat(stockLandingText+" ", 30) + "</body></html>"))
 		case strings.HasPrefix(r.URL.Path, "/web/20240102030405id_/"):
+			_, _ = w.Write([]byte("<html><body>" + strings.Repeat(stockLandingText+" ", 30) + "</body></html>"))
+		case strings.HasPrefix(r.URL.Path, "/web/20240102030405/"):
 			requestedSnapshotPath = r.URL.Path
 			_, _ = w.Write([]byte(articleText))
 		default:
@@ -188,8 +188,11 @@ func TestArchiveWaybackFallback_UsesExactReplay(t *testing.T) {
 	if delta := time.Since(timestamp.UTC()); delta < -time.Minute || delta > time.Minute {
 		t.Fatalf("expected recent availability timestamp, got %q (delta %v)", requestedAvailabilityTimestamp, delta)
 	}
-	if !strings.HasPrefix(requestedSnapshotPath, "/web/20240102030405id_/") {
-		t.Fatalf("expected exact replay snapshot request, got %q", requestedSnapshotPath)
+	if !strings.HasPrefix(requestedSnapshotPath, "/web/20240102030405/") {
+		t.Fatalf("expected wayback snapshot request from availability response, got %q", requestedSnapshotPath)
+	}
+	if strings.HasPrefix(requestedSnapshotPath, "/web/20240102030405id_/") {
+		t.Fatalf("expected wayback snapshot request without id_ modifier, got %q", requestedSnapshotPath)
 	}
 }
 
