@@ -37,7 +37,10 @@ jobs:
         run: make vet
 
       - name: Archive fallback regression tests
-        run: go test -v ./internal/article -run '^TestArchive'
+        run: go test -v ./internal/article -run '^TestArchive(PHFallback_UsesSubmittedSnapshot|WaybackFallback_UsesExactReplay|PHResponseURL_UsesLocationHeader)$'
+
+      - name: Playwright fetch regression test
+        run: go test -v ./internal/article -run '^TestArchivePlaywrightFallback_UsesDaemon$'
 
       - name: Unit tests
         run: make test-unit
