@@ -48,7 +48,7 @@ type ArticleCritique struct {
 	MainPoints     []string `json:"mainPoints"`
 	Truthfulness   string   `json:"truthfulness"`
 	Considerations []string `json:"considerations"`
-	// Rating is one of: reliable, needs citation, questionable, misleading, unavailable.
+	// Rating is one of: reliable, needs citation, questionable, misleading, opinion, unavailable.
 	Rating string `json:"rating"`
 }
 
