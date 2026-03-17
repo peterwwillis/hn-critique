@@ -132,6 +132,18 @@ func (g *Generator) loadTemplates() error {
 				return "rating-questionable"
 			}
 		},
+		"commentHighlightClass": func(indicators []string) string {
+			if hasAnyIndicator(indicators, "useless", "belligerent", "trolling") {
+				return "comment-highlight-red"
+			}
+			if hasAnyIndicator(indicators, "likely-untrue", "emotional") {
+				return "comment-highlight-yellow"
+			}
+			if hasAnyIndicator(indicators, "constructive", "likely-true", "thoughtful", "intelligent") {
+				return "comment-highlight-green"
+			}
+			return ""
+		},
 	}
 
 	sub, err := fs.Sub(embeddedFS, "templates")
@@ -214,6 +226,17 @@ func joinStrings(sep string, s []string) string {
 		result += v
 	}
 	return result
+}
+
+func hasAnyIndicator(indicators []string, wanted ...string) bool {
+	for _, indicator := range indicators {
+		for _, target := range wanted {
+			if indicator == target {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func storyDatePath(storyTime int64) string {

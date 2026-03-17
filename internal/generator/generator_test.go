@@ -53,6 +53,22 @@ func TestGenerate(t *testing.T) {
 						AccuracyRank: 1,
 						Analysis:     "Accurate and supportive.",
 					},
+					{
+						ID:           99002,
+						Author:       "bob",
+						Text:         "This is clearly fake.",
+						Indicators:   []string{"likely-untrue"},
+						AccuracyRank: 2,
+						Analysis:     "Likely an exaggerated claim.",
+					},
+					{
+						ID:           99003,
+						Author:       "carol",
+						Text:         "Everyone here is clueless.",
+						Indicators:   []string{"belligerent"},
+						AccuracyRank: 3,
+						Analysis:     "Hostile and unhelpful tone.",
+					},
 				},
 			},
 		},
@@ -179,6 +195,9 @@ func TestGenerate(t *testing.T) {
 		"thoughtful",
 		"constructive",
 		"Accurate and supportive.",
+		"comment-highlight-green",
+		"comment-highlight-yellow",
+		"comment-highlight-red",
 		"#1",
 	} {
 		if !strings.Contains(comments, want) {
