@@ -127,9 +127,12 @@ func (c *Client) getTopStoriesViaPlaywright(limit int) ([]int, error) {
 		return nil, fmt.Errorf("HTTP %d from playwright fetch service: %s", resp.StatusCode, strings.TrimSpace(string(msg)))
 	}
 
-	htmlBody, err := io.ReadAll(io.LimitReader(resp.Body, maxPlaywrightResponseBytes))
+	htmlBody, err := io.ReadAll(io.LimitReader(resp.Body, maxPlaywrightResponseBytes+1))
 	if err != nil {
 		return nil, err
+	}
+	if len(htmlBody) > maxPlaywrightResponseBytes {
+		return nil, fmt.Errorf("playwright response too large (max %d bytes)", maxPlaywrightResponseBytes)
 	}
 
 	ids, err := topStoryIDsFromHTML(string(htmlBody))
