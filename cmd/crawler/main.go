@@ -428,6 +428,11 @@ func parseStoryID(token string) (int, error) {
 	if err != nil {
 		return 0, fmt.Errorf("invalid story URL %q: %w", token, err)
 	}
+	host := u.Hostname()
+	path := u.EscapedPath()
+	if !strings.EqualFold(host, "news.ycombinator.com") || !strings.HasPrefix(path, "/item") {
+		return 0, fmt.Errorf("story URL %q is not a Hacker News item link (expected https://news.ycombinator.com/item?id=...)", token)
+	}
 	idText := u.Query().Get("id")
 	if idText == "" {
 		return 0, fmt.Errorf("story URL %q is missing ?id=", token)
