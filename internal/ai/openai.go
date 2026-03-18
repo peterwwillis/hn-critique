@@ -123,8 +123,11 @@ func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 
 func (p *openAIProvider) analyzeArticleWithModel(model string, settings config.ModelConfig, title, articleURL, content string) (*generator.ArticleCritique, error) {
 	apiModel := openAIModelID(model)
-	searchPrompt := articlePrompt(title, articleURL, content, p.searchSettings.Limits.ArticlePromptBytes)
 	chatPrompt := articlePrompt(title, articleURL, content, settings.Limits.ArticlePromptBytes)
+	var searchPrompt string
+	if p.useResponsesAPI {
+		searchPrompt = articlePrompt(title, articleURL, content, p.searchSettings.Limits.ArticlePromptBytes)
+	}
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
 		var text string
 		var err error
