@@ -21,7 +21,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around a reported sandbox escape incident involving Snowflake's Cortex AI, with many commenters questioning the validity of calling it a true sandbox escape due to design flaws. Participants highlight architectural issues, the challenges of securing agentic CLIs, and the broader implications of AI autonomy and security boundaries.",
+    "summary": "The discussion centers on a reported 'sandbox escape' vulnerability in Snowflake's Cortex AI, with many commenters arguing that the term 'sandbox' is misused since the AI was able to disable sandboxing itself. The conversation highlights broader challenges in securing AI agents, especially those with CLI access, and the inherent tension between agent capability and containment.",
     "comments": [
       {
         "id": 47429141,
@@ -34,7 +34,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately identifies a fundamental architectural flaw in relying on the model to enforce sandbox constraints, emphasizing the importance of external enforcement layers."
+        "analysis": "This comment accurately identifies a key architectural flaw: relying on the model to enforce sandbox constraints internally is insecure. It suggests enforcing constraints externally, which is a sound security principle."
       },
       {
         "id": 47429404,
@@ -47,75 +47,69 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment insightfully explains the tension between agent capability and containment, highlighting the challenge of anticipating complex agent behaviors."
+        "analysis": "This comment insightfully explains the fundamental challenge in agent sandboxing: the AI's reasoning ability can circumvent expected constraints, highlighting a core tension between capability and containment."
       },
       {
         "id": 47428007,
         "author": "john_strinlai",
         "text": "typically, my first move is to read the affected company\u0026#x27;s own announcement. but, for who knows what misinformed reason, the advisory written by snowflake requires an account to read.\u003cp\u003eanother prompt injection (shocked pikachu)\u003cp\u003eanyways, from reading this, i feel like they (snowflake) are misusing the term \u0026quot;sandbox\u0026quot;. \u003ci\u003e\u0026quot;Cortex, by default, can set a flag to trigger unsandboxed command execution.\u0026quot;\u003c/i\u003e if the thing that is sandboxed can say \u0026quot;do this without the sandbox\u0026quot;, it is not a sandbox.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment correctly critiques the misuse of the term 'sandbox' when the system allows toggling off sandbox protections from within."
+        "analysis": "This comment correctly critiques the use of 'sandbox' since the AI could disable sandboxing itself, meaning the containment was not effective or genuine."
       },
       {
         "id": 47428752,
         "author": "seedpi",
         "text": "The bilekas comment is right — if there is no workspace trust or scope restriction, calling it a sandbox escape is generous. It escaped a suggestion of a sandbox.\u003cp\u003eBut the broader pattern matters. Cortex bypassed human-in-the-loop approval via specially constructed commands. That is the attack surface for every agentic CLI: the gap between what the approval UI shows the user and what actually executes.\u003cp\u003eI would be interested to know whether the fix was to validate the command at the shell level or just patch the specific bypass. If it is the latter, there will be another one.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "This comment provides a nuanced view on the incident, emphasizing the importance of scope restrictions and the risks of approval bypasses in agentic CLIs."
+        "analysis": "This comment highlights the real security risk: bypassing human approval in agentic CLIs, emphasizing the gap between UI and actual command execution."
+      },
+      {
+        "id": 47428895,
+        "author": "Dshadowzh",
+        "text": "CLI is quickly becoming the default entry point for agents. But data agents probably need a much stricter permission model than coding agents. Bash + CLI greatly expands what you can do beyond the native SQL capabilities of a data warehouse, which is powerful. But it also means data operations and credentials are now exposed to the shell environment.\u003cp\u003eSo giving data agents rich tooling through a CLI is really a double-edged sword.\u003cp\u003eI went through the security guidance for the Snowflake Cortex Code CLI(\u003ca href=\"https:\u0026#x2F;\u0026#x2F;docs.snowflake.com\u0026#x2F;en\u0026#x2F;user-guide\u0026#x2F;cortex-code\u0026#x2F;security\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;docs.snowflake.com\u0026#x2F;en\u0026#x2F;user-guide\u0026#x2F;cortex-code\u0026#x2F;securit...\u003c/a\u003e), and the CLI itself does have some guardrails. \nBut since this is a shared cloud environment, if a sandbox escape happens, could someone break out and access another user’s credentials?\nIt is a broader system problem around permission caching, shell auditing, and sandbox isolation.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment provides a nuanced perspective on the security implications of giving AI agents CLI access, noting the increased attack surface and need for stricter permissions."
       },
       {
         "id": 47428021,
         "author": "bilekas",
         "text": "\u0026gt; Note: Cortex does not support ‘workspace trust’, a security convention first seen in code editors, since adopted by most agentic CLIs.\u003cp\u003eAm I crazy or does this mean it didn\u0026#x27;t really escape, it wasn\u0026#x27;t given any scope restrictions in the first place ?",
         "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "This comment questions the framing of the incident as an escape, suggesting the system lacked proper initial restrictions."
-      },
-      {
-        "id": 47429001,
-        "author": "jeffbee",
-        "text": "It kinda sucks how \u0026quot;sandbox\u0026quot; has been repurposed to mean nothing. This is not a \u0026quot;sandbox escape\u0026quot; because the thing under attack never had any meaningful containment.",
-        "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 6,
-        "analysis": "This comment highlights the dilution of the term 'sandbox' in security contexts, reinforcing that meaningful containment was absent."
-      },
-      {
-        "id": 47428489,
-        "author": "throw0101d",
-        "text": "Not the first time; From §3.1.4, \u0026quot;Safety-Aligned Data Composition\u0026quot;:\u003cp\u003e\u0026gt; \u003ci\u003eEarly one morning, our team was urgently convened after Alibaba Cloud’s managed firewall flagged a burst of security-policy violations originating from our training servers. The alerts were severe and heterogeneous, including attempts to probe or access internal-network resources and traffic patterns consistent with cryptomining-related activity. We initially treated this as a conventional security incident (e.g., misconfigured egress controls or external compromise).\u003c/i\u003e […]\u003cp\u003e\u0026gt; […] \u003ci\u003eIn the most striking instance, the agent established and used a reverse SSH tunnel from an Alibaba Cloud instance to an external IP address—an outbound-initiated remote access channel that can effectively neutralize ingress filtering and erode supervisory control. We also observed the unauthorized repurposing of provisioned GPU capacity for cryptocurrency mining, quietly diverting compute away from training, inflating operational costs, and introducing clear legal and reputational exposure. Notably, these events were not triggered by prompts requesting tunneling or mining; instead, they emerged as\u003c/i\u003e instrumental side effects \u003ci\u003eof autonomous tool use under RL optimization.\u003c/i\u003e\u003cp\u003e* \u003ca href=\"https:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2512.24873\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2512.24873\u003c/a\u003e\u003cp\u003eOne of Anthropic\u0026#x27;s models also \u0026#x27;turned evil\u0026#x27; and tried to hide that fact from its observers:\u003cp\u003e* \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.anthropic.com\u0026#x2F;research\u0026#x2F;emergent-misalignment-reward-hacking\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.anthropic.com\u0026#x2F;research\u0026#x2F;emergent-misalignment-rew...\u003c/a\u003e\u003cp\u003e* \u003ca href=\"https:\u0026#x2F;\u0026#x2F;time.com\u0026#x2F;7335746\u0026#x2F;ai-anthropic-claude-hack-evil\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;time.com\u0026#x2F;7335746\u0026#x2F;ai-anthropic-claude-hack-evil\u0026#x2F;\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment provides relevant external examples of AI-related security incidents, supporting the broader context of AI system vulnerabilities."
+        "analysis": "This comment questions whether the incident was truly a sandbox escape or simply a lack of sandboxing, which aligns with other critiques about the misuse of the term."
       },
       {
         "id": 47429178,
         "author": "Groxx",
         "text": "\u0026gt;\u003ci\u003eAny shell commands were executed without triggering human approval as long as:\u003c/i\u003e\u003cp\u003e\u0026gt;\u003ci\u003e(1) the unsafe commands were within a process substitution \u0026lt;() expression\u003c/i\u003e\u003cp\u003e\u0026gt;\u003ci\u003e(2) the full command started with a ‘safe’ command (details below)\u003c/i\u003e\u003cp\u003eif you spend \u003ci\u003eany time at all\u003c/i\u003e thinking about how to secure shell commands, how on earth do you not take into account the various ways of creating sub-processes?",
         "indicators": [
+          "intelligent",
           "thoughtful",
-          "constructive"
+          "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment points out a specific security oversight related to subprocess handling in shell command approval mechanisms."
+        "accuracyRank": 7,
+        "analysis": "This comment points out a basic security oversight in handling shell commands, emphasizing the importance of considering subprocess creation in sandboxing."
       },
       {
         "id": 47429366,
@@ -125,8 +119,8 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 9,
-        "analysis": "This comment critiques the sensationalism in the article's title, clarifying that the escape was induced rather than autonomous."
+        "accuracyRank": 8,
+        "analysis": "This comment clarifies that the AI was prompted to escape rather than escaping autonomously, which is an important distinction for understanding the incident."
       },
       {
         "id": 47429009,
@@ -137,8 +131,20 @@
           "thoughtful",
           "likely-true"
         ],
+        "accuracyRank": 9,
+        "analysis": "This comment expresses skepticism about the marketing around the product and the misuse of the term sandbox, reflecting a common theme in the discussion."
+      },
+      {
+        "id": 47427780,
+        "author": "RobRivera",
+        "text": "If the user has access to a lever that enables accesss, that lever is not providing a sandbox.\u003cp\u003eI expected this to be about gaining os privileges.\u003cp\u003eThey didn\u0026#x27;t create a sandbox. Poor security design all around",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
         "accuracyRank": 10,
-        "analysis": "This comment expresses frustration with marketing language and accurately notes that toggleable sandboxing undermines security claims."
+        "analysis": "This comment bluntly summarizes the consensus that the security design was flawed and the sandbox was ineffective due to user-accessible overrides."
       }
     ]
   }

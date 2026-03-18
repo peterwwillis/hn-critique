@@ -22,7 +22,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on a new sub-millisecond VM sandboxing technique using copy-on-write memory forking. Commenters highlight its impressive speed and potential, discuss practical challenges like entropy and networking setup, and compare it to existing solutions and use cases.",
+    "summary": "The discussion centers on a new sub-millisecond VM sandboxing approach using copy-on-write memory forking, with commenters highlighting its technical merits, potential security concerns, and practical use cases. Some express enthusiasm for its speed and promise, while others raise questions about networking, entropy, and broader applicability.",
     "comments": [
       {
         "id": 47420878,
@@ -30,85 +30,35 @@
         "text": "Don\u0026#x27;t forget about entropy!  You\u0026#x27;ve just created two identical copies of all of your random number generators, which could be very very bad for security.\u003cp\u003eThe firecracker team wrote a very good paper about addressing this when they added snapshot support.",
         "indicators": [
           "intelligent",
-          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "Raises a critical security concern about entropy duplication in VM forking, referencing established research, making this a highly accurate and valuable insight."
+        "analysis": "This comment accurately points out a critical security issue related to entropy duplication in VM forking, referencing established research, making it highly relevant and accurate."
       },
       {
         "id": 47424649,
         "author": "BornaP",
         "text": "Really impressive work. Sub-millisecond cold starts via CoW forking is a pretty clever approach.\u003cp\u003eThe tricky part we keep running into with agent sandboxes is that code execution is just one piece, bcs agents also need file system access, memory, git, a pty, and a bunch of other tools all wired up and isolated together. That\u0026#x27;s where things get hairy fast.",
         "indicators": [
-          "intelligent",
           "thoughtful",
-          "likely-true",
+          "intelligent",
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Provides a nuanced view on the complexity of sandboxing beyond fast startup, highlighting practical integration challenges which are valid and important."
+        "analysis": "Provides a nuanced view on the complexity of sandboxing beyond just fast startup, highlighting practical challenges which aligns well with real-world experience."
       },
       {
         "id": 47420684,
         "author": "crawshaw",
         "text": "Nice to see this work! I experimented with this for exe.dev before we launched. The VM itself worked really well, but there was a lot of setup to get the networking functioning. And in the end, our target are use cases that don\u0026#x27;t mind a ~1-second startup time, which meant doing a clean systemd start each time was easier.\u003cp\u003eThat said, I have seen several use cases where people want a VM for something minimal, like a python interpreter, and this is absolutely the sort of approach they should be using. Lot of promise here, excited to see how far you can push it!",
         "indicators": [
-          "intelligent",
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
         "accuracyRank": 3,
-        "analysis": "Shares real-world experience with similar technology, emphasizing networking complexity and tradeoffs in startup time, adding practical perspective."
-      },
-      {
-        "id": 47422572,
-        "author": "injidup",
-        "text": "It\u0026#x27;s so frustrating seeing all this sandbox tooling pop up for linux but windows is soooooo far behind. I mean Windows Sandbox ( \u003ca href=\"https:\u0026#x2F;\u0026#x2F;learn.microsoft.com\u0026#x2F;en-us\u0026#x2F;windows\u0026#x2F;security\u0026#x2F;application-security\u0026#x2F;application-isolation\u0026#x2F;windows-sandbox\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;learn.microsoft.com\u0026#x2F;en-us\u0026#x2F;windows\u0026#x2F;security\u0026#x2F;applicati...\u003c/a\u003e ) doesn\u0026#x27;t even have customizable networking white lists. You can turn networking on or off but that\u0026#x27;s about as fine grained as it gets. So all of us still having to write desktop windows stuff are left without a good method of easily putting our agents in a blast proof box.",
-        "indicators": [
-          "emotional",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "Expresses a valid frustration about Windows sandboxing limitations compared to Linux, reflecting a common developer pain point."
-      },
-      {
-        "id": 47426329,
-        "author": "aftbit",
-        "text": "Is this a service or a library? The README has curl and an API key... Can I run this myself on my own hardware?",
-        "indicators": [
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Asks a relevant clarifying question about the nature of the project, indicating engagement but not providing evaluative content."
-      },
-      {
-        "id": 47420711,
-        "author": "diptanu",
-        "text": "The tricky part of doing this in production is cloning sandboxes across nodes. You would have to snapshot the resident memory, file system (or a CoW layer on top of the rootfs), move the data across nodes, etc.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Accurately points out a significant operational challenge in distributed environments, adding depth to the discussion."
-      },
-      {
-        "id": 47426557,
-        "author": "polskibus",
-        "text": "Is it possible to run minikube inside ? I’d love to use it for ephemeral clusters for testing .",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Poses a practical use case question, showing interest but without evaluative or critical content."
+        "analysis": "Shares practical experience with similar technology, emphasizing networking challenges and use case suitability, which adds valuable context."
       },
       {
         "id": 47420810,
@@ -119,8 +69,32 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 8,
-        "analysis": "Provides a relevant analogy and highlights a known security limitation, contributing useful context."
+        "accuracyRank": 4,
+        "analysis": "Correctly relates the approach to Android process management and notes potential security trade-offs, adding important perspective."
+      },
+      {
+        "id": 47420711,
+        "author": "diptanu",
+        "text": "The tricky part of doing this in production is cloning sandboxes across nodes. You would have to snapshot the resident memory, file system (or a CoW layer on top of the rootfs), move the data across nodes, etc.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Insightfully addresses the complexity of distributed sandbox cloning, highlighting real operational challenges."
+      },
+      {
+        "id": 47422572,
+        "author": "injidup",
+        "text": "It\u0026#x27;s so frustrating seeing all this sandbox tooling pop up for linux but windows is soooooo far behind. I mean Windows Sandbox ( \u003ca href=\"https:\u0026#x2F;\u0026#x2F;learn.microsoft.com\u0026#x2F;en-us\u0026#x2F;windows\u0026#x2F;security\u0026#x2F;application-security\u0026#x2F;application-isolation\u0026#x2F;windows-sandbox\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;learn.microsoft.com\u0026#x2F;en-us\u0026#x2F;windows\u0026#x2F;security\u0026#x2F;applicati...\u003c/a\u003e ) doesn\u0026#x27;t even have customizable networking white lists. You can turn networking on or off but that\u0026#x27;s about as fine grained as it gets. So all of us still having to write desktop windows stuff are left without a good method of easily putting our agents in a blast proof box.",
+        "indicators": [
+          "emotional",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Expresses a common frustration about Windows sandboxing limitations relative to Linux, which is generally accurate though somewhat subjective."
       },
       {
         "id": 47423147,
@@ -128,21 +102,10 @@
         "text": "Niiiiiice, I\u0026#x27;ve been working on something like this, but reducing linux boot time instead of snapshot restore time; obviously my solution doesn\u0026#x27;t work for heavy runtimes",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "intelligent"
         ],
-        "accuracyRank": 9,
-        "analysis": "Shares a related approach and acknowledges tradeoffs, adding perspective though less detailed."
-      },
-      {
-        "id": 47425541,
-        "author": "aa-jv",
-        "text": "Nice.\u003cp\u003eNow I want the ability to freeze the VM cryogenically and move it to another machine automagically, defrosting and running as seamlessly as possible.\u003cp\u003eI know this is gonna happen soon enough, I\u0026#x27;ve been waiting since the death of TandemOS for just this feature ..",
-        "indicators": [
-          "emotional",
-          "thoughtful"
-        ],
-        "accuracyRank": 10,
-        "analysis": "Expresses enthusiasm and visionary thinking about VM migration, but speculative rather than factual."
+        "accuracyRank": 7,
+        "analysis": "Provides a relevant comparison of alternative approaches to fast VM startup, adding useful context."
       },
       {
         "id": 47427307,
@@ -152,8 +115,29 @@
           "emotional",
           "useless"
         ],
-        "accuracyRank": 11,
-        "analysis": "A brief positive reaction without substantive content or analysis."
+        "accuracyRank": 8,
+        "analysis": "Expresses enthusiasm but lacks substantive content or critique."
+      },
+      {
+        "id": 47426329,
+        "author": "aftbit",
+        "text": "Is this a service or a library? The README has curl and an API key... Can I run this myself on my own hardware?",
+        "indicators": [
+          "constructive"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Asks a practical question about usage and deployment, contributing to understanding but not providing analysis."
+      },
+      {
+        "id": 47420820,
+        "author": "indigodaddy",
+        "text": "Your write-up made me think of:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;codesandbox.io\u0026#x2F;blog\u0026#x2F;how-we-clone-a-running-vm-in-2-seconds\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;codesandbox.io\u0026#x2F;blog\u0026#x2F;how-we-clone-a-running-vm-in-2-s...\u003c/a\u003e\u003cp\u003eAre there parallels?",
+        "indicators": [
+          "constructive",
+          "thoughtful"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Makes a relevant connection to a similar technology, encouraging comparison and further discussion."
       }
     ]
   }
