@@ -23,7 +23,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around Edge.js, a project enabling Node.js to run inside a WebAssembly sandbox with pluggable JS engines. Commenters debate its security, use cases, compatibility, and potential advantages over existing solutions like containers or Deno.",
+    "summary": "The discussion centers on Edge.js, a project enabling Node.js to run inside a WebAssembly sandbox with pluggable JS engines. Commenters debate its security, use cases, and technical feasibility, especially for hostile workloads and multi-tenant environments.",
     "comments": [
       {
         "id": 47421907,
@@ -36,7 +36,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed and realistic assessment of the challenges Edge.js faces, emphasizing security and multi-tenant isolation, which are critical for such a runtime."
+        "analysis": "This comment accurately highlights critical security and compatibility challenges for sandboxing Node.js in WebAssembly, emphasizing practical concerns for adversarial and multi-tenant use cases."
       },
       {
         "id": 47421026,
@@ -49,42 +49,19 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment accurately highlights the shift in trust model and raises valid concerns about the runtime's robustness under adversarial conditions."
+        "analysis": "The comment correctly points out that moving isolation into the runtime shifts the trust model and raises valid questions about robustness against hostile workloads and native dependencies."
       },
       {
         "id": 47417202,
         "author": "syrusakbary",
         "text": "Hi HN!\u003cp\u003eI\u0026#x27;m Syrus, from Wasmer. We built Edge.js in a few weeks after different trials trying to bring Node.js to the Edge. We used AI and Codex heavily for this project, as otherwise the timeline would have spanned to a year plus to develop.\u003cp\u003eThe summary of this announcement is that Edge.js:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  * Runs using WebAssembly when in `--safe` mode\n  * It\u0026#x27;s fully compatible with Node.js (passing all their spec tests for non-VM modules)\n  * It has a pluggable JS engine architecture: can work with V8, Javascript, SpiderMonkey, QuickJS, Hermes, etc.\n\u003c/code\u003e\u003c/pre\u003e\nSuper happy to answer any questions you may have!",
         "indicators": [
-          "intelligent",
           "constructive",
+          "intelligent",
           "likely-true"
         ],
         "accuracyRank": 3,
-        "analysis": "As the project author, this comment provides authoritative information about Edge.js features, though some claims (e.g., full compatibility) may need independent verification."
-      },
-      {
-        "id": 47417727,
-        "author": "alex_reg",
-        "text": "It\u0026#x27;s a bit confusing.\u003cp\u003eRoughly:\u003cp\u003e* a refactor of Node.js, but using a standardized API for JS engine interop\n* Integration with the Wasmer CLI so it will run JS with v8 but, everything else in Webassembly\u003cp\u003eInteresting idea.\u003cp\u003eCould be a much lighter weight way to sandbox JS...",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true"
-        ],
-        "accuracyRank": 4,
-        "analysis": "This comment offers a reasonable technical interpretation of the project, suggesting plausible architecture and benefits."
-      },
-      {
-        "id": 47421033,
-        "author": "d0100",
-        "text": "I still prefer Deno because I don\u0026#x27;t need a separate npm install command, which makes running code that much easier\u003cp\u003eBeing able to import from \u0026quot;\u003ca href=\"https:\u0026#x2F;\u0026#x2F;my-vpn.com\u0026#x2F;mypackage@1.2.3\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;my-vpn.com\u0026#x2F;mypackage@1.2.3\u003c/a\u003e\u0026quot; or \u0026quot;npm:package@1.2.3\u0026quot; and just running code without having to worry about scaffolding node_modules makes sandboxing code much easier",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "The comment reflects a valid user perspective on developer experience and sandboxing convenience, though it does not directly assess Edge.js."
+        "analysis": "As the project author, this comment provides accurate technical details and context about Edge.js's capabilities and design, though promotional in tone."
       },
       {
         "id": 47420147,
@@ -92,10 +69,11 @@
         "text": "Not sure I understand the use cases. I\u0026#x27;m guessing people want to run unsafe nodejs code. Either cloud providers like for lambdas or on personal computer for AI coding?  On cloud why is this better than firecracker, firecrack can run any programming language this is just nodejs so already useless for that use case?\u003cp\u003eFor personal computer, people worried about the spin up time of docker? I think that is more of a tooling issue where you spin up one instance and run multiple jobs.\u003cp\u003eWhat am I missing? What are actually real use cases where this would be better?",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "intelligent",
+          "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Raises important questions about practical advantages and target scenarios, highlighting potential gaps in the project's value proposition."
+        "accuracyRank": 4,
+        "analysis": "This comment raises valid questions about the practical advantages and target use cases of Edge.js compared to existing container technologies, reflecting a need for clearer positioning."
       },
       {
         "id": 47418484,
@@ -103,50 +81,59 @@
         "text": "Very interesting! On what platforms can this run? If it can run on iOS, how would you handle attempts to access to the file system or networking, is this already wired in somehow? If not is it easy to add custom handlers to handle these actions?",
         "indicators": [
           "thoughtful",
+          "intelligent",
           "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "Poses relevant questions about platform support and security controls, indicating practical concerns for real-world deployment."
-      },
-      {
-        "id": 47420882,
-        "author": "ammmir",
-        "text": "I don\u0026#x27;t get it. You mention being able to choose your own JS engine, so it\u0026#x27;s not using Wasmer\u0026#x27;s WebAssembly implementation but that of the chosen JS engine\u0026#x27;s? In other words, can Edge.js use Wasmer? Or have you managed to compile V8\u0026#x2F;JSC into WebAssembly and are executing it with Wasmer? If so, amazing!",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Seeks clarification on technical implementation details, showing curiosity though not providing evaluative insight."
+        "accuracyRank": 5,
+        "analysis": "The inquiry about platform support and sandboxing controls is relevant and important for evaluating Edge.js's applicability in restricted environments like iOS."
       },
       {
         "id": 47417906,
         "author": "willquack",
         "text": "Awesome project!\u003cp\u003eDumb question: could you run this in frontend js using the browser\u0026#x27;s js engine and wasm environment similar to WebContainers? Maybe `fs` is just in-memory, and some things like forking are disabled. It\u0026#x27;d be cool to have \u0026quot;nodejs\u0026quot; in the web!",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "constructive",
+          "likely-true"
         ],
-        "accuracyRank": 9,
-        "analysis": "Asks an interesting question about browser-based use cases, though speculative and not addressing core project claims."
+        "accuracyRank": 6,
+        "analysis": "This comment explores a plausible use case for Edge.js in browser environments, showing curiosity about extending Node.js capabilities to the frontend."
       },
       {
-        "id": 47418493,
-        "author": "pscanf",
-        "text": "Very cool project!\u003cp\u003eQuestion regarding the pluggable js engine: I have an electron app where I\u0026#x27;m currently using QuickJS to run LLM-generated code. Would edge.js be able (theoretically) to use electron\u0026#x27;s v8 to get a \u0026quot;sanboxed within electron\u0026quot; execution environment?",
+        "id": 47420882,
+        "author": "ammmir",
+        "text": "I don\u0026#x27;t get it. You mention being able to choose your own JS engine, so it\u0026#x27;s not using Wasmer\u0026#x27;s WebAssembly implementation but that of the chosen JS engine\u0026#x27;s? In other words, can Edge.js use Wasmer? Or have you managed to compile V8\u0026#x2F;JSC into WebAssembly and are executing it with Wasmer? If so, amazing!",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "intelligent",
+          "constructive"
         ],
-        "accuracyRank": 10,
-        "analysis": "Poses a practical question about integration with Electron, reflecting user interest but not evaluating project claims."
+        "accuracyRank": 7,
+        "analysis": "This question demonstrates technical understanding and seeks clarification on the architecture, which is important for assessing performance and compatibility."
+      },
+      {
+        "id": 47421033,
+        "author": "d0100",
+        "text": "I still prefer Deno because I don\u0026#x27;t need a separate npm install command, which makes running code that much easier\u003cp\u003eBeing able to import from \u0026quot;\u003ca href=\"https:\u0026#x2F;\u0026#x2F;my-vpn.com\u0026#x2F;mypackage@1.2.3\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;my-vpn.com\u0026#x2F;mypackage@1.2.3\u003c/a\u003e\u0026quot; or \u0026quot;npm:package@1.2.3\u0026quot; and just running code without having to worry about scaffolding node_modules makes sandboxing code much easier",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "The comment provides a relevant comparison to Deno, highlighting developer experience factors that affect sandboxing and code execution workflows."
       },
       {
         "id": 47420178,
         "author": "robjam",
         "text": "Wow! Node APIs in wasm(wasix)? Something that I have been thinking over for a long time is getting wasm (just wasm, not wasi or com) to be the unit of deployment\u0026#x2F;packaging for web apps like Nuxt\u0026#x2F;Next that only depend on, for example SQLite or Postgres. Slightly ignorant question, but would edge.js allow integrating with a caddy plug-in to handle serving the app from wasm?\u003cp\u003eI know of the extism project and played around with it in elixir, but I\u0026#x27;m looking to have CF Workers DX with as little operational complexity as possible for many silly pet projects.",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "intelligent",
+          "constructive"
         ],
-        "accuracyRank": 11,
-        "analysis": "Explores potential deployment scenarios and developer experience improvements, though speculative and not critical."
+        "accuracyRank": 9,
+        "analysis": "This comment connects Edge.js to broader wasm deployment ambitions, showing insight into potential integration and operational benefits."
       },
       {
         "id": 47420662,
@@ -154,10 +141,10 @@
         "text": "Can that Node app load and run WebAssembly?\u003cp\u003e(A.K.A. are we IBM 360 yet?)",
         "indicators": [
           "trolling",
-          "emotional"
+          "useless"
         ],
-        "accuracyRank": 12,
-        "analysis": "This comment is more of a sarcastic or humorous remark, lacking substantive analysis or constructive feedback."
+        "accuracyRank": 10,
+        "analysis": "This comment is vague and uses an unclear analogy, adding little substantive value to the discussion."
       }
     ]
   }

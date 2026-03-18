@@ -20,21 +20,8 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the challenges and potential solutions for SSH access to multiple VMs sharing a single IPv4 address, including the limitations of SSH protocol design, proxying techniques, and alternative approaches like IPv6 and certificate-based authentication. Several commenters share practical workarounds and critique the current SSH UX and infrastructure constraints.",
+    "summary": "The discussion revolves around the challenges and potential solutions for SSH access to multiple VMs sharing a single IPv4 address, with suggestions ranging from using jump hosts, port knocking, and SSH certificates to advocating for IPv6 adoption and alternative protocols. Several commenters highlight the limitations of SSH's design and propose workarounds or improvements such as SSH over HTTP/3 or TLS SNI redirecting.",
     "comments": [
-      {
-        "id": 47421984,
-        "author": "morpheuskafka",
-        "text": "They are saying they want to directly SSH into a VM\u0026#x2F;container based on the web hostname it serves. But that\u0026#x27;s not how the HTTP traffic flows either. With only one routable IP for the host, all traffic on a port shared by VMs has to go to a server on the host first (unless you route based on port or source IP with iptnbles, but that is not hostname based).\u003cp\u003eThe HTTP traffic goes to a server (a reverse proxy, say nginx) on the host, which then reads it and proxies it to the correct VM. The client can\u0026#x27;t ever send TCP packets directly to the VM, HTTP or otherwise. That doesn\u0026#x27;t just magically happen because HTTP has a Host header, only because nginx is on the host.\u003cp\u003eWhat they want is a reverse proxy for SSH, and doesn\u0026#x27;t SSH already have that via jump\u0026#x2F;bastion hosts? I feel like this could be implement with a shell alias, so that:\u003cp\u003essh user@vm1.box1.tld becomes: ssh -j jumpusr@box1.tld user@vm1\u003cp\u003eAnd just make jumpusr have no host permissions and shell set to only allow ssh.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment accurately describes the fundamental difference between HTTP and SSH routing and correctly identifies jump hosts as the standard SSH proxy method."
-      },
       {
         "id": 47421890,
         "author": "dlenski",
@@ -45,8 +32,21 @@
           "likely-true",
           "constructive"
         ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides an informed critique of SSH's protocol design and key management, supported by a referenced survey, making it a highly accurate and insightful contribution."
+      },
+      {
+        "id": 47421984,
+        "author": "morpheuskafka",
+        "text": "They are saying they want to directly SSH into a VM\u0026#x2F;container based on the web hostname it serves. But that\u0026#x27;s not how the HTTP traffic flows either. With only one routable IP for the host, all traffic on a port shared by VMs has to go to a server on the host first (unless you route based on port or source IP with iptnbles, but that is not hostname based).\u003cp\u003eThe HTTP traffic goes to a server (a reverse proxy, say nginx) on the host, which then reads it and proxies it to the correct VM. The client can\u0026#x27;t ever send TCP packets directly to the VM, HTTP or otherwise. That doesn\u0026#x27;t just magically happen because HTTP has a Host header, only because nginx is on the host.\u003cp\u003eWhat they want is a reverse proxy for SSH, and doesn\u0026#x27;t SSH already have that via jump\u0026#x2F;bastion hosts? I feel like this could be implement with a shell alias, so that:\u003cp\u003essh user@vm1.box1.tld becomes: ssh -j jumpusr@box1.tld user@vm1\u003cp\u003eAnd just make jumpusr have no host permissions and shell set to only allow ssh.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 2,
-        "analysis": "The critique is well-founded and supported by a referenced survey, highlighting real security and usability issues in SSH key management."
+        "analysis": "This comment correctly explains the networking constraints and existing SSH solutions like jump hosts, offering a practical perspective on the problem."
       },
       {
         "id": 47422237,
@@ -54,11 +54,12 @@
         "text": "Yeah, I ran into this problem too. I tried a few different hacky solutions and then settled on using port knocking to sort inbound ssh connections into their intended destinations. Works great.\u003cp\u003eI have an architecture with a single IP hosting multiple LXC containers. I wanted users to be able to ssh into their containers as you would for any other environment. There\u0026#x27;s an option in sshd that allows you to run a script during a connection request so you can \u003ci\u003ealmost\u003c/i\u003e juggle connections according to the username -- if I remember right, it\u0026#x27;s been several years since I tried that -- but it\u0026#x27;s terribly fragile and tends to not pass TTYs properly and basically everything hates it.\u003cp\u003eBut, set up knockd, and then generate a random knock sequence for each individual user and automatically update your knockd config with that, and each knock sequence then (temporarily) adds a nat rule that connects the user to their destination container.\u003cp\u003eWhen adding ssh users, I also provide them with a client config file that includes the ProxyCommand incantation that makes it work on their end.\u003cp\u003eBeen using this for a few years and no problems so far.",
         "indicators": [
           "intelligent",
-          "constructive",
-          "likely-true"
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This is a practical and tested solution that addresses the problem with a clever use of port knocking and dynamic NAT, though it may be complex to maintain."
+        "analysis": "This comment shares a real-world, practical solution with technical details, demonstrating a constructive approach to the problem."
       },
       {
         "id": 47422207,
@@ -66,34 +67,25 @@
         "text": "In kinda the same situation, I was using username for host routing. And real user was determined by the principal in SSH certificate - so the proxy didn\u0026#x27;t even need to know the concrete certificates for users; it was even easier than keeping track of user SSH keys.\u003cp\u003eCertificate signing was done by a separate SSH service, which you connected too with enabled SSH agent forwarding, pass 2FA challenge, and get a signed cert injected into your agent.",
         "indicators": [
           "intelligent",
-          "constructive",
-          "likely-true"
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "This approach leverages SSH certificates effectively and improves security and usability, representing a modern and scalable solution."
+        "analysis": "The comment describes a sophisticated and secure method involving SSH certificates and proxying, reflecting a deep understanding of SSH infrastructure."
       },
       {
-        "id": 47422307,
-        "author": "ulrikrasmussen",
-        "text": "Wouldn\u0026#x27;t a much simpler approach be to have everyone log in to a common server which sits on a VPN with all the VMs? It introduces an extra hop, but this is a pretty minor inconvenience and can be scripted away.",
+        "id": 47421972,
+        "author": "otterley",
+        "text": "This is a clever trick, but I can’t help but wonder where it breaks. There seems to be an invariant that the number of backends a public key is mapped to cannot exceed the number of proxy IPs available. The scheme probably works fine if most people are only using a small number of instances, though. I assume this is in fact the case.\u003cp\u003eAnother thing that just crossed my mind is that the proxy IP cannot be reassigned without the client popping up a warning. That may alarm security-conscious users and impact usability.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 5,
-        "analysis": "This is a straightforward and commonly used approach that trades off a minor latency increase for simplicity and security."
-      },
-      {
-        "id": 47421979,
-        "author": "krautsauer",
-        "text": "SSH waits for the server key before it presents the client keys, right? Does this mean that different VMs from different users have the same key? (Or rather, all VMs have the same key? A quick look shows s00{1,2,3}.exe.xyz all having the same key.) So this is full MitM?",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Raises a valid security concern about key reuse that could lead to MITM vulnerabilities if not properly managed."
+        "analysis": "This comment thoughtfully considers the scalability and security implications of the discussed approach, highlighting potential practical issues."
       },
       {
         "id": 47422159,
@@ -101,33 +93,48 @@
         "text": "The solution to this is TLS SNI redirecting.\u003cp\u003eYou can front a TLS server on port 443 and then redirect \u003ci\u003ewithout decrypting\u003c/i\u003e the connection based on the SNI name to your final destination host.",
         "indicators": [
           "intelligent",
-          "constructive",
-          "likely-true"
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "While TLS SNI is effective for HTTPS, applying it to SSH is not straightforward since SSH does not use TLS; the idea is clever but not directly applicable."
+        "accuracyRank": 6,
+        "analysis": "This comment proposes a technically sound alternative using TLS SNI for routing, which is a recognized method for multiplexing connections."
       },
       {
-        "id": 47421972,
-        "author": "otterley",
-        "text": "This is a clever trick, but I can’t help but wonder where it breaks. There seems to be an invariant that the number of backends a public key is mapped to cannot exceed the number of proxy IPs available. The scheme probably works fine if most people are only using a small number of instances, though. I assume this is in fact the case.\u003cp\u003eAnother thing that just crossed my mind is that the proxy IP cannot be reassigned without the client popping up a warning. That may alarm security-conscious users and impact usability.",
+        "id": 47422307,
+        "author": "ulrikrasmussen",
+        "text": "Wouldn\u0026#x27;t a much simpler approach be to have everyone log in to a common server which sits on a VPN with all the VMs? It introduces an extra hop, but this is a pretty minor inconvenience and can be scripted away.",
         "indicators": [
+          "intelligent",
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 8,
-        "analysis": "Insightful about practical scalability and usability issues that could arise from IP reuse and reassignment in proxy setups."
+        "accuracyRank": 7,
+        "analysis": "This comment suggests a straightforward and practical solution that trades off a minor inconvenience for simplicity and security."
       },
       {
         "id": 47422245,
         "author": "snvzz",
         "text": "The solution is ipv6.",
         "indicators": [
+          "intelligent",
           "likely-true",
-          "useless"
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "While brief, this comment correctly points out that IPv6 adoption can alleviate IPv4 address scarcity issues relevant to the discussion."
+      },
+      {
+        "id": 47421889,
+        "author": "Eikon",
+        "text": "I am not sure to understand what this is this achieving compared to just assigning a ip + port per vm?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
         ],
         "accuracyRank": 9,
-        "analysis": "While IPv6 does solve address scarcity, this comment lacks depth and does not address the SSH-specific routing challenges discussed."
+        "analysis": "This comment raises a valid question about the necessity of the proposed approach versus traditional IP and port assignment."
       },
       {
         "id": 47422075,
@@ -138,7 +145,29 @@
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "A reasonable economic perspective on IPv4 vs IPv6 cost issues, though it does not directly address SSH routing problems."
+        "analysis": "This comment offers a pragmatic business perspective on IPv4 versus IPv6 cost and usage, though it is less technical than others."
+      },
+      {
+        "id": 47422637,
+        "author": "hamandcheese",
+        "text": "This would be a great use case of SSH over HTTP\u0026#x2F;3[0]. Sadly it doesn\u0026#x27;t seem to have gained traction.\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.ietf.org\u0026#x2F;archive\u0026#x2F;id\u0026#x2F;draft-michel-ssh3-00.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.ietf.org\u0026#x2F;archive\u0026#x2F;id\u0026#x2F;draft-michel-ssh3-00.html\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 11,
+        "analysis": "This comment points out a relevant but niche protocol proposal, indicating awareness of emerging technologies though with limited adoption."
+      },
+      {
+        "id": 47421979,
+        "author": "krautsauer",
+        "text": "SSH waits for the server key before it presents the client keys, right? Does this mean that different VMs from different users have the same key? (Or rather, all VMs have the same key? A quick look shows s00{1,2,3}.exe.xyz all having the same key.) So this is full MitM?",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 12,
+        "analysis": "This comment raises a security concern about key reuse across VMs, which is a valid point though context-dependent."
       },
       {
         "id": 47422271,
@@ -148,41 +177,8 @@
           "thoughtful",
           "intelligent"
         ],
-        "accuracyRank": 11,
-        "analysis": "Provides a relevant perspective on UX design in SSH-related tools but is more observational than solution-oriented."
-      },
-      {
-        "id": 47421959,
-        "author": "3r7j6qzi9jvnve",
-        "text": "I wonder if it\u0026#x27;s something like \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;cea-hpc\u0026#x2F;sshproxy\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;cea-hpc\u0026#x2F;sshproxy\u003c/a\u003e that sits in the middle (with decryption and everything) or if they could do this without setting up a session directly with the client.\u003cp\u003eWell, we\u0026#x27;re implicitly trusting the host when running a VM anyway (most of the time), but it\u0026#x27;s something I\u0026#x27;d want to check before buying into the service.\u003cp\u003eEDIT: Ah, it\u0026#x27;s probably \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;boldsoftware\u0026#x2F;sshpiper\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;boldsoftware\u0026#x2F;sshpiper\u003c/a\u003e\u003cp\u003ewill try to remember to look later.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 12,
-        "analysis": "Provides useful references to existing tools that address SSH proxying challenges, adding practical value."
-      },
-      {
-        "id": 47422087,
-        "author": "c45y",
-        "text": "I would love it if more systems just understood SRV records, hostname.xyz = 10.1.1.1:2222\u003cp\u003eSo far it feels like only LDAP really makes use of it, at least with the tech I interact with",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
         "accuracyRank": 13,
-        "analysis": "Highlights a DNS feature that could simplify service discovery, though adoption is limited and not directly solving SSH routing."
-      },
-      {
-        "id": 47421889,
-        "author": "Eikon",
-        "text": "I am not sure to understand what this is this achieving compared to just assigning a ip + port per vm?",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 14,
-        "analysis": "Raises a valid question about the complexity of proposed solutions versus a straightforward IP/port assignment approach."
+        "analysis": "This comment provides a broader perspective on UX design in SSH-related tools but is less directly relevant to the technical problem discussed."
       },
       {
         "id": 47422214,
@@ -192,8 +188,41 @@
           "thoughtful",
           "constructive"
         ],
+        "accuracyRank": 14,
+        "analysis": "This comment challenges the assumption that SSH is necessary, suggesting modern alternatives for managing VMs."
+      },
+      {
+        "id": 47421959,
+        "author": "3r7j6qzi9jvnve",
+        "text": "I wonder if it\u0026#x27;s something like \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;cea-hpc\u0026#x2F;sshproxy\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;cea-hpc\u0026#x2F;sshproxy\u003c/a\u003e that sits in the middle (with decryption and everything) or if they could do this without setting up a session directly with the client.\u003cp\u003eWell, we\u0026#x27;re implicitly trusting the host when running a VM anyway (most of the time), but it\u0026#x27;s something I\u0026#x27;d want to check before buying into the service.\u003cp\u003eEDIT: Ah, it\u0026#x27;s probably \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;boldsoftware\u0026#x2F;sshpiper\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;boldsoftware\u0026#x2F;sshpiper\u003c/a\u003e\u003cp\u003ewill try to remember to look later.",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
         "accuracyRank": 15,
-        "analysis": "Offers a strategic viewpoint advocating modern infrastructure management over traditional SSH access, though may not fit all use cases."
+        "analysis": "This comment speculates on existing proxy tools for SSH multiplexing, showing curiosity but lacking definitive conclusions."
+      },
+      {
+        "id": 47422632,
+        "author": "est",
+        "text": "jump servers, it\u0026#x27;s a thing and a good security measure.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 16,
+        "analysis": "This brief comment endorses the use of jump servers as a security best practice, aligning with common SSH usage."
+      },
+      {
+        "id": 47422087,
+        "author": "c45y",
+        "text": "I would love it if more systems just understood SRV records, hostname.xyz = 10.1.1.1:2222\u003cp\u003eSo far it feels like only LDAP really makes use of it, at least with the tech I interact with",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 17,
+        "analysis": "This comment notes the underutilization of SRV DNS records, which is accurate but less central to the SSH discussion."
       }
     ]
   }
