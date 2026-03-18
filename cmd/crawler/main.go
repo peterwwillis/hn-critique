@@ -35,8 +35,6 @@ const (
 )
 
 func main() {
-	cacheCheckedByStoryID := make(map[int]bool)
-
 	var (
 		storyCount   = flag.Int("stories", defaultStoryCount, "number of top stories to fetch")
 		outputDir    = flag.String("out", "docs", "output directory for the generated site")
