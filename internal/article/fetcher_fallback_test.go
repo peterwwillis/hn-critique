@@ -1,16 +1,21 @@
 package article
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 )
+
+var articleLogCaptureMu sync.Mutex
 
 func TestArchivePHFallback_UsesSubmittedSnapshot(t *testing.T) {
 	articleContent := strings.Repeat("archive-ph ", 40)
@@ -43,7 +48,7 @@ func TestArchivePHFallback_UsesSubmittedSnapshot(t *testing.T) {
 	}))
 	defer server.Close()
 
-	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available")
+	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available", server.URL+"/wayback/cdx", server.URL+"/")
 
 	fetcher := NewFetcher()
 	text, _, err := fetcher.FetchWithTruncation(server.URL + "/original")
@@ -110,7 +115,7 @@ func TestArchivePlaywrightFallback_UsesDaemon(t *testing.T) {
 	defer server.Close()
 
 	t.Setenv("PLAYWRIGHT_FETCH_URL", playwrightServer.URL+"/fetch")
-	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available")
+	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available", server.URL+"/wayback/cdx", server.URL+"/")
 
 	fetcher := NewFetcher()
 	text, _, err := fetcher.FetchWithTruncation(server.URL + "/original")
@@ -162,7 +167,7 @@ func TestArchiveWaybackFallback_UsesAvailabilitySnapshotURL(t *testing.T) {
 	}))
 	defer server.Close()
 
-	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available")
+	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available", server.URL+"/wayback/cdx", server.URL+"/")
 
 	fetcher := NewFetcher()
 	text, _, err := fetcher.FetchWithTruncation(server.URL + "/original")
@@ -196,6 +201,77 @@ func TestArchiveWaybackFallback_UsesAvailabilitySnapshotURL(t *testing.T) {
 	}
 }
 
+func TestArchiveWaybackFallback_UsesCDXSnapshotWhenAvailabilityMissing(t *testing.T) {
+	articleText := fmt.Sprintf("<html><body><main>%s</main></body></html>", strings.Repeat("wayback-cdx ", 80))
+	var requestedAvailabilityURL string
+	var requestedCDXURL string
+	var requestedCDXLimit string
+	var requestedCDXSort string
+	var requestedSnapshotPath string
+	var originalURL string
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.URL.Path == "/original":
+			http.Error(w, "primary failed", http.StatusBadGateway)
+		case r.URL.Path == "/archive/submit/":
+			w.Header().Set("Location", "/archive/not-enough")
+			w.WriteHeader(http.StatusFound)
+		case r.URL.Path == "/archive/not-enough":
+			_, _ = w.Write([]byte("<html><body>too short</body></html>"))
+		case r.URL.Path == "/wayback/available":
+			requestedAvailabilityURL = r.URL.Query().Get("url")
+			_, _ = w.Write([]byte(`{"archived_snapshots":{}}`))
+		case r.URL.Path == "/wayback/cdx":
+			requestedCDXURL = r.URL.Query().Get("url")
+			requestedCDXLimit = r.URL.Query().Get("limit")
+			requestedCDXSort = r.URL.Query().Get("sort")
+			_, _ = fmt.Fprintf(w, `[["timestamp","original"],["20240102030405","%s"]]`, originalURL)
+		case strings.HasPrefix(r.URL.Path, "/web/20240102030405/http://"):
+			requestedSnapshotPath = r.URL.Path
+			_, _ = w.Write([]byte(articleText))
+		default:
+			http.Error(w, "unexpected path", http.StatusNotFound)
+		}
+	}))
+	defer server.Close()
+	originalURL = server.URL + "/original"
+
+	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available", server.URL+"/wayback/cdx", server.URL+"/")
+
+	fetcher := NewFetcher()
+	var text string
+	logs := captureArticleLogs(t, func() {
+		var err error
+		text, _, err = fetcher.FetchWithTruncation(originalURL)
+		if err != nil {
+			t.Fatalf("FetchWithTruncation returned error: %v", err)
+		}
+	})
+	if !strings.Contains(text, "wayback-cdx") {
+		t.Fatalf("expected internet archive CDX fallback content in text, got %q", text)
+	}
+	if requestedAvailabilityURL != originalURL {
+		t.Fatalf("expected availability lookup for %q, got %q", originalURL, requestedAvailabilityURL)
+	}
+	if requestedCDXURL != originalURL {
+		t.Fatalf("expected CDX lookup for %q, got %q", originalURL, requestedCDXURL)
+	}
+	if requestedCDXLimit != "1" {
+		t.Fatalf("expected CDX lookup limit=1, got %q", requestedCDXLimit)
+	}
+	if requestedCDXSort != "reverse" {
+		t.Fatalf("expected CDX lookup sort=reverse, got %q", requestedCDXSort)
+	}
+	if requestedSnapshotPath != "/web/20240102030405/"+originalURL {
+		t.Fatalf("expected CDX replay snapshot path %q, got %q", "/web/20240102030405/"+originalURL, requestedSnapshotPath)
+	}
+	expectedLogURL := server.URL + "/web/20240102030405/" + originalURL
+	if !strings.Contains(logs, "article fetch attempt (internet archive): "+expectedLogURL) {
+		t.Fatalf("expected internet archive log to include resolved replay URL, got logs:\n%s", logs)
+	}
+}
+
 func TestArchivePHResponseURL_UsesLocationHeader(t *testing.T) {
 	base, err := url.Parse("https://archive.ph/submit/")
 	if err != nil {
@@ -213,14 +289,36 @@ func TestArchivePHResponseURL_UsesLocationHeader(t *testing.T) {
 	}
 }
 
-func setTestFallbackPrefixes(t *testing.T, archivePH, waybackAvailability string) {
+func setTestFallbackPrefixes(t *testing.T, archivePH, waybackAvailability, waybackCDX, waybackReplay string) {
 	t.Helper()
 	oldArchive := archivePHBaseURL
 	oldWaybackAvailability := waybackAvailabilityAPIURL
+	oldWaybackCDX := waybackCDXAPIURL
+	oldWaybackReplay := waybackReplayBaseURL
 	archivePHBaseURL = archivePH
 	waybackAvailabilityAPIURL = waybackAvailability
+	waybackCDXAPIURL = waybackCDX
+	waybackReplayBaseURL = waybackReplay
 	t.Cleanup(func() {
 		archivePHBaseURL = oldArchive
 		waybackAvailabilityAPIURL = oldWaybackAvailability
+		waybackCDXAPIURL = oldWaybackCDX
+		waybackReplayBaseURL = oldWaybackReplay
 	})
+}
+
+func captureArticleLogs(t *testing.T, fn func()) string {
+	t.Helper()
+	articleLogCaptureMu.Lock()
+	defer articleLogCaptureMu.Unlock()
+
+	origLogger := articleLogger
+	var buf bytes.Buffer
+	articleLogger = log.New(&buf, "", 0)
+	defer func() {
+		articleLogger = origLogger
+	}()
+
+	fn()
+	return buf.String()
 }

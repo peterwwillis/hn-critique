@@ -27,7 +27,10 @@ const (
 var (
 	archivePHBaseURL           = "https://archive.ph/"
 	waybackAvailabilityAPIURL  = "https://archive.org/wayback/available"
+	waybackCDXAPIURL           = "https://web.archive.org/cdx/search/cdx"
+	waybackReplayBaseURL       = "https://web.archive.org/"
 	errPlaywrightNotConfigured = errors.New("playwright fetch service not configured")
+	articleLogger              = log.Default()
 )
 
 // Limits controls fetcher resource caps.
@@ -119,22 +122,22 @@ func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 		if targetURL == "" {
 			targetURL = rawURL
 		}
-		log.Printf("    article fetch attempt (%s): %s", candidate.source, targetURL)
+		articleLogger.Printf("    article fetch attempt (%s): %s", candidate.source, targetURL)
 		if err != nil {
 			if errors.Is(err, errPlaywrightNotConfigured) {
-				log.Printf("    article fetch skipped (%s): %v", candidate.source, err)
+				articleLogger.Printf("    article fetch skipped (%s): %v", candidate.source, err)
 			} else {
-				log.Printf("    article fetch failed (%s): %v", candidate.source, err)
+				articleLogger.Printf("    article fetch failed (%s): %v", candidate.source, err)
 			}
 			continue
 		}
 		if len(text) >= 300 {
 			if candidate.source != "direct" {
-				log.Printf("    article fetch succeeded via fallback: %s", candidate.source)
+				articleLogger.Printf("    article fetch succeeded via fallback: %s", candidate.source)
 			}
 			return text, truncated, nil
 		}
-		log.Printf("    article fetch produced insufficient content (%s): %d chars", candidate.source, utf8.RuneCountInString(text))
+		articleLogger.Printf("    article fetch produced insufficient content (%s): %d chars", candidate.source, utf8.RuneCountInString(text))
 	}
 	return "", false, fmt.Errorf("could not retrieve article content for %s", rawURL)
 }
@@ -268,10 +271,77 @@ func (f *Fetcher) internetArchiveSnapshotURL(rawURL string) (string, error) {
 	}
 
 	closest := payload.ArchivedSnapshots.Closest
-	if !closest.Available || closest.URL == "" || (closest.Status != "" && closest.Status != "200") {
+	if closest.Available && closest.URL != "" && (closest.Status == "" || closest.Status == "200") {
+		return normalizeInternetArchiveSnapshotURL(closest.URL), nil
+	}
+	return f.internetArchiveCDXSnapshotURL(rawURL)
+}
+
+func (f *Fetcher) internetArchiveCDXSnapshotURL(rawURL string) (string, error) {
+	req, err := http.NewRequest("GET", waybackCDXAPIURL, nil)
+	if err != nil {
+		return "", err
+	}
+	query := req.URL.Query()
+	query.Set("url", rawURL)
+	query.Set("output", "json")
+	query.Set("fl", "timestamp,original")
+	query.Add("filter", "statuscode:200")
+	query.Add("filter", "mimetype:text/html")
+	query.Set("limit", "1")
+	query.Set("sort", "reverse")
+	req.URL.RawQuery = query.Encode()
+	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
+
+	resp, err := f.http.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("HTTP %d for wayback CDX lookup", resp.StatusCode)
+	}
+
+	var rows [][]string
+	// CDX responses are small metadata payloads; 1 MiB is ample for a single URL lookup
+	// while still avoiding unbounded reads on an external service response.
+	if err := json.NewDecoder(io.LimitReader(resp.Body, 1<<20)).Decode(&rows); err != nil {
+		return "", fmt.Errorf("decode wayback CDX response: %w", err)
+	}
+	if len(rows) < 2 {
 		return "", fmt.Errorf("no archived snapshot available")
 	}
-	return closest.URL, nil
+
+	last := rows[len(rows)-1]
+	if len(last) < 2 {
+		return "", fmt.Errorf("no archived snapshot available")
+	}
+
+	timestamp := strings.TrimSpace(last[0])
+	original := strings.TrimSpace(last[1])
+	if timestamp == "" || original == "" {
+		return "", fmt.Errorf("no archived snapshot available")
+	}
+
+	return normalizeInternetArchiveSnapshotURL(internetArchiveReplayURL(timestamp, original)), nil
+}
+
+func internetArchiveReplayURL(timestamp, original string) string {
+	return strings.TrimRight(waybackReplayBaseURL, "/") + "/web/" + timestamp + "/" + original
+}
+
+func normalizeInternetArchiveSnapshotURL(snapshotURL string) string {
+	parsed, err := url.Parse(snapshotURL)
+	if err != nil {
+		return snapshotURL
+	}
+	if parsed.Host == "web.archive.org" && parsed.Scheme == "http" {
+		parsed.Scheme = "https"
+	}
+	return parsed.String()
 }
 
 func archivePHResponseURL(base *url.URL, headers http.Header) (string, bool) {
