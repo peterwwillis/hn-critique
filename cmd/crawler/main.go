@@ -255,16 +255,20 @@ func main() {
 	for _, story := range stories {
 		if aiProvider != nil {
 			log.Printf("Processing AI analysis for story %d…", story.ID)
-			cached := cachedAnalysisByStoryID[story.ID]
-			if cached == nil && !cacheCheckedByStoryID[story.ID] {
+			cached, ok := cachedAnalysisByStoryID[story.ID]
+			if !ok {
 				loaded, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
 				if cacheErr != nil {
 					log.Printf("  ⚠  cache load failed: %v", cacheErr)
-				} else if loaded != nil {
+					// Record that we attempted to load the cache for this story ID,
+					// even if the load failed, so we don't retry on this run.
+					cachedAnalysisByStoryID[story.ID] = nil
+				} else {
 					cached = loaded
+					// Store the loaded cache (which may be nil) so subsequent
+					// iterations know this story ID has already been checked.
 					cachedAnalysisByStoryID[story.ID] = loaded
 				}
-				cacheCheckedByStoryID[story.ID] = true
 			}
 
 			// Article critique.

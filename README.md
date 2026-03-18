@@ -173,7 +173,7 @@ go run ./cmd/crawler/ -prepare-input -out ./docs
 go run ./cmd/crawler/ -analyze-input -out ./docs
 ```
 
-Article critiques are cached per story/day. When a story already has a
+Article critiques are cached per story and stored under the story’s submission date. When a story already has a
 successful article critique in the cache, later runs will re-use it (skipping
 article fetch + re-analysis). Unsuccessful or “unavailable” critiques may
 still have cache files, but they are not re-used and will be re-fetched and
