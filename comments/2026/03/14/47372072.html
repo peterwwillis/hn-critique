@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">41 points</span>
+        <span class="score">73 points</span>
         by <a href="https://news.ycombinator.com/user?id=mmcclure" class="hnuser">mmcclure</a>
         <span class="age">5 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/14/47372072.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the use of QUIC for streaming media, with one user sharing practical experience implementing pull-based streaming via WebRTC and expressing frustration with its complexity. Another user comments on the article&#39;s technical details and asks questions about frame prioritization and FEC in streaming contexts.</p>
+      <p>The discussion centers around the use of QUIC for media streaming, highlighting its advantages over TCP such as reduced head-of-line blocking and better goodput. Some commenters share practical experiences with QUIC and WebRTC, while others discuss related technologies like IP multicast and media stream prioritization.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,36 +56,79 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=dmm" class="hnuser">dmm</a>
+        <a href="https://news.ycombinator.com/user?id=Lliora" class="hnuser">Lliora</a>
         &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Ship-to-shore SAT link, 800 ms RTT, 2 % burst loss. We muxed 4 K pps telemetry + 1 Mbps H264 over QUIC last year. Head-of-line blocking vanished - TCP would have stalled 12 s on each 200 ms fade. FEC at the stream frame, not packet, let us ride fades with 3 % overhead. QUIC’s real win is acking individual frames; we saw 40 % better goodput vs TCP + application FEC at the same latency.</div>
+      <div class="comment-analysis"><em>This comment provides detailed, real-world experience with QUIC over a challenging satellite link, supporting claims about QUIC&#39;s advantages in latency and loss recovery.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dmm" class="hnuser">dmm</a>
+        &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Pull-based streaming can work with webrtc. I implemented it for my custom ip camera nvr solution. I just open N streams on the client and when one is deactivated (typically by scrolling it out of the viewport), the client sends an unsubscribe message and the server just stops sending video until they resubscribe.<p>I&#x27;m currently switching to a quic-based solution for other reasons, mainly that webrtc is a giant blackbox which provides very limited control[1], yet requires deep understanding of its implementation[2] and I&#x27;m tired.<p>I looked at moq-lite but decided against it for some reason. I think because I have &lt;5 clients and don&#x27;t need the fanout. The auth strategy is very different than what I currently use too.<p>[1] Why is firefox now picking that (wrong) ice candidate?
-[2] rtp, ice, sdp, etc</div>
-      <div class="comment-analysis"><em>This comment provides a detailed, experience-based perspective on streaming technologies, highlighting practical challenges and motivations for switching to QUIC, making it highly credible and informative.</em></div>
+      <div class="comment-text">Pull-based streaming can work with webrtc. I implemented it for my custom ip camera nvr solution. I just open N streams on the client and when one is deactivated (typically by scrolling it out of the viewport), the client sends an unsubscribe message over a separate control channel and the server just stops sending video until they resubscribe.<p>I&#x27;m currently switching to a quic-based solution for other reasons, mainly that webrtc is a giant blackbox which provides very limited control[1], yet requires deep understanding of its implementation[2] and I&#x27;m tired[3].<p>I looked at moq-lite but decided against it for some reason. I think because I have &lt;5 clients and don&#x27;t need the fanout. The auth strategy is very different than what I currently use too.<p>[1] Why is firefox now picking that (wrong) ice candidate?<p>[2] rtp, ice, sdp, etc<p>[3] webrtc isn&#x27;t bad for the video conferencing use-case but anything else is a pain</div>
+      <div class="comment-analysis"><em>The comment shares practical implementation details and critiques of WebRTC, providing valuable context for why switching to QUIC might be preferable in some cases.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=newsclues" class="hnuser">newsclues</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I like the ability to choose what you want to pull.<p>I’ve been thinking about an application where people consume all their media, and having the ability to pick which tracks to pull for any content you want to stream would be great.</div>
+      <div class="comment-analysis"><em>This comment offers a thoughtful perspective on the benefits of selective media pulling, aligning well with the advantages of QUIC-based streaming.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=tamimio" class="hnuser">tamimio</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Very good progress, I have been keeping an eye on quic for some time, I have yet to use it in the wild. The article mentions the prioritization of the frames and keeping it in the RAM, I am a bit confused, so.. it’s sent delayed later or is it only added in non-priority stream? Also slightly far from that, how does that work with FEC? I built before a streaming platform for drones but it utilized gstreamer primarily over udp, different codecs based in the hardware, one of the issues was what you mentioned in the article of having one subscriber only at a time, so we had some duct tape solutions if we needed more but it wasn’t really great.</div>
-      <div class="comment-analysis"><em>This comment shows engagement with the article&#39;s technical content by asking relevant questions about frame prioritization and FEC, indicating a reasonable understanding though lacking direct experience.</em></div>
+      <div class="comment-analysis"><em>The comment raises relevant technical questions about frame prioritization and FEC in QUIC streaming, indicating engagement but some uncertainty.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ale42" class="hnuser">ale42</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Apart from actual support on real networks, isn&#x27;t this the problem IP multicast was supposed to solve ages ago?</div>
+      <div class="comment-analysis"><em>This comment correctly references IP multicast as a historical solution to similar problems, though it lacks deeper technical elaboration.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=adithyassekhar" class="hnuser">adithyassekhar</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">Never had to work with moq, got me to read the whole thing. There&#x27;s still a place for good writing.</div>
+      <div class="comment-analysis"><em>This comment is more of a personal reaction to the article&#39;s writing style and does not contribute technical insight.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=teekert" class="hnuser">teekert</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">useless</span> 
+        <span class="indicator">useless</span> <span class="indicator">trolling</span> 
       </div>
       <div class="comment-text">The Lonely Island - I&#x27;m On A Boat (Explicit Version) ft. T-Pain (Official Video)  [0]<p>[0] <a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=avaSdC0QOUM" rel="nofollow">https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=avaSdC0QOUM</a></div>
-      <div class="comment-analysis"><em>This comment is unrelated to the technical discussion and does not contribute to the analysis or understanding of the article.</em></div>
+      <div class="comment-analysis"><em>This comment is unrelated to the technical discussion and serves as a joke or distraction.</em></div>
     </div>
     
 
@@ -97,7 +140,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 13:16 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 15:15 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

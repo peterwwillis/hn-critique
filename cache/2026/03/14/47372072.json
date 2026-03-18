@@ -22,20 +22,44 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the use of QUIC for streaming media, with one user sharing practical experience implementing pull-based streaming via WebRTC and expressing frustration with its complexity. Another user comments on the article's technical details and asks questions about frame prioritization and FEC in streaming contexts.",
+    "summary": "The discussion centers around the use of QUIC for media streaming, highlighting its advantages over TCP such as reduced head-of-line blocking and better goodput. Some commenters share practical experiences with QUIC and WebRTC, while others discuss related technologies like IP multicast and media stream prioritization.",
     "comments": [
+      {
+        "id": 47426488,
+        "author": "Lliora",
+        "text": "Ship-to-shore SAT link, 800 ms RTT, 2 % burst loss. We muxed 4 K pps telemetry + 1 Mbps H264 over QUIC last year. Head-of-line blocking vanished - TCP would have stalled 12 s on each 200 ms fade. FEC at the stream frame, not packet, let us ride fades with 3 % overhead. QUIC’s real win is acking individual frames; we saw 40 % better goodput vs TCP + application FEC at the same latency.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides detailed, real-world experience with QUIC over a challenging satellite link, supporting claims about QUIC's advantages in latency and loss recovery."
+      },
       {
         "id": 47425247,
         "author": "dmm",
-        "text": "Pull-based streaming can work with webrtc. I implemented it for my custom ip camera nvr solution. I just open N streams on the client and when one is deactivated (typically by scrolling it out of the viewport), the client sends an unsubscribe message and the server just stops sending video until they resubscribe.\u003cp\u003eI\u0026#x27;m currently switching to a quic-based solution for other reasons, mainly that webrtc is a giant blackbox which provides very limited control[1], yet requires deep understanding of its implementation[2] and I\u0026#x27;m tired.\u003cp\u003eI looked at moq-lite but decided against it for some reason. I think because I have \u0026lt;5 clients and don\u0026#x27;t need the fanout. The auth strategy is very different than what I currently use too.\u003cp\u003e[1] Why is firefox now picking that (wrong) ice candidate?\n[2] rtp, ice, sdp, etc",
+        "text": "Pull-based streaming can work with webrtc. I implemented it for my custom ip camera nvr solution. I just open N streams on the client and when one is deactivated (typically by scrolling it out of the viewport), the client sends an unsubscribe message over a separate control channel and the server just stops sending video until they resubscribe.\u003cp\u003eI\u0026#x27;m currently switching to a quic-based solution for other reasons, mainly that webrtc is a giant blackbox which provides very limited control[1], yet requires deep understanding of its implementation[2] and I\u0026#x27;m tired[3].\u003cp\u003eI looked at moq-lite but decided against it for some reason. I think because I have \u0026lt;5 clients and don\u0026#x27;t need the fanout. The auth strategy is very different than what I currently use too.\u003cp\u003e[1] Why is firefox now picking that (wrong) ice candidate?\u003cp\u003e[2] rtp, ice, sdp, etc\u003cp\u003e[3] webrtc isn\u0026#x27;t bad for the video conferencing use-case but anything else is a pain",
         "indicators": [
           "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed, experience-based perspective on streaming technologies, highlighting practical challenges and motivations for switching to QUIC, making it highly credible and informative."
+        "accuracyRank": 2,
+        "analysis": "The comment shares practical implementation details and critiques of WebRTC, providing valuable context for why switching to QUIC might be preferable in some cases."
+      },
+      {
+        "id": 47425798,
+        "author": "newsclues",
+        "text": "I like the ability to choose what you want to pull.\u003cp\u003eI’ve been thinking about an application where people consume all their media, and having the ability to pick which tracks to pull for any content you want to stream would be great.",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment offers a thoughtful perspective on the benefits of selective media pulling, aligning well with the advantages of QUIC-based streaming."
       },
       {
         "id": 47423929,
@@ -44,21 +68,43 @@
         "indicators": [
           "thoughtful",
           "intelligent",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment shows engagement with the article's technical content by asking relevant questions about frame prioritization and FEC, indicating a reasonable understanding though lacking direct experience."
+        "accuracyRank": 4,
+        "analysis": "The comment raises relevant technical questions about frame prioritization and FEC in QUIC streaming, indicating engagement but some uncertainty."
+      },
+      {
+        "id": 47426118,
+        "author": "ale42",
+        "text": "Apart from actual support on real networks, isn\u0026#x27;t this the problem IP multicast was supposed to solve ages ago?",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment correctly references IP multicast as a historical solution to similar problems, though it lacks deeper technical elaboration."
+      },
+      {
+        "id": 47425600,
+        "author": "adithyassekhar",
+        "text": "Never had to work with moq, got me to read the whole thing. There\u0026#x27;s still a place for good writing.",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment is more of a personal reaction to the article's writing style and does not contribute technical insight."
       },
       {
         "id": 47423681,
         "author": "teekert",
         "text": "The Lonely Island - I\u0026#x27;m On A Boat (Explicit Version) ft. T-Pain (Official Video)  [0]\u003cp\u003e[0] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=avaSdC0QOUM\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=avaSdC0QOUM\u003c/a\u003e",
         "indicators": [
-          "useless"
+          "useless",
+          "trolling"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment is unrelated to the technical discussion and does not contribute to the analysis or understanding of the article."
+        "accuracyRank": 7,
+        "analysis": "This comment is unrelated to the technical discussion and serves as a joke or distraction."
       }
     ]
   }
