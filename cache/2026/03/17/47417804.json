@@ -2,65 +2,35 @@
   "story_id": 47417804,
   "generated_at": "",
   "critique": {
-    "summary": "The article describes 'Get Shit Done' (GSD), a meta-prompting, context engineering, and spec-driven development system designed to improve the reliability and efficiency of AI-assisted coding with Claude Code and other AI runtimes. It outlines GSD's workflow, features, commands, and technical design aimed at solo developers and small teams to automate and verify software development tasks.",
+    "summary": "The article describes 'Get Shit Done' (GSD), a system designed to facilitate meta-prompting, context engineering, and spec-driven development primarily for AI models like Claude Code. It emphasizes simplifying complex workflows, maintaining context quality, and automating code generation and verification processes.",
     "mainPoints": [
-      "GSD is a lightweight system that enhances AI coding by managing context and orchestrating multiple agents to maintain quality and consistency.",
-      "It supports multiple AI runtimes including Claude Code, OpenCode, Gemini CLI, Codex, Copilot, and Antigravity.",
-      "The system automates phases of software development: initializing projects, discussing phases, planning, executing, verifying, and repeating until milestones are complete.",
-      "GSD uses XML prompt formatting, multi-agent orchestration, atomic git commits, and context engineering to prevent quality degradation in AI-generated code.",
-      "It is designed for solo developers or small teams who want to avoid complex enterprise workflows but still produce reliable software.",
-      "The system includes commands for managing phases, projects, verification, and debugging, with options for quick tasks and detailed planning.",
-      "GSD is open source, actively maintained, and trusted by engineers at major tech companies according to the repository description."
+      "GSD aims to solve context degradation ('context rot') in AI workflows by managing context effectively.",
+      "It provides a structured, XML-based prompt format and orchestrates multi-agent processes for research, planning, execution, and verification.",
+      "Designed for solo developers and small teams, GSD emphasizes simplicity, reliability, and avoiding enterprise complexity.",
+      "The system supports multiple AI models and runtimes, with commands for project initialization, phase management, and automation.",
+      "GSD promotes atomic commits, modular workflows, and detailed context management to ensure consistent and traceable development."
     ],
-    "truthfulness": "The claims about GSD's functionality and design are consistent with the publicly available GitHub repository and documentation. The repository is active, well-documented, and includes detailed explanations of the system's architecture and usage. The description of supported runtimes and workflow steps matches the actual commands and files in the repository. The claim of adoption by engineers at companies like Amazon and Google is stated in the README but is not independently verified within the article; such endorsements should be treated cautiously without external confirmation. Overall, the technical claims about the system's features and purpose appear accurate and verifiable.",
+    "truthfulness": "The article presents a detailed overview of GSD's features and design philosophy, with claims about solving context degradation and automating development workflows. These claims align with known challenges in AI prompt engineering and context management, and the system's architecture appears plausible based on existing AI development practices. However, as it is a product description, independent verification of its effectiveness or real-world performance is limited. The references to trusted companies like Amazon, Google, Shopify, and Webflow suggest some credibility, but specific independent evaluations or user testimonials are not provided.",
     "considerations": [
-      "The article does not provide independent third-party reviews or user testimonials beyond quotes in the README, so user experience and effectiveness claims are anecdotal.",
-      "There is no detailed discussion of limitations, potential biases in AI-generated code, or security implications beyond basic secret file protections.",
-      "The claim of trust by engineers at major companies lacks direct evidence or references to external validation.",
-      "The system's reliance on specific AI runtimes means its effectiveness depends on those underlying models and their availability.",
-      "The article does not compare GSD to competing tools in detail, so readers lack context on relative advantages or disadvantages."
+      "Lack of independent third-party validation or empirical results demonstrating GSD's effectiveness.",
+      "Potential limitations in handling very large or complex projects beyond small teams or solo developers.",
+      "The system's reliance on specific AI models and prompt formatting may require technical expertise to implement effectively."
     ],
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the effectiveness and practicality of the GSD (Get Shit Done) system for AI-assisted development compared to alternatives like Superpowers and PAUL. Users share mixed experiences, highlighting issues such as verbosity, token consumption, and the challenge of adapting workflows, while some praise its productivity gains and spec-driven approach.",
+    "summary": "The discussion revolves around various AI-driven development frameworks like GSD, Superpowers, openspec, and PAUL, with users sharing experiences, comparisons, and critiques on their effectiveness, usability, and practicality in real-world projects.",
     "comments": [
-      {
-        "id": 47418427,
-        "author": "yoaviram",
-        "text": "I\u0026#x27;ve been using GSD extensively over the past 3 months. I previously used speckit, which I found lacking. GSD consistently gets me 95% of the way there on complex tasks. That\u0026#x27;s amazing. The last 5% is mostly \u0026quot;manual\u0026quot; testing. We\u0026#x27;ve used GSD to build and launch a SaaS product including an agent-first CMS (whiteboar.it).\u003cp\u003eIt\u0026#x27;s hard to say why GSD worked so much better for us than other similar frameworks, because the underlying models also improved considerably during the same period. What is clear is that it\u0026#x27;s a huge productivity boost over vanilla Claude Code.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed personal experience with GSD, noting measurable productivity improvements and realistic limitations, making it a credible and balanced perspective."
-      },
       {
         "id": 47418626,
         "author": "gtirloni",
         "text": "I was using this and superpowers but eventually, Plan mode became enough and I prefer to steer Claude Code myself. These frameworks are great for fire-and-forget tasks, especially when there is some research involved but they burn 10x more tokens, in my experience. I was always hitting the Max plan limits for no discernable benefit in the outcomes I was getting. But this will vary a lot depending on how people prefer to work.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "The comment offers a nuanced comparison of token usage and workflow preferences, reflecting practical considerations in using these AI tools."
-      },
-      {
-        "id": 47419048,
-        "author": "ibrahim_h",
-        "text": "The README recommends --dangerously-skip-permissions as the intended workflow. Looking at gsd-executor.md you can see why — subagents run node gsd-tools.cjs, git checkout -b, eslint, test runners, all generated dynamically by the planner. Approving each one kills autonomous mode.\u003cp\u003eThere is a gsd-plan-checker that runs before execution, but it only verifies logical completeness — requirement coverage, dependency graphs, context budget. It never looks at what commands will actually run. So if the planner generates something destructive, the plan-checker won\u0026#x27;t catch it because that\u0026#x27;s not what it checks for. The gsd-verifier runs after execution, checking whether the goal was achieved, not whether anything bad happened along the way. In \u0026#x2F;gsd:autonomous this chains across all remaining phases unattended.\u003cp\u003eThe granular permissions fallback in the README only covers safe reads and git ops — but the executor needs way more than that to actually function. Feels like there should be a permission profile scoped to what GSD actually needs without going full skip.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment critically analyzes security and permission issues in GSD's execution model, highlighting potential risks and gaps in safety checks."
+        "accuracyRank": 1,
+        "analysis": "This comment provides a nuanced view based on personal experience, highlighting the trade-offs and limitations of these frameworks, making it quite credible."
       },
       {
         "id": 47419476,
@@ -68,107 +38,81 @@
         "text": "I\u0026#x27;ve compared this to superpowers and the classic prd-\u0026gt;task generator. And I came away convinced that less is more. At least at the moment. gsd performed well, but took hours instead of minutes. \nHaving a simple explanation of how to create a PRD followed by a slightly more technical task list performed much better. It wasn\u0026#x27;t that grd or superpowers couldn\u0026#x27;t find a solution, it\u0026#x27;s just that they did it much slower and with a lot more help. \nFor me, the lesson was that the workflow has changed, and we that we can\u0026#x27;t apply old project-dev paradigms to this new\u0026#x2F;alien technology. \nThere\u0026#x27;s a new instruction manual and it doesn\u0026#x27;t build on the old one.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The critique emphasizes efficiency and workflow changes, supported by personal testing, which adds credibility to the evaluation."
+      },
+      {
+        "id": 47418177,
+        "author": "maccam912",
+        "text": "I\u0026#x27;ve had a good experience with \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;obra\u0026#x2F;superpowers\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;obra\u0026#x2F;superpowers\u003c/a\u003e. At first glance this looks similar. Has anyone tried both who can offer a comparison?",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment seeks comparative insights based on personal use, which is valuable but lacks detailed evidence."
+      },
+      {
+        "id": 47418296,
+        "author": "gbrindisi",
+        "text": "I like openspec, it lets you tune the workflow to your liking and doesn’t get in the way.\u003cp\u003eI started with all the standard spec flow and as I got more confident and opinionated I simplified it to my liking.\u003cp\u003eI think the point of any spec driven framework is that you want to eventually own the workflow yourself, so that you can constraint code generation on your own terms.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
         ],
         "accuracyRank": 4,
-        "analysis": "Provides a thoughtful comparison emphasizing efficiency and the need to adapt workflows for AI tools, offering valuable insight into practical use."
+        "analysis": "The user shares a positive, experience-based perspective on openspec's flexibility, adding practical insight."
+      },
+      {
+        "id": 47419580,
+        "author": "theodorewiles",
+        "text": "I think the research \u0026#x2F; plan \u0026#x2F; execute idea is good but feels like you would be outsourcing your thinking. Gotta review the plan and spend your own thinking tokens!",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment raises a valid concern about the potential over-reliance on automated planning, emphasizing the importance of human oversight."
+      },
+      {
+        "id": 47418851,
+        "author": "arjie",
+        "text": "I could not produce useful output from this. It was useful as a rubber duck because it asks good motivating questions during the plan phase, but the actual implementation was lacklustre and not worth the effort. In the end, I just have Claude Opus create plans, and then I have it write them to memory and update it as it goes along and the output is better.",
+        "indicators": [
+          "belligerent"
+        ],
+        "accuracyRank": 6,
+        "analysis": "The critique is subjective and somewhat dismissive, but it highlights the perceived shortcomings in practical output."
       },
       {
         "id": 47419626,
         "author": "galexyending",
         "text": "I gave it a shot, but won\u0026#x27;t be using it going forward. It requires a waterfall process. And, I found it difficult, and in some cases impossible, to adjust phases\u0026#x2F;plans when bugs or changes in features arise. The execution prompts didn\u0026#x27;t do a good job of steering the code to be verified while coding and relies on the user to manually test at the end of each phase.",
         "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Highlights limitations in flexibility and testing support, which are important considerations for real-world software development."
-      },
-      {
-        "id": 47419539,
-        "author": "recroad",
-        "text": "I use openspec and love it. I’m doing 5-7x with close to 100% of code AI generated, and shipping to production multiple times a day. I work on a large sass app with hundreds of customers. Wrote something here:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;zarar.dev\u0026#x2F;spec-driven-development-from-vibe-coding-to-structured-development\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;zarar.dev\u0026#x2F;spec-driven-development-from-vibe-coding-t...\u003c/a\u003e",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Offers a positive example of spec-driven development with AI, providing a useful counterpoint and alternative to GSD."
-      },
-      {
-        "id": 47418650,
-        "author": "Andrei_dev",
-        "text": "250K lines in a month — okay, but what does review actually look like at that volume?\u003cp\u003eI\u0026#x27;ve been poking at security issues in AI-generated repos and it\u0026#x27;s the same thing: more generation means less review. Not just logic — checking what\u0026#x27;s in your .env, whether API routes have auth middleware, whether debug endpoints made it to prod.\u003cp\u003eYou can move that fast. But \u0026quot;review\u0026quot; means something different now. Humans make human mistakes. AI writes clean-looking code that ships with hardcoded credentials because some template had them and nobody caught it.\u003cp\u003eAll these frameworks are racing to generate faster. Nobody\u0026#x27;s solving the verification side at that speed.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
+          "thoughtful"
         ],
         "accuracyRank": 7,
-        "analysis": "Raises valid concerns about code review and security risks in rapid AI-generated code production, an important aspect often overlooked."
+        "analysis": "This comment points out practical limitations related to flexibility and adaptability in real projects."
       },
       {
-        "id": 47419760,
-        "author": "Frannky",
-        "text": "I tried it once; it was incredibly verbose, generating an insane amount of files. I stopped using it because I was worried it would not be possible to rapidly, cheaply, and robustly update things as interaction with users generated new requirements.\u003cp\u003eThe best way I have today is to start with a project requirements document and then ask for a step-by-step implementation plan, and then go do the thing at each step but only after I greenlight the strategy of the current step. I also specify minimal, modular, and functional stateless code.",
+        "id": 47418148,
+        "author": "dfltr",
+        "text": "GSD has a reputation for being a token burner compared to something like Superpowers. Has that changed lately? Always open to revisiting things as they improve.",
         "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
+          "useless"
         ],
         "accuracyRank": 8,
-        "analysis": "Points out practical challenges with verbosity and maintainability, which are critical for sustainable software development."
+        "analysis": "This is a general inquiry without specific evidence, making it less reliable as a critique."
       },
       {
-        "id": 47419890,
-        "author": "hermanzegerman",
-        "text": "For me it was awesome. I needed a custom Pipeline for Preprocessing some Lab Data, including Visualization and Manipulation and it got me exactly what I wanted, as opposed to Codex Plan Mode, which just burned my weekly quota and produced Garbage",
+        "id": 47418759,
+        "author": "dhorthy",
+        "text": "it is very hard for me to take seriously any system that is not proven for shipping production code in complex codebases that have been around for a while.\u003cp\u003eI\u0026#x27;ve been down the \u0026quot;don\u0026#x27;t read the code\u0026quot; path and I can say it leads nowhere good.\u003cp\u003eI am perhaps talking my own book here, but I\u0026#x27;d like to see more tools that brag about \u0026quot;shipped N real features to production\u0026quot; or \u0026quot;solved Y problem in large-10-year-old-codebase\u0026quot;\u003cp\u003eI\u0026#x27;m not saying that coding agents can\u0026#x27;t do these things and such tools don\u0026#x27;t exist, I\u0026#x27;m just afraid that counting 100k+ LOC that the author didn\u0026#x27;t read kind of fuels the \u0026quot;this is all hype-slop\u0026quot; argument rather than helping people discover the ways that coding agents can solve real and valuable problems.",
         "indicators": [
-          "emotional",
-          "likely-true",
-          "constructive"
+          "thoughtful"
         ],
         "accuracyRank": 9,
-        "analysis": "Provides a positive anecdote contrasting GSD favorably with another tool, though based on a specific use case."
-      },
-      {
-        "id": 47419793,
-        "author": "loveparade",
-        "text": "\u0026quot;I am a super productive person that just wants to get shit done\u0026quot;\u003cp\u003eLooked at profile, hasn\u0026#x27;t done or published anything interesting other than promoting products to \u0026quot;get stuff done\u0026quot;\u003cp\u003eThis is like the TODO list book gurus writing about productivity",
-        "indicators": [
-          "emotional",
-          "belligerent",
-          "likely-true"
-        ],
-        "accuracyRank": 10,
-        "analysis": "This comment is dismissive and ad hominem, focusing on the author's profile rather than the tool's merits, reducing its constructive value."
-      },
-      {
-        "id": 47419421,
-        "author": "jatora",
-        "text": "Another heavily overengineered AND underengineered abomination. I\u0026#x27;m convinced anyone who advocates for these types of tools would find just as much success just prompting claude code normally and taking a little bit to plan first. Such a waste of time to bother with these tools that solve a problem that never existed in the first place.",
-        "indicators": [
-          "emotional",
-          "belligerent",
-          "likely-true"
-        ],
-        "accuracyRank": 11,
-        "analysis": "Expresses strong skepticism about the value of such tools, though the argument lacks detailed evidence and is somewhat hyperbolic."
-      },
-      {
-        "id": 47419510,
-        "author": "chrisss395",
-        "text": "I\u0026#x27;m curious if anyone has used this (or similar) to build a production system?\u003cp\u003eI\u0026#x27;m facing increasing pressure from senior executives who think we can avoid the $$$ B2B SaaS by using AI to vibe code a custom solution.  I love the idea of experimenting with this but am horrified by the first-ever-case being a production system that is critical to the annual strategic plan.  :-\u0026#x2F;",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 12,
-        "analysis": "Raises a valid concern about risk management and the appropriateness of using experimental AI tools in critical production environments."
+        "analysis": "The skepticism about new tools' readiness for production is valid but somewhat conservative, lacking specific evidence."
       }
     ]
   }

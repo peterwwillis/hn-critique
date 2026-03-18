@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Critique: A tale about fixing eBPF spinlock issues in the Linux kernel | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://rovarma.com/articles/a-tale-about-fixing-ebpf-spinlock-issues-in-the-linux-kernel/" rel="noreferrer noopener">A tale about fixing eBPF spinlock issues in the Linux kernel</a>
+        <span class="sitebit"> (rovarma.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">3 points</span>
+        by <a href="https://news.ycombinator.com/user?id=y1n0" class="hnuser">y1n0</a>
+        <span class="age">1 hour ago</span>
+        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/18/47420388.html">0&nbsp;comments critique</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47420388" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+    <div class="critique-content">
+
+      <section class="critique-section">
+        <h3>Summary</h3>
+        <p>The article details the investigation and resolution of a complex Linux kernel freeze issue caused by eBPF spinlock interactions. The author describes debugging efforts, the discovery of a bug in the resilient queued spinlock implementation, and subsequent kernel patches that fixed the problem in recent Linux versions.</p>
+      </section>
+
+      <section class="critique-section">
+        <h3>Main Points &amp; Arguments</h3>
+        <ul>
+          <li>Superluminal, a CPU profiler using eBPF, caused periodic system freezes on Fedora 42 with kernel 6.17.4-200.</li><li>The freezes were traced to a deadlock in the Linux kernel&#39;s resilient queued spinlock (rqspinlock) used by eBPF ring buffer reservation.</li><li>The root cause was a race condition where a non-maskable interrupt (NMI) could interrupt lock acquisition, causing inconsistent lock state and missed deadlock detection.</li><li>A patch was developed to update the held lock table before attempting lock acquisition, fixing the race condition and eliminating the 250ms freezes.</li><li>Additional fixes addressed delayed deadlock detection and NMI-induced lock holder starvation, further improving system stability.</li><li>The issue was specific to kernels 6.15 to 6.18 due to the introduction of rqspinlock in the eBPF ring buffer, and was resolved in kernel 6.19 and backported versions.</li><li>The article provides an in-depth explanation of spinlocks, queued spinlocks, and the complexities of handling locking in the presence of NMIs in the Linux kernel.</li>
+        </ul>
+      </section>
+
+      <section class="critique-section">
+        <h3>Truthfulness Assessment</h3>
+        <div class="rating-badge rating-reliable">
+          Reliable
+        </div>
+        <p>The article provides a detailed, technical, and accurate account of a real Linux kernel issue related to eBPF and spinlocks. The described problem, debugging process, and fixes correspond with known Linux kernel development practices and patch submissions. The references to kernel versions, mailing list discussions, and specific kernel functions align with publicly available Linux kernel source code and documentation. The involvement of known kernel maintainers and the timeline of kernel versions further support the article&#39;s credibility.</p>
+      </section>
+
+      
+      <section class="critique-section">
+        <h3>Additional Considerations</h3>
+        <ul>
+          <li>The article focuses on a very technical and specific kernel issue; readers without kernel development background may find some explanations challenging.</li><li>The impact of the issue is limited to certain kernel versions and specific eBPF usage patterns, which may not affect all users.</li><li>While the article explains the fixes, it does not discuss potential performance implications of the patches or alternative mitigation strategies.</li><li>The article is written by a developer involved in the debugging process, which provides insider insight but may lack external perspectives.</li><li>The long-term stability and performance of the fixes in diverse real-world workloads are not covered.</li>
+        </ul>
+      </section>
+      
+
+    </div>
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-18 02:05 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>

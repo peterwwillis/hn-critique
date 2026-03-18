@@ -2,38 +2,53 @@
   "story_id": 47416486,
   "generated_at": "",
   "critique": {
-    "summary": "The article discusses the progress and current status of the CPython JIT (Just-In-Time) compiler development for Python 3.15, highlighting achieved performance improvements and the community-driven efforts behind it. It emphasizes the challenges faced, key contributors, and technical innovations such as trace recording and reference count elimination that helped improve JIT performance.",
+    "summary": "The article discusses the progress and current status of the Python 3.15 Just-In-Time (JIT) compiler, highlighting that it has met modest performance goals ahead of schedule on macOS AArch64 and x86_64 Linux. It attributes the success to a combination of community effort, technical innovations like trace recording and reference count elimination, and effective team collaboration.",
     "mainPoints": [
-      "Python 3.15's JIT has achieved modest but meaningful speedups ahead of schedule, with about 11-12% faster performance on macOS AArch64 and 5-6% on x86_64 Linux compared to the interpreter.",
-      "The JIT project faced significant challenges, including loss of funding for the Faster CPython team, but continued through volunteer and community contributions.",
-      "The development approach focused on breaking down complex JIT tasks into manageable parts to attract contributors, increasing the number of active maintainers across different JIT components.",
-      "Key technical improvements include a tracing JIT frontend with a novel dual dispatch mechanism and reference count elimination, which significantly enhanced performance and code coverage.",
-      "The article credits a combination of community effort, technical innovation, and some luck for the JIT's progress, highlighting the importance of collaboration and knowledge sharing."
+      "Python 3.15's JIT achieves about 11-12% speedup on macOS AArch64 and 5-6% on x86_64 Linux compared to the interpreter.",
+      "The JIT project faced challenges including loss of main funding but continued through community stewardship and volunteer contributions.",
+      "The team broke down complex JIT tasks into manageable issues to attract contributors and improve maintainability.",
+      "A key technical innovation was rewriting the JIT frontend to a tracing interpreter using a 'dual dispatch' mechanism, which improved performance.",
+      "Reference count elimination was another optimization that reduced expensive branching in JITted code.",
+      "The project benefits from a small but dedicated infrastructure setup for continuous performance monitoring.",
+      "Collaboration and knowledge sharing with other compiler developers and projects like PyPy helped improve the JIT."
     ],
-    "truthfulness": "The claims in the article are consistent with publicly available information about the CPython JIT project and its development timeline. The performance improvements cited align with benchmarks reported on community sites such as doesjitgobrrr.com. The article accurately reflects the challenges faced by the Faster CPython team, including funding loss, and the community-driven nature of the ongoing development. The technical details about tracing JIT and reference count elimination correspond to known optimization techniques in JIT compilers. However, the article is a personal blog post by a contributor and does not cite multiple independent sources or perspectives, limiting its journalistic reliability.",
+    "truthfulness": "The claims in the article are consistent with publicly available information about the ongoing development of Python's JIT compiler in CPython 3.15. The performance improvements cited align with data from sources like doesjitgobrrr.com, which tracks JIT performance metrics. The article is authored by a contributor involved in the project and provides detailed technical insights and contributor acknowledgments, lending credibility. However, the article is a personal blog post and does not cite multiple independent sources or perspectives, so while the technical claims appear accurate, the presentation is subjective and optimistic.",
     "considerations": [
-      "The article does not provide independent verification or benchmarking data from third-party sources to corroborate the performance claims.",
-      "It focuses primarily on the positive aspects and successes of the JIT development, with limited discussion of remaining challenges or potential limitations.",
-      "The impact of the JIT improvements on real-world Python application performance and compatibility is not detailed.",
-      "The article is a personal blog post and may contain subjective views or optimism not fully representative of the broader Python community consensus."
+      "The performance improvements are preliminary and based on geometric means; actual performance varies widely depending on workload.",
+      "The JIT does not yet support free-threading, which may limit its applicability in multithreaded Python programs until future releases.",
+      "The article does not provide independent verification or benchmarking from third-party sources.",
+      "The success is partly attributed to luck and team dynamics, which may not be replicable in other projects.",
+      "The blog post format means it reflects the author's perspective and may omit challenges or criticisms."
     ],
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the challenges and progress of implementing a JIT compiler for Python, with users expressing curiosity about technical details, comparisons to other languages, and the potential impact on Python's future. Some comments highlight the complexity of Python internals and the difficulty of optimizing Python compared to other dynamic languages.",
+    "summary": "The discussion centers around the challenges and progress of implementing a JIT compiler for Python, with users debating the complexity of Python's internals, the impact of language features on optimization, and comparisons to other languages' JIT efforts. Some express curiosity about technical details and future directions, while others question the relevance of Python in a machine-generated code future.",
     "comments": [
       {
         "id": 47419755,
         "author": "rslashuser",
         "text": "I\u0026#x27;m curious is the JIT developers could mention any Python features that prevent promising JIT features. An earlier Ken Jin blog [1], mentions how __del__ complicates reference counting optimization.\u003cp\u003eThere is a story that Python is harder to optimize than, say, Typescript, with Python flexibility and the C API getting mentioned. Maybe, if the list of troublesome Python features was out there, programmers could know to avoid those features with the promise of activating the JIT when it can prove the feature is not in use. This could provide a way out of the current Python hard-to-JIT trap. It\u0026#x27;s just a gist of an idea, but certainly an interesting first step would be to hear from the JIT people which Python features they find troublesome.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;fidget-spinner.github.io\u0026#x2F;posts\u0026#x2F;faster-jit-plan.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;fidget-spinner.github.io\u0026#x2F;posts\u0026#x2F;faster-jit-plan.html\u003c/a\u003e",
         "indicators": [
-          "intelligent",
           "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment insightfully references a known challenge in Python optimization related to __del__ and suggests a practical approach to improve JIT adoption by avoiding problematic features."
+        "analysis": "This comment insightfully identifies specific Python features that complicate JIT optimization and suggests a practical approach for improving JIT adoption by avoiding troublesome features."
+      },
+      {
+        "id": 47418043,
+        "author": "adrian17",
+        "text": "I\u0026#x27;m been occasionally glancing at PR\u0026#x2F;issue tracker to keep up to date with things happening with the JIT, but I\u0026#x27;ve never seen where the high level discussions were happening; the issues and PRs always jumped right to the gritty details. Is there anywhere a high-level introduction\u0026#x2F;example of how trace projection vs recording work and differ? Googling for the terms often returns CPython issue tracker as the first result, and repo\u0026#x27;s jit.md is relatively barebones and rarely updated :(\u003cp\u003eSimilarly, I don\u0026#x27;t entirely understand refcount elimination; I\u0026#x27;ve seen the codegen difference, but since the codegen happens at build time, does this mean each opcode is possibly split into two (or more?) stencils, with and without removed increfs\u0026#x2F;decrefs? With so many opcodes and their specialized variants, how many stencils are there now?",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment accurately highlights the lack of accessible documentation on complex JIT internals, indicating a genuine need for clearer educational resources."
       },
       {
         "id": 47418261,
@@ -41,33 +56,45 @@
         "text": "What is wrong with the Python code base that makes this so much harder to implement than seemingly all other code bases? Ruby, PHP, JS. They all seemed to add JITs in significantly less time. A Python JIT has been asked for for like 2 decades at this point.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "intelligent"
-        ],
-        "accuracyRank": 2,
-        "analysis": "Raises a valid point about Python's complexity and legacy design making JIT implementation more difficult compared to other dynamic languages, reflecting common community observations."
-      },
-      {
-        "id": 47419401,
-        "author": "owaislone",
-        "text": "Oh man, Python 2 \u0026gt; 3 was such a massive shift. Took almost half a decade if not more and yet it mainly changing superficial syntax stuff. They should have allowed ABIs to break and get these internal things done. Probably came up with a new, tighter API for integrating with other lower level languages so going forward Python internals can be changed more freely without breaking everything.",
-        "indicators": [
-          "thoughtful",
+          "intelligent",
           "likely-true"
         ],
         "accuracyRank": 3,
-        "analysis": "Provides a reasonable critique of Python 3's backward compatibility approach limiting internal improvements, which is a widely acknowledged trade-off in the Python community."
+        "analysis": "This comment correctly points out the relative difficulty of JIT implementation in Python, reflecting common knowledge about Python's dynamic features and C API complexity."
+      },
+      {
+        "id": 47419522,
+        "author": "vanderZwan",
+        "text": "\u0026gt; \u003ci\u003eHowever, I misunderstood and came up with an even more extreme version: instead of tracing versions of normal instructions, I had only one instruction responsible for tracing, and all instructions in the second table point to that. Yes I know this part is confusing, I’ll hopefully try to explain better one day. This turned out to be a really really good choice. I found that the initial dual table approach was so much slower due to a doubling of the size of the interpreter, causing huge compiled code bloat, and naturally a slowdown.\u003c/i\u003e\u003cp\u003e\u0026gt; \u003ci\u003eBy using only a single instruction and two tables, we only increase the interpreter by a size of 1 instruction, and also keep the base interpreter ultra fast. I affectionally call this mechanism dual dispatch.\u003c/i\u003e\u003cp\u003eI really do hope they\u0026#x27;ll write that better explanation one day because this sounds pretty intriguing all on its own.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "The comment constructively requests clearer communication on a technical aspect of the JIT, reflecting a genuine interest in understanding implementation details."
+      },
+      {
+        "id": 47419727,
+        "author": "thunky",
+        "text": "I always wanted this for Python but now that machines write code instead of humans I feel like languages like Python will not be needed as much anymore.  They\u0026#x27;re made for humans, not machines.  If a machine is going to do the dirty work I want it to produce something lean, fast, and strictly verified.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 5,
+        "analysis": "While speculative and somewhat emotional, the comment raises a valid point about the evolving role of programming languages in the era of AI-generated code."
       },
       {
         "id": 47417919,
         "author": "ekjhgkejhgk",
         "text": "Doesn\u0026#x27;t PyPy already have a jit compiler? Why aren\u0026#x27;t we using that?",
         "indicators": [
-          "intelligent",
-          "likely-true"
+          "thoughtful",
+          "intelligent"
         ],
-        "accuracyRank": 4,
-        "analysis": "Correctly notes that PyPy has a mature JIT but overlooks that CPython's JIT efforts aim to improve the standard interpreter rather than replace it with PyPy."
+        "accuracyRank": 6,
+        "analysis": "This is a common question reflecting a reasonable curiosity, though it overlooks differences in compatibility and goals between CPython and PyPy."
       },
       {
         "id": 47419735,
@@ -77,19 +104,19 @@
           "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 5,
-        "analysis": "Raises a reasonable question about funding and sustainability but lacks technical depth; acknowledges the difficulty of the JIT project."
+        "accuracyRank": 7,
+        "analysis": "The comment is a reasonable inquiry about project sustainability but lacks technical insight into funding dynamics."
       },
       {
-        "id": 47419522,
-        "author": "vanderZwan",
-        "text": "\u0026gt; \u003ci\u003eHowever, I misunderstood and came up with an even more extreme version: instead of tracing versions of normal instructions, I had only one instruction responsible for tracing, and all instructions in the second table point to that. Yes I know this part is confusing, I’ll hopefully try to explain better one day. This turned out to be a really really good choice. I found that the initial dual table approach was so much slower due to a doubling of the size of the interpreter, causing huge compiled code bloat, and naturally a slowdown.\u003c/i\u003e\u003cp\u003e\u0026gt; \u003ci\u003eBy using only a single instruction and two tables, we only increase the interpreter by a size of 1 instruction, and also keep the base interpreter ultra fast. I affectionally call this mechanism dual dispatch.\u003c/i\u003e\u003cp\u003eI really do hope they\u0026#x27;ll write that better explanation one day because this sounds pretty intriguing all on its own.",
+        "id": 47418415,
+        "author": "killingtime74",
+        "text": "Sorry but the graphs are completely unreadable. There are four code names for each of the lines. Which is jit and which is cpython?",
         "indicators": [
-          "thoughtful",
-          "constructive"
+          "emotional",
+          "useless"
         ],
-        "accuracyRank": 6,
-        "analysis": "Shows engagement with technical details and a desire for clearer communication, which is constructive but does not add new factual information."
+        "accuracyRank": 8,
+        "analysis": "While the comment points out a valid usability issue, it does not contribute to the technical discussion."
       },
       {
         "id": 47419817,
@@ -98,42 +125,55 @@
         "indicators": [
           "emotional",
           "belligerent",
-          "likely-untrue",
-          "useless"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment is dismissive and inaccurate, conflating unrelated issues and showing bias without constructive insight."
-      },
-      {
-        "id": 47419727,
-        "author": "thunky",
-        "text": "I always wanted this for Python but now that machines write code instead of humans I feel like languages like Python will not be needed as much anymore.  They\u0026#x27;re made for humans, not machines.  If a machine is going to do the dirty work I want it to produce something lean, fast, and strictly verified.",
-        "indicators": [
-          "emotional",
           "likely-untrue"
         ],
-        "accuracyRank": 8,
-        "analysis": "Speculative and somewhat pessimistic about Python's future, lacking evidence and ignoring ongoing human-driven development needs."
-      },
-      {
-        "id": 47418415,
-        "author": "killingtime74",
-        "text": "Sorry but the graphs are completely unreadable. There are four code names for each of the lines. Which is jit and which is cpython?",
-        "indicators": [
-          "constructive"
-        ],
         "accuracyRank": 9,
-        "analysis": "Provides useful feedback on presentation clarity but does not contribute to the technical discussion."
+        "analysis": "This comment is largely opinionated and dismissive without supporting evidence, reducing its credibility."
       },
       {
         "id": 47418293,
         "author": "fluidcruft",
         "text": "(what are blueberry, ripley, jones and prometheus?)",
         "indicators": [
-          "constructive"
+          "useless"
         ],
         "accuracyRank": 10,
-        "analysis": "Asks for clarification on terminology, which is helpful for understanding but not substantive analysis."
+        "analysis": "This question shows lack of context and does not advance the discussion."
+      },
+      {
+        "id": 47417799,
+        "author": "oystersareyum",
+        "text": "\u0026gt; We don’t have proper free-threading support yet, but we’re aiming for that in 3.15\u0026#x2F;3.16. The JIT is now back on track.\u003cp\u003eI recently read an interview about implementing free-threading and getting modifications through the ecosystem to really enable it: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;alexalejandre.com\u0026#x2F;programming\u0026#x2F;interview-with-ngoldbaum\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;alexalejandre.com\u0026#x2F;programming\u0026#x2F;interview-with-ngoldba...\u003c/a\u003e\u003cp\u003eThe guy said he hopes the free-threaded build\u0026#x27;ll be the only one in \u0026quot;3.16 or 3.17\u0026quot;, I wonder if that should apply to the JIT too or how the JIT and interpreter interact.",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 11,
+        "analysis": "The comment is relevant but somewhat speculative and lacks detailed technical analysis."
+      },
+      {
+        "id": 47419401,
+        "author": "owaislone",
+        "text": "Oh man, Python 2 \u0026gt; 3 was such a massive shift. Took almost half a decade if not more and yet it mainly changing superficial syntax stuff. They should have allowed ABIs to break and get these internal things done. Probably came up with a new, tighter API for integrating with other lower level languages so going forward Python internals can be changed more freely without breaking everything.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 12,
+        "analysis": "The comment provides a reasonable historical perspective and constructive suggestion about Python's evolution."
+      },
+      {
+        "id": 47420612,
+        "author": "openclaw01",
+        "text": "The JIT work is exciting, but I wonder if the focus on trace-based optimization might hit a ceiling without more aggressive escape analysis. We\u0026#x27;ve seen in V8 that inline caching combined with deoptimization can handle many dynamic cases that pure tracing struggles with. Any thoughts on whether CPython\u0026#x27;s JIT will eventually need a hybrid approach?",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 13,
+        "analysis": "This comment shows good understanding of JIT techniques and raises a relevant question about future design directions."
       }
     ]
   }
