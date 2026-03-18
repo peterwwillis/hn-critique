@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: SSH has no Host header | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://blog.exe.dev/ssh-host-header" rel="noreferrer noopener">SSH has no Host header</a>
+        <span class="sitebit"> (blog.exe.dev)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">68 points</span>
+        by <a href="https://news.ycombinator.com/user?id=apitman" class="hnuser">apitman</a>
+        <span class="age">1 hour ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/18/47421828.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47421828" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion revolves around the challenges and potential solutions for SSH access to multiple VMs sharing a single IPv4 address, including the limitations of SSH protocol design, proxying techniques, and alternative approaches like IPv6 and certificate-based authentication. Several commenters share practical workarounds and critique the current SSH UX and infrastructure constraints.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=morpheuskafka" class="hnuser">morpheuskafka</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">They are saying they want to directly SSH into a VM&#x2F;container based on the web hostname it serves. But that&#x27;s not how the HTTP traffic flows either. With only one routable IP for the host, all traffic on a port shared by VMs has to go to a server on the host first (unless you route based on port or source IP with iptnbles, but that is not hostname based).<p>The HTTP traffic goes to a server (a reverse proxy, say nginx) on the host, which then reads it and proxies it to the correct VM. The client can&#x27;t ever send TCP packets directly to the VM, HTTP or otherwise. That doesn&#x27;t just magically happen because HTTP has a Host header, only because nginx is on the host.<p>What they want is a reverse proxy for SSH, and doesn&#x27;t SSH already have that via jump&#x2F;bastion hosts? I feel like this could be implement with a shell alias, so that:<p>ssh user@vm1.box1.tld becomes: ssh -j jumpusr@box1.tld user@vm1<p>And just make jumpusr have no host permissions and shell set to only allow ssh.</div>
+      <div class="comment-analysis"><em>This comment accurately describes the fundamental difference between HTTP and SSH routing and correctly identifies jump hosts as the standard SSH proxy method.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dlenski" class="hnuser">dlenski</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">SSH is an incredibly versatile and useful tool, but many things about the protocol are <i>poorly designed</i>, including its essentially made-up-as-you-go-along wire formats for authentication negotiation, key exchange, etc.<p>In 2024-2025, I did a survey of millions of public keys on the Internet, gathered from SSH servers and users in addition to TLS hosts, and discovered—among other problems—that it&#x27;s incredibly easy to misuse SSH keys in large part because they&#x27;re stored &quot;bare&quot; rather than encapsulated into a certificate format that can provide some guidance as to <i>how</i> they should be used and <i>for what purposes</i> they should be trusted:<p><a href="https:&#x2F;&#x2F;cryptographycaffe.sandboxaq.com&#x2F;posts&#x2F;survey-public-keys-internet&#x2F;#keys-that-were-not-generated-using-best-practices:~:text=SSH%20typically%20uses%20%E2%80%9Cbare%E2%80%9D%20keys%20and%20lacks%20a%20mechanism%20like%20the%20X.509%20key%20usage%20extension%20which%20can%20be%20used%20to%20define%20the%20intended%20purpose%20of%20a%20key%2C%20and%20thus%20limit%20its%20inadvertent%20misuse%20for%20an%20unrelated%20purpose" rel="nofollow">https:&#x2F;&#x2F;cryptographycaffe.sandboxaq.com&#x2F;posts&#x2F;survey-public-...</a>.</div>
+      <div class="comment-analysis"><em>The critique is well-founded and supported by a referenced survey, highlighting real security and usability issues in SSH key management.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=thaumaturgy" class="hnuser">thaumaturgy</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Yeah, I ran into this problem too. I tried a few different hacky solutions and then settled on using port knocking to sort inbound ssh connections into their intended destinations. Works great.<p>I have an architecture with a single IP hosting multiple LXC containers. I wanted users to be able to ssh into their containers as you would for any other environment. There&#x27;s an option in sshd that allows you to run a script during a connection request so you can <i>almost</i> juggle connections according to the username -- if I remember right, it&#x27;s been several years since I tried that -- but it&#x27;s terribly fragile and tends to not pass TTYs properly and basically everything hates it.<p>But, set up knockd, and then generate a random knock sequence for each individual user and automatically update your knockd config with that, and each knock sequence then (temporarily) adds a nat rule that connects the user to their destination container.<p>When adding ssh users, I also provide them with a client config file that includes the ProxyCommand incantation that makes it work on their end.<p>Been using this for a few years and no problems so far.</div>
+      <div class="comment-analysis"><em>This is a practical and tested solution that addresses the problem with a clever use of port knocking and dynamic NAT, though it may be complex to maintain.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=binarin" class="hnuser">binarin</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">In kinda the same situation, I was using username for host routing. And real user was determined by the principal in SSH certificate - so the proxy didn&#x27;t even need to know the concrete certificates for users; it was even easier than keeping track of user SSH keys.<p>Certificate signing was done by a separate SSH service, which you connected too with enabled SSH agent forwarding, pass 2FA challenge, and get a signed cert injected into your agent.</div>
+      <div class="comment-analysis"><em>This approach leverages SSH certificates effectively and improves security and usability, representing a modern and scalable solution.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ulrikrasmussen" class="hnuser">ulrikrasmussen</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Wouldn&#x27;t a much simpler approach be to have everyone log in to a common server which sits on a VPN with all the VMs? It introduces an extra hop, but this is a pretty minor inconvenience and can be scripted away.</div>
+      <div class="comment-analysis"><em>This is a straightforward and commonly used approach that trades off a minor latency increase for simplicity and security.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=krautsauer" class="hnuser">krautsauer</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">SSH waits for the server key before it presents the client keys, right? Does this mean that different VMs from different users have the same key? (Or rather, all VMs have the same key? A quick look shows s00{1,2,3}.exe.xyz all having the same key.) So this is full MitM?</div>
+      <div class="comment-analysis"><em>Raises a valid security concern about key reuse that could lead to MITM vulnerabilities if not properly managed.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=XorNot" class="hnuser">XorNot</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">The solution to this is TLS SNI redirecting.<p>You can front a TLS server on port 443 and then redirect <i>without decrypting</i> the connection based on the SNI name to your final destination host.</div>
+      <div class="comment-analysis"><em>While TLS SNI is effective for HTTPS, applying it to SSH is not straightforward since SSH does not use TLS; the idea is clever but not directly applicable.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=otterley" class="hnuser">otterley</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This is a clever trick, but I can’t help but wonder where it breaks. There seems to be an invariant that the number of backends a public key is mapped to cannot exceed the number of proxy IPs available. The scheme probably works fine if most people are only using a small number of instances, though. I assume this is in fact the case.<p>Another thing that just crossed my mind is that the proxy IP cannot be reassigned without the client popping up a warning. That may alarm security-conscious users and impact usability.</div>
+      <div class="comment-analysis"><em>Insightful about practical scalability and usability issues that could arise from IP reuse and reassignment in proxy setups.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=snvzz" class="hnuser">snvzz</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">likely-true</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">The solution is ipv6.</div>
+      <div class="comment-analysis"><em>While IPv6 does solve address scarcity, this comment lacks depth and does not address the SSH-specific routing challenges discussed.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=miyuru" class="hnuser">miyuru</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">&gt; We cannot issue an IPv4 address to each machine without blowing out the cost of the subscription. We cannot use IPv6-only as that means some of the internet cannot reach the VM over the web. That means we have to share IPv4 addresses between VMs.<p>Give a user a option for use IPv6 only, and if the user need legacy IP add it as a additional cost and move on.<p>Trying to keep v4 at the same cost level as v6 is not a thing we can solve. If it was we wouldn&#x27;t need v6.</div>
+      <div class="comment-analysis"><em>A reasonable economic perspective on IPv4 vs IPv6 cost issues, though it does not directly address SSH routing problems.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=TZubiri" class="hnuser">TZubiri</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">It&#x27;s hard to think of a clearer example for the concept of Developer Experience.<p>One similar example of SSH related UX design is Github. We mostly take the git clone git@github.com&#x2F;author&#x2F;repo for granted, as if it were a standard git thing that existed before. But if you ever go broke and have to implement GitHub from scratch, you&#x27;ll notice the beauty in its design.</div>
+      <div class="comment-analysis"><em>Provides a relevant perspective on UX design in SSH-related tools but is more observational than solution-oriented.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=3r7j6qzi9jvnve" class="hnuser">3r7j6qzi9jvnve</a>
+        &nbsp;|&nbsp;rank #12
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I wonder if it&#x27;s something like <a href="https:&#x2F;&#x2F;github.com&#x2F;cea-hpc&#x2F;sshproxy" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;cea-hpc&#x2F;sshproxy</a> that sits in the middle (with decryption and everything) or if they could do this without setting up a session directly with the client.<p>Well, we&#x27;re implicitly trusting the host when running a VM anyway (most of the time), but it&#x27;s something I&#x27;d want to check before buying into the service.<p>EDIT: Ah, it&#x27;s probably <a href="https:&#x2F;&#x2F;github.com&#x2F;boldsoftware&#x2F;sshpiper" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;boldsoftware&#x2F;sshpiper</a><p>will try to remember to look later.</div>
+      <div class="comment-analysis"><em>Provides useful references to existing tools that address SSH proxying challenges, adding practical value.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=c45y" class="hnuser">c45y</a>
+        &nbsp;|&nbsp;rank #13
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I would love it if more systems just understood SRV records, hostname.xyz = 10.1.1.1:2222<p>So far it feels like only LDAP really makes use of it, at least with the tech I interact with</div>
+      <div class="comment-analysis"><em>Highlights a DNS feature that could simplify service discovery, though adoption is limited and not directly solving SSH routing.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Eikon" class="hnuser">Eikon</a>
+        &nbsp;|&nbsp;rank #14
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">I am not sure to understand what this is this achieving compared to just assigning a ip + port per vm?</div>
+      <div class="comment-analysis"><em>Raises a valid question about the complexity of proposed solutions versus a straightforward IP/port assignment approach.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=charcircuit" class="hnuser">charcircuit</a>
+        &nbsp;|&nbsp;rank #15
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">You don&#x27;t need SSH. Installing an SSH server to such a VM is a hold over from how UNIX servers worked. It puts you in the mindset of treating your server as a pet and doing things for a single vm instead of having proper server management in place. I would reconsider if offering ssh is an actual requirement here or if it could be better served by offering users a proper control panel to manage and monitor the vms.</div>
+      <div class="comment-analysis"><em>Offers a strategic viewpoint advocating modern infrastructure management over traditional SSH access, though may not fit all use cases.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-18 07:13 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

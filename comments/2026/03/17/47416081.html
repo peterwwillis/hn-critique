@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">111 points</span>
+        <span class="score">126 points</span>
         by <a href="https://news.ycombinator.com/user?id=syrusakbary" class="hnuser">syrusakbary</a>
-        <span class="age">11 hours ago</span>
+        <span class="age">13 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47416081.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47416081" rel="noopener">original on HN</a>
       </p>
@@ -47,19 +47,41 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around the capabilities and potential use cases of Edge.js, a project that runs Node.js inside a WebAssembly sandbox with a pluggable JavaScript engine architecture. Commenters inquire about technical details, use cases, platform compatibility, and sandboxing possibilities, while the author provides clarifications.</p>
+      <p>The discussion revolves around Edge.js, a project enabling Node.js to run inside a WebAssembly sandbox with pluggable JS engines. Commenters debate its security, use cases, compatibility, and potential advantages over existing solutions like containers or Deno.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 12 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47416081" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 12 of 13 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47416081" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=syrusakbary" class="hnuser">syrusakbary</a>
+        <a href="https://news.ycombinator.com/user?id=billionverify" class="hnuser">billionverify</a>
         &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Interesting direction, but the real question is whether this survives hostile, real-world workloads.<p>Moving isolation into the runtime (WASIX + shims) sounds great for latency, but it also shifts a lot of trust away from the kernel. In multi-tenant scenarios, that tradeoff tends to break under pressure.<p>The bar isn’t “can it run JS fast”, it’s:<p>- can it safely run untrusted, adversarial code<p>- with full npm compatibility<p>- at high concurrency<p>- without escape vectors or resource abuse<p>Concrete question:<p>Would you be comfortable running something like OpenClaw (multi-tenant agent workloads, arbitrary user-generated code, long-running tasks) on top of this today?<p>If yes, what are the isolation guarantees and known failure modes?<p>If not, where does it break first — syscalls, native modules, or resource isolation?<p>This feels promising for LLM code execution, but that use case is exactly where things get adversarial fast.</div>
+      <div class="comment-analysis"><em>This comment provides a detailed and realistic assessment of the challenges Edge.js faces, emphasizing security and multi-tenant isolation, which are critical for such a runtime.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=davispeck" class="hnuser">davispeck</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">This feels like shifting the trust boundary from the OS (containers) into your runtime (WASIX + shims).<p>Curious how this holds up under hostile workloads, especially with native modules and libuv in the mix.</div>
+      <div class="comment-analysis"><em>The comment accurately highlights the shift in trust model and raises valid concerns about the runtime&#39;s robustness under adversarial conditions.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=syrusakbary" class="hnuser">syrusakbary</a>
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
@@ -68,107 +90,107 @@
   * It has a pluggable JS engine architecture: can work with V8, Javascript, SpiderMonkey, QuickJS, Hermes, etc.
 </code></pre>
 Super happy to answer any questions you may have!</div>
-      <div class="comment-analysis"><em>As the creator, this comment provides authoritative and detailed information about Edge.js, its features, and development process, making it the most accurate.</em></div>
+      <div class="comment-analysis"><em>As the project author, this comment provides authoritative information about Edge.js features, though some claims (e.g., full compatibility) may need independent verification.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=alex_reg" class="hnuser">alex_reg</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">It&#x27;s a bit confusing.<p>Roughly:<p>* a refactor of Node.js, but using a standardized API for JS engine interop
 * Integration with the Wasmer CLI so it will run JS with v8 but, everything else in Webassembly<p>Interesting idea.<p>Could be a much lighter weight way to sandbox JS...</div>
-      <div class="comment-analysis"><em>This comment offers a clear and informed summary of the technical approach behind Edge.js, showing understanding of the project&#39;s architecture.</em></div>
+      <div class="comment-analysis"><em>This comment offers a reasonable technical interpretation of the project, suggesting plausible architecture and benefits.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=d0100" class="hnuser">d0100</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I still prefer Deno because I don&#x27;t need a separate npm install command, which makes running code that much easier<p>Being able to import from &quot;<a href="https:&#x2F;&#x2F;my-vpn.com&#x2F;mypackage@1.2.3" rel="nofollow">https:&#x2F;&#x2F;my-vpn.com&#x2F;mypackage@1.2.3</a>&quot; or &quot;npm:package@1.2.3&quot; and just running code without having to worry about scaffolding node_modules makes sandboxing code much easier</div>
+      <div class="comment-analysis"><em>The comment reflects a valid user perspective on developer experience and sandboxing convenience, though it does not directly assess Edge.js.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=pacman1337" class="hnuser">pacman1337</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Not sure I understand the use cases. I&#x27;m guessing people want to run unsafe nodejs code. Either cloud providers like for lambdas or on personal computer for AI coding?  On cloud why is this better than firecracker, firecrack can run any programming language this is just nodejs so already useless for that use case?<p>For personal computer, people worried about the spin up time of docker? I think that is more of a tooling issue where you spin up one instance and run multiple jobs.<p>What am I missing? What are actually real use cases where this would be better?</div>
-      <div class="comment-analysis"><em>Raises valid questions about practical applications and competitive advantages compared to existing solutions, contributing to the discussion.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=ammmir" class="hnuser">ammmir</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
-      </div>
-      <div class="comment-text">I don&#x27;t get it. You mention being able to choose your own JS engine, so it&#x27;s not using Wasmer&#x27;s WebAssembly implementation but that of the chosen JS engine&#x27;s? In other words, can Edge.js use Wasmer? Or have you managed to compile V8&#x2F;JSC into WebAssembly and are executing it with Wasmer? If so, amazing!</div>
-      <div class="comment-analysis"><em>Seeks clarification on technical details regarding JS engine usage and WebAssembly implementation, showing engagement but some confusion.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=pscanf" class="hnuser">pscanf</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Very cool project!<p>Question regarding the pluggable js engine: I have an electron app where I&#x27;m currently using QuickJS to run LLM-generated code. Would edge.js be able (theoretically) to use electron&#x27;s v8 to get a &quot;sanboxed within electron&quot; execution environment?</div>
-      <div class="comment-analysis"><em>Poses a practical question about integration with Electron and sandboxing, reflecting real-world application interest.</em></div>
+      <div class="comment-analysis"><em>Raises important questions about practical advantages and target scenarios, highlighting potential gaps in the project&#39;s value proposition.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=MillionOClock" class="hnuser">MillionOClock</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Very interesting! On what platforms can this run? If it can run on iOS, how would you handle attempts to access to the file system or networking, is this already wired in somehow? If not is it easy to add custom handlers to handle these actions?</div>
-      <div class="comment-analysis"><em>Asks relevant questions about platform support and security handling, indicating curiosity about implementation details.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=willquack" class="hnuser">willquack</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">Awesome project!<p>Dumb question: could you run this in frontend js using the browser&#x27;s js engine and wasm environment similar to WebContainers? Maybe `fs` is just in-memory, and some things like forking are disabled. It&#x27;d be cool to have &quot;nodejs&quot; in the web!</div>
-      <div class="comment-analysis"><em>Expresses enthusiasm and inquires about browser-based use cases, though the question is speculative and less technical.</em></div>
+      <div class="comment-analysis"><em>Poses relevant questions about platform support and security controls, indicating practical concerns for real-world deployment.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=2001zhaozhao" class="hnuser">2001zhaozhao</a>
+        <a href="https://news.ycombinator.com/user?id=ammmir" class="hnuser">ammmir</a>
         &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> 
       </div>
-      <div class="comment-text">Huh. Could this be a way to sandbox user-generated JS in web apps?</div>
-      <div class="comment-analysis"><em>Brief but relevant question about sandboxing user-generated code, showing interest in security applications.</em></div>
+      <div class="comment-text">I don&#x27;t get it. You mention being able to choose your own JS engine, so it&#x27;s not using Wasmer&#x27;s WebAssembly implementation but that of the chosen JS engine&#x27;s? In other words, can Edge.js use Wasmer? Or have you managed to compile V8&#x2F;JSC into WebAssembly and are executing it with Wasmer? If so, amazing!</div>
+      <div class="comment-analysis"><em>Seeks clarification on technical implementation details, showing curiosity though not providing evaluative insight.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=willquack" class="hnuser">willquack</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Awesome project!<p>Dumb question: could you run this in frontend js using the browser&#x27;s js engine and wasm environment similar to WebContainers? Maybe `fs` is just in-memory, and some things like forking are disabled. It&#x27;d be cool to have &quot;nodejs&quot; in the web!</div>
+      <div class="comment-analysis"><em>Asks an interesting question about browser-based use cases, though speculative and not addressing core project claims.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=pscanf" class="hnuser">pscanf</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Very cool project!<p>Question regarding the pluggable js engine: I have an electron app where I&#x27;m currently using QuickJS to run LLM-generated code. Would edge.js be able (theoretically) to use electron&#x27;s v8 to get a &quot;sanboxed within electron&quot; execution environment?</div>
+      <div class="comment-analysis"><em>Poses a practical question about integration with Electron, reflecting user interest but not evaluating project claims.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=robjam" class="hnuser">robjam</a>
-        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;rank #11
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+        <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">Wow! Node APIs in wasm(wasix)? Something that I have been thinking over for a long time is getting wasm (just wasm, not wasi or com) to be the unit of deployment&#x2F;packaging for web apps like Nuxt&#x2F;Next that only depend on, for example SQLite or Postgres. Slightly ignorant question, but would edge.js allow integrating with a caddy plug-in to handle serving the app from wasm?<p>I know of the extism project and played around with it in elixir, but I&#x27;m looking to have CF Workers DX with as little operational complexity as possible for many silly pet projects.</div>
-      <div class="comment-analysis"><em>Shares a conceptual idea related to wasm deployment and asks about integration possibilities, contributing a visionary perspective.</em></div>
+      <div class="comment-analysis"><em>Explores potential deployment scenarios and developer experience improvements, though speculative and not critical.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=actionfromafar" class="hnuser">actionfromafar</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #12
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+        <span class="indicator">trolling</span> <span class="indicator">emotional</span> 
       </div>
       <div class="comment-text">Can that Node app load and run WebAssembly?<p>(A.K.A. are we IBM 360 yet?)</div>
-      <div class="comment-analysis"><em>The comment is vague and uses an unclear analogy, adding little substantive value to the technical discussion.</em></div>
+      <div class="comment-analysis"><em>This comment is more of a sarcastic or humorous remark, lacking substantive analysis or constructive feedback.</em></div>
     </div>
     
 
@@ -180,7 +202,7 @@ Super happy to answer any questions you may have!</div>
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 04:37 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 07:13 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
