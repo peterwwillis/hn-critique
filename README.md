@@ -173,6 +173,13 @@ go run ./cmd/crawler/ -prepare-input -out ./docs
 go run ./cmd/crawler/ -analyze-input -out ./docs
 ```
 
+Article critiques are cached per story and stored under the story’s submission date. When a story already has a
+successful article critique in the cache, later runs will re-use it (skipping
+article fetch + re-analysis). Unsuccessful or “unavailable” critiques may
+still have cache files, but they are not re-used and will be re-fetched and
+re-analyzed, and comments can always be refreshed and re-analyzed as new
+discussion appears.
+
 ## Project layout
 
 ```
@@ -217,4 +224,3 @@ OPENAI_API_KEY=sk-… ./bin/mcp-server -provider openai
 
 The server reads newline-delimited JSON-RPC 2.0 from stdin and writes responses to stdout,
 following the standard MCP transport. All diagnostic logging goes to stderr.
-

@@ -115,6 +115,7 @@ func main() {
 	var analysisWarnings int
 
 	var stories []*generator.Story
+	cachedAnalysisByStoryID := map[int]*generator.AnalysisCache{}
 	if *analyzeInput {
 		log.Printf("Loading cached story inputs…")
 		loaded, err := generator.LoadStoryInputs(*outputDir)
@@ -179,6 +180,22 @@ func main() {
 				CommentCount: item.Descendants,
 			}
 
+			if !*prepareInput {
+				cached, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
+				if cacheErr != nil {
+					log.Printf("  ⚠  cache load failed: %v", cacheErr)
+				} else if cached != nil {
+					cachedAnalysisByStoryID[story.ID] = cached
+					// Only reuse a cached successful critique when not preparing input.
+					// In -prepare-input mode we always want to fetch and store raw inputs,
+					// without pre-populating story.Critique from prior analysis.
+					if crit := successfulCachedArticleCritique(cached); crit != nil {
+						story.Critique = crit
+						log.Printf("  Using cached successful article analysis for story %d (skip article fetch and re-analysis).", story.ID)
+					}
+				}
+			}
+
 			// Fetch comments.
 			if len(item.Kids) > 0 {
 				log.Printf("  Fetching comments for story %d…", story.ID)
@@ -191,7 +208,8 @@ func main() {
 			}
 
 			// Fetch article content (only for stories with external URLs).
-			if item.URL != "" {
+			// If a successful article critique is already cached, skip article fetch.
+			if item.URL != "" && story.Critique == nil {
 				log.Printf("  Fetching article for story %d: %s", story.ID, item.URL)
 				text, truncated, err := articleFetcher.FetchWithTruncation(item.URL)
 				if err != nil {
@@ -235,25 +253,44 @@ func main() {
 	for _, story := range stories {
 		if aiProvider != nil {
 			log.Printf("Processing AI analysis for story %d…", story.ID)
-			// Load any previously cached analysis as a fallback.
-			cached, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
-			if cacheErr != nil {
-				log.Printf("  ⚠  cache load failed: %v", cacheErr)
+			cached, ok := cachedAnalysisByStoryID[story.ID]
+			if !ok {
+				loaded, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
+				if cacheErr != nil {
+					log.Printf("  ⚠  cache load failed: %v", cacheErr)
+					// Record that we attempted to load the cache for this story ID,
+					// even if the load failed, so we don't retry on this run.
+					cachedAnalysisByStoryID[story.ID] = nil
+				} else {
+					cached = loaded
+					// Store the loaded cache (which may be nil) so subsequent
+					// iterations know this story ID has already been checked.
+					cachedAnalysisByStoryID[story.ID] = loaded
+				}
 			}
 
 			// Article critique.
-			if story.ArticleUnavailableReason != "" {
-				story.Critique = unavailableCritiqueForReason(story.ArticleUnavailableReason)
-			} else if story.ArticleText != "" || story.URL != "" {
-				log.Printf("  Analyzing article for story %d…", story.ID)
-				crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
-				if err != nil {
-					log.Printf("  ⚠  story %d article analysis failed: %v", story.ID, err)
-					analysisWarnings++
-					analysisReason := "the AI assessment could not be completed because the AI provider returned an error. The analysis may be retried on the next run"
-					story.Critique = unavailableCritiqueForReason(analysisReason)
-				} else {
+			if story.Critique == nil {
+				// Re-check the cache here because analyze-input runs skip the
+				// earlier fetch phase where story.Critique may be preloaded.
+				if crit := successfulCachedArticleCritique(cached); crit != nil {
+					log.Printf("  Using cached successful article analysis (skip re-analysis).")
 					story.Critique = crit
+				} else if story.ArticleUnavailableReason != "" {
+					story.Critique = unavailableCritiqueForReason(story.ArticleUnavailableReason)
+				} else if story.ArticleText != "" || story.URL != "" {
+					log.Printf("  Analyzing article for story %d…", story.ID)
+					crit, err := aiProvider.AnalyzeArticle(story.Title, story.URL, story.ArticleText)
+					if err != nil {
+						log.Printf("  ⚠  story %d article analysis failed: %v", story.ID, err)
+						analysisWarnings++
+						analysisReason := "the AI assessment could not be completed because the AI provider returned an error. The analysis may be retried on the next run"
+						story.Critique = unavailableCritiqueForReason(analysisReason)
+					} else {
+						story.Critique = crit
+					}
+				} else {
+					log.Printf("  Skipping article analysis for story %d: no article URL or text.", story.ID)
 				}
 			}
 
@@ -462,6 +499,24 @@ func unavailableTruthfulness(reason string) string {
 
 func unavailableCritiqueForReason(reason string) *generator.ArticleCritique {
 	return unavailableCritique(unavailableSummary(reason), unavailableTruthfulness(reason))
+}
+
+func successfulCachedArticleCritique(cached *generator.AnalysisCache) *generator.ArticleCritique {
+	if cached == nil || !isSuccessfulArticleCritique(cached.Critique) {
+		return nil
+	}
+	return cached.Critique
+}
+
+func isSuccessfulArticleCritique(critique *generator.ArticleCritique) bool {
+	if critique == nil {
+		return false
+	}
+	rating := strings.TrimSpace(critique.Rating)
+	if rating == "" {
+		return false
+	}
+	return !strings.EqualFold(rating, "unavailable")
 }
 
 // formatCommentForAI returns the formatted representation of a single comment

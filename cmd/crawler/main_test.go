@@ -3,6 +3,8 @@ package main
 import (
 	"reflect"
 	"testing"
+
+	"github.com/peterwwillis/hn-critique/internal/generator"
 )
 
 func TestCommentFetchCappedWarningIncludesRetrievedCount(t *testing.T) {
@@ -56,6 +58,51 @@ func TestParseStoryIDs(t *testing.T) {
 			}
 			if !reflect.DeepEqual(tc.want, got) {
 				t.Fatalf("parseStoryIDs mismatch: want %v, got %v", tc.want, got)
+			}
+		})
+	}
+}
+
+func TestIsSuccessfulArticleCritique(t *testing.T) {
+	tests := []struct {
+		name string
+		in   *generator.ArticleCritique
+		want bool
+	}{
+		{name: "nil", in: nil, want: false},
+		{name: "unavailable", in: &generator.ArticleCritique{Rating: "unavailable"}, want: false},
+		{name: "unavailable case-insensitive", in: &generator.ArticleCritique{Rating: " UnAvAiLaBlE "}, want: false},
+		{name: "reliable", in: &generator.ArticleCritique{Rating: "reliable"}, want: true},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := isSuccessfulArticleCritique(tc.in); got != tc.want {
+				t.Fatalf("isSuccessfulArticleCritique() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestSuccessfulCachedArticleCritique(t *testing.T) {
+	good := &generator.ArticleCritique{Summary: "ok", Rating: "reliable"}
+
+	tests := []struct {
+		name string
+		in   *generator.AnalysisCache
+		want *generator.ArticleCritique
+	}{
+		{name: "nil cache", in: nil, want: nil},
+		{name: "missing critique", in: &generator.AnalysisCache{}, want: nil},
+		{name: "failed placeholder critique", in: &generator.AnalysisCache{Critique: &generator.ArticleCritique{Rating: "unavailable"}}, want: nil},
+		{name: "successful critique", in: &generator.AnalysisCache{Critique: good}, want: good},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			got := successfulCachedArticleCritique(tc.in)
+			if got != tc.want {
+				t.Fatalf("successfulCachedArticleCritique() = %#v, want %#v", got, tc.want)
 			}
 		})
 	}
