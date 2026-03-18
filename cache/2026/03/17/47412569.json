@@ -22,44 +22,20 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around the technical challenges and potential of sub-millisecond VM sandboxes using copy-on-write memory forking. Key points include security concerns related to entropy duplication, limitations in Windows sandboxing, and practical deployment issues such as networking setup and cross-node cloning.",
+    "summary": "The discussion centers on a new approach to sub-millisecond VM sandboxing using copy-on-write memory forking. Commenters highlight potential security concerns, practical challenges in production environments, and comparisons to existing technologies and use cases.",
     "comments": [
       {
         "id": 47420878,
         "author": "cperciva",
         "text": "Don\u0026#x27;t forget about entropy!  You\u0026#x27;ve just created two identical copies of all of your random number generators, which could be very very bad for security.\u003cp\u003eThe firecracker team wrote a very good paper about addressing this when they added snapshot support.",
         "indicators": [
-          "thoughtful",
           "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment highlights a critical security issue with duplicating entropy sources in VM snapshots, referencing a known paper, making it highly accurate and relevant."
-      },
-      {
-        "id": 47420684,
-        "author": "crawshaw",
-        "text": "Nice to see this work! I experimented with this for exe.dev before we launched. The VM itself worked really well, but there was a lot of setup to get the networking functioning. And in the end, our target are use cases that don\u0026#x27;t mind a ~1-second startup time, which meant doing a clean systemd start each time was easier.\u003cp\u003eThat said, I have seen several use cases where people want a VM for something minimal, like a python interpreter, and this is absolutely the sort of approach they should be using. Lot of promise here, excited to see how far you can push it!",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "Provides practical experience with similar technology, noting trade-offs in startup time and networking complexity, which adds valuable real-world context."
-      },
-      {
-        "id": 47422572,
-        "author": "injidup",
-        "text": "It\u0026#x27;s so frustrating seeing all this sandbox tooling pop up for linux but windows is soooooo far behind. I mean Windows Sandbox ( \u003ca href=\"https:\u0026#x2F;\u0026#x2F;learn.microsoft.com\u0026#x2F;en-us\u0026#x2F;windows\u0026#x2F;security\u0026#x2F;application-security\u0026#x2F;application-isolation\u0026#x2F;windows-sandbox\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;learn.microsoft.com\u0026#x2F;en-us\u0026#x2F;windows\u0026#x2F;security\u0026#x2F;applicati...\u003c/a\u003e ) doesn\u0026#x27;t even have customizable networking white lists. You can turn networking on or off but that\u0026#x27;s about as fine grained as it gets. So all of us still having to write desktop windows stuff are left without a good method of easily putting our agents in a blast proof box.",
-        "indicators": [
-          "emotional",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "Accurately points out the relative immaturity of Windows sandboxing features compared to Linux, reflecting common developer frustrations."
+        "analysis": "This comment correctly identifies a critical security risk related to entropy duplication in VM forking, referencing a known paper addressing the issue."
       },
       {
         "id": 47420711,
@@ -71,8 +47,21 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "Insightfully discusses operational challenges in distributed environments, which is an important consideration for production use."
+        "accuracyRank": 2,
+        "analysis": "The comment insightfully points out real-world challenges in scaling this approach across distributed systems, emphasizing the complexity of snapshotting and data transfer."
+      },
+      {
+        "id": 47420684,
+        "author": "crawshaw",
+        "text": "Nice to see this work! I experimented with this for exe.dev before we launched. The VM itself worked really well, but there was a lot of setup to get the networking functioning. And in the end, our target are use cases that don\u0026#x27;t mind a ~1-second startup time, which meant doing a clean systemd start each time was easier.\u003cp\u003eThat said, I have seen several use cases where people want a VM for something minimal, like a python interpreter, and this is absolutely the sort of approach they should be using. Lot of promise here, excited to see how far you can push it!",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment provides practical experience and context, noting trade-offs between startup time and complexity, which is valuable for understanding real-world applicability."
       },
       {
         "id": 47420508,
@@ -80,10 +69,45 @@
         "text": "Does it only work with that specific version of firecracker and only with vms with 1 vcpu?\u003cp\u003eMore than the sub ms startup time the 258kb of ram per VM is huge.",
         "indicators": [
           "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Raises valid technical questions about compatibility and resource usage, which are important considerations for evaluating the solution's practicality."
+      },
+      {
+        "id": 47422572,
+        "author": "injidup",
+        "text": "It\u0026#x27;s so frustrating seeing all this sandbox tooling pop up for linux but windows is soooooo far behind. I mean Windows Sandbox ( \u003ca href=\"https:\u0026#x2F;\u0026#x2F;learn.microsoft.com\u0026#x2F;en-us\u0026#x2F;windows\u0026#x2F;security\u0026#x2F;application-security\u0026#x2F;application-isolation\u0026#x2F;windows-sandbox\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;learn.microsoft.com\u0026#x2F;en-us\u0026#x2F;windows\u0026#x2F;security\u0026#x2F;applicati...\u003c/a\u003e ) doesn\u0026#x27;t even have customizable networking white lists. You can turn networking on or off but that\u0026#x27;s about as fine grained as it gets. So all of us still having to write desktop windows stuff are left without a good method of easily putting our agents in a blast proof box.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 5,
-        "analysis": "Raises valid technical questions about compatibility and resource usage, though some claims like 258kb RAM per VM seem exaggerated or unclear."
+        "analysis": "Expresses a common frustration about Windows sandboxing limitations, providing useful context though somewhat subjective."
+      },
+      {
+        "id": 47420810,
+        "author": "buckle8017",
+        "text": "This is how android processes work, but it\u0026#x27;s a security problem breaking some ASLR type things.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Links the concept to Android process management and notes a security implication, adding relevant perspective though briefly."
+      },
+      {
+        "id": 47419095,
+        "author": "yagizdagabak",
+        "text": "Cool approach. Are you guys planning on creating a managed version?",
+        "indicators": [
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "A straightforward inquiry about product plans, showing interest but lacking technical depth."
       },
       {
         "id": 47420839,
@@ -91,10 +115,10 @@
         "text": "Does this need passthrough or might we be able to leverage PVM with it on a passthrough-less cloud VM\u0026#x2F;VPS?",
         "indicators": [
           "thoughtful",
-          "intelligent"
+          "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Asks a relevant technical question about hardware virtualization features, indicating engagement but without definitive accuracy."
+        "accuracyRank": 8,
+        "analysis": "Asks a relevant technical question about hardware virtualization features, indicating engagement but speculative."
       },
       {
         "id": 47420820,
@@ -103,49 +127,73 @@
         "indicators": [
           "thoughtful"
         ],
-        "accuracyRank": 7,
-        "analysis": "Makes a reasonable comparison to another VM cloning approach, showing curiosity but not providing a direct assessment."
+        "accuracyRank": 9,
+        "analysis": "Makes a comparison to a similar project, which could be useful but is more of a prompt for discussion than analysis."
       },
       {
-        "id": 47420810,
-        "author": "buckle8017",
-        "text": "This is how android processes work, but it\u0026#x27;s a security problem breaking some ASLR type things.",
+        "id": 47423147,
+        "author": "deivid",
+        "text": "Niiiiiice, I\u0026#x27;ve been working on something like this, but reducing linux boot time instead of snapshot restore time; obviously my solution doesn\u0026#x27;t work for heavy runtimes",
         "indicators": [
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "Notes a relevant security implication related to address space layout randomization, adding a useful perspective."
+        "accuracyRank": 10,
+        "analysis": "Shares personal experience related to the topic, adding perspective though less directly analytical."
       },
       {
-        "id": 47421087,
-        "author": "latortuga",
-        "text": "Similar to sprites.dev?",
+        "id": 47414113,
+        "author": "skwuwu",
+        "text": "I noticed that you implemented a high-performance VM fork. However, to me, it seems like a general-purpose KVM project. Is there a reason why you say it is specialized for running AI agents?",
         "indicators": [
           "thoughtful"
         ],
-        "accuracyRank": 9,
-        "analysis": "Briefly suggests a comparison to another project but lacks detail to assess accuracy or depth."
+        "accuracyRank": 11,
+        "analysis": "Questions the specialization claim, prompting clarification but without providing a definitive critique."
+      },
+      {
+        "id": 47418613,
+        "author": "jauntywundrkind",
+        "text": "I keep so so so many opencode windows going. I wish I had bought a better SSD, because I have so much swap space to support it all.\u003cp\u003eI keep thinking I need to see if CRIU (checkpoint restore in userspace) is going to work here. So I can put work down for longer time, be able to close \u0026amp; restore instances sort of on-demand.\u003cp\u003eI don\u0026#x27;t really love the idea of using VMs more, but I super love this project. Heck yes forking our processes\u0026#x2F;VMs.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 12,
+        "analysis": "Shares personal workflow and interest in checkpoint/restore tools, reflecting user perspective rather than technical analysis."
       },
       {
         "id": 47420340,
         "author": "handfuloflight",
         "text": "Can you run this in another sandbox? Not sure why you\u0026#x27;d want to... but can you?",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "useless"
         ],
-        "accuracyRank": 10,
-        "analysis": "Poses a speculative question about sandbox nesting, showing curiosity but no substantive analysis."
+        "accuracyRank": 13,
+        "analysis": "Poses a speculative question with unclear purpose, adding little substantive value."
       },
       {
         "id": 47420521,
         "author": "jauntywundrkind",
         "text": "Mods: can we merge with \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47412812\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47412812\u003c/a\u003e?",
         "indicators": [
+          "useless",
+          "emotional"
+        ],
+        "accuracyRank": 14,
+        "analysis": "A meta-comment about thread management, unrelated to technical discussion."
+      },
+      {
+        "id": 47421087,
+        "author": "latortuga",
+        "text": "Similar to sprites.dev?",
+        "indicators": [
+          "thoughtful",
           "useless"
         ],
-        "accuracyRank": 11,
-        "analysis": "A meta comment about thread management that does not contribute to the technical discussion."
+        "accuracyRank": 15,
+        "analysis": "A brief comparison prompt without elaboration, adding minimal insight."
       }
     ]
   }
