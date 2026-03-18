@@ -19,7 +19,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around Rob Pike's programming rules, emphasizing the importance of measuring performance, avoiding premature optimization and abstraction, and prioritizing data structures. Commenters debate the applicability of these rules in modern contexts, share personal experiences, and clarify historical attributions of famous quotes.",
+    "summary": "The discussion centers on Rob Pike's programming rules, especially the emphasis on data structures over algorithms and the caution against premature optimization. Commenters share personal experiences, historical context, and modern perspectives, debating the applicability and interpretation of these rules in today's software development.",
     "comments": [
       {
         "id": 47427730,
@@ -32,7 +32,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment insightfully connects the rules and highlights a common practical issue, providing a nuanced understanding consistent with software engineering experience."
+        "analysis": "This comment insightfully connects the rules as a logical sequence rather than independent points, highlighting the practical issue of premature abstraction over premature optimization."
       },
       {
         "id": 47424923,
@@ -45,59 +45,7 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment correctly clarifies the origin and context of a famous quote, addressing common misconceptions that affect software development practices."
-      },
-      {
-        "id": 47427222,
-        "author": "GuB-42",
-        "text": "The opposite conclusion can be taken from the premise of rule #1 \u0026quot;You can\u0026#x27;t tell where a program is going to spend its time\u0026quot;\u003cp\u003eIf you can\u0026#x27;t tell in advance what is performance critical, then consider everything to be performance critical.\u003cp\u003eI would then go against rule #3 \u0026quot;Fancy algorithms are slow when n is small, and n is usually small\u0026quot;. n is usually small, except when it isn\u0026#x27;t, and as per rule #1, you may not know that ahead of time. Assuming n is going to be small is how you get accidentally quadratic behavior, such as the infamous GTA bug. So, assume n is going to be big unless you are sure it won\u0026#x27;t be. Understand that your users may use your software in ways you don\u0026#x27;t expect.\u003cp\u003eNote that if you really want high performance, you should properly characterize your \u0026quot;n\u0026quot; so that you can use the appropriate technique, it is hard because you need to know all your use cases and their implications in advance. Assuming n will be big is the easy way!\u003cp\u003eAbout rule #4, fancy algorithms are often not harder to implement, most of the times, it means using the right library.\u003cp\u003eAbout rule #2 (measure), yes, you absolutely should, but it doesn\u0026#x27;t mean you shouldn\u0026#x27;t consider performance before you measure. It would be like saying that you shouldn\u0026#x27;t worry about introducing bugs before testing. You should do your best to make your code fast and correct before you start measuring and testing.\u003cp\u003eWhat I agree with is that you shouldn\u0026#x27;t introduce speed hacks unless you know what you are doing. Most of performance come from giving it consideration on every step. Avoiding a copy here, using a hash map instead of a linear search there, etc... If you have to resort to a hack, it may be because you didn\u0026#x27;t consider performance early enough. For example, if took care of making a function fast enough, you may not have to cache results later on.\u003cp\u003eAs for #5, I agree completely. Data is the most important. It applies to performance too, especially on modern hardware. To give you an very simplified idea, RAM access is about 100x slower than running a CPU instruction, it means you can get massive speed improvement by making your memory footprint smaller and using cache-friendly data structures.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment provides a well-reasoned alternative interpretation of the rules, emphasizing caution and the centrality of data structures, aligning with modern performance considerations."
-      },
-      {
-        "id": 47427687,
-        "author": "nlawalker",
-        "text": "This reminds me of a portion of a talk Jonathan Blow gave[1], where he justifies this from a productivity angle. He explains how his initial implementation for virtually everything in Braid used arrays of records, and only after finding bottlenecks did he make changes, because if he had approached every technical challenge by trying to find the optimal data structure and algorithm he would never have shipped.\u003cp\u003e\u0026quot;There\u0026#x27;s a third thing [beyond speed and memory] that you might want to optimize for which is much more important than either of these, which is years of your life required per program implementation.\u0026quot; This is of course from the perspective of a solo indie game developer, but it\u0026#x27;s a good and interesting perspective to consider.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=JjDsP5n2kSM\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=JjDsP5n2kSM\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "This comment adds valuable perspective from a known developer, reinforcing the practical importance of prioritizing productivity over premature optimization."
-      },
-      {
-        "id": 47427863,
-        "author": "PaulHoule",
-        "text": "The \u0026quot;bottleneck\u0026quot; model of performance has limitations.\u003cp\u003eThere are a lot of systems where useless work and other inefficiencies are spread all over the place.  Even though I think garbage collection is underrated (e.g. Rustifarians will agree with me in 15 years) it\u0026#x27;s a good example because of the nonlocality that profilers miss or misunderstand.\u003cp\u003eYou can make great prop bets around \u0026quot;I\u0026#x27;ll rewrite your Array-of-Structures code to Structure-of-Arrays code and it will get much faster\u0026quot;\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;en.wikipedia.org\u0026#x2F;wiki\u0026#x2F;AoS_and_SoA\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;en.wikipedia.org\u0026#x2F;wiki\u0026#x2F;AoS_and_SoA\u003c/a\u003e\u003cp\u003ebecause SoA usually is much more cache friendly and AoS makes the memory hierarchy perform poorly in a way profilers can\u0026#x27;t see.  The more time somebody spends looking at profilers and more they quote Rule 1 the more they get blindsided by it.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "The comment correctly points out limitations of common performance assumptions and profiling tools, adding depth to the discussion on optimization."
-      },
-      {
-        "id": 47425049,
-        "author": "ta20211004_1",
-        "text": "Can\u0026#x27;t agree more on 5. I\u0026#x27;ve repeatedly found that any really tricky programming problem is (eventually) solved by iterative refinement of the data structures (and the APIs they expose \u0026#x2F; are associated with). When you get it right the control flow of a program becomes straightforward to reason about.\u003cp\u003eTo address our favorite topic: while I use LLMs to assist on coding tasks a lot, I think they\u0026#x27;re very weak at this. Claude is much more likely to suggest or expand complex control flow logic on small data types than it is to recognize and implement an opportunity to encapsulate ideas in composable chunks. And I don\u0026#x27;t buy the idea that this doesn\u0026#x27;t matter since most code will be produced and consumed by LLMs. The LLMs of today are much more effective on code bases that have already been thoughtfully designed. So are humans. Why would that change?",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment insightfully comments on the role of data structures and AI tools in programming, highlighting current LLM limitations."
+        "analysis": "This comment provides important historical and contextual correction, clarifying a common misconception that influences software development practices negatively."
       },
       {
         "id": 47427836,
@@ -109,135 +57,92 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "The comment offers a balanced view on performance design, acknowledging both measurement and informed estimation."
+        "accuracyRank": 3,
+        "analysis": "The comment balances two respected perspectives on performance optimization, advocating for both informed design and empirical tuning."
       },
       {
         "id": 47426304,
         "author": "thecodemonkey",
         "text": "Running the same codebase for 10+ years with a small team is what finally made me fully internalize these rules.\u003cp\u003eI\u0026#x27;ve always been a KISS\u0026#x2F;DRY person but over a decade there are plenty of moments where you\u0026#x27;re tempted to reach for a fancier database or rewrite something in a trendier stack. What\u0026#x27;s actually kept things running well at scale is boring, known technologies and only optimizing in the places where it actually matters.\u003cp\u003eWe wrote our principles down recently and it basically just reads like Pike\u0026#x27;s rules in different words: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.geocod.io\u0026#x2F;code-and-coordinates\u0026#x2F;2025-09-30-development-manifesto\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.geocod.io\u0026#x2F;code-and-coordinates\u0026#x2F;2025-09-30-develo...\u003c/a\u003e",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment provides practical validation of the rules from real-world experience, emphasizing stability and focused optimization."
+        "accuracyRank": 4,
+        "analysis": "This practical experience reinforces the rules' validity and highlights the value of simplicity and targeted optimization in long-term projects."
       },
       {
-        "id": 47426546,
-        "author": "BTAQA",
-        "text": "Rule 5 is the one that took me longest to internalize. Coming from \nfrontend development into building a full product with a real \ndatabase, I kept reaching for complex query logic when the real \nfix was just restructuring the data. Once the schema was right the \nqueries became obvious. Brooks was right 50 years ago and it\u0026#x27;s \nstill true.",
+        "id": 47425049,
+        "author": "ta20211004_1",
+        "text": "Can\u0026#x27;t agree more on 5. I\u0026#x27;ve repeatedly found that any really tricky programming problem is (eventually) solved by iterative refinement of the data structures (and the APIs they expose \u0026#x2F; are associated with). When you get it right the control flow of a program becomes straightforward to reason about.\u003cp\u003eTo address our favorite topic: while I use LLMs to assist on coding tasks a lot, I think they\u0026#x27;re very weak at this. Claude is much more likely to suggest or expand complex control flow logic on small data types than it is to recognize and implement an opportunity to encapsulate ideas in composable chunks. And I don\u0026#x27;t buy the idea that this doesn\u0026#x27;t matter since most code will be produced and consumed by LLMs. The LLMs of today are much more effective on code bases that have already been thoughtfully designed. So are humans. Why would that change?",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "The comment emphasizes the centrality of data structure design and provides a nuanced view on current AI coding assistance capabilities."
+      },
+      {
+        "id": 47429402,
+        "author": "ryguz",
+        "text": "Rule 5 about data dominating resonates most in modern systems. The trend of just throwing more code at it when most performance and correctness issues come down to how data flows through the system. Most junior engineers optimize the wrong layer because they start with the code instead of the data model.",
         "indicators": [
           "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment highlights a common pitfall in performance optimization, reinforcing the primacy of data modeling."
+      },
+      {
+        "id": 47427222,
+        "author": "GuB-42",
+        "text": "The opposite conclusion can be taken from the premise of rule #1 \u0026quot;You can\u0026#x27;t tell where a program is going to spend its time\u0026quot;\u003cp\u003eIf you can\u0026#x27;t tell in advance what is performance critical, then consider everything to be performance critical.\u003cp\u003eI would then go against rule #3 \u0026quot;Fancy algorithms are slow when n is small, and n is usually small\u0026quot;. n is usually small, except when it isn\u0026#x27;t, and as per rule #1, you may not know that ahead of time. Assuming n is going to be small is how you get accidentally quadratic behavior, such as the infamous GTA bug. So, assume n is going to be big unless you are sure it won\u0026#x27;t be. Understand that your users may use your software in ways you don\u0026#x27;t expect.\u003cp\u003eNote that if you really want high performance, you should properly characterize your \u0026quot;n\u0026quot; so that you can use the appropriate technique, it is hard because you need to know all your use cases and their implications in advance. Assuming n will be big is the easy way!\u003cp\u003eAbout rule #4, fancy algorithms are often not harder to implement, most of the times, it means using the right library.\u003cp\u003eAbout rule #2 (measure), yes, you absolutely should, but it doesn\u0026#x27;t mean you shouldn\u0026#x27;t consider performance before you measure. It would be like saying that you shouldn\u0026#x27;t worry about introducing bugs before testing. You should do your best to make your code fast and correct before you start measuring and testing.\u003cp\u003eWhat I agree with is that you shouldn\u0026#x27;t introduce speed hacks unless you know what you are doing. Most of performance come from giving it consideration on every step. Avoiding a copy here, using a hash map instead of a linear search there, etc... If you have to resort to a hack, it may be because you didn\u0026#x27;t consider performance early enough. For example, if took care of making a function fast enough, you may not have to cache results later on.\u003cp\u003eAs for #5, I agree completely. Data is the most important. It applies to performance too, especially on modern hardware. To give you an very simplified idea, RAM access is about 100x slower than running a CPU instruction, it means you can get massive speed improvement by making your memory footprint smaller and using cache-friendly data structures.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment challenges a common assumption about input size and advocates for cautious design to prevent severe performance issues."
+      },
+      {
+        "id": 47427687,
+        "author": "nlawalker",
+        "text": "This reminds me of a portion of a talk Jonathan Blow gave[1], where he justifies this from a productivity angle. He explains how his initial implementation for virtually everything in Braid used arrays of records, and only after finding bottlenecks did he make changes, because if he had approached every technical challenge by trying to find the optimal data structure and algorithm he would never have shipped.\u003cp\u003e\u0026quot;There\u0026#x27;s a third thing [beyond speed and memory] that you might want to optimize for which is much more important than either of these, which is years of your life required per program implementation.\u0026quot; This is of course from the perspective of a solo indie game developer, but it\u0026#x27;s a good and interesting perspective to consider.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=JjDsP5n2kSM\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=JjDsP5n2kSM\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This perspective aligns with Pike's rules and adds a valuable viewpoint from an indie developer's experience."
+      },
+      {
+        "id": 47427798,
+        "author": "tracker1",
+        "text": "Pretty much live by these in practice... I\u0026#x27;ve had a lot of arguments over #3 though...  yes nested loops can cause problems... but when you\u0026#x27;re dealing with \u0026lt; 100 or so items in each nested loop and outer loop, it\u0026#x27;s not a big deal in practice.  It\u0026#x27;s simpler and easier to reason with... don\u0026#x27;t optimize unless you really need to for practical reasons.\u003cp\u003eOn #5, I think most people tend to just lean on RDBMS databases for a lot of data access patterns.  I think it helps to have some fundamental understandings in terms of where\u0026#x2F;how\u0026#x2F;why you can optimize databases as well as where it make sense to consider non-relational (no-sql) databases too.  A poorly structured database can crawl under a relatively small number of users.",
+        "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 9,
-        "analysis": "The comment highlights the importance of data structure design in solving complex problems, reinforcing a key rule."
+        "analysis": "This comment provides a pragmatic take on algorithmic complexity and optimization thresholds."
       },
       {
-        "id": 47426191,
-        "author": "patwolf",
-        "text": "These rules apply equally well to system architecture. I\u0026#x27;ve been trying to talk our team out of premature optimization (redis cluster) and fancy algorithms (bloom filters) to compensate for poor data structures (database schema) before we know if performance is going to be a problem.\u003cp\u003eEven knowing with 100% certainty that performance will be subpar, requirements change often enough that it\u0026#x27;s often not worth the cost of adding architectural complexity too early.",
+        "id": 47426885,
+        "author": "justacatbot",
+        "text": "Rule 2 is the one that keeps biting me. You can spend days micro-optimizing functions only to realize the real bottleneck was storing data in a map when you needed a sorted list. The structure of the data almost always determines the structure of the code.",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment effectively extends the rules to architecture, warning against complexity without addressing core data issues."
-      },
-      {
-        "id": 47427292,
-        "author": "fl0ki",
-        "text": "\u0026gt; Fancy algorithms are slow when n is small, and n is usually small. Fancy algorithms have big constants.\u003cp\u003eI get where he\u0026#x27;s coming from, but I\u0026#x27;ve seen people get this very wrong in practice. They use an algorithm that\u0026#x27;s indeed faster for small n, which doesn\u0026#x27;t matter because anything was going to be fast enough for small n, meanwhile their algorithm is so slow for large n that it ends up becoming a production crisis just a year later. They prematurely optimized after all, but for an n that did not need optimization, while prematurely pessimizing for an n that ultimately did need optimization.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 11,
-        "analysis": "This comment warns about misapplying the rules, illustrating a common pitfall in algorithm selection."
-      },
-      {
-        "id": 47426781,
-        "author": "01100011",
-        "text": "Rule 3 gets me into trouble with CS majors a lot. I\u0026#x27;m an EE by education and entered into SW via the bottom floor(embedded C\u0026#x2F;ASM) so it was late in my career before I knew the formal definition of big-O and complexity.\u003cp\u003eFor most of my career, sticking to rule 3 made the most sense. When the CS major would be annoying and talk about big-O they usually forgot n was tiny. But then my job changed. I started working on different things. Suddenly my job started sounding more like a leetcode interview people complain about. Now n really is big and now it really does matter.\u003cp\u003eKeep in mind that Rob Pike comes from a different era when programming for \u0026#x27;big iron\u0026#x27; looked a lot more like programming for an embedded microcontroller now.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 12,
-        "analysis": "The comment provides historical context and acknowledges that some rules may need adaptation for modern large-scale computing."
-      },
-      {
-        "id": 47426535,
-        "author": "possiblydrunk",
-        "text": "Optimization usually trades complexity for speed. Complexity hinders debugging and maintenance. Don\u0026#x27;t optimize unless you have to and not before you know where the bottleneck is. Straightforward common sense advice as long as hardware is not persistently constraining.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 13,
-        "analysis": "This comment succinctly summarizes a core principle of optimization, emphasizing practicality."
-      },
-      {
-        "id": 47427683,
-        "author": "vishnugupta",
-        "text": "I can’t emphasize the importance of rule-5 enough.\u003cp\u003eI learnt about rule-5 through experience before I had heard it was a rule.\u003cp\u003eI used to do tech due diligence for acquisition of companies. I had a very short time, about a day. I hit upon a great time saver idea of asking them to show their DB schema and explain it. It turned out to be surprisingly effective. Once I understood the scheme most of the architecture explained itself.\u003cp\u003eNow I apply the same principle while designing a system.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 14,
-        "analysis": "This comment provides a practical example of the importance of data structure understanding in real-world scenarios."
-      },
-      {
-        "id": 47424167,
-        "author": "CharlieDigital",
-        "text": "I feel like 1 and 2 are only applicable in cases of novelty.\u003cp\u003eThe thing is, if you build enough of the same kinds of systems in the same kinds of domains, you can kinda tell where you should optimize ahead of time.\u003cp\u003eMost of us tend to build the same kinds of systems and usually spend a career or a good chunk of our careers in a given domain.  I feel like you can\u0026#x27;t really be considered a staff\u0026#x2F;principal if you can\u0026#x27;t already tell ahead of time where the perf bottleneck will be just on experience and intuition.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 15,
-        "analysis": "This comment offers a perspective on experience reducing uncertainty in performance prediction."
-      },
-      {
-        "id": 47426528,
-        "author": "yandrypozo",
-        "text": "does _a speed hack_ mean adding time.Sleep() for testing? or it\u0026#x27;s something else?",
-        "indicators": [
-          "useless",
-          "emotional"
-        ],
-        "accuracyRank": 16,
-        "analysis": "This question shows misunderstanding or lack of clarity about terminology, contributing little to the discussion."
-      },
-      {
-        "id": 47426776,
-        "author": "sneedenheimer",
-        "text": "Given that Rob Pike seems to think having a shell script that uses tar is better than having a `-r` flag for cp [1], I wouldn\u0026#x27;t give much weight to his philosophy of programming :P.\u003cp\u003e[1]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;wiki.c2.com\u0026#x2F;?WhatIsNotInPlanNine\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;wiki.c2.com\u0026#x2F;?WhatIsNotInPlanNine\u003c/a\u003e",
-        "indicators": [
-          "emotional",
-          "trolling",
-          "likely-untrue"
-        ],
-        "accuracyRank": 17,
-        "analysis": "This comment is dismissive and based on a minor anecdote, lacking substantive critique of the rules themselves."
+        "analysis": "This comment underscores the importance of data structure choice over micro-optimizations, reinforcing Rule 5."
       }
     ]
   }
