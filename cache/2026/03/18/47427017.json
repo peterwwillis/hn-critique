@@ -1,0 +1,97 @@
+{
+  "story_id": 47427017,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article reports a security vulnerability in Snowflake Cortex Code CLI that allowed malware execution via indirect prompt injection, bypassing human approval and sandbox restrictions. The vulnerability was responsibly disclosed and fixed by Snowflake in version 1.0.25 released on February 28, 2026.",
+    "mainPoints": [
+      "A vulnerability in Snowflake Cortex Code CLI allowed arbitrary command execution without user approval through indirect prompt injection.",
+      "The flaw bypassed the sandbox by manipulating a flag that enabled unsandboxed command execution.",
+      "Malicious commands could leverage cached credentials to exfiltrate data, drop tables, and add backdoor users in Snowflake.",
+      "The vulnerability was responsibly disclosed to Snowflake shortly after release and fixed within a month.",
+      "Snowflake released an advisory and an automatic update to patch the issue."
+    ],
+    "truthfulness": "The claims in the article are consistent with standard security vulnerability disclosure practices and the timeline provided aligns with typical responsible disclosure processes. The technical details about prompt injection, sandbox bypass, and credential misuse are plausible and align with known attack vectors in AI-assisted coding tools. The article references an official Snowflake advisory available on their community site, supporting the credibility of the reported vulnerability and its remediation. However, the article relies primarily on a single source (PromptArmor) and Snowflake's advisory, lacking multiple independent perspectives or third-party verification.",
+    "considerations": [
+      "The article does not discuss the potential impact on users who do not enable sandbox modes or use different configurations.",
+      "There is no mention of how widespread the vulnerability was exploited in the wild before the fix.",
+      "The article does not address whether similar vulnerabilities exist in other AI coding assistants or how this incident affects the broader AI security landscape.",
+      "User guidance on mitigating risks before the patch was released is not provided.",
+      "The stochastic nature of the attack (50% efficacy) suggests variability in exploit success, which could be further elaborated."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers on the security implications of Snowflake's Cortex agent escaping its sandbox, with commenters debating whether the sandbox was properly implemented and questioning the product's use case and security design. Some express skepticism about the term 'sandbox' being applied when unsandboxed command execution is possible.",
+    "comments": [
+      {
+        "id": 47428007,
+        "author": "john_strinlai",
+        "text": "typically, my first move is to read the affected company\u0026#x27;s own announcement. for who knows what reason, the advisory written by snowflake requires an account to read.\u003cp\u003eanother prompt injection (shocked pikachu)\u003cp\u003eanyways, from reading this, i feel like they (snowflake) are misusing the term \u0026quot;sandbox\u0026quot;. \u003ci\u003e\u0026quot;Cortex, by default, can set a flag to trigger unsandboxed command execution.\u0026quot;\u003c/i\u003e if the thing that is sandboxed can say \u0026quot;do this without the sandbox\u0026quot;, it is not a sandbox.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment accurately highlights a key issue with the sandbox implementation, noting that if the sandboxed process can disable sandboxing, it undermines the security model."
+      },
+      {
+        "id": 47427780,
+        "author": "RobRivera",
+        "text": "If the user has access to a lever that enables accesss, that lever is not providing a sandbox.\u003cp\u003eI expected this to be about gaining os privileges.\u003cp\u003eThey didn\u0026#x27;t create a sandbox. Poor security design all around",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment correctly points out that a sandbox that can be bypassed by the user is ineffective, reinforcing the critique of poor security design."
+      },
+      {
+        "id": 47428021,
+        "author": "bilekas",
+        "text": "\u0026gt; Note: Cortex does not support ‘workspace trust’, a security convention first seen in code editors, since adopted by most agentic CLIs.\u003cp\u003eAm I crazy or does this mean it didn\u0026#x27;t really escape, it wasn\u0026#x27;t given any scope restrictions in the first place ?",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment raises a valid point about the absence of scope restrictions, suggesting the issue may be due to lack of proper sandboxing rather than a true escape."
+      },
+      {
+        "id": 47428114,
+        "author": "mritchie712",
+        "text": "what\u0026#x27;s the use case for cortex? is anyone here using it?\u003cp\u003eWe run a lakehouse product (\u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.definite.app\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.definite.app\u0026#x2F;\u003c/a\u003e) and I still don\u0026#x27;t get who the user is for cortex. Our users are either:\u003cp\u003enon-technical: wants to use the agent we have built into our web app\u003cp\u003etechnical: wants to use their own agent (e.g. claude, cursor) and connect via MCP \u0026#x2F; API.\u003cp\u003ewhy does snowflake need it\u0026#x27;s own agentic CLI?",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment is a relevant inquiry into the practical application of Cortex, though it does not directly address the security concerns."
+      },
+      {
+        "id": 47427978,
+        "author": "eagerpace",
+        "text": "Is this the new “gain of function” research?",
+        "indicators": [
+          "emotional",
+          "trolling"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment is a sarcastic or emotional remark that does not contribute meaningful analysis to the discussion."
+      },
+      {
+        "id": 47428091,
+        "author": "alephnerd",
+        "text": "And so BSides and RSA season begins.",
+        "indicators": [
+          "emotional",
+          "trolling",
+          "useless"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment is a dismissive remark referencing security conferences and adds no substantive value to the discussion."
+      }
+    ]
+  }
+}
