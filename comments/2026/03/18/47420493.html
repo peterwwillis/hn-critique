@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">8 points</span>
+        <span class="score">18 points</span>
         by <a href="https://news.ycombinator.com/user?id=wiseprobe" class="hnuser">wiseprobe</a>
-        <span class="age">1 hour ago</span>
+        <span class="age">3 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/18/47420493.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47420493" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion critiques the implementation of an autonomous AI agent that uses Docker containers with runtime package installation, highlighting inefficiencies in container startup and sandboxing methods.</p>
+      <p>The discussion critiques the simplicity of launching an autonomous AI agent with sandboxed execution, focusing on technical inefficiencies and the challenges of managing external resource payments. Commenters highlight the limitations of the approach and the complexity hidden behind the &#39;two lines of code&#39; claim.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -67,7 +67,40 @@
       &lt;command&gt;
 </code></pre>
 Which cool, great, I sure love &quot;pip install&quot;ing every time instead of just baking a single container image with it already installed.<p>This isn&#x27;t any sort of fancy or interesting sandboxing, this is shelling out to &quot;docker run&quot;, and not even using docker as well as it could.<p>Quoting from the linked page:<p>&gt; The tradeoff is ~5-10 seconds of container startup overhead<p>Sure, maybe it&#x27;s 5-10 seconds if you use containers wrong. Unpacking a root filesystem and spinning up a clean mount namespace on linux is a few ms, and taking more than a second means something is going wrong, like &quot;pip install&quot;ing at runtime instead of buildtime for some reason.<p>I can spin up a full linux vm and run some code in quicker than 5 seconds.</div>
-      <div class="comment-analysis"><em>The comment accurately identifies inefficiencies in the approach, such as runtime package installation causing delays and suboptimal use of Docker, supported by practical knowledge of container startup times.</em></div>
+      <div class="comment-analysis"><em>This comment provides a detailed technical critique of the implementation, pointing out inefficiencies and misconceptions about container startup times and sandboxing.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=gpubridge" class="hnuser">gpubridge</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">The &quot;2 lines of code&quot; framing is appealing but hides the real complexity: what happens when the agent needs to make external API calls at runtime?<p>Sandboxed execution solves the safety problem (agent cannot destroy your filesystem). But autonomous agents also need compute resources — inference, embeddings, image generation — that run outside the sandbox. The payment and authentication for those external calls is where the interesting engineering happens.<p>An agent running in a sandbox with a funded wallet (USDC on Base L2 via x402) can pay for its own compute without any human in the loop. That is the missing piece between &quot;launch an agent&quot; and &quot;agent runs autonomously for weeks.&quot;</div>
+      <div class="comment-analysis"><em>This comment accurately identifies the complexity beyond sandboxing, emphasizing the challenges of autonomous agent resource management and payment mechanisms.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=lightningenable" class="hnuser">lightningenable</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Sandboxed execution is the right call. The next challenge is what happens when these agents need to pay for external resources — APIs, data, compute. Right now most demos just assume free access or hardcoded API keys. Curious how you&#x27;re thinking about that.</div>
+      <div class="comment-analysis"><em>This comment raises a relevant and practical concern about the sustainability of autonomous agents needing to access paid external resources.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=davispeck" class="hnuser">davispeck</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This feels less like &quot;agents&quot; and more like a controlled generate → execute → fix loop.<p>Works great when you have a clear verification signal (tests passing), but what drives convergence when that signal isn’t well-defined?</div>
+      <div class="comment-analysis"><em>This comment provides a conceptual perspective on the agent&#39;s operation, questioning its effectiveness without strong feedback signals.</em></div>
     </div>
     
 
@@ -79,7 +112,7 @@ Which cool, great, I sure love &quot;pip install&quot;ing every time instead of 
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 02:33 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 04:37 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">43 points</span>
+        <span class="score">83 points</span>
         by <a href="https://news.ycombinator.com/user?id=adammiribyan" class="hnuser">adammiribyan</a>
-        <span class="age">13 hours ago</span>
+        <span class="age">15 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47412569.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47412569" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the technical aspects and challenges of sub-millisecond VM sandboxes using copy-on-write memory forking. Commenters highlight security concerns like entropy duplication, practical deployment issues such as networking setup and cross-node cloning, and potential use cases and limitations.</p>
+      <p>The discussion centers around the technical aspects and potential challenges of using sub-millisecond VM sandboxes with copy-on-write memory forking. Key points include concerns about entropy and security, practical use cases, and limitations related to networking and resource usage.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -59,32 +59,32 @@
         <a href="https://news.ycombinator.com/user?id=cperciva" class="hnuser">cperciva</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Don&#x27;t forget about entropy!  You&#x27;ve just created two identical copies of all of your random number generators, which could be very very bad for security.<p>The firecracker team wrote a very good paper about addressing this when they added snapshot support.</div>
-      <div class="comment-analysis"><em>This comment correctly points out a critical security risk related to entropy duplication in VM snapshots, referencing a known paper, making it highly accurate and relevant.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=diptanu" class="hnuser">diptanu</a>
-        &nbsp;|&nbsp;rank #2
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">The tricky part of doing this in production is cloning sandboxes across nodes. You would have to snapshot the resident memory, file system (or a CoW layer on top of the rootfs), move the data across nodes, etc.</div>
-      <div class="comment-analysis"><em>This comment insightfully highlights practical challenges in production environments, emphasizing the complexity of distributed sandbox cloning.</em></div>
+      <div class="comment-analysis"><em>This comment highlights a critical security issue with entropy duplication in VM forking, referencing a known solution, making it highly accurate and relevant.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=crawshaw" class="hnuser">crawshaw</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Nice to see this work! I experimented with this for exe.dev before we launched. The VM itself worked really well, but there was a lot of setup to get the networking functioning. And in the end, our target are use cases that don&#x27;t mind a ~1-second startup time, which meant doing a clean systemd start each time was easier.<p>That said, I have seen several use cases where people want a VM for something minimal, like a python interpreter, and this is absolutely the sort of approach they should be using. Lot of promise here, excited to see how far you can push it!</div>
-      <div class="comment-analysis"><em>Provides practical experience and context about the trade-offs between fast startup VMs and simpler but slower alternatives, adding valuable real-world perspective.</em></div>
+      <div class="comment-analysis"><em>Provides practical experience with similar technology, noting trade-offs between startup time and complexity, which adds valuable context to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=diptanu" class="hnuser">diptanu</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">The tricky part of doing this in production is cloning sandboxes across nodes. You would have to snapshot the resident memory, file system (or a CoW layer on top of the rootfs), move the data across nodes, etc.</div>
+      <div class="comment-analysis"><em>Accurately identifies a significant production challenge related to distributed sandbox cloning, contributing a realistic perspective on deployment complexity.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -95,7 +95,7 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Does it only work with that specific version of firecracker and only with vms with 1 vcpu?<p>More than the sub ms startup time the 258kb of ram per VM is huge.</div>
-      <div class="comment-analysis"><em>Raises valid questions about compatibility and resource usage, though the claim about 258kb RAM per VM being huge depends on context and could use more detail.</em></div>
+      <div class="comment-analysis"><em>Raises valid questions about compatibility and resource usage, though the claim about RAM usage being huge depends on context and workload.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -103,10 +103,10 @@
         <a href="https://news.ycombinator.com/user?id=buckle8017" class="hnuser">buckle8017</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">This is how android processes work, but it&#x27;s a security problem breaking some ASLR type things.</div>
-      <div class="comment-analysis"><em>Makes a relevant analogy to Android process behavior and notes security implications, though the comment is brief and less detailed.</em></div>
+      <div class="comment-analysis"><em>Makes a relevant comparison to Android process handling and points out security implications, though the comment is brief and less detailed.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -114,10 +114,10 @@
         <a href="https://news.ycombinator.com/user?id=indigodaddy" class="hnuser">indigodaddy</a>
         &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">Your write-up made me think of:<p><a href="https:&#x2F;&#x2F;codesandbox.io&#x2F;blog&#x2F;how-we-clone-a-running-vm-in-2-seconds" rel="nofollow">https:&#x2F;&#x2F;codesandbox.io&#x2F;blog&#x2F;how-we-clone-a-running-vm-in-2-s...</a><p>Are there parallels?</div>
-      <div class="comment-analysis"><em>Poses a question linking to related work, encouraging further exploration but does not provide analysis itself.</em></div>
+      <div class="comment-text">Does this need passthrough or might we be able to leverage PVM with it on a passthrough-less cloud VM&#x2F;VPS?</div>
+      <div class="comment-analysis"><em>Asks a technical question about passthrough requirements, indicating curiosity but not providing evaluative content.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -125,32 +125,43 @@
         <a href="https://news.ycombinator.com/user?id=indigodaddy" class="hnuser">indigodaddy</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> 
       </div>
-      <div class="comment-text">Does this need passthrough or might we be able to leverage PVM with it on a passthrough-less cloud VM&#x2F;VPS?</div>
-      <div class="comment-analysis"><em>Asks a technical question about hardware passthrough requirements, showing engagement but no definitive claim.</em></div>
+      <div class="comment-text">Your write-up made me think of:<p><a href="https:&#x2F;&#x2F;codesandbox.io&#x2F;blog&#x2F;how-we-clone-a-running-vm-in-2-seconds" rel="nofollow">https:&#x2F;&#x2F;codesandbox.io&#x2F;blog&#x2F;how-we-clone-a-running-vm-in-2-s...</a><p>Are there parallels?</div>
+      <div class="comment-analysis"><em>Makes a relevant connection to a similar technology, though it is more of a prompt for discussion than an analysis.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=latortuga" class="hnuser">latortuga</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Similar to sprites.dev?</div>
+      <div class="comment-analysis"><em>Briefly suggests a similarity to another project but lacks detail or explanation.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=handfuloflight" class="hnuser">handfuloflight</a>
-        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">Can you run this in another sandbox? Not sure why you&#x27;d want to... but can you?</div>
-      <div class="comment-analysis"><em>Poses a speculative question about sandbox nesting, showing curiosity but lacking technical detail.</em></div>
+      <div class="comment-analysis"><em>Poses a speculative question about nested sandboxing, showing curiosity but no substantive insight.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jauntywundrkind" class="hnuser">jauntywundrkind</a>
-        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
         <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Mods: can we merge with <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47412812">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47412812</a>?</div>
-      <div class="comment-analysis"><em>This comment is a meta-discussion about thread management and does not contribute to technical analysis.</em></div>
+      <div class="comment-analysis"><em>A meta-comment about merging threads, unrelated to technical discussion or analysis.</em></div>
     </div>
     
 
@@ -162,7 +173,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 02:33 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 04:37 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
