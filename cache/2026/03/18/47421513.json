@@ -20,20 +20,32 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the idea of using file names as input parameters for programs, with mixed reactions. Some users recall historical or technical contexts supporting the concept, while others express concerns about usability, version control, and clarity.",
+    "summary": "The discussion revolves around the concept of using filenames to encode program options, with some users sharing historical context and similar implementations, while others express concerns about maintainability and usability. Opinions vary from appreciating the originality to criticizing the approach as impractical or confusing.",
     "comments": [
       {
-        "id": 47422335,
-        "author": "ycombiredd",
-        "text": "This just gave me a flashback to something I made a long time ago, which was a tool to create a file that was a named pipe - the contents of which were determined by the command in its filename. If I remember correctly (and its embedded man page would seem to validate this memory), the primary impetus for making this tool was to have dynamically generated file content for purposes of enabling a remote process execution over server daemons that did not explicitly allow for it, such as finger, etc, but were intended only to read a specific static file.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;web.archive.org\u0026#x2F;web\u0026#x2F;19991109163128\u0026#x2F;http:\u0026#x2F;\u0026#x2F;www.dfw.net:80\u0026#x2F;~scottvr\u0026#x2F;program-file\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;web.archive.org\u0026#x2F;web\u0026#x2F;19991109163128\u0026#x2F;http:\u0026#x2F;\u0026#x2F;www.dfw.ne...\u003c/a\u003e\u003cp\u003eUsing named pipes in this manner also enabled a hackish method to create server-side dynamic web  content by symlinking index.html to a file created in this manner, which was a secondary motivator, which seems kinda quaint and funny now, but at that time, it wasn\u0026#x27;t very long after just having finally decommed our gopher server, so fingerd was still a thing, Apache was fairly new, and I may still have been trying to convince management that the right move was not from ncsa httpd to Netscape Enteprise Server, but to Apache+mod_ssl.  RSA patent licensing may still have been a thing too. Stronghold vaguely comes to mind, but I digress.\u003cp\u003eYeah, programs that do stuff based on filename, like busybox. Oh, and this long forgotten artifact this article just reminded me of that I managed to find in the Wayback Machine, a tool to mknod a named pipe on a SunOS 4.1.4 machine, to get server-side dynamic content when remotely accessing a daemon that was supposed to return content from a single static file. Ah, memories.",
+        "id": 47423956,
+        "author": "blacklion",
+        "text": "exiftool uses this method (among others) for many years.\nI\u0026#x27;m surprised nobody mentioned this.",
         "indicators": [
-          "thoughtful",
           "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed historical and technical example supporting the concept, showing practical use cases and context, making it highly accurate and insightful."
+        "analysis": "This comment provides a relevant real-world example supporting the article's concept, adding credibility and context."
+      },
+      {
+        "id": 47422335,
+        "author": "ycombiredd",
+        "text": "This just gave me a flashback to something I made a long time ago, which was a tool to create a file that was a named pipe - the contents of which were determined by the command in its filename. If I remember correctly (and its embedded man page would seem to validate this memory), the primary impetus for making this tool was to have dynamically generated file content for purposes of enabling a remote process execution over server daemons that did not explicitly allow for it, such as finger, etc, but were intended only to read a specific static file.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;web.archive.org\u0026#x2F;web\u0026#x2F;19991109163128\u0026#x2F;http:\u0026#x2F;\u0026#x2F;www.dfw.net:80\u0026#x2F;~scottvr\u0026#x2F;program-file\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;web.archive.org\u0026#x2F;web\u0026#x2F;19991109163128\u0026#x2F;http:\u0026#x2F;\u0026#x2F;www.dfw.ne...\u003c/a\u003e\u003cp\u003eUsing named pipes in this manner also enabled a hackish method to create server-side dynamic web  content by symlinking index.html to a file created in this manner, which was a secondary motivator, which seems kinda quaint and funny now, but at that time, it wasn\u0026#x27;t very long after just having finally decommed our gopher server, so fingerd was still a thing, Apache was fairly new, and I may still have been trying to convince management that the right move was not from ncsa httpd to Netscape Enteprise Server, but to Apache+mod_ssl.  RSA patent licensing may still have been a thing too. Stronghold vaguely comes to mind, but I digress.\u003cp\u003eYeah, programs that do stuff based on filename, like busybox. Oh, and this long forgotten artifact this article just reminded me of that I managed to find in the Wayback Machine, a tool to mknod a named pipe on a SunOS 4.1.4 machine, to get server-side dynamic content when remotely accessing a daemon that was supposed to return content from a single static file. Ah, memories.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment offers a detailed historical example and technical insight, enriching the discussion with practical experience."
       },
       {
         "id": 47421809,
@@ -41,12 +53,56 @@
         "text": "It feels wrong but I can\u0026#x27;t quite put my finger on the reason why... It will make version control more hectic, for sure. It also seems to be conflating identification with configuration which seems non-ideal. What about versioning and upgrading? How do I find a \u0026quot;well-known\u0026quot; entry point with a file name of flags? Every read now becomes an expensive find and grep lesson... Yeah, I don\u0026#x27;t like it.",
         "indicators": [
           "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Raises valid concerns about version control and the mixing of identification with configuration, highlighting potential drawbacks."
+      },
+      {
+        "id": 47423482,
+        "author": "applfanboysbgon",
+        "text": "Or you could just use a config file. Many programming languages use something like a .csproj or .toml or whatever which is merely a fancy way of writing CLI arguments for the compiler that will be invoked during the build process; for a random executable it can be even simpler, just write a tiny library that parses a plaintext string into arguments and include it in each of your programs. You can even store multiple configs in one file this way, separated by linebreaks or whatever you choose.\u003cp\u003efoo.exe\u003cp\u003efoo.config\u003cp\u003efoo.config contents:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  --flag1 --flag3\n  --flag2 --flag5 some_param\n\u003c/code\u003e\u003c/pre\u003e\nrun: `foo.exe --config 2`\u003cp\u003eCompared to shell scripts, this is a portable solution that will work across different environments, and compared to including arguments in filenames, it\u0026#x27;s not insane and doesn\u0026#x27;t require duplicating the entire binary to maintain multiple configs. The only merit I see to the filename approach is that it gives you a single file instead of two (if you have exactly one config), but I don\u0026#x27;t think that tradeoff is worth it.",
+        "indicators": [
           "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Provides a practical alternative to the filename approach, emphasizing portability and maintainability advantages."
+      },
+      {
+        "id": 47423553,
+        "author": "krick",
+        "text": "Bonus points for originality, but that\u0026#x27;s really just some crackpot idea.",
+        "indicators": [
+          "emotional",
+          "belligerent"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Dismissive comment lacking constructive critique or evidence, reducing its value in the discussion."
+      },
+      {
+        "id": 47422921,
+        "author": "CrendKing",
+        "text": "Yesterday I found an app that I need to keep my bluetooth headphone from entering sleep mode. It is Sound Keeper: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;veg.by\u0026#x2F;en\u0026#x2F;projects\u0026#x2F;soundkeeper\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;veg.by\u0026#x2F;en\u0026#x2F;projects\u0026#x2F;soundkeeper\u0026#x2F;\u003c/a\u003e. And it uses exactly the same approach talked in this article. For example, normally its filename is SoundKeeper64.exe. But if you rename it to SoundKeeper64AllOpenOnly.exe, it switches behavior to operate on \u0026quot;All\u0026quot; devices with the \u0026quot;OpenOnly\u0026quot; mode.",
+        "indicators": [
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "Raises valid concerns about version control, clarity, and maintainability, highlighting potential drawbacks of the approach in practical software development."
+        "accuracyRank": 6,
+        "analysis": "Supports the article's idea with a concrete example of a real application using filename-based behavior switching."
+      },
+      {
+        "id": 47422844,
+        "author": "japanuspus",
+        "text": "It should be trivial to combine ephemeral options with file name options, which seems like it would be the best of both world.\u003cp\u003eWith some agreement on mapping (maybe just `%HH` for anything outside `A-Z a-z 0-9 . _ -`), this could be completely standardized and made part of standard library argument parsers.\u003cp\u003eI could see a bunch of my utility scripts replaced with a python script and a `uv` shebang if this was in argparse.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Suggests a hybrid approach and potential standardization, showing forward-thinking and constructive input."
       },
       {
         "id": 47421847,
@@ -54,67 +110,32 @@
         "text": "Seems a lot easier to have a --help flag that lists all of the options and their function. That is self-documenting (assuming the descriptions are useful) and helps with discovery. Changing the name of the file to foo--bar.exe doesn\u0026#x27;t seem any easier than writing foo.exe --bar",
         "indicators": [
           "thoughtful",
-          "intelligent",
-          "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "Offers a practical alternative emphasizing usability and discoverability, reinforcing traditional CLI design principles over the proposed method."
-      },
-      {
-        "id": 47422327,
-        "author": "tehbeard",
-        "text": "This is the classname soup mess of TailwindCSS (when people don\u0026#x27;t precompile that away) manifested into the CLI...",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 4,
-        "analysis": "Provides a critical analogy to a known complexity issue, expressing skepticism about the approach's clarity but without deep technical elaboration."
-      },
-      {
-        "id": 47422636,
-        "author": "runlaszlorun",
-        "text": "I\u0026#x27;ll confess to only have skimmed TFA but I love this idea.",
-        "indicators": [
-          "emotional",
-          "useless"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Expresses a positive but superficial reaction without engaging in detailed analysis or critique."
-      },
-      {
-        "id": 47422445,
-        "author": "r4ppz",
-        "text": "this is new to me tbh",
-        "indicators": [
-          "emotional",
-          "useless"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Simply states unfamiliarity with the concept, adding little substantive content to the discussion."
-      },
-      {
-        "id": 47421872,
-        "author": "abrookewood",
-        "text": "You could skip the underlying mechanism by renaming Claude.exe and then it just passes the name as a new chat.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Suggests a practical implementation detail related to the article's concept, though somewhat brief and lacking broader context."
-      },
-      {
-        "id": 47421764,
-        "author": "Quarrelsome",
-        "text": "this is satire, right?",
-        "indicators": [
-          "emotional",
-          "useless"
-        ],
         "accuracyRank": 8,
-        "analysis": "Questions the seriousness of the article without providing constructive input or analysis."
+        "analysis": "Advocates for conventional CLI help flags, highlighting usability and discoverability advantages over filename encoding."
+      },
+      {
+        "id": 47422898,
+        "author": "eternauta3k",
+        "text": "I love it because it\u0026#x27;s horrible, but in real life I\u0026#x27;d just put the options inside the script (which is what you do anyway when you\u0026#x27;re too lazy to import argparse).",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Expresses a humorous but practical preference for embedding options in scripts rather than using filename tricks."
+      },
+      {
+        "id": 47423310,
+        "author": "endymion-light",
+        "text": "this feels slightly insane and horrible but at the same time I can definitely see me using this for a phd project",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Acknowledges the unconventional nature of the idea while recognizing its potential experimental value."
       }
     ]
   }

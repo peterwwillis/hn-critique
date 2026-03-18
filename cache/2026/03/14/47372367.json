@@ -9,44 +9,77 @@
     "rating": "unavailable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around technical insights and personal experiences related to JPEG compression and image formats. Participants share knowledge about frequency decomposition, comparisons with other compression methods, and preferences for newer image formats like WebP and AVIF.",
+    "summary": "The discussion revolves around the technical aspects of JPEG compression, particularly the Discrete Cosine Transform (DCT) and its visual artifacts, with some users sharing personal experiments and insights on related image formats and encoding techniques. There is also appreciation for the article's clarity, alongside some technical critiques and suggestions for newer image formats.",
     "comments": [
       {
-        "id": 47423052,
-        "author": "danwills",
-        "text": "Having played a bit with Discrete FFT (with FFTW on 2D images in a Shake plugin we made at work ages ago) makes the DCT coefficients make so much more sense! I really wonder whether the frequency-decomposition could happen at multiple scale levels though? Sounds slightly like wavelets and maybe that\u0026#x27;s how jpeg2000 works?.. Yeah I looked it up, uses DWT so it kinda sounds like it! Shame it hasn\u0026#x27;t taken off so far!? Or maybe there\u0026#x27;s an even better way?",
+        "id": 47423205,
+        "author": "chromakode",
+        "text": "The DCT is a cool primitive. By extracting the low frequency coefficients, you can get a compact blurry representation of an image. This is used by preload thumbnail algorithms like blurhash and thumbhash. It\u0026#x27;s also used by some image watermarking techniques to target changes to a detail level that will be less affected by scaling or re-encoding.\u003cp\u003eI made a notebook a few years back which lets you play with \u0026#x2F; filter the DCT coefficients of an image: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;observablehq.com\u0026#x2F;d\u0026#x2F;167d8f3368a6d602\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;observablehq.com\u0026#x2F;d\u0026#x2F;167d8f3368a6d602\u003c/a\u003e",
         "indicators": [
-          "thoughtful",
           "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment shows a solid understanding of frequency domain techniques and correctly connects JPEG compression to wavelet-based methods like JPEG2000, reflecting accurate and insightful knowledge."
+        "analysis": "This comment accurately explains the role of DCT in image compression and its practical applications, providing a useful resource for further exploration."
+      },
+      {
+        "id": 47423524,
+        "author": "dipflow",
+        "text": "Whenever I see those \u0026#x27;blocky\u0026#x27; artifacts on a low-quality image, I used to just think of it as \u0026#x27;bad tech.\u0026#x27; After reading this, it\u0026#x27;s cool to realize you\u0026#x27;re actually seeing the 8x8 DCT grid itself. You\u0026#x27;re literally seeing the math break down because there wasn\u0026#x27;t enough bit-budget to describe those high-frequency sine waves. It’s like looking at the brushstrokes on a digital painting.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment insightfully connects visual JPEG artifacts to the underlying DCT process, accurately describing the cause of blockiness in compressed images."
+      },
+      {
+        "id": 47423771,
+        "author": "petercooper",
+        "text": "I\u0026#x27;ve been working on a pure Ruby JPEG encoder and a bug led me to an effect I wanted. The output looked just like the \u0026quot;crunchy\u0026quot; JPEGs my 2000-era Kodak digital camera used to put out, but it turns out the encoder wasn\u0026#x27;t following the zig-zag pattern properly but just going in raster order. I\u0026#x27;m now on a quest to figure out if some early digital cameras had similar encoding bugs because their JPEG output was often horrendous compared to what you\u0026#x27;d expect for the filesize.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment provides a practical perspective on JPEG encoding quirks and historical encoding bugs, which is plausible and adds depth to the discussion."
+      },
+      {
+        "id": 47423052,
+        "author": "danwills",
+        "text": "Having played a bit with Discrete FFT (with FFTW on 2D images in a Shake plugin we made at work ages ago) makes the DCT coefficients make so much more sense! I really wonder whether the frequency-decomposition could happen at multiple scale levels though? Sounds slightly like wavelets and maybe that\u0026#x27;s how jpeg2000 works?.. Yeah I looked it up, uses DWT so it kinda sounds like it! Shame it hasn\u0026#x27;t taken off so far!? Or maybe there\u0026#x27;s an even better way?",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "The comment correctly relates DCT to FFT and wavelet transforms, showing understanding of frequency decomposition and referencing JPEG2000's use of DWT."
+      },
+      {
+        "id": 47423803,
+        "author": "vanderZwan",
+        "text": "This is a really great article, and I really appreciate how it explains the different parts of how JPEG works with so much clarity and interactive visualizations.\u003cp\u003eHowever, I do have to give one bit of critique: it also makes my laptop fans spin like crazy even when nothing is happening at all.\u003cp\u003eNow, this is not intended as a critique of the author. I\u0026#x27;m assuming that she used some framework to get the results out quickly, and that there is a bug in how that framework handles events and reactivity. But it would still be nice if whatever causes this issue could be fixed. It would be sad if the website had the same issue on mobile and caused my phone battery to drain quickly when 90% of the time is spent reading text and watching graphics that don\u0026#x27;t change.",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "The comment offers positive feedback on the article's clarity but raises a valid technical concern about performance issues likely related to the website's implementation."
       },
       {
         "id": 47422778,
         "author": "tomalaci",
         "text": "I usually have a script\u0026#x2F;alias cmd to automatically convert images to webp. The webp format has pretty much replaced jpg\u0026#x2F;jpeg (lacks transparency\u0026#x2F;alpha support) and png (no compression) formats for me.\u003cp\u003eThere is also AVIF format which is newer and better but it needs to still mature a bit with better support\u0026#x2F;compatability.\u003cp\u003eIf you are hosting images it is nice to use avif and fallback to webp.",
         "indicators": [
-          "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment provides practical advice on image format usage and correctly notes the advantages and limitations of JPEG, WebP, and AVIF formats, reflecting current trends in image compression."
-      },
-      {
-        "id": 47423157,
-        "author": "tmilard",
-        "text": "Thanks for the sharing :  I now understood more how sampling of image works. And going from RGB to lunimesence+chroma works. interesting and usefull",
-        "indicators": [
-          "emotional",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment expresses gratitude and indicates a basic understanding of color space transformation in image compression, though it contains a minor typo and lacks technical depth."
+        "accuracyRank": 6,
+        "analysis": "The comment correctly notes the advantages of WebP and AVIF formats over JPEG and PNG, reflecting current trends in image format adoption."
       },
       {
         "id": 47423078,
@@ -54,11 +87,43 @@
         "text": "So the idea behind JPEG is the same as behind MP3: we filter out what we don\u0026#x27;t perceive.\u003cp\u003eI wonder if other species would look at our images or listen to our sounds and register with horror all the gaping holes everywhere.",
         "indicators": [
           "thoughtful",
-          "emotional",
-          "likely-true"
+          "emotional"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment accurately summarizes the perceptual basis of lossy compression but adds a speculative and humorous remark about other species, blending fact with lighthearted conjecture."
+        "accuracyRank": 7,
+        "analysis": "The comment makes a thoughtful analogy between JPEG and MP3 compression but speculates humorously about other species' perception without evidence."
+      },
+      {
+        "id": 47423157,
+        "author": "tmilard",
+        "text": "Thanks for the sharing :  I now understood more how sampling of image works. And going from RGB to lunimesence+chroma works. interesting and usefull",
+        "indicators": [
+          "emotional",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment expresses gratitude and indicates a basic understanding of color space conversion, though it contains a minor typo and lacks technical depth."
+      },
+      {
+        "id": 47423234,
+        "author": "meindnoch",
+        "text": "What would happen if the Cr and Cb channels used different chroma subsampling patterns? E.g. Cr would use the 4:2:0 pattern, and Cb would use the 4:1:1 pattern.",
+        "indicators": [
+          "intelligent",
+          "thoughtful"
+        ],
+        "accuracyRank": 9,
+        "analysis": "The comment raises a technically interesting question about chroma subsampling variations, showing curiosity though it does not provide an answer."
+      },
+      {
+        "id": 47423886,
+        "author": "qy-mj",
+        "text": "Wow, that\u0026#x27;s amazing! How did you do that? Where do you learn it?",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 10,
+        "analysis": "This comment is purely emotional praise and a question without adding substantive content or analysis."
       },
       {
         "id": 47422786,
@@ -68,8 +133,8 @@
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "This comment reports a technical issue related to website functionality dependent on WebGL, which is plausible but not directly related to JPEG compression discussion."
+        "accuracyRank": 11,
+        "analysis": "The comment reports a technical issue with the website related to WebGL dependency, which is plausible but not deeply analyzed."
       },
       {
         "id": 47422728,
@@ -78,8 +143,8 @@
         "indicators": [
           "useless"
         ],
-        "accuracyRank": 6,
-        "analysis": "This comment merely repeats an error message without additional insight or context, contributing little to the discussion."
+        "accuracyRank": 12,
+        "analysis": "This comment merely repeats an error message without additional context or constructive input."
       },
       {
         "id": 47422626,
@@ -88,8 +153,8 @@
         "indicators": [
           "useless"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment only references a previous post without adding new information or analysis, making it unhelpful for the current discussion."
+        "accuracyRank": 13,
+        "analysis": "This comment provides a link to a previous post but adds no new information or analysis."
       }
     ]
   }

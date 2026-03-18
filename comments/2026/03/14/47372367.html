@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">126 points</span>
+        <span class="score">214 points</span>
         by <a href="https://news.ycombinator.com/user?id=vinhnx" class="hnuser">vinhnx</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/14/47372367.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around technical insights and personal experiences related to JPEG compression and image formats. Participants share knowledge about frequency decomposition, comparisons with other compression methods, and preferences for newer image formats like WebP and AVIF.</p>
+      <p>The discussion revolves around the technical aspects of JPEG compression, particularly the Discrete Cosine Transform (DCT) and its visual artifacts, with some users sharing personal experiments and insights on related image formats and encoding techniques. There is also appreciation for the article&#39;s clarity, alongside some technical critiques and suggestions for newer image formats.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,79 +56,145 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=danwills" class="hnuser">danwills</a>
+        <a href="https://news.ycombinator.com/user?id=chromakode" class="hnuser">chromakode</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">The DCT is a cool primitive. By extracting the low frequency coefficients, you can get a compact blurry representation of an image. This is used by preload thumbnail algorithms like blurhash and thumbhash. It&#x27;s also used by some image watermarking techniques to target changes to a detail level that will be less affected by scaling or re-encoding.<p>I made a notebook a few years back which lets you play with &#x2F; filter the DCT coefficients of an image: <a href="https:&#x2F;&#x2F;observablehq.com&#x2F;d&#x2F;167d8f3368a6d602" rel="nofollow">https:&#x2F;&#x2F;observablehq.com&#x2F;d&#x2F;167d8f3368a6d602</a></div>
+      <div class="comment-analysis"><em>This comment accurately explains the role of DCT in image compression and its practical applications, providing a useful resource for further exploration.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dipflow" class="hnuser">dipflow</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Whenever I see those &#x27;blocky&#x27; artifacts on a low-quality image, I used to just think of it as &#x27;bad tech.&#x27; After reading this, it&#x27;s cool to realize you&#x27;re actually seeing the 8x8 DCT grid itself. You&#x27;re literally seeing the math break down because there wasn&#x27;t enough bit-budget to describe those high-frequency sine waves. It’s like looking at the brushstrokes on a digital painting.</div>
+      <div class="comment-analysis"><em>The comment insightfully connects visual JPEG artifacts to the underlying DCT process, accurately describing the cause of blockiness in compressed images.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=petercooper" class="hnuser">petercooper</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I&#x27;ve been working on a pure Ruby JPEG encoder and a bug led me to an effect I wanted. The output looked just like the &quot;crunchy&quot; JPEGs my 2000-era Kodak digital camera used to put out, but it turns out the encoder wasn&#x27;t following the zig-zag pattern properly but just going in raster order. I&#x27;m now on a quest to figure out if some early digital cameras had similar encoding bugs because their JPEG output was often horrendous compared to what you&#x27;d expect for the filesize.</div>
+      <div class="comment-analysis"><em>This comment provides a practical perspective on JPEG encoding quirks and historical encoding bugs, which is plausible and adds depth to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=danwills" class="hnuser">danwills</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Having played a bit with Discrete FFT (with FFTW on 2D images in a Shake plugin we made at work ages ago) makes the DCT coefficients make so much more sense! I really wonder whether the frequency-decomposition could happen at multiple scale levels though? Sounds slightly like wavelets and maybe that&#x27;s how jpeg2000 works?.. Yeah I looked it up, uses DWT so it kinda sounds like it! Shame it hasn&#x27;t taken off so far!? Or maybe there&#x27;s an even better way?</div>
-      <div class="comment-analysis"><em>This comment shows a solid understanding of frequency domain techniques and correctly connects JPEG compression to wavelet-based methods like JPEG2000, reflecting accurate and insightful knowledge.</em></div>
+      <div class="comment-analysis"><em>The comment correctly relates DCT to FFT and wavelet transforms, showing understanding of frequency decomposition and referencing JPEG2000&#39;s use of DWT.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=vanderZwan" class="hnuser">vanderZwan</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">This is a really great article, and I really appreciate how it explains the different parts of how JPEG works with so much clarity and interactive visualizations.<p>However, I do have to give one bit of critique: it also makes my laptop fans spin like crazy even when nothing is happening at all.<p>Now, this is not intended as a critique of the author. I&#x27;m assuming that she used some framework to get the results out quickly, and that there is a bug in how that framework handles events and reactivity. But it would still be nice if whatever causes this issue could be fixed. It would be sad if the website had the same issue on mobile and caused my phone battery to drain quickly when 90% of the time is spent reading text and watching graphics that don&#x27;t change.</div>
+      <div class="comment-analysis"><em>The comment offers positive feedback on the article&#39;s clarity but raises a valid technical concern about performance issues likely related to the website&#39;s implementation.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=tomalaci" class="hnuser">tomalaci</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I usually have a script&#x2F;alias cmd to automatically convert images to webp. The webp format has pretty much replaced jpg&#x2F;jpeg (lacks transparency&#x2F;alpha support) and png (no compression) formats for me.<p>There is also AVIF format which is newer and better but it needs to still mature a bit with better support&#x2F;compatability.<p>If you are hosting images it is nice to use avif and fallback to webp.</div>
-      <div class="comment-analysis"><em>This comment provides practical advice on image format usage and correctly notes the advantages and limitations of JPEG, WebP, and AVIF formats, reflecting current trends in image compression.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=tmilard" class="hnuser">tmilard</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Thanks for the sharing :  I now understood more how sampling of image works. And going from RGB to lunimesence+chroma works. interesting and usefull</div>
-      <div class="comment-analysis"><em>This comment expresses gratitude and indicates a basic understanding of color space transformation in image compression, though it contains a minor typo and lacks technical depth.</em></div>
+      <div class="comment-analysis"><em>The comment correctly notes the advantages of WebP and AVIF formats over JPEG and PNG, reflecting current trends in image format adoption.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=bambax" class="hnuser">bambax</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> 
       </div>
       <div class="comment-text">So the idea behind JPEG is the same as behind MP3: we filter out what we don&#x27;t perceive.<p>I wonder if other species would look at our images or listen to our sounds and register with horror all the gaping holes everywhere.</div>
-      <div class="comment-analysis"><em>This comment accurately summarizes the perceptual basis of lossy compression but adds a speculative and humorous remark about other species, blending fact with lighthearted conjecture.</em></div>
+      <div class="comment-analysis"><em>The comment makes a thoughtful analogy between JPEG and MP3 compression but speculates humorously about other species&#39; perception without evidence.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=tmilard" class="hnuser">tmilard</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Thanks for the sharing :  I now understood more how sampling of image works. And going from RGB to lunimesence+chroma works. interesting and usefull</div>
+      <div class="comment-analysis"><em>This comment expresses gratitude and indicates a basic understanding of color space conversion, though it contains a minor typo and lacks technical depth.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=meindnoch" class="hnuser">meindnoch</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">What would happen if the Cr and Cb channels used different chroma subsampling patterns? E.g. Cr would use the 4:2:0 pattern, and Cb would use the 4:1:1 pattern.</div>
+      <div class="comment-analysis"><em>The comment raises a technically interesting question about chroma subsampling variations, showing curiosity though it does not provide an answer.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=qy-mj" class="hnuser">qy-mj</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">Wow, that&#x27;s amazing! How did you do that? Where do you learn it?</div>
+      <div class="comment-analysis"><em>This comment is purely emotional praise and a question without adding substantive content or analysis.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=NooneAtAll3" class="hnuser">NooneAtAll3</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #11
         &nbsp;|&nbsp;
         <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">&gt; Application error: a client-side exception has occurred (see the browser console for more information).<p>seems like website doesn&#x27;t work without webgl enabled... why?</div>
-      <div class="comment-analysis"><em>This comment reports a technical issue related to website functionality dependent on WebGL, which is plausible but not directly related to JPEG compression discussion.</em></div>
+      <div class="comment-analysis"><em>The comment reports a technical issue with the website related to WebGL dependency, which is plausible but not deeply analyzed.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jbverschoor" class="hnuser">jbverschoor</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #12
         &nbsp;|&nbsp;
         <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Application error: a client-side exception has occurred (see the browser console for more information).</div>
-      <div class="comment-analysis"><em>This comment merely repeats an error message without additional insight or context, contributing little to the discussion.</em></div>
+      <div class="comment-analysis"><em>This comment merely repeats an error message without additional context or constructive input.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=7777777phil" class="hnuser">7777777phil</a>
-        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;rank #13
         &nbsp;|&nbsp;
         <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Already posted here earlier: <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47376119">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47376119</a></div>
-      <div class="comment-analysis"><em>This comment only references a previous post without adding new information or analysis, making it unhelpful for the current discussion.</em></div>
+      <div class="comment-analysis"><em>This comment provides a link to a previous post but adds no new information or analysis.</em></div>
     </div>
     
 
@@ -140,7 +206,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 08:53 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 10:59 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
