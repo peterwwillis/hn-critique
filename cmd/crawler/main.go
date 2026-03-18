@@ -34,6 +34,8 @@ const (
 	storyDelay = 2 * time.Second
 )
 
+var cacheCheckedByStoryID = make(map[int]bool)
+
 func main() {
 	var (
 		storyCount   = flag.Int("stories", defaultStoryCount, "number of top stories to fetch")
@@ -180,17 +182,19 @@ func main() {
 				CommentCount: item.Descendants,
 			}
 
-			cached, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
-			if cacheErr != nil {
-				log.Printf("  ⚠  cache load failed: %v", cacheErr)
-			} else if cached != nil {
-				cachedAnalysisByStoryID[story.ID] = cached
-				// Only reuse a cached successful critique when not preparing input.
-				// In -prepare-input mode we always want to fetch and store raw inputs,
-				// without pre-populating story.Critique from prior analysis.
-				if crit := successfulCachedArticleCritique(cached); crit != nil && !*prepareInput {
-					story.Critique = crit
-					log.Printf("  Using cached successful article analysis for story %d (skip article fetch and re-analysis).", story.ID)
+			if !*prepareInput {
+				cached, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
+				if cacheErr != nil {
+					log.Printf("  ⚠  cache load failed: %v", cacheErr)
+				} else if cached != nil {
+					cachedAnalysisByStoryID[story.ID] = cached
+					// Only reuse a cached successful critique when not preparing input.
+					// In -prepare-input mode we always want to fetch and store raw inputs,
+					// without pre-populating story.Critique from prior analysis.
+					if crit := successfulCachedArticleCritique(cached); crit != nil && !*prepareInput {
+						story.Critique = crit
+						log.Printf("  Using cached successful article analysis for story %d (skip article fetch and re-analysis).", story.ID)
+					}
 				}
 			}
 
@@ -252,7 +256,7 @@ func main() {
 		if aiProvider != nil {
 			log.Printf("Processing AI analysis for story %d…", story.ID)
 			cached := cachedAnalysisByStoryID[story.ID]
-			if cached == nil {
+			if cached == nil && !cacheCheckedByStoryID[story.ID] {
 				loaded, cacheErr := generator.LoadCache(*outputDir, story.ID, story.Time)
 				if cacheErr != nil {
 					log.Printf("  ⚠  cache load failed: %v", cacheErr)
@@ -260,6 +264,7 @@ func main() {
 					cached = loaded
 					cachedAnalysisByStoryID[story.ID] = loaded
 				}
+				cacheCheckedByStoryID[story.ID] = true
 			}
 
 			// Article critique.
