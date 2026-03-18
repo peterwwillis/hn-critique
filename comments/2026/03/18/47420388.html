@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">101 points</span>
+        <span class="score">115 points</span>
         by <a href="https://news.ycombinator.com/user?id=y1n0" class="hnuser">y1n0</a>
-        <span class="age">10 hours ago</span>
+        <span class="age">12 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/18/47420388.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47420388" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on a detailed write-up about eBPF spinlock debugging in the Linux kernel, highlighting the complexity and challenges of static verification in kernel programming. Commenters appreciate the technical depth and clarity, while also suggesting potential improvements and noting the added complexity from container orchestration systems like Kubernetes.</p>
+      <p>The discussion centers around a detailed write-up on eBPF spinlock issues in the Linux kernel, with commenters appreciating the technical depth and complexity of the topic. Some comments highlight the challenges of kernel programming and verification, while others touch on related infrastructure complexity and observability.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -62,7 +62,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">eBPF spinlock debugging is exactly the kind of kernel work that&#x27;s simultaneously terrifying and fascinating. Spinlocks in eBPF programs are particularly tricky because you&#x27;re operating in a context where you can&#x27;t sleep, can&#x27;t take mutexes, and the verifier needs to statically prove your lock usage is correct before the program even runs.<p>The verification challenge is the interesting part. The kernel verifier has to ensure that every path through the eBPF program properly acquires and releases locks, which is essentially solving a subset of the halting problem through conservative static analysis. False positives (rejecting valid programs) are acceptable; false negatives (allowing deadlocks) are not.</div>
-      <div class="comment-analysis"><em>This comment accurately describes the complexity of eBPF spinlock verification and the challenges of static analysis in kernel programming, providing a nuanced and technically sound perspective.</em></div>
+      <div class="comment-analysis"><em>This comment provides a technically accurate and insightful explanation of the complexity of eBPF spinlock debugging and the kernel verifier&#39;s role, reflecting a deep understanding of the subject.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -73,40 +73,73 @@
         <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Excellently explained writeup. Kudos on explaining the shockingly multiple kernel bugs in a (a) simple (b) interesting way.<p>TL;DR the main issue arises because the context switch and sampling event both need to be written to the `ringBuffer` eBPF map. sampling event lock needs to be taken in an NMI which is by definition non-maskable. This leads to lock contention and recursive locks etc as explained when context switch handler tries to do the same thing.<p>Why not have context switches write to ringBuffer1 and sampling events write to ringBuffer2 (i.e. use different ringBuffers). This way buggy kernels should work properly too !?</div>
-      <div class="comment-analysis"><em>This comment offers a detailed explanation of the specific kernel bug and suggests a plausible workaround, demonstrating a good understanding of the problem and potential solutions.</em></div>
+      <div class="comment-analysis"><em>The comment summarizes the core issue well and proposes a plausible solution to reduce lock contention, showing thoughtful engagement with the technical content.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=alecco" class="hnuser">alecco</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Good writeup.<p>It is very confusing how Linux source code has macros with names that make them look like functions. At first view it looks like &quot;flags&quot; is passed uninitialized, but it&#x27;s a temporary save variable used by a macro. Sigh.</div>
+      <div class="comment-analysis"><em>This comment accurately points out a common source of confusion in Linux kernel code related to macros, reflecting a practical understanding of kernel development challenges.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=legedemon" class="hnuser">legedemon</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">Thanks for the great write-up with links to many more interesting articles and code! I have long stopped working on Linux kernel but deep dives like these are very exciting reading.</div>
-      <div class="comment-analysis"><em>While this comment is mostly appreciative and lacks technical detail, it reflects genuine engagement and interest in the topic, adding a positive tone to the discussion.</em></div>
+      <div class="comment-analysis"><em>This comment expresses appreciation and personal reflection but adds little technical analysis or critique.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Boulos00191" class="hnuser">Boulos00191</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">observability is underrated. you can&#x27;t fix what you can&#x27;t see</div>
+      <div class="comment-analysis"><em>A concise and generally accepted statement emphasizing the importance of observability in debugging and system reliability.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Reed10119039" class="hnuser">Reed10119039</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">docker compose for dev, k8s for prod. don&#x27;t overcomplicate it</div>
+      <div class="comment-analysis"><em>A practical but somewhat generic comment about development and production environments, only tangentially related to the main technical discussion.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=stupefy" class="hnuser">stupefy</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">It is a fantastic write up</div>
-      <div class="comment-analysis"><em>This brief comment expresses positive sentiment but does not contribute any substantive analysis or technical insight.</em></div>
+      <div class="comment-analysis"><em>A brief compliment without substantive content or analysis.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jamesvzb" class="hnuser">jamesvzb</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">kubernetes makes this 10x more complicated than it needs to be</div>
-      <div class="comment-analysis"><em>This comment introduces an external factor complicating the issue but lacks explanation or evidence, making it a less informative contribution.</em></div>
+      <div class="comment-analysis"><em>A subjective opinion that Kubernetes adds complexity, which is a common sentiment but lacks detailed explanation or evidence here.</em></div>
     </div>
     
 
@@ -118,7 +151,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 10:59 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 13:16 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

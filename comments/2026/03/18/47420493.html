@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Launch an autonomous AI agent with sandboxed execution in 2 lines of code | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://amaiya.github.io/onprem/examples_agent.html" rel="noreferrer noopener">Launch an autonomous AI agent with sandboxed execution in 2 lines of code</a>
+        <span class="sitebit"> (amaiya.github.io)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">47 points</span>
+        by <a href="https://news.ycombinator.com/user?id=wiseprobe" class="hnuser">wiseprobe</a>
+        <span class="age">12 hours ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/18/47420493.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47420493" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion centers on the implementation details and practical challenges of launching autonomous AI agents with sandboxed execution, with some comments critiquing the approach&#39;s efficiency and others highlighting broader issues like enterprise integration and future cost considerations. There is also a brief off-topic comment about the automotive industry&#39;s shift to electric vehicles.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=TheDong" class="hnuser">TheDong</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I was curious, so I dug a bit.<p>Under the hood it&#x27;s effectively running:<p><pre><code>    docker run --rm -w $PWD:&#x2F;workspace \
+      python:3.11-slim \
+      pip install -q patchpal &amp;&amp; \
+      &lt;command&gt;
+</code></pre>
+Which cool, great, I sure love &quot;pip install&quot;ing every time instead of just baking a single container image with it already installed.<p>This isn&#x27;t any sort of fancy or interesting sandboxing, this is shelling out to &quot;docker run&quot;, and not even using docker as well as it could.<p>Quoting from the linked page:<p>&gt; The tradeoff is ~5-10 seconds of container startup overhead<p>Sure, maybe it&#x27;s 5-10 seconds if you use containers wrong. Unpacking a root filesystem and spinning up a clean mount namespace on linux is a few ms, and taking more than a second means something is going wrong, like &quot;pip install&quot;ing at runtime instead of buildtime for some reason.<p>I can spin up a full linux vm and run some code in quicker than 5 seconds.</div>
+      <div class="comment-analysis"><em>This comment provides a detailed technical critique of the implementation, correctly identifying inefficiencies and misconceptions about container startup times.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=internet_points" class="hnuser">internet_points</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">The problem isn&#x27;t getting an AI agent running in a sandbox. That&#x27;s trivial. The problem is getting an existing enterprise project runnable inside the sandbox too, with no access to production keys or data or even test-db-that-is-actually-just-a-copy-of-prod, but with access to mock versions of all the various microservices and api&#x27;s that the project depends on.</div>
+      <div class="comment-analysis"><em>This comment insightfully highlights a significant practical challenge beyond just sandboxing AI agents, emphasizing enterprise security and testing concerns.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=davispeck" class="hnuser">davispeck</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">This feels less like &quot;agents&quot; and more like a controlled generate → execute → fix loop.<p>Works great when you have a clear verification signal (tests passing), but what drives convergence when that signal isn’t well-defined?</div>
+      <div class="comment-analysis"><em>The comment provides a conceptual perspective on how the AI agent operates, correctly noting the importance of verification signals for convergence.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=voidUpdate" class="hnuser">voidUpdate</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Couldn&#x27;t you just do AgentExecutor(...).run(task=&quot;...&quot;) and launch an autonomous AI in only one line?</div>
+      <div class="comment-analysis"><em>This comment is a concise question about usage, likely accurate but less substantive than critiques or broader insights.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=wsesamemr81" class="hnuser">wsesamemr81</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">costs will come down. they always do. build for the future not today&#x27;s pricing</div>
+      <div class="comment-analysis"><em>This comment is optimistic but vague, offering a common platitude without technical detail or direct relevance to the implementation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=d0gemn45" class="hnuser">d0gemn45</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">costs will come down. they always do. build for the future not today&#x27;s pricing</div>
+      <div class="comment-analysis"><em>This is a duplicate of the previous comment, providing no additional insight.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=est" class="hnuser">est</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">self-plug here.<p>Launch an AI agent to operate on production servers&#x2F;sql safely using tmux<p><a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47411242">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47411242</a></div>
+      <div class="comment-analysis"><em>This comment promotes a related project but lacks detailed discussion or critique relevant to the main topic.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=DDxrp21" class="hnuser">DDxrp21</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Impressive results. Would be curious about the long-term performance.</div>
+      <div class="comment-analysis"><em>A brief positive comment expressing curiosity about future performance; adds little technical analysis.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=phoenix027745" class="hnuser">phoenix027745</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">the rag approach works better than people think if you get the chunking right</div>
+      <div class="comment-analysis"><em>This comment references a specific technique (rag) with a valid point about chunking, but lacks context for full evaluation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=petesergeant" class="hnuser">petesergeant</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">If you want sandboxed access to git, Slack, Gmail, etc, I built <a href="https:&#x2F;&#x2F;agentblocks.ai" rel="nofollow">https:&#x2F;&#x2F;agentblocks.ai</a></div>
+      <div class="comment-analysis"><em>This is a promotional comment about a related tool, providing a useful resource but not engaging deeply with the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=bubblerme" class="hnuser">bubblerme</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">The timing of killing EVs is particularly bad. The global market is clearly moving toward electrification regardless of what any single manufacturer does. BYD, Tesla, and the Chinese EV makers are not slowing down. Every year Honda delays, the gap in battery technology, software integration, and manufacturing cost efficiency widens.<p>What makes this shortsighted is that EV development isn&#x27;t just about the car — it&#x27;s about building the software and battery supply chain competence that will define the next 20 years of automotive. You can&#x27;t pause that for a few years and catch up later. The institutional knowledge, supplier relationships, and engineering talent move to whoever is actively building.<p>This feels like the Kodak pattern: a profitable incumbent deciding the future can wait because the present is still comfortable.</div>
+      <div class="comment-analysis"><em>Though off-topic, this comment offers a well-reasoned analogy about industry disruption and innovation risk.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-18 13:16 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+
