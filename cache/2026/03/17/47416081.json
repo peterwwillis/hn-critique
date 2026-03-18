@@ -2,29 +2,29 @@
   "story_id": 47416081,
   "generated_at": "",
   "critique": {
-    "summary": "The article announces the open source release of Edge.js, a JavaScript runtime designed to run Node.js applications safely inside a WebAssembly sandbox. Edge.js aims to provide full Node.js compatibility with improved security and startup times compared to container-based solutions, leveraging WebAssembly and WASIX for sandboxing unsafe system calls and native modules.",
+    "summary": "The article introduces Edge.js, an open-source JavaScript runtime designed to safely run Node.js workloads inside a WebAssembly sandbox. It emphasizes full Node.js compatibility, improved security through sandboxing unsafe operations, and better startup and runtime performance compared to container-based solutions. The article also compares Edge.js to other runtimes and explains its architecture and performance goals.",
     "mainPoints": [
-      "Edge.js allows running unmodified Node.js applications and native modules safely sandboxed using WebAssembly and WASIX.",
-      "It preserves full Node.js compatibility (targeting Node.js v24) and uses the same dependencies as Node.js for consistent behavior.",
-      "Edge.js runs JavaScript engines natively and isolates only unsafe parts like system calls, improving performance over running V8 inside WebAssembly.",
-      "The runtime supports major Node.js frameworks such as Next.js and Astro without modification and commits to fixing compatibility bugs quickly.",
-      "Performance is currently about 5-20% slower than native Node.js but with plans to improve startup times and runtime speed.",
-      "Edge.js was developed with significant assistance from AI tools like GPT-5.4 and OpenAI Codex, accelerating development.",
-      "The project aims to offer a more compatible and efficient alternative to other edge runtimes like Deno, Bun, and WinterCG, which have compatibility or fragmentation issues."
+      "Edge.js runs Node.js applications safely inside a WebAssembly sandbox using WASIX for system call isolation.",
+      "It preserves full Node.js compatibility (targeting Node.js v24) and supports native modules via NAPI.",
+      "Edge.js achieves faster startup times and higher density than container-based Node.js deployments.",
+      "The runtime uses pluggable JavaScript engines (V8, JavaScriptCore, QuickJS) and isolates only unsafe parts like OS system calls.",
+      "Edge.js currently runs at about 5-30% slower than native Node.js but plans significant performance improvements.",
+      "The project was accelerated by AI tools like GPT-5.4 and OpenAI Codex.",
+      "Edge.js aims to avoid fragmentation caused by alternative edge runtimes like WinterCG by supporting existing Node.js frameworks without modification."
     ],
-    "truthfulness": "The claims in the article are largely accurate based on available information about Edge.js and Wasmer's technology. Wasmer is a known company specializing in WebAssembly runtimes, and the approach of sandboxing Node.js workloads using WebAssembly and WASIX is technically plausible and aligns with current trends in secure, serverless computing. The compatibility claims are supported by detailed test results comparing Edge.js with other runtimes, which appear consistent with known limitations of those runtimes. The performance figures and architectural explanations are reasonable and reflect the trade-offs inherent in sandboxing and native engine integration. The use of AI tools for development acceleration is plausible but anecdotal and not independently verifiable. Overall, the article provides a credible overview of Edge.js with technical depth and transparency about current limitations and future plans.",
+    "truthfulness": "The claims in the article are largely accurate based on publicly available information about Edge.js and Wasmer's technology. Edge.js is indeed an open-source project by Wasmer designed to run Node.js workloads sandboxed with WebAssembly, preserving compatibility via NAPI and WASIX. The performance figures and architectural explanations align with known technical constraints and trade-offs of running Node.js in WebAssembly environments. The comparison to other runtimes like Deno and Bun is consistent with their documented capabilities. The article is authored by the Wasmer CEO, which may introduce some promotional bias, but the technical details are verifiable and credible. However, some performance claims and future plans should be viewed as projections rather than established facts.",
     "considerations": [
-      "The article is authored by the founder and CEO of Wasmer, which may introduce bias towards promoting their product.",
-      "Independent third-party benchmarks and reviews would be useful to confirm performance and compatibility claims.",
-      "The security of the sandbox depends heavily on the robustness of WASIX and WebAssembly isolation, which should be audited by external experts.",
-      "The article does not discuss potential limitations or challenges in migrating existing Node.js applications to Edge.js beyond compatibility bugs.",
-      "The impact of running native modules and system calls in a sandbox on application behavior and debugging is not deeply explored.",
-      "The reliance on AI tools for development, while innovative, raises questions about maintainability and code quality that are not addressed."
+      "The article does not provide independent third-party benchmarks or reviews to validate performance claims.",
+      "Potential security implications of sandboxing Node.js workloads are not deeply analyzed beyond the architectural overview.",
+      "The impact of missing features like js-snapshotting on startup times and usability is acknowledged but not quantified.",
+      "The article is authored by the founder of Wasmer, which may introduce bias towards promoting Edge.js.",
+      "Comparisons to other runtimes focus mainly on compatibility and performance but do not discuss ecosystem maturity or community support.",
+      "The reliance on AI tools for development is noted but not critically assessed for potential risks or limitations."
     ],
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the new Edge.js project, which runs Node.js apps inside a WebAssembly sandbox. Commenters are curious about use cases, platform compatibility, and sandboxing capabilities, with some expressing enthusiasm and others seeking clarification on practical applications.",
+    "summary": "The discussion centers around the capabilities and potential use cases of Edge.js, a project that runs Node.js inside a WebAssembly sandbox with a pluggable JavaScript engine architecture. Commenters inquire about technical details, use cases, platform compatibility, and sandboxing possibilities, while the author provides clarifications.",
     "comments": [
       {
         "id": 47417202,
@@ -36,7 +36,19 @@
           "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "As the project creator, this comment provides authoritative and accurate information about Edge.js features and development background."
+        "analysis": "As the creator, this comment provides authoritative and detailed information about Edge.js, its features, and development process, making it the most accurate."
+      },
+      {
+        "id": 47417727,
+        "author": "alex_reg",
+        "text": "It\u0026#x27;s a bit confusing.\u003cp\u003eRoughly:\u003cp\u003e* a refactor of Node.js, but using a standardized API for JS engine interop\n* Integration with the Wasmer CLI so it will run JS with v8 but, everything else in Webassembly\u003cp\u003eInteresting idea.\u003cp\u003eCould be a much lighter weight way to sandbox JS...",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment offers a clear and informed summary of the technical approach behind Edge.js, showing understanding of the project's architecture."
       },
       {
         "id": 47420147,
@@ -46,60 +58,41 @@
           "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "Raises valid questions about the practical advantages and target use cases of Edge.js compared to existing sandboxing solutions like Firecracker."
-      },
-      {
-        "id": 47417727,
-        "author": "alex_reg",
-        "text": "It\u0026#x27;s a bit confusing.\u003cp\u003eRoughly:\u003cp\u003e* a refactor of Node.js, but using a standardized API for JS engine interop\n* Integration with the Wasmer CLI so it will run JS with v8 but, everything else in Webassembly\u003cp\u003eInteresting idea.\u003cp\u003eCould be a much lighter weight way to sandbox JS...",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
         "accuracyRank": 3,
-        "analysis": "Provides a reasonable summary and interpretation of the project, helping clarify its architecture and potential benefits."
+        "analysis": "Raises valid questions about practical applications and competitive advantages compared to existing solutions, contributing to the discussion."
       },
       {
-        "id": 47420178,
-        "author": "robjam",
-        "text": "Wow! Node APIs in wasm(wasix)? Something that I have been thinking over for a long time is getting wasm (just wasm, not wasi or com) to be the unit of deployment\u0026#x2F;packaging for web apps like Nuxt\u0026#x2F;Next that only depend on, for example SQLite or Postgres. Slightly ignorant question, but would edge.js allow integrating with a caddy plug-in to handle serving the app from wasm?\u003cp\u003eI know of the extism project and played around with it in elixir, but I\u0026#x27;m looking to have CF Workers DX with as little operational complexity as possible for many silly pet projects.",
+        "id": 47420882,
+        "author": "ammmir",
+        "text": "I don\u0026#x27;t get it. You mention being able to choose your own JS engine, so it\u0026#x27;s not using Wasmer\u0026#x27;s WebAssembly implementation but that of the chosen JS engine\u0026#x27;s? In other words, can Edge.js use Wasmer? Or have you managed to compile V8\u0026#x2F;JSC into WebAssembly and are executing it with Wasmer? If so, amazing!",
         "indicators": [
           "thoughtful",
-          "constructive"
+          "intelligent"
         ],
         "accuracyRank": 4,
-        "analysis": "Explores advanced deployment scenarios and integration possibilities, showing understanding of wasm and serverless environments."
-      },
-      {
-        "id": 47419740,
-        "author": "2001zhaozhao",
-        "text": "Huh. Could this be a way to sandbox user-generated JS in web apps?",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Poses a relevant question about sandboxing user-generated code, reflecting a common use case for such technology."
+        "analysis": "Seeks clarification on technical details regarding JS engine usage and WebAssembly implementation, showing engagement but some confusion."
       },
       {
         "id": 47418493,
         "author": "pscanf",
         "text": "Very cool project!\u003cp\u003eQuestion regarding the pluggable js engine: I have an electron app where I\u0026#x27;m currently using QuickJS to run LLM-generated code. Would edge.js be able (theoretically) to use electron\u0026#x27;s v8 to get a \u0026quot;sanboxed within electron\u0026quot; execution environment?",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Asks a specific technical question about compatibility and sandboxing within Electron, showing practical interest in the technology."
+        "accuracyRank": 5,
+        "analysis": "Poses a practical question about integration with Electron and sandboxing, reflecting real-world application interest."
       },
       {
         "id": 47418484,
         "author": "MillionOClock",
         "text": "Very interesting! On what platforms can this run? If it can run on iOS, how would you handle attempts to access to the file system or networking, is this already wired in somehow? If not is it easy to add custom handlers to handle these actions?",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "Raises important questions about platform support and security controls, which are critical for sandboxed environments."
+        "accuracyRank": 6,
+        "analysis": "Asks relevant questions about platform support and security handling, indicating curiosity about implementation details."
       },
       {
         "id": 47417906,
@@ -109,18 +102,40 @@
           "emotional",
           "thoughtful"
         ],
+        "accuracyRank": 7,
+        "analysis": "Expresses enthusiasm and inquires about browser-based use cases, though the question is speculative and less technical."
+      },
+      {
+        "id": 47419740,
+        "author": "2001zhaozhao",
+        "text": "Huh. Could this be a way to sandbox user-generated JS in web apps?",
+        "indicators": [
+          "thoughtful"
+        ],
         "accuracyRank": 8,
-        "analysis": "Expresses enthusiasm and asks about browser-based use cases, which is a natural extension but may have technical limitations."
+        "analysis": "Brief but relevant question about sandboxing user-generated code, showing interest in security applications."
+      },
+      {
+        "id": 47420178,
+        "author": "robjam",
+        "text": "Wow! Node APIs in wasm(wasix)? Something that I have been thinking over for a long time is getting wasm (just wasm, not wasi or com) to be the unit of deployment\u0026#x2F;packaging for web apps like Nuxt\u0026#x2F;Next that only depend on, for example SQLite or Postgres. Slightly ignorant question, but would edge.js allow integrating with a caddy plug-in to handle serving the app from wasm?\u003cp\u003eI know of the extism project and played around with it in elixir, but I\u0026#x27;m looking to have CF Workers DX with as little operational complexity as possible for many silly pet projects.",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Shares a conceptual idea related to wasm deployment and asks about integration possibilities, contributing a visionary perspective."
       },
       {
         "id": 47420662,
         "author": "actionfromafar",
         "text": "Can that Node app load and run WebAssembly?\u003cp\u003e(A.K.A. are we IBM 360 yet?)",
         "indicators": [
-          "thoughtful"
+          "emotional",
+          "useless"
         ],
-        "accuracyRank": 9,
-        "analysis": "Briefly inquires about WebAssembly support within Node apps running on Edge.js, a relevant but vague question."
+        "accuracyRank": 10,
+        "analysis": "The comment is vague and uses an unclear analogy, adding little substantive value to the technical discussion."
       }
     ]
   }

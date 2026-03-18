@@ -35,16 +35,42 @@
       </h2>
       
       <p class="meta">
-        <span class="score">4 points</span>
+        <span class="score">8 points</span>
         by <a href="https://news.ycombinator.com/user?id=wiseprobe" class="hnuser">wiseprobe</a>
-        <span class="age">55 minutes ago</span>
+        <span class="age">1 hour ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/18/47420493.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47420493" rel="noopener">original on HN</a>
       </p>
     </div>
 
     
-    <p class="no-critique">Analysis could not be generated for this story's comments.</p>
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion critiques the implementation of an autonomous AI agent that uses Docker containers with runtime package installation, highlighting inefficiencies in container startup and sandboxing methods.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=TheDong" class="hnuser">TheDong</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I was curious, so I dug a bit.<p>Under the hood it&#x27;s effectively running:<p><pre><code>    docker run --rm -w $PWD:&#x2F;workspace \
+      python:3.11-slim \
+      pip install -q patchpal &amp;&amp; \
+      &lt;command&gt;
+</code></pre>
+Which cool, great, I sure love &quot;pip install&quot;ing every time instead of just baking a single container image with it already installed.<p>This isn&#x27;t any sort of fancy or interesting sandboxing, this is shelling out to &quot;docker run&quot;, and not even using docker as well as it could.<p>Quoting from the linked page:<p>&gt; The tradeoff is ~5-10 seconds of container startup overhead<p>Sure, maybe it&#x27;s 5-10 seconds if you use containers wrong. Unpacking a root filesystem and spinning up a clean mount namespace on linux is a few ms, and taking more than a second means something is going wrong, like &quot;pip install&quot;ing at runtime instead of buildtime for some reason.<p>I can spin up a full linux vm and run some code in quicker than 5 seconds.</div>
+      <div class="comment-analysis"><em>The comment accurately identifies inefficiencies in the approach, such as runtime package installation causing delays and suboptimal use of Docker, supported by practical knowledge of container startup times.</em></div>
+    </div>
+    
+
     
 
   </td></tr>
@@ -53,7 +79,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 02:05 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 02:33 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

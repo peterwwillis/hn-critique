@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">3 points</span>
+        <span class="score">6 points</span>
         by <a href="https://news.ycombinator.com/user?id=y1n0" class="hnuser">y1n0</a>
         <span class="age">1 hour ago</span>
         &nbsp;|&nbsp;<a href="../../../../comments/2026/03/18/47420388.html">0&nbsp;comments critique</a>
@@ -48,13 +48,13 @@
 
       <section class="critique-section">
         <h3>Summary</h3>
-        <p>The article details the investigation and resolution of a complex Linux kernel freeze issue caused by eBPF spinlock interactions. The author describes debugging efforts, the discovery of a bug in the resilient queued spinlock implementation, and subsequent kernel patches that fixed the problem in recent Linux versions.</p>
+        <p>The article describes the investigation and resolution of a complex Linux kernel freeze issue related to eBPF spinlock handling. The authors detail their debugging process, the identification of a race condition in the resilient queued spinlock (rqspinlock) implementation, and the subsequent kernel patches that fixed the problem.</p>
       </section>
 
       <section class="critique-section">
         <h3>Main Points &amp; Arguments</h3>
         <ul>
-          <li>Superluminal, a CPU profiler using eBPF, caused periodic system freezes on Fedora 42 with kernel 6.17.4-200.</li><li>The freezes were traced to a deadlock in the Linux kernel&#39;s resilient queued spinlock (rqspinlock) used by eBPF ring buffer reservation.</li><li>The root cause was a race condition where a non-maskable interrupt (NMI) could interrupt lock acquisition, causing inconsistent lock state and missed deadlock detection.</li><li>A patch was developed to update the held lock table before attempting lock acquisition, fixing the race condition and eliminating the 250ms freezes.</li><li>Additional fixes addressed delayed deadlock detection and NMI-induced lock holder starvation, further improving system stability.</li><li>The issue was specific to kernels 6.15 to 6.18 due to the introduction of rqspinlock in the eBPF ring buffer, and was resolved in kernel 6.19 and backported versions.</li><li>The article provides an in-depth explanation of spinlocks, queued spinlocks, and the complexities of handling locking in the presence of NMIs in the Linux kernel.</li>
+          <li>A system freeze was observed on Fedora 42 with kernel 6.17.4-200 when running the Superluminal CPU profiler using eBPF.</li><li>The freeze was traced to a deadlock caused by recursive acquisition of a ring buffer spinlock protected by rqspinlock in the Linux kernel.</li><li>The root cause was a race condition where a non-maskable interrupt (NMI) could interrupt lock acquisition after the lock was acquired but before the lock was recorded in the held locks table, causing deadlock detection to fail.</li><li>Kernel patches were made to update the held locks table before attempting lock acquisition, preventing missed deadlock detection.</li><li>Additional fixes addressed delayed deadlock detection checks and NMI-induced lock holder starvation, resulting in elimination of system freezes and timeout warnings.</li><li>The issue was specific to newer kernels (6.15 and later) using rqspinlock; older kernels used different spinlocks without this problem.</li><li>The authors implemented a workaround for older kernels and plan to use more up-to-date kernels for future development.</li>
         </ul>
       </section>
 
@@ -63,14 +63,14 @@
         <div class="rating-badge rating-reliable">
           Reliable
         </div>
-        <p>The article provides a detailed, technical, and accurate account of a real Linux kernel issue related to eBPF and spinlocks. The described problem, debugging process, and fixes correspond with known Linux kernel development practices and patch submissions. The references to kernel versions, mailing list discussions, and specific kernel functions align with publicly available Linux kernel source code and documentation. The involvement of known kernel maintainers and the timeline of kernel versions further support the article&#39;s credibility.</p>
+        <p>The article provides a detailed technical analysis consistent with known Linux kernel development practices and references specific kernel versions, commits, and interactions with kernel maintainers. The described bug, its root cause, and the fixes align with publicly available Linux kernel mailing list discussions and patch notes from 2025 and 2026. The explanations of spinlocks, NMIs, and deadlock detection mechanisms are accurate and well-supported by kernel source code excerpts. Therefore, the claims in the article are accurate and truthful.</p>
       </section>
 
       
       <section class="critique-section">
         <h3>Additional Considerations</h3>
         <ul>
-          <li>The article focuses on a very technical and specific kernel issue; readers without kernel development background may find some explanations challenging.</li><li>The impact of the issue is limited to certain kernel versions and specific eBPF usage patterns, which may not affect all users.</li><li>While the article explains the fixes, it does not discuss potential performance implications of the patches or alternative mitigation strategies.</li><li>The article is written by a developer involved in the debugging process, which provides insider insight but may lack external perspectives.</li><li>The long-term stability and performance of the fixes in diverse real-world workloads are not covered.</li>
+          <li>The article focuses on a very specific kernel version range and hardware/software configuration; results may differ on other setups.</li><li>The complexity of kernel locking and eBPF interactions means that similar issues might arise in other contexts not covered here.</li><li>The article does not discuss potential performance impacts of the fixes beyond eliminating freezes and warnings.</li><li>Users of kernels older than 6.15 or distributions with backported patches should verify their own environment for related issues.</li><li>The debugging approach required specialized hardware (serial ports) and knowledge, which may not be accessible to all developers.</li>
         </ul>
       </section>
       
@@ -84,7 +84,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 02:05 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 02:33 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

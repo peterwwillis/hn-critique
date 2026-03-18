@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">535 points</span>
+        <span class="score">548 points</span>
         by <a href="https://news.ycombinator.com/user?id=crtasm" class="hnuser">crtasm</a>
         <span class="age">11 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47413876.html">critique article</a>
@@ -47,12 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the recent hack of the 2013 Xbox One, previously considered &#39;unhackable.&#39; Commenters analyze the technical complexity of the hack, the implications for emulation and homebrew, and the broader lesson that physical access undermines device security.</p>
+      <p>The discussion revolves around the recent hack of the 2013 Xbox One model, which was previously considered effectively unhackable due to its advanced security measures. Commenters analyze the technical details of the hack, the implications for emulation and homebrew, and the broader lesson that physical access to hardware often undermines security.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 9 of 26 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47413876" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 26 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47413876" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -64,7 +64,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Amazing talk. Here&#x27;s a quick writeup if you don&#x27;t want to watch the full hour or don&#x27;t have enough hardware knowledge to follow what Markus is talking about, as he goes <i>very</i> fast, in some cases too fast to even let you read the text on his slides. It&#x27;s mandatory to use the pause key to understand the full details <i>even if</i> you have a deep understanding of <i>every</i> relevant technology, of which he explains none.<p>The Xbox uses a very advanced variant of the same technologies that also exist on smartphones, tablets and Secure Boot enabled PCs. When fully operational the Xbox security system prevents any unsigned code from running, keeps all code encrypted, proves to remote servers (Xbox Live) that it&#x27;s a genuine device running in a secure state, and on this base you can build strong anti-piracy checks and block cheating.<p>The Xbox has several processors and what follows applies to the Platform Security Processor. When a computer starts up (any computer), the CPU begins execution in a state in which basically nothing works, including external communication and even RAM. Executions starts at a &#x27;reset vector&#x27; mapped to a boot ROM i.e. the bytes are hard-wired into the silicon itself and can&#x27;t be changed. The boot ROM then executes instructions to progressively enable more and more hardware, including things like activating RAM. Until that point the whole CPU executes out of its cache lines and can&#x27;t use more memory than exists on-die.<p>Getting to the state where the Xbox can achieve all its security goals thus requires it to boot through a series of chained steps which incrementally bring the hardware online, and each step must verify the integrity of the next. The boot ROM is only 19kb of code and a few more kb of data, and can&#x27;t do much beyond just activating RAM, the memory mapping unit (called MPU on the Xbox), and reading some more code out of writeable flash RAM. The code it reads from flash RAM is the second stage bootloader where much more work gets done, but from this second stage on it can be patched remotely by Microsoft. So if bugs are found there or in any later stage, it hardly matters because MS can issue a software update and detect remotely on Xbox Live servers if that upgrade was applied, so kicking out cheaters and pirates. The second stage boot loader in turn loads more code from disk, signature checks and decrypts it, sets up lots of software security schemes like hypervisors and so on, all the way up to the OS and the games.<p>Therefore to break Xbox security permanently you have to attack the boot ROM, because that&#x27;s the only part that can&#x27;t be changed via a software update. It&#x27;s the keys to the kingdom and this is what Markus attacked. Attacking the boot ROM is very, very hard. The Xbox team were highly competent:<p>• Normally the bringup code would be written by the CPU or BIOS vendors but MS wrote it all in house themselves from scratch.<p>• The code isn&#x27;t public and has never leaked. To obtain it, someone had to decode it visually by looking at the chip under a scanning electron microscope and map the atomic pictures to bits and then to bytes.<p>• Having the code barely helps because there are no bugs in it whatsoever.<p>So, the only way to manipulate it is to actually screw with the internals of the CPU itself by &quot;glitching&quot;, meaning tampering with the power supply to the chip at exactly the right moment to corrupt the state of the internal electronics. Glitching a processor has semi-random effects and you don&#x27;t control what happens exactly, but sometimes you can get lucky and the CPU will skip instructions. By creating a device that reboots the machine over and over again, glitching each time, you can wait until one of those attempts gets lucky and makes a tiny mistake in the execution process.<p>Glitching attacks predate the Xbox and were mostly used on smartcards until the Xbox 360, which was successfully attacked this way. So Microsoft knew all about them and added many mitigations, beyond &quot;just&quot; writing bug free code:<p>1. The boot ROM is full of randomized loops that do nothing but which are designed to make it hard to know where in the program the CPU has got to. Glitching requires near perfect timing and this makes it harder.<p>2. They hardware-disabled the usual status readouts that can be used to know where the program got up to and debug the boot process.<p>3. They hash-chain execution to catch cases where steps were skipped, even though that&#x27;s impossible according to program logic.<p>4. They effectively use a little &#x27;kernel&#x27; and run parts of the boot sequence as &#x27;user mode&#x27; programs, so that if sensitive parts of the code are glitched they are limited in how badly they can tamper with the boot process.<p>And apparently there are even more mitigations added post-2013. Markus managed to bypass these by chaining two glitch attacks together, one which skipped past the code that turned on the MMU, which made it possible to break out of one of the the usermode &#x27;processes&#x27; (not really a process) and into the &#x27;kernel&#x27;, and one which then was able to corrupt the CPU state during a memcpy operation, allowing him to take control of the CPU as it was copying the next stage from flash RAM.<p>If you can take control of the boot ROM execution then you can proceed to decrypt the next stage, skip the signature checks and from there do whatever you want in ways that can&#x27;t be detected remotely - however, the fact that you&#x27;re using a 2013 Phat device still can be.</div>
-      <div class="comment-analysis"><em>This comment provides a comprehensive, technically accurate overview of the Xbox security architecture and the nature of the attack, making it the most informative and reliable in the discussion.</em></div>
+      <div class="comment-analysis"><em>This comment provides a comprehensive, technically accurate overview of the Xbox One security system and the nature of the hack, supported by detailed knowledge of hardware and software security.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -75,84 +75,95 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">&gt; Whether PC users, our core readership, will be interested in actually emulating Xbox One, looks unlikely. The 2013 system’s game library is largely overlapped in better quality on the PC platform.<p>And this explains why it&#x27;s stayed unhacked so long. There was very little incentive to hack the system when the games are all playable on a PC. Pirates, cheaters, archivists, and hackers could just go there. Microsoft&#x27;s best security measure was making something nobody cared enough about to hack in the first place</div>
-      <div class="comment-analysis"><em>This comment offers a plausible economic and motivational explanation for the delayed hack, reflecting a nuanced understanding of hacker incentives.</em></div>
+      <div class="comment-analysis"><em>This comment insightfully explains the lack of incentive to hack the Xbox One, which aligns with the observed delay in successful exploits and the availability of better PC alternatives.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=tencentshill" class="hnuser">tencentshill</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Note this only affects the very first original 2013 &quot;VCR&quot; hardware. Newer revisions and variants are still unaffected.</div>
+      <div class="comment-analysis"><em>This comment correctly clarifies that the hack applies only to the original hardware revision, which is important context for understanding the scope of the vulnerability.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=au8er" class="hnuser">au8er</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">This just again shows that given enough time skill, and resources, any security is pointless if the attacker has physical access to the device.</div>
-      <div class="comment-analysis"><em>This is a well-known security principle accurately stated, reinforcing the consensus that physical access significantly weakens device security.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=charcircuit" class="hnuser">charcircuit</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">It wasn&#x27;t unhackable and decrypted versions of games already have been dumped. There was even a public exploit published years ago.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;exploits-forsale&#x2F;collateral-damage" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;exploits-forsale&#x2F;collateral-damage</a><p>What&#x27;s new here is that this compromises the entire system security giving access to the highest privilege level.</div>
-      <div class="comment-analysis"><em>This comment correctly contextualizes the hack as a breakthrough in privilege escalation rather than the first exploit, adding valuable perspective on the security landscape.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=nxc18" class="hnuser">nxc18</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">I think it counts as effectively unhackable since it remained unhacked until five and a half years after its successor went on the market.<p>I wonder if, assuming they continue making Xbox, they find a way to mitigate this in the next generation.</div>
-      <div class="comment-analysis"><em>This comment reasonably qualifies the term &#39;unhackable&#39; in a practical sense, though it overlooks existing lower-level exploits mentioned elsewhere.</em></div>
+      <div class="comment-analysis"><em>This is a widely accepted principle in security; physical access often undermines even the strongest protections, making this a valid and relevant observation.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=tetrisgm" class="hnuser">tetrisgm</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">This is great news. Hopefully this opens the floodgates towards emulation and homebrew. Not that there are really any exclusives, but it would be interesting.</div>
-      <div class="comment-analysis"><em>Expresses optimism about the hack&#39;s impact on the community, though it is speculative and less technical.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jvillegasd" class="hnuser">jvillegasd</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Don&#x27;t ever call a thing &quot;unhackable&quot;, because every single human creation is imperfect</div>
-      <div class="comment-analysis"><em>A general but accurate caution against absolute security claims, reflecting common wisdom in security discussions.</em></div>
+      <div class="comment-analysis"><em>While optimistic, this comment reflects a common positive community reaction to hardware hacks enabling new possibilities, though it lacks technical depth.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=Jerrrrrrrry" class="hnuser">Jerrrrrrrry</a>
-        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Created a voltage drop that exactly occurred to be timed to the key comparison, then a spike at the continuation.<p>Irl noop and forced execution control flow to effectively return true.<p>B e a utiful</div>
-      <div class="comment-analysis"><em>Provides a concise technical description of the glitching attack, supporting the detailed explanation given by others.</em></div>
+      <div class="comment-analysis"><em>This brief technical description aligns with the glitching attack method but lacks broader context or explanation.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Simulacra" class="hnuser">Simulacra</a>
-        &nbsp;|&nbsp;rank #9
+        <a href="https://news.ycombinator.com/user?id=charcircuit" class="hnuser">charcircuit</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">It wasn&#x27;t unhackable and decrypted versions of games already have been dumped. There was even a public exploit published years ago.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;exploits-forsale&#x2F;collateral-damage" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;exploits-forsale&#x2F;collateral-damage</a><p>What&#x27;s new here is that this compromises the entire system security giving access to the highest privilege level.</div>
+      <div class="comment-analysis"><em>This comment provides useful historical context and correctly distinguishes the novelty of this hack as gaining full system control rather than just game decryption.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=nxc18" class="hnuser">nxc18</a>
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">One should never call something &quot;unhackable&quot; ...</div>
-      <div class="comment-analysis"><em>A brief but valid reminder of the fallibility of security claims.</em></div>
+      <div class="comment-text">I think it counts as effectively unhackable since it remained unhacked until five and a half years after its successor went on the market.<p>I wonder if, assuming they continue making Xbox, they find a way to mitigate this in the next generation.</div>
+      <div class="comment-analysis"><em>This comment reasonably argues that the Xbox One&#39;s security was strong given the long time before a successful hack, though &#39;unhackable&#39; is a strong term.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jvillegasd" class="hnuser">jvillegasd</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Don&#x27;t ever call a thing &quot;unhackable&quot;, because every single human creation is imperfect</div>
+      <div class="comment-analysis"><em>A general but valid caution against absolute security claims, reflecting a common security mindset.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=natas" class="hnuser">natas</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> 
+      </div>
+      <div class="comment-text">I wonder... if microsoft can&#x27;t secure a gaming console which they have full control on, from top to bottom, how do they secure &quot;Azure Government&quot;?</div>
+      <div class="comment-analysis"><em>This comment expresses skepticism but conflates very different security contexts; console security differs significantly from cloud service security.</em></div>
     </div>
     
 
@@ -164,7 +175,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 02:05 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 02:33 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
