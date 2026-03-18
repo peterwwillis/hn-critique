@@ -185,7 +185,10 @@ func main() {
 				log.Printf("  ⚠  cache load failed: %v", cacheErr)
 			} else if cached != nil {
 				cachedAnalysisByStoryID[story.ID] = cached
-				if crit := successfulCachedArticleCritique(cached); crit != nil {
+				// Only reuse a cached successful critique when not preparing input.
+				// In -prepare-input mode we always want to fetch and store raw inputs,
+				// without pre-populating story.Critique from prior analysis.
+				if crit := successfulCachedArticleCritique(cached); crit != nil && !*prepareInput {
 					story.Critique = crit
 					log.Printf("  Using cached successful article analysis for story %d (skip article fetch and re-analysis).", story.ID)
 				}
@@ -502,7 +505,11 @@ func isSuccessfulArticleCritique(critique *generator.ArticleCritique) bool {
 	if critique == nil {
 		return false
 	}
-	return !strings.EqualFold(strings.TrimSpace(critique.Rating), "unavailable")
+	rating := strings.TrimSpace(critique.Rating)
+	if rating == "" {
+		return false
+	}
+	return !strings.EqualFold(rating, "unavailable")
 }
 
 // formatCommentForAI returns the formatted representation of a single comment
