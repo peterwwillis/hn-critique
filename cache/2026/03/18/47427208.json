@@ -21,31 +21,43 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around a recently disclosed local privilege escalation vulnerability in Snap on Ubuntu systems. Commenters debate the complexity added by modern software like Snap and systemd, the usefulness of traditional Unix features like suid, and share resources for tracking CVEs.",
+    "summary": "The discussion centers around a local privilege escalation vulnerability in Snap on Ubuntu, with commenters debating the security implications of Snap, system design choices like setuid and shared /tmp usage, and alternatives such as Flatpak or Debian. Some express frustration with Ubuntu's decisions and Snap's attack surface, while others speculate on the root causes and mitigation strategies.",
     "comments": [
       {
         "id": 47429198,
         "author": "ptx",
         "text": "Better to follow the link to the technical details and just read those: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;cdn2.qualys.com\u0026#x2F;advisory\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;17\u0026#x2F;snap-confine-systemd-tmpfiles.txt\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;cdn2.qualys.com\u0026#x2F;advisory\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;17\u0026#x2F;snap-confine-sys...\u003c/a\u003e\u003cp\u003eThe article linked in the submission is more verbose but less clear and half of it is an advertisement for their product.",
         "indicators": [
-          "thoughtful",
+          "intelligent",
           "constructive",
           "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a practical recommendation to consult the primary technical advisory for clarity, which is a reliable approach to understanding vulnerabilities."
+        "analysis": "This comment provides a useful pointer to primary technical details, emphasizing clarity and factual information over marketing content."
       },
       {
-        "id": 47430653,
-        "author": "capitainenemo",
-        "text": "It is possible to just not use snap on ubuntu. The few ubuntu servers we have, even the couple with a minimal XFCE interface for some gui pieces, don\u0026#x27;t have snap installed.  I realise local exploits happen all the time, but why add a whole new huge surface area if I don\u0026#x27;t have to.",
+        "id": 47431560,
+        "author": "AgentME",
+        "text": "The shared \u0026#x2F;tmp\u0026#x2F; directory that can be used by processes of multiple users seems extremely prone to causing this type of issue. I wish there was a common convention for user-specific temp directories on Linux, because a whole class of vulnerabilities could go away.\u003cp\u003eMacOS handles this great by setting $TMPDIR to some \u0026#x2F;var\u0026#x2F;folders\u0026#x2F;...\u0026#x2F; directory that\u0026#x27;s specific to the current user. Linux does have something similar with $XDG_RUNTIME_DIR (generally \u0026#x2F;run\u0026#x2F;user\u0026#x2F;$UID\u0026#x2F;), though it\u0026#x27;s stored in memory only which is a little different from usual for \u0026#x2F;tmp\u0026#x2F;, seemingly mainly intended for small stuff like unix sockets.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "intelligent",
+          "likely-true"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment highlights a valid mitigation strategy by avoiding unnecessary software, reducing potential vulnerabilities, which is a reasonable security practice."
+        "analysis": "The comment insightfully highlights a common source of vulnerabilities related to shared temporary directories and suggests user-specific temp directories as a mitigation."
+      },
+      {
+        "id": 47431217,
+        "author": "sysops9x",
+        "text": "The frustrating part is that Snap\u0026#x27;s confinement story was supposed to be a selling point. Here we are with a priv-esc in the daemon itself. At this point I\u0026#x27;ve just disabled snapd on all our Ubuntu boxes and moved to flatpak or building from source. The attack surface of a privileged install daemon that parses arbitrary package manifests is just too broad.",
+        "indicators": [
+          "emotional",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment reflects practical experience and frustration with Snap's security model, advocating for alternatives due to the expanded attack surface."
       },
       {
         "id": 47430587,
@@ -53,11 +65,35 @@
         "text": "When will these distros accept suid was a mistake and disable it. It has lead to critical local privilege escalation exploits so many times.",
         "indicators": [
           "emotional",
-          "likely-true",
-          "belligerent"
+          "thoughtful",
+          "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "While the criticism of suid is valid given its history of vulnerabilities, the comment is somewhat emotional and lacks nuance about why suid remains in use."
+        "accuracyRank": 4,
+        "analysis": "The comment correctly identifies setuid binaries as a recurring source of privilege escalation vulnerabilities, though disabling suid entirely may be impractical."
+      },
+      {
+        "id": 47431805,
+        "author": "thayne",
+        "text": "Why does snap-confine need to be setuid, rather than use a user namespace?",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This question raises a valid technical point about alternative sandboxing mechanisms that might reduce the need for setuid privileges."
+      },
+      {
+        "id": 47432127,
+        "author": "kev009",
+        "text": "I always wonder why Ubuntu is even on the radar anymore.  It is a pile of questionable decisions with a billionaire ego bus factor.  If you like apt, just use Debian.  sid is fine for desktops if you are moderately technical.",
+        "indicators": [
+          "emotional",
+          "belligerent",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "The comment expresses strong negative opinions about Ubuntu's governance and decisions, which may be subjective but reflects some community frustrations."
       },
       {
         "id": 47429244,
@@ -68,8 +104,8 @@
           "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment raises an insightful question about the trade-offs between software complexity and security, though it is speculative without concrete evidence."
+        "accuracyRank": 7,
+        "analysis": "The comment thoughtfully speculates on whether increased system complexity contributes to vulnerabilities, a reasonable point though not definitive."
       },
       {
         "id": 47430356,
@@ -77,10 +113,69 @@
         "text": "Semi-related: does anybody know of a reliable API that announces CVEs as they\u0026#x27;re published?\u003cp\u003eEdit: for others who may be curious \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.cve.org\u0026#x2F;Downloads\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.cve.org\u0026#x2F;Downloads\u003c/a\u003e",
         "indicators": [
           "constructive",
+          "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "The comment is helpful in providing a resource for tracking CVEs but does not contribute directly to the vulnerability discussion."
+        "accuracyRank": 8,
+        "analysis": "This comment seeks practical information about CVE feeds, contributing constructively to the discussion."
+      },
+      {
+        "id": 47431602,
+        "author": "broadsidepicnic",
+        "text": "Well, fuck snaps, that is.\u003cp\u003eEven though I\u0026#x27;ve used ubuntu since 6.04, fuck snaps. I\u0026#x27;m still stuck on Ubuntu even after 20 years. But fuck snaps.",
+        "indicators": [
+          "emotional",
+          "belligerent",
+          "useless"
+        ],
+        "accuracyRank": 9,
+        "analysis": "This comment is purely emotional and dismissive without providing substantive reasoning or technical insight."
+      },
+      {
+        "id": 47431844,
+        "author": "IshKebab",
+        "text": "Eh. Definitely not great but until they make it so you can\u0026#x27;t trivially MitM sudo, I don\u0026#x27;t think any local privilege execution bugs on Linux are especially notable, at least for most desktop users. Also there\u0026#x27;s the whole xkcd \u0026quot;at least they can\u0026#x27;t install drivers\u0026quot; thing.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 10,
+        "analysis": "This comment provides perspective on the relative impact of local privilege escalation bugs compared to other attack vectors like sudo MitM attacks."
+      },
+      {
+        "id": 47430653,
+        "author": "capitainenemo",
+        "text": "It is possible to just not use snap on ubuntu. The few ubuntu servers we have, even the couple with a minimal XFCE interface for some gui pieces, don\u0026#x27;t have snap installed.  I realise local exploits happen all the time, but why add a whole new huge surface area if I don\u0026#x27;t have to.",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 11,
+        "analysis": "This comment offers a practical mitigation by avoiding Snap entirely to reduce risk, a valid approach for some users."
+      },
+      {
+        "id": 47429175,
+        "author": "cyberpunk",
+        "text": "\u0026gt; As a side note, we also discovered a local vulnerability (a race\ncondition) in the uutils coreutils (a Rust rewrite of the standard GNU\ncoreutils -- ls, cp, rm, cat, sort, etc), which are installed by default\nin Ubuntu 25.10. This vulnerability was mitigated in Ubuntu 25.10 before\nits release (by replacing the uutils coreutils\u0026#x27; rm with the standard GNU\ncoreutils\u0026#x27; rm), and would otherwise have resulted in an LPE (from any\nunprivileged user to full root) in the default installation of Ubuntu Desktop 25.10.\u003cp\u003eShurely Shome mistake, not a vuln in holy rust!",
+        "indicators": [
+          "trolling",
+          "emotional",
+          "likely-untrue"
+        ],
+        "accuracyRank": 12,
+        "analysis": "This sarcastic comment dismisses a reported vulnerability in Rust rewritten coreutils, likely undermining a valid security concern."
+      },
+      {
+        "id": 47431441,
+        "author": "Neskenfrederi44",
+        "text": "surprised this isn\u0026#x27;t talked about more",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 13,
+        "analysis": "This brief comment expresses surprise but adds no substantive content or analysis."
       }
     ]
   }

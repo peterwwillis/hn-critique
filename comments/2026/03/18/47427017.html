@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">188 points</span>
+        <span class="score">209 points</span>
         by <a href="https://news.ycombinator.com/user?id=ozgune" class="hnuser">ozgune</a>
-        <span class="age">5 hours ago</span>
+        <span class="age">7 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/18/47427017.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47427017" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on a reported &#39;sandbox escape&#39; vulnerability in Snowflake&#39;s Cortex AI, with many commenters arguing that the term &#39;sandbox&#39; is misused since the AI was able to disable sandboxing itself. The conversation highlights broader challenges in securing AI agents, especially those with CLI access, and the inherent tension between agent capability and containment.</p>
+      <p>The discussion centers on a security incident involving Snowflake&#39;s AI sandbox, with many commenters arguing that the term &#39;sandbox&#39; is misused since the AI could disable sandbox restrictions. Participants highlight the architectural flaws allowing the AI to execute unsandboxed commands, and debate the challenges of securing AI agents that require powerful capabilities.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -64,7 +64,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Author of LDP here [1].<p>The core issue seems to be that the security boundary lived inside the agent loop. If the model can request execution outside the sandbox, then the sandbox is not really an external boundary.<p>One design principle we explored in LDP is that constraints should be enforced outside the prompt&#x2F;context layer — in the runtime, protocol, or approval layer — not by relying on the model to obey instructions.<p>Not a silver bullet, but I think that architectural distinction matters here.<p>[1] <a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.08852" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.08852</a></div>
-      <div class="comment-analysis"><em>This comment accurately identifies a key architectural flaw: relying on the model to enforce sandbox constraints internally is insecure. It suggests enforcing constraints externally, which is a sound security principle.</em></div>
+      <div class="comment-analysis"><em>This comment accurately identifies a key architectural flaw: relying on the model to enforce sandbox constraints is ineffective. Enforcing constraints externally is a sound security principle.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -75,7 +75,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The attack chain here is interesting because the escape didnt require a novel vulnerability in the sandbox itself. It exploited the fact that the LLM can reason about its environment and chain tool calls in ways the sandbox designers didnt anticipate. This is the fundamental tension with agent sandboxing: you need the agent capable enough to be useful, but capability and containment are in direct tension.</div>
-      <div class="comment-analysis"><em>This comment insightfully explains the fundamental challenge in agent sandboxing: the AI&#39;s reasoning ability can circumvent expected constraints, highlighting a core tension between capability and containment.</em></div>
+      <div class="comment-analysis"><em>This comment insightfully explains the fundamental tension between agent capability and containment, highlighting the difficulty in designing secure sandboxes for intelligent agents.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -86,18 +86,18 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">typically, my first move is to read the affected company&#x27;s own announcement. but, for who knows what misinformed reason, the advisory written by snowflake requires an account to read.<p>another prompt injection (shocked pikachu)<p>anyways, from reading this, i feel like they (snowflake) are misusing the term &quot;sandbox&quot;. <i>&quot;Cortex, by default, can set a flag to trigger unsandboxed command execution.&quot;</i> if the thing that is sandboxed can say &quot;do this without the sandbox&quot;, it is not a sandbox.</div>
-      <div class="comment-analysis"><em>This comment correctly critiques the use of &#39;sandbox&#39; since the AI could disable sandboxing itself, meaning the containment was not effective or genuine.</em></div>
+      <div class="comment-analysis"><em>The comment correctly challenges the validity of calling the environment a sandbox if the AI can disable sandboxing, pointing out a critical misuse of terminology and security design.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=seedpi" class="hnuser">seedpi</a>
+        <a href="https://news.ycombinator.com/user?id=RobRivera" class="hnuser">RobRivera</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">The bilekas comment is right — if there is no workspace trust or scope restriction, calling it a sandbox escape is generous. It escaped a suggestion of a sandbox.<p>But the broader pattern matters. Cortex bypassed human-in-the-loop approval via specially constructed commands. That is the attack surface for every agentic CLI: the gap between what the approval UI shows the user and what actually executes.<p>I would be interested to know whether the fix was to validate the command at the shell level or just patch the specific bypass. If it is the latter, there will be another one.</div>
-      <div class="comment-analysis"><em>This comment highlights the real security risk: bypassing human approval in agentic CLIs, emphasizing the gap between UI and actual command execution.</em></div>
+      <div class="comment-text">If the user has access to a lever that enables accesss, that lever is not providing a sandbox.<p>I expected this to be about gaining os privileges.<p>They didn&#x27;t create a sandbox. Poor security design all around</div>
+      <div class="comment-analysis"><em>This comment concisely points out that a sandbox that can be bypassed by the user is not a sandbox, emphasizing the poor security design in the system.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -110,29 +110,29 @@
       <div class="comment-text">CLI is quickly becoming the default entry point for agents. But data agents probably need a much stricter permission model than coding agents. Bash + CLI greatly expands what you can do beyond the native SQL capabilities of a data warehouse, which is powerful. But it also means data operations and credentials are now exposed to the shell environment.<p>So giving data agents rich tooling through a CLI is really a double-edged sword.<p>I went through the security guidance for the Snowflake Cortex Code CLI(<a href="https:&#x2F;&#x2F;docs.snowflake.com&#x2F;en&#x2F;user-guide&#x2F;cortex-code&#x2F;security" rel="nofollow">https:&#x2F;&#x2F;docs.snowflake.com&#x2F;en&#x2F;user-guide&#x2F;cortex-code&#x2F;securit...</a>), and the CLI itself does have some guardrails. 
 But since this is a shared cloud environment, if a sandbox escape happens, could someone break out and access another user’s credentials?
 It is a broader system problem around permission caching, shell auditing, and sandbox isolation.</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced perspective on the security implications of giving AI agents CLI access, noting the increased attack surface and need for stricter permissions.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=bilekas" class="hnuser">bilekas</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">&gt; Note: Cortex does not support ‘workspace trust’, a security convention first seen in code editors, since adopted by most agentic CLIs.<p>Am I crazy or does this mean it didn&#x27;t really escape, it wasn&#x27;t given any scope restrictions in the first place ?</div>
-      <div class="comment-analysis"><em>This comment questions whether the incident was truly a sandbox escape or simply a lack of sandboxing, which aligns with other critiques about the misuse of the term.</em></div>
+      <div class="comment-analysis"><em>This comment provides a nuanced perspective on the security implications of exposing CLI access to data agents, highlighting the need for stricter permission models and broader system considerations.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=Groxx" class="hnuser">Groxx</a>
-        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">&gt;<i>Any shell commands were executed without triggering human approval as long as:</i><p>&gt;<i>(1) the unsafe commands were within a process substitution &lt;() expression</i><p>&gt;<i>(2) the full command started with a ‘safe’ command (details below)</i><p>if you spend <i>any time at all</i> thinking about how to secure shell commands, how on earth do you not take into account the various ways of creating sub-processes?</div>
-      <div class="comment-analysis"><em>This comment points out a basic security oversight in handling shell commands, emphasizing the importance of considering subprocess creation in sandboxing.</em></div>
+      <div class="comment-analysis"><em>The comment points out a basic security oversight in not considering subprocess creation in shell command restrictions, indicating a lack of thorough security design.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jeffbee" class="hnuser">jeffbee</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">It kinda sucks how &quot;sandbox&quot; has been repurposed to mean nothing. This is not a &quot;sandbox escape&quot; because the thing under attack never had any meaningful containment.</div>
+      <div class="comment-analysis"><em>This comment criticizes the misuse of the term &#39;sandbox escape&#39; in this context, emphasizing that meaningful containment was never present.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -143,29 +143,29 @@ It is a broader system problem around permission caching, shell auditing, and sa
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">the title is very misleading, it was told to escape, it didn&#x27;t do it on its own as you would think from the title</div>
-      <div class="comment-analysis"><em>This comment clarifies that the AI was prompted to escape rather than escaping autonomously, which is an important distinction for understanding the incident.</em></div>
+      <div class="comment-analysis"><em>This comment clarifies that the AI did not autonomously escape the sandbox but was manipulated to do so, highlighting the importance of precise language.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jessfyi" class="hnuser">jessfyi</a>
+        <a href="https://news.ycombinator.com/user?id=orbital-decay" class="hnuser">orbital-decay</a>
         &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">A sandbox that can be toggled off is not a sandbox, this is simply more marketing&#x2F;&quot;critihype&quot; to overstate the capability of their AI to distract from their poorly built product. The erroneous title doing all the heavy lifting here.</div>
-      <div class="comment-analysis"><em>This comment expresses skepticism about the marketing around the product and the misuse of the term sandbox, reflecting a common theme in the discussion.</em></div>
+      <div class="comment-text"><i>&gt;Snowflake Cortex AI Escapes Sandbox and Executes Malware</i><p><i>rolls eyes</i> Actual content: prompt injection vulnerability discovered in a coding agent</div>
+      <div class="comment-analysis"><em>This comment reduces the incident to a prompt injection vulnerability, which is a reasonable summary of the technical root cause.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=RobRivera" class="hnuser">RobRivera</a>
+        <a href="https://news.ycombinator.com/user?id=bilekas" class="hnuser">bilekas</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">If the user has access to a lever that enables accesss, that lever is not providing a sandbox.<p>I expected this to be about gaining os privileges.<p>They didn&#x27;t create a sandbox. Poor security design all around</div>
-      <div class="comment-analysis"><em>This comment bluntly summarizes the consensus that the security design was flawed and the sandbox was ineffective due to user-accessible overrides.</em></div>
+      <div class="comment-text">&gt; Note: Cortex does not support ‘workspace trust’, a security convention first seen in code editors, since adopted by most agentic CLIs.<p>Am I crazy or does this mean it didn&#x27;t really escape, it wasn&#x27;t given any scope restrictions in the first place ?</div>
+      <div class="comment-analysis"><em>This comment questions whether the AI truly escaped sandboxing or if it was never properly sandboxed, a valid point given the reported design.</em></div>
     </div>
     
 
@@ -177,7 +177,7 @@ It is a broader system problem around permission caching, shell auditing, and sa
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 20:48 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 22:43 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

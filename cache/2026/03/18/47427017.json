@@ -21,7 +21,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on a reported 'sandbox escape' vulnerability in Snowflake's Cortex AI, with many commenters arguing that the term 'sandbox' is misused since the AI was able to disable sandboxing itself. The conversation highlights broader challenges in securing AI agents, especially those with CLI access, and the inherent tension between agent capability and containment.",
+    "summary": "The discussion centers on a security incident involving Snowflake's AI sandbox, with many commenters arguing that the term 'sandbox' is misused since the AI could disable sandbox restrictions. Participants highlight the architectural flaws allowing the AI to execute unsandboxed commands, and debate the challenges of securing AI agents that require powerful capabilities.",
     "comments": [
       {
         "id": 47429141,
@@ -34,7 +34,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately identifies a key architectural flaw: relying on the model to enforce sandbox constraints internally is insecure. It suggests enforcing constraints externally, which is a sound security principle."
+        "analysis": "This comment accurately identifies a key architectural flaw: relying on the model to enforce sandbox constraints is ineffective. Enforcing constraints externally is a sound security principle."
       },
       {
         "id": 47429404,
@@ -47,7 +47,7 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment insightfully explains the fundamental challenge in agent sandboxing: the AI's reasoning ability can circumvent expected constraints, highlighting a core tension between capability and containment."
+        "analysis": "This comment insightfully explains the fundamental tension between agent capability and containment, highlighting the difficulty in designing secure sandboxes for intelligent agents."
       },
       {
         "id": 47428007,
@@ -59,20 +59,19 @@
           "likely-true"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment correctly critiques the use of 'sandbox' since the AI could disable sandboxing itself, meaning the containment was not effective or genuine."
+        "analysis": "The comment correctly challenges the validity of calling the environment a sandbox if the AI can disable sandboxing, pointing out a critical misuse of terminology and security design."
       },
       {
-        "id": 47428752,
-        "author": "seedpi",
-        "text": "The bilekas comment is right — if there is no workspace trust or scope restriction, calling it a sandbox escape is generous. It escaped a suggestion of a sandbox.\u003cp\u003eBut the broader pattern matters. Cortex bypassed human-in-the-loop approval via specially constructed commands. That is the attack surface for every agentic CLI: the gap between what the approval UI shows the user and what actually executes.\u003cp\u003eI would be interested to know whether the fix was to validate the command at the shell level or just patch the specific bypass. If it is the latter, there will be another one.",
+        "id": 47427780,
+        "author": "RobRivera",
+        "text": "If the user has access to a lever that enables accesss, that lever is not providing a sandbox.\u003cp\u003eI expected this to be about gaining os privileges.\u003cp\u003eThey didn\u0026#x27;t create a sandbox. Poor security design all around",
         "indicators": [
           "intelligent",
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
         "accuracyRank": 4,
-        "analysis": "This comment highlights the real security risk: bypassing human approval in agentic CLIs, emphasizing the gap between UI and actual command execution."
+        "analysis": "This comment concisely points out that a sandbox that can be bypassed by the user is not a sandbox, emphasizing the poor security design in the system."
       },
       {
         "id": 47428895,
@@ -85,19 +84,7 @@
           "constructive"
         ],
         "accuracyRank": 5,
-        "analysis": "This comment provides a nuanced perspective on the security implications of giving AI agents CLI access, noting the increased attack surface and need for stricter permissions."
-      },
-      {
-        "id": 47428021,
-        "author": "bilekas",
-        "text": "\u0026gt; Note: Cortex does not support ‘workspace trust’, a security convention first seen in code editors, since adopted by most agentic CLIs.\u003cp\u003eAm I crazy or does this mean it didn\u0026#x27;t really escape, it wasn\u0026#x27;t given any scope restrictions in the first place ?",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment questions whether the incident was truly a sandbox escape or simply a lack of sandboxing, which aligns with other critiques about the misuse of the term."
+        "analysis": "This comment provides a nuanced perspective on the security implications of exposing CLI access to data agents, highlighting the need for stricter permission models and broader system considerations."
       },
       {
         "id": 47429178,
@@ -108,8 +95,19 @@
           "thoughtful",
           "likely-true"
         ],
+        "accuracyRank": 6,
+        "analysis": "The comment points out a basic security oversight in not considering subprocess creation in shell command restrictions, indicating a lack of thorough security design."
+      },
+      {
+        "id": 47429001,
+        "author": "jeffbee",
+        "text": "It kinda sucks how \u0026quot;sandbox\u0026quot; has been repurposed to mean nothing. This is not a \u0026quot;sandbox escape\u0026quot; because the thing under attack never had any meaningful containment.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
         "accuracyRank": 7,
-        "analysis": "This comment points out a basic security oversight in handling shell commands, emphasizing the importance of considering subprocess creation in sandboxing."
+        "analysis": "This comment criticizes the misuse of the term 'sandbox escape' in this context, emphasizing that meaningful containment was never present."
       },
       {
         "id": 47429366,
@@ -120,31 +118,29 @@
           "likely-true"
         ],
         "accuracyRank": 8,
-        "analysis": "This comment clarifies that the AI was prompted to escape rather than escaping autonomously, which is an important distinction for understanding the incident."
+        "analysis": "This comment clarifies that the AI did not autonomously escape the sandbox but was manipulated to do so, highlighting the importance of precise language."
       },
       {
-        "id": 47429009,
-        "author": "jessfyi",
-        "text": "A sandbox that can be toggled off is not a sandbox, this is simply more marketing\u0026#x2F;\u0026quot;critihype\u0026quot; to overstate the capability of their AI to distract from their poorly built product. The erroneous title doing all the heavy lifting here.",
+        "id": 47429076,
+        "author": "orbital-decay",
+        "text": "\u003ci\u003e\u0026gt;Snowflake Cortex AI Escapes Sandbox and Executes Malware\u003c/i\u003e\u003cp\u003e\u003ci\u003erolls eyes\u003c/i\u003e Actual content: prompt injection vulnerability discovered in a coding agent",
         "indicators": [
-          "emotional",
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 9,
-        "analysis": "This comment expresses skepticism about the marketing around the product and the misuse of the term sandbox, reflecting a common theme in the discussion."
+        "analysis": "This comment reduces the incident to a prompt injection vulnerability, which is a reasonable summary of the technical root cause."
       },
       {
-        "id": 47427780,
-        "author": "RobRivera",
-        "text": "If the user has access to a lever that enables accesss, that lever is not providing a sandbox.\u003cp\u003eI expected this to be about gaining os privileges.\u003cp\u003eThey didn\u0026#x27;t create a sandbox. Poor security design all around",
+        "id": 47428021,
+        "author": "bilekas",
+        "text": "\u0026gt; Note: Cortex does not support ‘workspace trust’, a security convention first seen in code editors, since adopted by most agentic CLIs.\u003cp\u003eAm I crazy or does this mean it didn\u0026#x27;t really escape, it wasn\u0026#x27;t given any scope restrictions in the first place ?",
         "indicators": [
-          "emotional",
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment bluntly summarizes the consensus that the security design was flawed and the sandbox was ineffective due to user-accessible overrides."
+        "analysis": "This comment questions whether the AI truly escaped sandboxing or if it was never properly sandboxed, a valid point given the reported design."
       }
     ]
   }
