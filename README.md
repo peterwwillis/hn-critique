@@ -173,6 +173,10 @@ go run ./cmd/crawler/ -prepare-input -out ./docs
 go run ./cmd/crawler/ -analyze-input -out ./docs
 ```
 
+Article critiques are cached per story/day after a successful AI analysis and
+will be re-used in later runs (skipping article fetch + re-analysis), while
+comments can still be refreshed and re-analyzed as new discussion appears.
+
 ## Project layout
 
 ```
@@ -217,4 +221,3 @@ OPENAI_API_KEY=sk-… ./bin/mcp-server -provider openai
 
 The server reads newline-delimited JSON-RPC 2.0 from stdin and writes responses to stdout,
 following the standard MCP transport. All diagnostic logging goes to stderr.
-

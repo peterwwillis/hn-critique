@@ -272,6 +272,46 @@ func TestArchiveWaybackFallback_UsesCDXSnapshotWhenAvailabilityMissing(t *testin
 	}
 }
 
+func TestArchiveWaybackFallback_TreatsWaybackPlaceholderAsFetchFailure(t *testing.T) {
+	// Keep text above the 300-char minimum acceptance threshold while remaining
+	// below maxWaybackPlaceholderRuneCount so placeholder detection is exercised.
+	placeholder := strings.Repeat("Wayback Machine timestamp capture data archive.org save page now ", 20)
+	var requestedSnapshotPath string
+	var originalURL string
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.URL.Path == "/original":
+			http.Error(w, "primary failed", http.StatusBadGateway)
+		case r.URL.Path == "/archive/submit/":
+			w.Header().Set("Location", "/archive/not-enough")
+			w.WriteHeader(http.StatusFound)
+		case r.URL.Path == "/archive/not-enough":
+			_, _ = w.Write([]byte("<html><body>too short</body></html>"))
+		case r.URL.Path == "/wayback/available":
+			fmt.Fprintf(w, `{"archived_snapshots":{"closest":{"available":true,"status":"200","url":"http://%s/web/20240102030405/%s"}}}`, r.Host, originalURL)
+		case strings.HasPrefix(r.URL.Path, "/web/20240102030405/"):
+			requestedSnapshotPath = r.URL.Path
+			_, _ = w.Write([]byte("<html><body><main>" + placeholder + "</main></body></html>"))
+		default:
+			http.Error(w, "unexpected path", http.StatusNotFound)
+		}
+	}))
+	defer server.Close()
+	originalURL = server.URL + "/original"
+
+	setTestFallbackPrefixes(t, server.URL+"/archive/", server.URL+"/wayback/available", server.URL+"/wayback/cdx", server.URL+"/")
+
+	fetcher := NewFetcher()
+	_, _, err := fetcher.FetchWithTruncation(originalURL)
+	if err == nil {
+		t.Fatal("expected fetch failure for wayback placeholder content, got nil error")
+	}
+	if requestedSnapshotPath == "" {
+		t.Fatal("expected wayback snapshot to be requested")
+	}
+}
+
 func TestArchivePHResponseURL_UsesLocationHeader(t *testing.T) {
 	base, err := url.Parse("https://archive.ph/submit/")
 	if err != nil {
