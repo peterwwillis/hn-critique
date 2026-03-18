@@ -22,9 +22,6 @@ const (
 	userAgent          = "Mozilla/5.0 (compatible; HNCritique/1.0; +https://github.com/peterwwillis/hn-critique)"
 	defaultMaxBodySize = 2 << 20 // 2 MB
 	defaultMaxTextLen  = 8000
-	// Keep this high enough to avoid false positives for substantive articles
-	// discussing the Wayback Machine, while still filtering short metadata pages.
-	maxWaybackPlaceholderRuneCount = 1800
 )
 
 var (
@@ -135,10 +132,6 @@ func (f *Fetcher) FetchWithTruncation(rawURL string) (string, bool, error) {
 			continue
 		}
 		if len(text) >= 300 {
-			if isWaybackPlaceholderContent(text) {
-				articleLogger.Printf("    article fetch produced wayback placeholder content (%s): %d chars", candidate.source, utf8.RuneCountInString(text))
-				continue
-			}
 			if candidate.source != "direct" {
 				articleLogger.Printf("    article fetch succeeded via fallback: %s", candidate.source)
 			}
@@ -349,38 +342,6 @@ func normalizeInternetArchiveSnapshotURL(snapshotURL string) string {
 		parsed.Scheme = "https"
 	}
 	return parsed.String()
-}
-
-func isWaybackPlaceholderContent(text string) bool {
-	lower := strings.ToLower(text)
-	if strings.TrimSpace(lower) == "" {
-		return false
-	}
-	if !strings.Contains(lower, "wayback machine") && !strings.Contains(lower, "internet archive") {
-		return false
-	}
-	normalized := strings.Join(strings.Fields(lower), " ")
-	markers := 0
-	for _, marker := range []string{
-		"timestamp",
-		"capture",
-		"captures",
-		"about this capture",
-		"save page now",
-		"web archive",
-		"archive.org",
-		"saved from",
-	} {
-		if strings.Contains(normalized, marker) {
-			markers++
-		}
-	}
-	if markers < 2 {
-		return false
-	}
-	// Placeholder pages are typically short metadata pages. Keep a generous cap
-	// so that long real articles discussing Wayback are not incorrectly dropped.
-	return utf8.RuneCountInString(normalized) < maxWaybackPlaceholderRuneCount
 }
 
 func archivePHResponseURL(base *url.URL, headers http.Header) (string, bool) {
