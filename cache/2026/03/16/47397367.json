@@ -2,27 +2,26 @@
   "story_id": 47397367,
   "generated_at": "",
   "critique": {
-    "summary": "The article discusses an experiment exploring the use of unreviewed AI-generated code in production by shifting from manual code review to automated verification through property-based testing, mutation testing, and other constraints. The author argues that these verification methods can sufficiently ensure code correctness without manual inspection, treating AI-generated code more like compiled binaries.",
+    "summary": "The article discusses an experiment exploring the use of unreviewed AI-generated code in production by shifting from manual code review to automated verification through property-based testing, mutation testing, and other constraints. The author argues that these verification methods can sufficiently ensure code correctness without human review, though current overheads remain high.",
     "mainPoints": [
-      "The author conducted an experiment generating AI code for a simplified FizzBuzz problem and verified it using automated tests instead of manual review.",
-      "Verification included property-based testing, mutation testing, enforcing no side effects, and type-checking/linting in Python.",
-      "These automated checks can reduce the need for human review by constraining the solution space to correct code.",
-      "The author suggests maintainability and readability may be less relevant when treating AI-generated code like compiled code.",
-      "Setting up these verification constraints currently has overhead but could improve as AI and tooling advance.",
-      "Related work includes formal verification, large unit test suites like JustHTML, and projects aiming for no human code review in software factories."
+      "The author conducted an experiment generating AI code for a simplified FizzBuzz problem and verified it using automated tests rather than manual review.",
+      "Verification included property-based testing, mutation testing, ensuring no side effects, and type-checking/linting in Python.",
+      "The author suggests that maintainability and readability may be less relevant when treating AI-generated code as compiled code.",
+      "Setting up automated verification currently has higher overhead than manual review but could improve with better tools and agents.",
+      "Related works include formal verification approaches, the JustHTML library's use of extensive unit tests, and a 'Software Factory' concept with no human code review."
     ],
-    "truthfulness": "The claims about property-based testing, mutation testing, and their roles in verifying code correctness are accurate and well-established in software engineering. The author's experiment and reasoning about shifting from manual review to verification are plausible and consistent with current research trends. The references to known tools like Hypothesis and mutmut, and the mention of formal verification and JustHTML, align with documented practices. However, the article is based on a personal experiment and opinion rather than comprehensive empirical studies, so while the technical claims are truthful, the broader conclusions about trustworthiness without review should be considered preliminary.",
+    "truthfulness": "The claims in the article are consistent with current software engineering practices and research on automated testing and verification. Property-based testing and mutation testing are established techniques to improve code reliability and test suite quality. The author's experiment with AI-generated code and verification aligns with ongoing discussions in the software development community about reducing reliance on manual code review for AI outputs. The references to known tools like Hypothesis and mutmut are accurate. However, the article is primarily anecdotal and exploratory, lacking independent verification or multiple perspectives. The suggestion that automated verification alone can replace human review is plausible but not yet widely validated in production environments.",
     "considerations": [
-      "The article does not address potential risks of relying solely on automated verification for complex or safety-critical code.",
-      "It overlooks the importance of code readability and maintainability for future debugging and development, which remain relevant in many contexts.",
-      "The experiment focuses on a simple problem (FizzBuzz), which may not generalize to more complex software systems.",
-      "The overhead and complexity of setting up automated verification pipelines might be prohibitive in many real-world scenarios.",
-      "Human review can catch issues beyond correctness, such as security vulnerabilities, ethical concerns, or architectural problems, which automated tests might miss."
+      "The article does not address potential risks of relying solely on automated verification, such as missing logical errors not covered by tests.",
+      "It does not discuss the complexity or scalability of these verification methods for larger or more complex AI-generated codebases.",
+      "The impact of AI model improvements on the quality and maintainability of generated code is only briefly mentioned and could be further explored.",
+      "Human factors such as trust, accountability, and debugging challenges when skipping manual review are not examined.",
+      "The article focuses on Python and may not generalize to other programming languages or environments."
     ],
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the challenges and limitations of automated verification and testing of AI-generated code, particularly beyond trivial examples like FizzBuzz. Commenters emphasize the importance of human review, the complexity of real-world software, and the difficulties in trusting AI-generated tests and code for maintainability and security.",
+    "summary": "The discussion centers on the challenges and limitations of automated verification and testing of AI-generated code, especially beyond trivial examples like FizzBuzz. Commenters emphasize the importance of human review, the complexity of real-world software, and the need for advanced testing methods such as property-based testing and mutation testing, while acknowledging that AI tools currently cannot fully replace human oversight.",
     "comments": [
       {
         "id": 47416156,
@@ -35,7 +34,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "Provides a nuanced view on the complexity of software testing and the limitations of AI in fully covering testing, emphasizing the engineer's responsibility."
+        "analysis": "This comment accurately highlights the complexity of software testing and the current limitations of AI coding agents, emphasizing the necessity of human responsibility in verification."
       },
       {
         "id": 47417620,
@@ -48,7 +47,32 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Insightfully highlights the unique failure modes of AI code and suggests property-based testing as a promising approach to catch edge cases."
+        "analysis": "The comment insightfully discusses the nature of AI errors and suggests property-based testing as a practical approach to catch edge cases, reflecting current best practices."
+      },
+      {
+        "id": 47415756,
+        "author": "tedivm",
+        "text": "While I understand why people want to skip code reviews, I think it is an absolute mistake at this point in time. I think AI coding assistants are great, but I\u0026#x27;ve seen them fail or go down the wrong path enough times (even with things like spec driven development) where I don\u0026#x27;t think it\u0026#x27;s reasonable to not review code. Everything from development paths in production code, improper implementations, security risks: all of those are just as likely to happen with an AI as a Human, and any team that let\u0026#x27;s humans push to production without a review would absolutely be ridiculed for it.\u003cp\u003eAgain, I\u0026#x27;m not opposed to AI coding. I know a lot of people are. I have multiple open source projects that were 100% created with AI assistants, and wrote a blog post about it you can see in my post history. I\u0026#x27;m not anti-ai, but I do think that developers have some responsibility for the code they create with those tools.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment provides a balanced view acknowledging AI benefits while stressing the critical need for code reviews to avoid errors and security risks."
+      },
+      {
+        "id": 47416503,
+        "author": "pron",
+        "text": "\u0026gt; The code must pass property-based tests\u003cp\u003eWho writes the tests? It can be ok to trust code that passes tests \u003ci\u003eif\u003c/i\u003e you can trust the tests.\u003cp\u003eThere are, however, other problems. I frequently see agents write code that\u0026#x27;s functionally correct but that they won\u0026#x27;t be able to evolve for long. That\u0026#x27;s also what happened with Anthropic\u0026#x27;s failed attempt to have agents write a C compiler (not a trivial task, but far from an exceptionally difficult one). They had thousands of good human-written tests, but the agents couldn\u0026#x27;t get the software to converge. They fixed one bug only to create another.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "The comment correctly points out the dependency on test quality and the difficulty AI agents face in evolving complex software despite extensive testing."
       },
       {
         "id": 47418636,
@@ -60,33 +84,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "Raises a critical security concern that automated tests often miss, emphasizing the need for human oversight beyond correctness testing."
-      },
-      {
-        "id": 47415756,
-        "author": "tedivm",
-        "text": "While I understand why people want to skip code reviews, I think it is an absolute mistake at this point in time. I think AI coding assistants are great, but I\u0026#x27;ve seen them fail or go down the wrong path enough times (even with things like spec driven development) where I don\u0026#x27;t think it\u0026#x27;s reasonable to not review code. Everything from development paths in production code, improper implementations, security risks: all of those are just as likely to happen with an AI as a Human, and any team that let\u0026#x27;s humans push to production without a review would absolutely be ridiculed for it.\u003cp\u003eAgain, I\u0026#x27;m not opposed to AI coding. I know a lot of people are. I have multiple open source projects that were 100% created with AI assistants, and wrote a blog post about it you can see in my post history. I\u0026#x27;m not anti-ai, but I do think that developers have some responsibility for the code they create with those tools.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "Balances optimism about AI tools with caution, stressing the necessity of code reviews and developer accountability."
-      },
-      {
-        "id": 47419136,
-        "author": "vicchenai",
-        "text": "the part that breaks down for me is the property test loop. if the agent writes the code AND the properties, it\u0026#x27;s just bootstrapping from the same mental model that produced the bug. i\u0026#x27;ve had it pass all self-generated tests and still ship logic that was wrong in ways i only caught by accident. review the spec\u0026#x2F;properties carefully, not the code, seems like the right frame.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 5,
-        "analysis": "Correctly points out the risk of self-referential testing where AI-generated tests may fail to catch its own mistakes."
+        "analysis": "This comment highlights a critical security issue overlooked by automated testing, underscoring the importance of human vigilance in code review."
       },
       {
         "id": 47416001,
@@ -99,12 +98,12 @@
           "constructive"
         ],
         "accuracyRank": 6,
-        "analysis": "Critiques the article's choice of example, emphasizing that real software challenges extend beyond correctness to growth and performance."
+        "analysis": "The comment accurately critiques the oversimplification of using trivial examples like FizzBuzz to represent real-world code complexity and challenges."
       },
       {
-        "id": 47417189,
-        "author": "davemp",
-        "text": "So often these AI articles mis or ignore the Test Oracle Problem. Generating correct tests is at least as hard as generating the correct answers (often harder).\u003cp\u003eI’m actually starting to get annoyed about how much material is getting spread around about software analysis \u0026#x2F; formal methods by folks ignorant about the basics of the field.",
+        "id": 47419136,
+        "author": "vicchenai",
+        "text": "the part that breaks down for me is the property test loop. if the agent writes the code AND the properties, it\u0026#x27;s just bootstrapping from the same mental model that produced the bug. i\u0026#x27;ve had it pass all self-generated tests and still ship logic that was wrong in ways i only caught by accident. review the spec\u0026#x2F;properties carefully, not the code, seems like the right frame.",
         "indicators": [
           "intelligent",
           "thoughtful",
@@ -112,19 +111,18 @@
           "constructive"
         ],
         "accuracyRank": 7,
-        "analysis": "Highlights a fundamental problem in automated testing that is often overlooked, reinforcing the difficulty of test generation."
+        "analysis": "This comment insightfully notes the risk of AI-generated tests sharing the same flawed assumptions as the code, reducing test effectiveness."
       },
       {
-        "id": 47418127,
-        "author": "keithnz",
-        "text": "I\u0026#x27;ve been working on a \u0026quot;vibe coded\u0026quot; project to create a open source TUI sql query tool a bit like DataGrip, with autocomplete, syntax highlighting, schema introspection, vim mode\u0026#x2F;non vim, allows MCP mode so an agent can help with queries\u0026#x2F;get results, editing rows, etc.   It\u0026#x27;s mostly an experiment into how to build software from scratch via an Agent without looking at the code (other than to see what decisions its making) and I wanted something reasonably complicated so the requirements evolve \u0026#x2F; change over time.  There are a couple of issues I find, many bugs are unspecified edge cases especially because many of the features \u0026quot;combo\u0026quot; together, and the other issue is it\u0026#x27;s hard for it to maintain consistency across the UI.  You start setting up a lot more context for cross cutting concerns, reviewing itself, and testing.  The tool itself is actually really useful and it is my main tool for querying our dbs now.  Most of the problem I find are due to \u0026quot;sloppy\u0026quot; prompting (or just not thinking through the edge cases), and a lack of project wide guidance for dealing with the architecture of the system to maintain consistency across the same concerns.",
+        "id": 47419159,
+        "author": "teiferer",
+        "text": "If that would work reliably then you could apply that to human-produced code too. But nothing like that has shown to work, so I wouldn\u0026#x27;t put money on it working for LLM output.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
         "accuracyRank": 8,
-        "analysis": "Provides practical experience with AI-assisted development, illustrating real-world challenges in consistency and edge case handling."
+        "analysis": "The comment realistically tempers expectations about automated verification, emphasizing that no current method reliably replaces human review."
       },
       {
         "id": 47418625,
@@ -136,19 +134,44 @@
           "constructive"
         ],
         "accuracyRank": 9,
-        "analysis": "Offers a balanced perspective comparing AI to junior engineers, advocating for standard quality controls to mitigate risks."
+        "analysis": "This comment offers a pragmatic perspective comparing AI to junior engineers, advocating for standard code quality controls and review processes."
       },
       {
         "id": 47417792,
         "author": "agentultra",
         "text": "This might work on small, self contained projects.\u003cp\u003eNo side effects is a hefty constraint.\u003cp\u003eSystems tend to have multiple processes all using side effects. There are global properties of the system that need specification and tests are hard to write for these situations. Especially when they are temporal properties that you care about (eg: if we enter the A state then eventually we must enter the B state).\u003cp\u003eWhen such guarantees involve multiple processes, even property tests aren’t going to cover you sufficiently.\u003cp\u003eWorse, when it falls over at 3am and you’ve never read the code… is the plan to vibe code a big fix right there? Will you also remember to modify the specifications first?\u003cp\u003eGood on the author for trying. Correctness is hard.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "Realistically assesses the limitations of property testing in complex systems with side effects and temporal properties."
+        "analysis": "The comment effectively points out the limitations of the approach for complex systems with side effects and temporal properties, emphasizing the difficulty of specification."
+      },
+      {
+        "id": 47417496,
+        "author": "jerf",
+        "text": "\u0026quot;However, I\u0026#x27;m starting to think that maintainability and readability aren\u0026#x27;t relevant in this context. We should treat the output like compiled code.\u0026quot;\u003cp\u003eI would like to put my marker out here as \u003ci\u003evigorously\u003c/i\u003e disagreeing with this. I will quote my post [1] again, which given that this is the third time I\u0026#x27;ve referred to a footnote via link rather suggests this should be lifted out of the footnote:\u003cp\u003e\u0026quot;It has been lost in AI money-grabbing frenzy but a few years ago we were talking a lot about AIs being “legible”, that they could explain their actions in human-comprehensible terms. “Running code we can examine” is the highest grade of legibility any AI system has produced to date. We should not give that away.\u003cp\u003e\u0026quot;We will, of course. The Number Must Go Up. We aren’t very good at this sort of thinking.\u003cp\u003e\u0026quot;But we shouldn’t.\u0026quot;\u003cp\u003eDo not let go of human-readable code. Ask me 20 years ago whether we\u0026#x27;d get \u0026quot;unreadable code generation\u0026quot; or \u0026quot;readable code generation\u0026quot; out of AIs and I would have guessed they\u0026#x27;d generate completely opaque and unreadable code. Good news! I would have been completely wrong! They in fact produce perfectly readable code. It may be perfectly readable \u0026quot;slop\u0026quot; sometimes, but the slop-ness is a separate issue. Even the slop is still perfectly readable. Don\u0026#x27;t let go of it.\u003cp\u003e[1]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;jerf.org\u0026#x2F;iri\u0026#x2F;post\u0026#x2F;2026\u0026#x2F;what_value_code_in_ai_era\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;jerf.org\u0026#x2F;iri\u0026#x2F;post\u0026#x2F;2026\u0026#x2F;what_value_code_in_ai_era\u0026#x2F;\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 11,
+        "analysis": "This comment argues convincingly for maintaining code readability and human legibility even in AI-generated code, an important consideration for maintainability."
+      },
+      {
+        "id": 47416481,
+        "author": "otabdeveloper4",
+        "text": "This one is pretty easy!\u003cp\u003eJust write your business requirements in a clear, unambiguous and exhaustive manner using a formal specification language.\u003cp\u003eBam, no coding required.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 12,
+        "analysis": "The comment suggests formal specifications as a way to avoid coding errors, which is a valid but often difficult approach to implement in practice."
       }
     ]
   }

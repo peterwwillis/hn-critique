@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">145 points</span>
+        <span class="score">147 points</span>
         by <a href="https://news.ycombinator.com/user?id=mariuz" class="hnuser">mariuz</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../comments/2026/03/13/47364337.html">45&nbsp;comments critique</a>
@@ -48,29 +48,29 @@
 
       <section class="critique-section">
         <h3>Summary</h3>
-        <p>The article recounts the author&#39;s experience discovering a CPU design bug in the Xbox 360 related to a special prefetch instruction (xdcbt) that bypassed the L2 cache, causing memory coherency issues and crashes. The root cause was speculative execution of this instruction by the branch predictor, which led to incoherent memory views and instability, a problem analogous to vulnerabilities like Meltdown and Spectre.</p>
+        <p>The article recounts the author&#39;s experience discovering a CPU design bug in the Xbox 360 related to a special prefetch instruction, xdcbt, which bypassed the L2 cache and caused memory coherency issues. The bug was exacerbated by speculative execution of this instruction due to branch prediction, leading to crashes even when the instruction was not actually executed. The author explains the technical details and implications of this bug, drawing parallels to the Meltdown and Spectre vulnerabilities.</p>
       </section>
 
       <section class="critique-section">
         <h3>Main Points &amp; Arguments</h3>
         <ul>
-          <li>The Xbox 360 CPU was a three-core PowerPC chip with a 1-MB L2 cache and high memory latencies.</li><li>A new instruction, xdcbt, was added to prefetch data directly into the L1 cache, bypassing L2, which broke cache coherency guarantees.</li><li>Using xdcbt carelessly caused heap corruption crashes due to incoherent memory views between cores.</li><li>The branch predictor could speculatively execute xdcbt instructions, causing the same issues even when the instruction was not actually executed.</li><li>Replacing xdcbt instructions with breakpoints stopped the crashes, proving speculative execution was the cause.</li><li>The bug was too risky to allow xdcbt in shipped games, and the author fixed his memory copy routine to avoid prefetching beyond buffer boundaries.</li><li>The issue illustrates the dangers of speculative execution and branch prediction, similar to later-known CPU vulnerabilities like Meltdown and Spectre.</li>
+          <li>The Xbox 360 CPU is a three-core PowerPC chip with a 1-MB L2 cache shared among cores.</li><li>A new instruction, xdcbt, was added to prefetch data directly into L1 cache, bypassing L2, which broke memory coherency guarantees.</li><li>Using xdcbt incorrectly caused heap corruption crashes due to incoherent views of memory between cores.</li><li>Speculative execution of xdcbt instructions caused crashes even when the instruction was not actually executed, due to branch predictor mispredictions.</li><li>The bug was difficult to fix and ultimately deemed too dangerous to use xdcbt in released games.</li><li>The issue is related to the same underlying problem as Meltdown and Spectre, involving speculative execution and side effects.</li><li>The author shares insights into CPU pipeline design, branch prediction, and cache coherency in the context of the Xbox 360.</li>
         </ul>
       </section>
 
       <section class="critique-section">
         <h3>Truthfulness Assessment</h3>
-        <div class="rating-badge rating-needs-citation">
-          Needs Citation
+        <div class="rating-badge rating-reliable">
+          Reliable
         </div>
-        <p>The article is a first-person account by Bruce Dawson, a known programmer with direct experience on the Xbox 360 CPU, providing detailed technical explanations consistent with known CPU architecture principles and speculative execution behavior. The description of the xdcbt instruction, cache coherency issues, and speculative execution causing side effects aligns with established knowledge about CPU design and vulnerabilities. The author also references corroboration from IBM and parallels to Meltdown and Spectre, which are well-documented speculative execution vulnerabilities. The article is factual and technically accurate based on available information.</p>
+        <p>The article is a first-person account by Bruce Dawson, a known expert and former Xbox 360 CPU engineer, providing detailed technical explanations consistent with known CPU architecture principles. The described behavior of the xdcbt instruction and its speculative execution effects aligns with established knowledge about speculative execution vulnerabilities like Meltdown and Spectre. The anecdotal evidence is supported by technical reasoning and corroborated by community discussions and comments from other professionals. While the article is a personal technical narrative and does not cite external sources formally, the information is credible and accurate based on available knowledge of CPU design and speculative execution issues.</p>
       </section>
 
       
       <section class="critique-section">
         <h3>Additional Considerations</h3>
         <ul>
-          <li>The article is a personal recount and does not cite multiple independent sources or perspectives, limiting its journalistic completeness.</li><li>The discussion assumes some technical background in CPU architecture and may omit broader context about how common such bugs are in console CPUs.</li><li>It does not detail how widespread the impact was across games or how Microsoft officially addressed the issue beyond the author&#39;s fix.</li><li>The potential security implications of speculative execution bugs in consoles are not deeply explored.</li><li>The article focuses on a specific CPU implementation and instruction, so generalization to other CPUs should be cautious.</li>
+          <li>The article does not provide external references or formal citations to official Microsoft or IBM documentation on the Xbox 360 CPU or the xdcbt instruction.</li><li>The impact of this bug on the overall Xbox 360 console launch and game development is anecdotal and not quantified with broader data.</li><li>The article focuses on a specific technical bug without discussing broader mitigations or how similar issues are handled in modern CPU designs beyond a brief mention of Meltdown and Spectre.</li><li>The narrative is technical and assumes familiarity with CPU architecture concepts, which may limit accessibility for general audiences.</li>
         </ul>
       </section>
       
@@ -84,7 +84,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-17 23:10 UTC &nbsp;|&nbsp;
+    Generated 2026-03-18 00:03 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
