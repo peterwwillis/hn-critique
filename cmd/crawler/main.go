@@ -34,9 +34,9 @@ const (
 	storyDelay = 2 * time.Second
 )
 
-var cacheCheckedByStoryID = make(map[int]bool)
-
 func main() {
+	cacheCheckedByStoryID := make(map[int]bool)
+
 	var (
 		storyCount   = flag.Int("stories", defaultStoryCount, "number of top stories to fetch")
 		outputDir    = flag.String("out", "docs", "output directory for the generated site")
@@ -191,7 +191,7 @@ func main() {
 					// Only reuse a cached successful critique when not preparing input.
 					// In -prepare-input mode we always want to fetch and store raw inputs,
 					// without pre-populating story.Critique from prior analysis.
-					if crit := successfulCachedArticleCritique(cached); crit != nil && !*prepareInput {
+					if crit := successfulCachedArticleCritique(cached); crit != nil {
 						story.Critique = crit
 						log.Printf("  Using cached successful article analysis for story %d (skip article fetch and re-analysis).", story.ID)
 					}
