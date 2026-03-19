@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Critique: The Serial Safety Net: Efficient Concurrency Control on Modern Hardware | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="http://muratbuffalo.blogspot.com/2026/03/the-serial-safety-net-efficient.html" rel="noreferrer noopener">The Serial Safety Net: Efficient Concurrency Control on Modern Hardware</a>
+        <span class="sitebit"> (muratbuffalo.blogspot.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">5 points</span>
+        by <a href="https://news.ycombinator.com/user?id=ingve" class="hnuser">ingve</a>
+        <span class="age">4 days ago</span>
+        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/15/47385247.html">0&nbsp;comments critique</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47385247" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+    <div class="critique-content">
+
+      <section class="critique-section">
+        <h3>Summary</h3>
+        <p>The article discusses the Serial Safety Net (SSN), a concurrency control mechanism designed to achieve serializability in database systems running on modern hardware. SSN operates as a certifier on top of weaker isolation levels like Read Committed (RC) or Snapshot Isolation (SI), preventing dependency cycles and ensuring serializable transaction histories without the performance penalties of traditional methods like Two-Phase Locking (2PL).</p>
+      </section>
+
+      <section class="critique-section">
+        <h3>Main Points &amp; Arguments</h3>
+        <ul>
+          <li>Modern hardware with many cores and large memory challenges traditional concurrency control methods like 2PL due to contention.</li><li>Weaker isolation levels such as RC and SI offer better performance but allow anomalies and dependency cycles.</li><li>SSN is introduced as a certifier that tracks transaction dependencies and aborts transactions that would create cycles, guaranteeing serializability.</li><li>SSN uses two watermarks per transaction to detect cycles and may abort transactions conservatively to prevent future cycles.</li><li>Compared to standard Optimistic Concurrency Control (OCC), SSN avoids repeated aborts by ensuring safe retry conditions.</li><li>SSN requires additional metadata storage per tuple and does not natively handle phantom reads, necessitating supplementary mechanisms.</li><li>Layering SSN on SI provides a consistent snapshot view for applications, avoiding mid-transaction anomalies seen with RC&#43;SSN despite both achieving serializability.</li>
+        </ul>
+      </section>
+
+      <section class="critique-section">
+        <h3>Truthfulness Assessment</h3>
+        <div class="rating-badge rating-needs-citation">
+          Needs Citation
+        </div>
+        <p>The article accurately summarizes the concepts and mechanisms of the Serial Safety Net as presented in academic research on concurrency control. The description of SSN&#39;s operation, its advantages over traditional methods like 2PL and OCC, and its limitations regarding phantom reads and metadata overhead align with published literature on the topic. The distinctions between RC&#43;SSN and SI&#43;SSN in terms of application-level consistency and performance trade-offs are consistent with known database theory. However, the article is a blog-style summary and does not cite multiple independent sources or provide alternative perspectives, limiting its journalistic completeness.</p>
+      </section>
+
+      
+      <section class="critique-section">
+        <h3>Additional Considerations</h3>
+        <ul>
+          <li>The article does not discuss real-world adoption or implementation challenges of SSN in commercial database systems.</li><li>It omits detailed performance benchmarks or comparisons with other serializability techniques beyond OCC and 2PL.</li><li>The need for additional mechanisms to handle phantom reads is mentioned but not elaborated, which is critical for full serializability.</li><li>Potential impacts on system complexity and maintainability from adding SSN and its metadata overhead are not explored.</li><li>The article is based on a single paper and related follow-up work without referencing broader academic consensus or critiques.</li>
+        </ul>
+      </section>
+      
+
+    </div>
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-19 10:50 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
