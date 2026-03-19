@@ -9,19 +9,69 @@
     "rating": "unavailable"
   },
   "comments_critique": {
-    "summary": "The discussion centers on skepticism about the novelty and practicality of the project described in the article, with references to known distributed system challenges. Commenters express cautious curiosity and reference established critiques of distributed objects.",
+    "summary": "The discussion revolves around the feasibility and challenges of making Python natively distributable, with comparisons to other languages and systems like Lua and BEAM. Participants highlight technical difficulties such as distributed computing fallacies, security concerns, and the complexity of reasoning about performance in distributed environments.",
     "comments": [
       {
-        "id": 47441895,
-        "author": "mohamedkoubaa",
-        "text": "The distributed object fallacy is never going away, is it?\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;martinfowler.com\u0026#x2F;articles\u0026#x2F;distributed-objects-microservices.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;martinfowler.com\u0026#x2F;articles\u0026#x2F;distributed-objects-micros...\u003c/a\u003e",
+        "id": 47443075,
+        "author": "blopker",
+        "text": "Every time I see something like this (turn function calls into a network call), I reflect fondly on the list of fallacies in distributed computing [0]. These are issues that largely have to be handled in an application-specific way, and cannot be solved in the general case.\u003cp\u003eThis list alone has saved me many late debugging nights, just by not making or using systems that ignore the list.\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;en.wikipedia.org\u0026#x2F;wiki\u0026#x2F;Fallacies_of_distributed_computing\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;en.wikipedia.org\u0026#x2F;wiki\u0026#x2F;Fallacies_of_distributed_compu...\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment accurately references well-known distributed computing challenges that are fundamental and must be addressed specifically by applications, making it a highly relevant and insightful contribution."
+      },
+      {
+        "id": 47442750,
+        "author": "westurner",
+        "text": "cloudpickle serializes code without signatures; which is an RCE vuln.\u003cp\u003eIt is much safer to distribute signed code in signed packages out of band and send only non-executable data in messages.\u003cp\u003eIt is more safe to store distributed messages in a page with the NX bit flipped.\u003cp\u003eA compromise of any client in this system results in DOS and arbitrary RCE; but that\u0026#x27;s an issue with most distributed task worker systems.\u003cp\u003eTo take a zero trust approach, you can\u0026#x27;t rely on the shared TLS key or the workers never being compromised.\u003cp\u003emDNS doesn\u0026#x27;t scale beyond a broadcast segment without mDNS repeaters (which don\u0026#x27;t scale) which are on multiple network segments.\u003cp\u003eSomething centralized like Dask, for example, can log and track state centrally to handle task retries on network, task, and worker failure.\u003cp\u003eBut Dask doesn\u0026#x27;t satisfy zero trust design guidelines either.\u003cp\u003eHow are these systems distinct from botnets with a shared TLS key and no certificate revocation?",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment provides a detailed security critique relevant to distributed code execution, highlighting real risks and suggesting safer practices, which is accurate and constructive."
+      },
+      {
+        "id": 47443187,
+        "author": "hosh",
+        "text": "Meanwhile, in BEAM land, this is a solved problem, and just watching different languages converge into towards the set of primitives and constraints. It is hard to replicate BEAM’s premptive scheduler, but I would not be surprised if someone will end up thinking they invented something novel by adding queues (mailboxes), or failing that, something like go channels.\u003cp\u003eAnd even then, once you have a workable set of primitives, it turns out that there are some orchestration patterns that recurs over and over again, so people will converge towards OTP once the primitives are there.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The comment correctly points to BEAM's mature approach to distributed concurrency and fault tolerance, providing a useful comparison that contextualizes the challenges discussed."
+      },
+      {
+        "id": 47442605,
+        "author": "petcat",
+        "text": "I don\u0026#x27;t have much experience with this kind of thing, but from here it looks like a program written this way would be nearly impossible to reason about performance when something as simple as a function call in your Python interpreter can have wild fluctuations in predictability just due to underlying network latency, remote host saturation, etc.\u003cp\u003eIt seems like you would need an entire observability framework built and instrumented on top of this to ever really be that useful.",
         "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment correctly references a well-known critique in distributed systems, providing context that the challenges of distributed objects remain relevant."
+        "accuracyRank": 4,
+        "analysis": "This comment insightfully highlights practical performance unpredictability in distributed function calls, emphasizing the need for observability frameworks."
+      },
+      {
+        "id": 47441895,
+        "author": "mohamedkoubaa",
+        "text": "The distributed object fallacy is never going away, is it?\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;martinfowler.com\u0026#x2F;articles\u0026#x2F;distributed-objects-microservices.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;martinfowler.com\u0026#x2F;articles\u0026#x2F;distributed-objects-micros...\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This succinct comment references a well-known concept in distributed systems that distributed objects often fail to meet expectations, reinforcing the discussion's theme."
       },
       {
         "id": 47442155,
@@ -29,11 +79,44 @@
         "text": "Whats curious to me here is that the github repo linked to in the article seems to exactly recreate the \u0026quot;operating system\u0026quot; that is called an \u0026quot;opinion in the wrong layer\u0026quot;.\u003cp\u003ePerhaps I am misunderstanding this, but after looking at the code what exactly are we achieving here over other frameworks? The repo is obviously very new (and the author certainly seems busy), so perhaps a better question is what do we aim to achieve? So far it seems like the exact same pattern with some catchy naming.\u003cp\u003eRegardless, I love ambitious projects furiously coded by one crazy person. And I mean \u0026quot;crazy\u0026quot; in the best sense of the word, not as an insult. This is what open source is all about.\u003cp\u003ePlease prove us all wrong. If you fail, you\u0026#x27;ll learn a ton!",
         "indicators": [
           "thoughtful",
-          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment raises a valid question about the novelty and goals of the project, reflecting a critical but constructive stance, though it lacks detailed technical analysis."
+      },
+      {
+        "id": 47442569,
+        "author": "MomsAVoxell",
+        "text": "I ask this question, but instead: I ask it of Lua.\u003cp\u003eAs in, what if there was a Linux distro that focused, primarily, on building a Lua layer on top of everything, system-wise.  Just replace all the standard stuff with one single, system-friendly language: Lua.  C\u0026#x2F;C++ everything as it currently is: put Lua on top all the way to the Desktop.\u003cp\u003eIt’s only a thought experiment, except there are cases where I can see a way to use it, and in fact have done it, only not to the desktop, such as of course \u003ci\u003eembedded\u003c/i\u003e.  Realtime data collection, processing and management. In this case, it is superlative to have a single system\u0026#x2F;app language on top of C\u0026#x2F;C++.\u003cp\u003eSo I think there may be a point in the future where this ‘single language for everything’ becomes a mantra in distro land.  I see the immense benefit.\u003cp\u003eLua table state can be easily transferred, give or take a bit of resource management vis a vis sync’ing state and restoring it appropriately.  Lua Bytecode, itself, in a properly defined manner can serve as a perfectly cromulant wire spec.  Do it properly and nobody will ever know it isn’t just a plain ol’ C struct on an event handler, one of the fastest, except it’ll be very well abstracted to the application.\u003cp\u003eOh, and if things are doing bytecode, may as well have playback and transactions intrinsically… it is all, after all, just a stream.\u003cp\u003eApp state as gstreamer plugin?  Within grasp, imho…",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This is an interesting thought experiment about language unification in a distro context, though it is more speculative and less directly related to Python's native distribution challenges."
+      },
+      {
+        "id": 47443249,
+        "author": "lelanthran",
+        "text": "Pah - all these newcomers with interpreted\u0026#x2F;bytecode languages for remote functions!\u003cp\u003eIt\u0026#x27;s \u003ci\u003eeasy\u003c/i\u003e to send text or bytecode to another instance of your runtime. I did a distributed system sending \u003ci\u003enative code functions\u003c/i\u003e to be executed remotely.\u003cp\u003eFair enough, it was for academic purposes, but it \u003ci\u003eworked\u003c/i\u003e[1].\u003cp\u003e-------------------------------------\u003cp\u003e[1] By \u0026quot;worked\u0026quot; I mean got a passing grade on a thesis that got an IMDB number. Probably still got the actual PDF somewhere, or maybe it was indexed by google at some point.",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment shares a personal academic experience with remote execution of native code, adding anecdotal evidence but lacking broader context or technical detail."
+      },
+      {
+        "id": 47443035,
+        "author": "extr",
+        "text": "LLM generated article.",
+        "indicators": [
+          "trolling",
+          "useless",
           "emotional"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment raises valid concerns about the project's novelty and goals, while also showing appreciation for ambitious open source work, reflecting a balanced and critical perspective."
+        "accuracyRank": 9,
+        "analysis": "This comment is dismissive without substantive content or explanation, contributing little to the discussion."
       }
     ]
   }
