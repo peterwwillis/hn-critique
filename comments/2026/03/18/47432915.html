@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">60 points</span>
+        <span class="score">77 points</span>
         by <a href="https://news.ycombinator.com/user?id=creationix" class="hnuser">creationix</a>
-        <span class="age">7 hours ago</span>
+        <span class="age">9 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/18/47432915.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47432915" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the new random-access JSON alternative called RX, with commenters debating its advantages, use cases, and comparisons to existing serialization formats like protobuf and SQLite. Some express curiosity about its binary format and performance implications, while others highlight its innovative features and potential limitations.</p>
+      <p>The discussion revolves around the new random-access JSON alternative called RX, with commenters debating its advantages over existing formats like SQLite, protobuf, and JSON itself. Key points include concerns about tooling support, serialization format specification, and the trade-offs between human readability and performance.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -62,29 +62,29 @@
         <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">This is really interesting. At first glance, I was tempted to say &quot;why not just use sqlite with JSON fields as the transfer format?&quot; But everything about that would be heavier-weight in every possible way - and if I&#x27;m reading things right, this handles nested data that might itself be massive. This is really elegant.<p>My one eyebrow raise is - is there no binary format specification? <a href="https:&#x2F;&#x2F;github.com&#x2F;creationix&#x2F;rx&#x2F;blob&#x2F;main&#x2F;rx.ts#L1109" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;creationix&#x2F;rx&#x2F;blob&#x2F;main&#x2F;rx.ts#L1109</a> is pretty well commented, but you can&#x27;t call it a JSON alternative without having some kind of equivalent to <a href="https:&#x2F;&#x2F;www.json.org&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.json.org&#x2F;</a> in all its flowchart glory!</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced comparison of RX with SQLite and raises a valid question about the lack of a binary format specification, showing a good understanding of the topic.</em></div>
+      <div class="comment-analysis"><em>This comment provides a balanced and informed perspective on RX&#39;s design and use case, highlighting its potential advantages over heavier alternatives like SQLite with JSON fields.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=benatkin" class="hnuser">benatkin</a>
+        <a href="https://news.ycombinator.com/user?id=50lo" class="hnuser">50lo</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Interesting. I&#x27;ve heard about cursors in reference to a Rust library that was mentioned as being similar to protobuf and cap&#x27;n proto.<p>Does this duplicate the name of keys? Say if you have a thousand plain objects in an array, each with a &quot;version&quot; key, would the string &quot;version&quot; be duplicated a thousand times?<p>Another project a lot of people aren&#x27;t aware of even though they&#x27;ve benefitted from it indirectly is the binary format for OpenStreetMap. It allows reading the data without loading a lot of it into memory, and is a lot faster than using sqlite would be.<p>Edit: the rust library I remember may have been <a href="https:&#x2F;&#x2F;rkyv.org&#x2F;" rel="nofollow">https:&#x2F;&#x2F;rkyv.org&#x2F;</a></div>
-      <div class="comment-analysis"><em>The comment brings up relevant technical concerns about key duplication and references related technologies, contributing valuable context to the discussion.</em></div>
+      <div class="comment-text">The biggest challenge for formats like this is usually tooling. JSON won largely because: every language supports it, every tool understands it.<p>Even a technically superior format struggles without that ecosystem.</div>
+      <div class="comment-analysis"><em>The comment correctly identifies the critical role of ecosystem and tooling in the adoption of data formats, a key factor often overlooked in technical evaluations.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=barishnamazov" class="hnuser">barishnamazov</a>
+        <a href="https://news.ycombinator.com/user?id=dtech" class="hnuser">dtech</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">You shouldn&#x27;t be using JSON for things that&#x27;d have performance implications.</div>
-      <div class="comment-analysis"><em>This comment correctly highlights JSON&#39;s limitations in performance-critical scenarios, which is relevant when considering alternatives like RX.</em></div>
+      <div class="comment-text">It&#x27;s not quite clear to me why you&#x27;d use this over something more established such as protobuf, thrift, flatbuffers, cap n proto etc.</div>
+      <div class="comment-analysis"><em>Raises a valid question about the practical advantages of RX compared to well-established serialization formats, encouraging deeper justification for its use.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -92,32 +92,32 @@
         <a href="https://news.ycombinator.com/user?id=garrettjoecox" class="hnuser">garrettjoecox</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Very cool stuff!<p>This did catch my eye, however: <a href="https:&#x2F;&#x2F;github.com&#x2F;creationix&#x2F;rx?tab=readme-ov-file#proxy-behavior" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;creationix&#x2F;rx?tab=readme-ov-file#proxy-be...</a><p>While this is a neat feature, this means it is not in fact a drop in replacement for JSON.parse, as you will be breaking any code that relies on the that result being a mutable object.</div>
-      <div class="comment-analysis"><em>The comment insightfully points out that RX&#39;s proxy behavior breaks compatibility with JSON.parse, which is an important consideration for adoption.</em></div>
+      <div class="comment-analysis"><em>Insightfully points out a practical limitation of RX regarding compatibility with existing JSON parsing expectations, which is important for adoption.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=dtech" class="hnuser">dtech</a>
+        <a href="https://news.ycombinator.com/user?id=_flux" class="hnuser">_flux</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">It&#x27;s not quite clear to me why you&#x27;d use this over something more established such as protobuf, thrift, flatbuffers, cap n proto etc.</div>
-      <div class="comment-analysis"><em>This comment raises a valid question about the practical advantages of RX compared to well-established serialization formats, encouraging further explanation.</em></div>
+      <div class="comment-text">It doesn&#x27;t seem the actual serialization format is specified? Other than in the code that is.<p>Is it versioned? Or does it need to be..</div>
+      <div class="comment-analysis"><em>Raises a crucial concern about the lack of formal serialization format specification and versioning, which are important for long-term maintainability.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Levitating" class="hnuser">Levitating</a>
+        <a href="https://news.ycombinator.com/user?id=benatkin" class="hnuser">benatkin</a>
         &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">JSON is human-readable, why even compare it with this. Is any serialization format now just a &quot;JSON alternative&quot;?</div>
-      <div class="comment-analysis"><em>The comment expresses skepticism about positioning RX as a JSON alternative, emphasizing JSON&#39;s unique human-readable property.</em></div>
+      <div class="comment-text">Interesting. I&#x27;ve heard about cursors in reference to a Rust library that was mentioned as being similar to protobuf and cap&#x27;n proto.<p>Does this duplicate the name of keys? Say if you have a thousand plain objects in an array, each with a &quot;version&quot; key, would the string &quot;version&quot; be duplicated a thousand times?<p>Another project a lot of people aren&#x27;t aware of even though they&#x27;ve benefitted from it indirectly is the binary format for OpenStreetMap. It allows reading the data without loading a lot of it into memory, and is a lot faster than using sqlite would be.<p>Edit: the rust library I remember may have been <a href="https:&#x2F;&#x2F;rkyv.org&#x2F;" rel="nofollow">https:&#x2F;&#x2F;rkyv.org&#x2F;</a></div>
+      <div class="comment-analysis"><em>Provides a nuanced technical inquiry about key duplication and efficiency, showing familiarity with related technologies and potential optimization concerns.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
@@ -125,43 +125,76 @@
         <a href="https://news.ycombinator.com/user?id=Spivak" class="hnuser">Spivak</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">I love these projects, I hope one of them someday emerges as the winner because (as it motivates all these libraries&#x27; authors) there&#x27;s so much low hanging fruit and free wins changing the line format for JSON but keeping the &quot;Good Parts&quot; like the dead simple generic typing.<p>XML has EXI (Efficient XML Interchange) for precisely the reason of getting wins over the wire but keeping the nice human readable format at the ends.</div>
-      <div class="comment-analysis"><em>This comment shows enthusiasm for innovation in JSON alternatives and draws a parallel with XML&#39;s EXI format, adding historical perspective.</em></div>
+      <div class="comment-analysis"><em>Expresses enthusiasm and hope for innovation in JSON alternatives, acknowledging the challenges and potential benefits of evolving the format.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=WatchDog" class="hnuser">WatchDog</a>
         &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> 
+        <span class="indicator">constructive</span> <span class="indicator">emotional</span> 
       </div>
       <div class="comment-text">Cool project.<p>The viewer is cool, took me a while to find the link to it though, maybe add a link in the readme next to the screenshot.</div>
-      <div class="comment-analysis"><em>A brief but constructive comment suggesting documentation improvements to enhance user experience.</em></div>
+      <div class="comment-analysis"><em>Provides positive feedback and a practical suggestion for improving project documentation and usability.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=transfire" class="hnuser">transfire</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I am a little confused. Is this still JSON? Is it “binary“ JSON?</div>
+      <div class="comment-analysis"><em>Reflects common confusion about the nature of the format, highlighting a need for clearer communication about RX&#39;s serialization approach.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=barishnamazov" class="hnuser">barishnamazov</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">You shouldn&#x27;t be using JSON for things that&#x27;d have performance implications.</div>
+      <div class="comment-analysis"><em>Makes a broad statement about JSON&#39;s performance limitations, which is generally accepted but somewhat simplistic without context.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Levitating" class="hnuser">Levitating</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">JSON is human-readable, why even compare it with this. Is any serialization format now just a &quot;JSON alternative&quot;?</div>
+      <div class="comment-analysis"><em>Questions the framing of new formats as JSON alternatives, emphasizing JSON&#39;s unique human-readability advantage.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=Shahbazay0719" class="hnuser">Shahbazay0719</a>
-        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;rank #12
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">this is more nuanced than the title suggests. worth reading the whole thing</div>
-      <div class="comment-analysis"><em>This comment encourages deeper engagement with the material but lacks specific insights or critique.</em></div>
+      <div class="comment-analysis"><em>Encourages deeper engagement with the project details, implying that superficial impressions may miss important complexities.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=creationix" class="hnuser">creationix</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #13
         &nbsp;|&nbsp;
-        <span class="indicator">likely-true</span> 
+        <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">A new random-access JSON alternative from the creator of nvm.sh, luvit.io, and js-git.</div>
-      <div class="comment-analysis"><em>A self-introduction by the project creator, providing context but no analytical content.</em></div>
+      <div class="comment-analysis"><em>Self-introduction comment providing context about the creator but offering little substantive analysis.</em></div>
     </div>
     
 
@@ -173,7 +206,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-19 07:08 UTC &nbsp;|&nbsp;
+    Generated 2026-03-19 08:53 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

@@ -19,137 +19,133 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around Rob Pike's programming rules, especially the emphasis on avoiding premature optimization and the importance of data structures over algorithms. Commenters share personal experiences and perspectives on how these rules apply in modern software development, with some debating the relevance of performance concerns and the role of measurement.",
+    "summary": "The discussion revolves around Rob Pike's programming rules, especially focusing on the importance of data structures over premature optimization. Commenters share personal experiences and perspectives on balancing simplicity, measurement, and performance in software development.",
     "comments": [
       {
         "id": 47427730,
         "author": "ryguz",
         "text": "The interesting thing about Rule 1 is that it makes Rules 3-5 follow almost mechanically. If you genuinely accept that you cannot predict where the bottleneck is, then writing straightforward code and measuring becomes the only rational strategy. The problem is most people treat these rules as independent guidelines rather than as consequences of a single premise.\u003cp\u003eIn practice what I see fail most often is not premature optimization but premature abstraction. People build elaborate indirection layers for flexibility they never need, and those layers impose real costs on every future reader of the code. The irony is that abstraction is supposed to manage complexity but prematurely applied it just creates a different kind.",
         "indicators": [
-          "intelligent",
           "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment insightfully connects the rules as a logical progression and highlights the common issue of premature abstraction, aligning well with established software engineering principles."
+        "analysis": "This comment insightfully connects the rules as a cohesive philosophy and highlights a common real-world problem of premature abstraction, which aligns well with established software engineering principles."
       },
       {
         "id": 47424923,
         "author": "anymouse123456",
         "text": "There are very few phrases in all of history that have done more damage to the project of software development than:\u003cp\u003e\u0026quot;Premature optimization is the root of all evil.\u0026quot;\u003cp\u003eFirst, let\u0026#x27;s not besmirch the good name of Tony Hoare. The quote is from Donald Knuth, and the missing context is essential.\u003cp\u003eFrom his 1974 paper, \u0026quot;Structured Programming with go to Statements\u0026quot;:\u003cp\u003e\u0026quot;Programmers waste enormous amounts of time thinking about, or worrying about, the speed of noncritical parts of their programs, and these attempts at efficiency actually have a strong negative impact when debugging and maintenance are considered. We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil. Yet we should not pass up our opportunities in that critical 3%.\u0026quot;\u003cp\u003eHe was talking about using GOTO statements in C. He was talking about making software much harder to reason about in the name of micro-optimizations. He assumed (incorrectly) that we would respect the machines our software runs on.\u003cp\u003eMultiple generations of programmers have now been raised to believe that brutally inefficient, bloated, and slow software is just fine. There is no limit to the amount of boilerplate and indirection a computer can be forced to execute. There is no ceiling to the crystalline abstractions emerging from these geniuses. There is no amount of time too long for a JVM to spend starting.\u003cp\u003eI worked at Google many years ago. I have lived the absolute nightmares that evolve from the willful misunderstanding of this quote.\u003cp\u003eNo thank you. Never again.\u003cp\u003eI have committed these sins more than any other, and I\u0026#x27;m mad as hell about it.",
         "indicators": [
-          "intelligent",
           "thoughtful",
+          "intelligent",
           "likely-true",
+          "constructive",
           "emotional"
         ],
         "accuracyRank": 2,
-        "analysis": "Provides important historical context and clarifies a widely misunderstood quote, adding valuable nuance to the discussion about optimization."
+        "analysis": "This comment provides important historical context clarifying a widely misquoted aphorism, adding nuance to the discussion about optimization and its role in programming."
       },
       {
         "id": 47427222,
         "author": "GuB-42",
         "text": "The opposite conclusion can be taken from the premise of rule #1 \u0026quot;You can\u0026#x27;t tell where a program is going to spend its time\u0026quot;\u003cp\u003eIf you can\u0026#x27;t tell in advance what is performance critical, then consider everything to be performance critical.\u003cp\u003eI would then go against rule #3 \u0026quot;Fancy algorithms are slow when n is small, and n is usually small\u0026quot;. n is usually small, except when it isn\u0026#x27;t, and as per rule #1, you may not know that ahead of time. Assuming n is going to be small is how you get accidentally quadratic behavior, such as the infamous GTA bug. So, assume n is going to be big unless you are sure it won\u0026#x27;t be. Understand that your users may use your software in ways you don\u0026#x27;t expect.\u003cp\u003eNote that if you really want high performance, you should properly characterize your \u0026quot;n\u0026quot; so that you can use the appropriate technique, it is hard because you need to know all your use cases and their implications in advance. Assuming n will be big is the easy way!\u003cp\u003eAbout rule #4, fancy algorithms are often not harder to implement, most of the times, it means using the right library.\u003cp\u003eAbout rule #2 (measure), yes, you absolutely should, but it doesn\u0026#x27;t mean you shouldn\u0026#x27;t consider performance before you measure. It would be like saying that you shouldn\u0026#x27;t worry about introducing bugs before testing. You should do your best to make your code fast and correct before you start measuring and testing.\u003cp\u003eWhat I agree with is that you shouldn\u0026#x27;t introduce speed hacks unless you know what you are doing. Most of performance come from giving it consideration on every step. Avoiding a copy here, using a hash map instead of a linear search there, etc... If you have to resort to a hack, it may be because you didn\u0026#x27;t consider performance early enough. For example, if took care of making a function fast enough, you may not have to cache results later on.\u003cp\u003eAs for #5, I agree completely. Data is the most important. It applies to performance too, especially on modern hardware. To give you an very simplified idea, RAM access is about 100x slower than running a CPU instruction, it means you can get massive speed improvement by making your memory footprint smaller and using cache-friendly data structures.",
         "indicators": [
-          "intelligent",
           "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "Offers a pragmatic counterpoint emphasizing caution about assumptions on input size and the importance of performance considerations early in design, which complements Pike's rules."
+        "analysis": "This comment challenges a simplistic interpretation of Pike's rules by advocating a cautious approach to performance assumptions, emphasizing the importance of anticipating scale and usage patterns."
       },
       {
-        "id": 47427687,
-        "author": "nlawalker",
-        "text": "This reminds me of a portion of a talk Jonathan Blow gave[1], where he justifies this from a productivity angle. He explains how his initial implementation for virtually everything in Braid used arrays of records, and only after finding bottlenecks did he make changes, because if he had approached every technical challenge by trying to find the optimal data structure and algorithm he would never have shipped.\u003cp\u003e\u0026quot;There\u0026#x27;s a third thing [beyond speed and memory] that you might want to optimize for which is much more important than either of these, which is years of your life required per program implementation.\u0026quot; This is of course from the perspective of a solo indie game developer, but it\u0026#x27;s a good and interesting perspective to consider.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=JjDsP5n2kSM\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=JjDsP5n2kSM\u003c/a\u003e",
+        "id": 47427836,
+        "author": "jkaptur",
+        "text": "It\u0026#x27;s interesting to contrast \u0026quot;Measure. Don\u0026#x27;t tune for speed until you\u0026#x27;ve measured\u0026quot; with Jeff Dean\u0026#x27;s \u0026quot;Latency Numbers Every Programmer Should Know\u0026quot; [0].\u003cp\u003eDean is saying (implicitly) that you \u003ci\u003ecan\u003c/i\u003e estimate performance, and therefore you can design for speed a priori - without measuring, and, indeed, before there is anything to measure.\u003cp\u003eI suspect that both authors would agree that there\u0026#x27;s a happy medium: you absolutely can and should use your knowledge to design for speed, but given an implementation of a reasonable design, you need measurement to \u0026quot;tune\u0026quot; or improve incrementally.\u003cp\u003e0: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;jboner\u0026#x2F;2841832\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;jboner\u0026#x2F;2841832\u003c/a\u003e",
         "indicators": [
-          "intelligent",
           "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Supports Pike's rules with a real-world example from a respected developer, reinforcing the productivity rationale behind avoiding premature optimization."
-      },
-      {
-        "id": 47425553,
-        "author": "dkarl",
-        "text": "I think it\u0026#x27;s fine and generous that he credited these rules to the better-known aphorisms that inspired them, but I think his versions are better, they deserve to be presented by themselves, instead of alongside the mental clickbait of the classic aphorisms. They preserve important context that was lost when the better-known versions were ripped out of their original texts.\u003cp\u003eFor example, I\u0026#x27;ve often heard \u0026quot;premature optimization is the root of all evil\u0026quot; invoked to support opposite sides of the same argument. Pike\u0026#x27;s rules are much clearer and harder to interpret creatively.\u003cp\u003eAlso, it\u0026#x27;s amusing that you don\u0026#x27;t hear this anymore:\u003cp\u003e\u0026gt; Rule 5 is often shortened to \u0026quot;write stupid code that uses smart objects\u0026quot;.\u003cp\u003eIn context, this clearly means that if you invest enough mental work in designing your data structures, it\u0026#x27;s easy to write simple code to solve your problem. But interpreted through an OO mindset, this could be seen as encouraging one of the classic noob mistakes of the heyday of OO: believing that your code could be as complex as you wanted, without cost, as long as you hid the complicated bits inside member methods on your objects. I\u0026#x27;m guessing that \u0026quot;write stupid code that uses smart objects\u0026quot; was a snappy bit of wisdom in the pre-OO days and was discarded as dangerous when the context of OO created a new and harmful way of interpreting it.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Provides valuable historical and contextual insight into the interpretation of Pike's rules, cautioning against common misunderstandings."
+        "analysis": "This comment adds valuable perspective by comparing Pike's rules with modern performance engineering insights, advocating balanced design and measurement."
       },
       {
         "id": 47426304,
         "author": "thecodemonkey",
         "text": "Running the same codebase for 10+ years with a small team is what finally made me fully internalize these rules.\u003cp\u003eI\u0026#x27;ve always been a KISS\u0026#x2F;DRY person but over a decade there are plenty of moments where you\u0026#x27;re tempted to reach for a fancier database or rewrite something in a trendier stack. What\u0026#x27;s actually kept things running well at scale is boring, known technologies and only optimizing in the places where it actually matters.\u003cp\u003eWe wrote our principles down recently and it basically just reads like Pike\u0026#x27;s rules in different words: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.geocod.io\u0026#x2F;code-and-coordinates\u0026#x2F;2025-09-30-development-manifesto\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.geocod.io\u0026#x2F;code-and-coordinates\u0026#x2F;2025-09-30-develo...\u003c/a\u003e",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Shares practical experience validating Pike's rules over long-term software maintenance, emphasizing stability and measured optimization."
-      },
-      {
-        "id": 47426885,
-        "author": "justacatbot",
-        "text": "Rule 2 is the one that keeps biting me. You can spend days micro-optimizing functions only to realize the real bottleneck was storing data in a map when you needed a sorted list. The structure of the data almost always determines the structure of the code.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Reinforces the importance of data structures over premature function-level optimization, consistent with Pike's Rule 5."
-      },
-      {
-        "id": 47427863,
-        "author": "PaulHoule",
-        "text": "The \u0026quot;bottleneck\u0026quot; model of performance has limitations.\u003cp\u003eThere are a lot of systems where useless work and other inefficiencies are spread all over the place.  Even though I think garbage collection is underrated (e.g. Rustifarians will agree with me in 15 years) it\u0026#x27;s a good example because of the nonlocality that profilers miss or misunderstand.\u003cp\u003eYou can make great prop bets around \u0026quot;I\u0026#x27;ll rewrite your Array-of-Structures code to Structure-of-Arrays code and it will get much faster\u0026quot;\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;en.wikipedia.org\u0026#x2F;wiki\u0026#x2F;AoS_and_SoA\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;en.wikipedia.org\u0026#x2F;wiki\u0026#x2F;AoS_and_SoA\u003c/a\u003e\u003cp\u003ebecause SoA usually is much more cache friendly and AoS makes the memory hierarchy perform poorly in a way profilers can\u0026#x27;t see.  The more time somebody spends looking at profilers and more they quote Rule 1 the more they get blindsided by it.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Adds depth by discussing modern hardware considerations and profiling limitations, complementing Pike's focus on data structures."
-      },
-      {
-        "id": 47427798,
-        "author": "tracker1",
-        "text": "Pretty much live by these in practice... I\u0026#x27;ve had a lot of arguments over #3 though...  yes nested loops can cause problems... but when you\u0026#x27;re dealing with \u0026lt; 100 or so items in each nested loop and outer loop, it\u0026#x27;s not a big deal in practice.  It\u0026#x27;s simpler and easier to reason with... don\u0026#x27;t optimize unless you really need to for practical reasons.\u003cp\u003eOn #5, I think most people tend to just lean on RDBMS databases for a lot of data access patterns.  I think it helps to have some fundamental understandings in terms of where\u0026#x2F;how\u0026#x2F;why you can optimize databases as well as where it make sense to consider non-relational (no-sql) databases too.  A poorly structured database can crawl under a relatively small number of users.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 9,
-        "analysis": "Balances theoretical rules with practical experience, emphasizing simplicity and domain knowledge in performance considerations."
+        "accuracyRank": 5,
+        "analysis": "This comment provides practical validation of Pike's rules through long-term experience, reinforcing the value of simplicity and targeted optimization."
       },
       {
         "id": 47426781,
         "author": "01100011",
         "text": "Rule 3 gets me into trouble with CS majors a lot. I\u0026#x27;m an EE by education and entered into SW via the bottom floor(embedded C\u0026#x2F;ASM) so it was late in my career before I knew the formal definition of big-O and complexity.\u003cp\u003eFor most of my career, sticking to rule 3 made the most sense. When the CS major would be annoying and talk about big-O they usually forgot n was tiny. But then my job changed. I started working on different things. Suddenly my job started sounding more like a leetcode interview people complain about. Now n really is big and now it really does matter.\u003cp\u003eKeep in mind that Rob Pike comes from a different era when programming for \u0026#x27;big iron\u0026#x27; looked a lot more like programming for an embedded microcontroller now.",
         "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment correctly points out that the relevance of algorithmic complexity varies with domain and scale, adding important nuance to Pike's rules."
+      },
+      {
+        "id": 47425553,
+        "author": "dkarl",
+        "text": "I think it\u0026#x27;s fine and generous that he credited these rules to the better-known aphorisms that inspired them, but I think his versions are better, they deserve to be presented by themselves, instead of alongside the mental clickbait of the classic aphorisms. They preserve important context that was lost when the better-known versions were ripped out of their original texts.\u003cp\u003eFor example, I\u0026#x27;ve often heard \u0026quot;premature optimization is the root of all evil\u0026quot; invoked to support opposite sides of the same argument. Pike\u0026#x27;s rules are much clearer and harder to interpret creatively.\u003cp\u003eAlso, it\u0026#x27;s amusing that you don\u0026#x27;t hear this anymore:\u003cp\u003e\u0026gt; Rule 5 is often shortened to \u0026quot;write stupid code that uses smart objects\u0026quot;.\u003cp\u003eIn context, this clearly means that if you invest enough mental work in designing your data structures, it\u0026#x27;s easy to write simple code to solve your problem. But interpreted through an OO mindset, this could be seen as encouraging one of the classic noob mistakes of the heyday of OO: believing that your code could be as complex as you wanted, without cost, as long as you hid the complicated bits inside member methods on your objects. I\u0026#x27;m guessing that \u0026quot;write stupid code that uses smart objects\u0026quot; was a snappy bit of wisdom in the pre-OO days and was discarded as dangerous when the context of OO created a new and harmful way of interpreting it.",
+        "indicators": [
+          "thoughtful",
           "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment thoughtfully critiques how Pike's rules are often overshadowed or misinterpreted, especially in object-oriented programming, emphasizing the importance of context."
+      },
+      {
+        "id": 47426885,
+        "author": "justacatbot",
+        "text": "Rule 2 is the one that keeps biting me. You can spend days micro-optimizing functions only to realize the real bottleneck was storing data in a map when you needed a sorted list. The structure of the data almost always determines the structure of the code.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment aligns well with the consensus that data structure choice is fundamental and often more impactful than micro-optimizations."
+      },
+      {
+        "id": 47427687,
+        "author": "nlawalker",
+        "text": "This reminds me of a portion of a talk Jonathan Blow gave[1], where he justifies this from a productivity angle. He explains how his initial implementation for virtually everything in Braid used arrays of records, and only after finding bottlenecks did he make changes, because if he had approached every technical challenge by trying to find the optimal data structure and algorithm he would never have shipped.\u003cp\u003e\u0026quot;There\u0026#x27;s a third thing [beyond speed and memory] that you might want to optimize for which is much more important than either of these, which is years of your life required per program implementation.\u0026quot; This is of course from the perspective of a solo indie game developer, but it\u0026#x27;s a good and interesting perspective to consider.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=JjDsP5n2kSM\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=JjDsP5n2kSM\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 9,
+        "analysis": "This comment provides a relevant real-world example supporting Pike's rules, emphasizing the importance of shipping and iterating over premature optimization."
+      },
+      {
+        "id": 47428763,
+        "author": "munro",
+        "text": "\u0026gt; Rule 5. Data dominates. If you\u0026#x27;ve chosen the right data structures and organized things well, the algorithms will almost always be self-evident. Data structures, not algorithms, are central to programming.\u003cp\u003eIt\u0026#x27;s so true, when specing things I always try to focused on DDL because even the UI will fall into place as well, and a place I see claude opus fail as well when building things.",
+        "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "Highlights the importance of context and scale in applying Pike's rules, acknowledging changes in computing environments over time."
+        "analysis": "This comment reinforces the centrality of data structures in programming and notes practical limitations of AI coding assistants in this area."
       }
     ]
   }

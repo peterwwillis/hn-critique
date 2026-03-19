@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Show HN: Duplicate 3 layers in a 24B LLM, logical deduction .22→.76. No training | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://github.com/alainnothere/llm-circuit-finder" rel="noreferrer noopener">Show HN: Duplicate 3 layers in a 24B LLM, logical deduction .22→.76. No training</a>
+        <span class="sitebit"> (github.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">99 points</span>
+        by <a href="https://news.ycombinator.com/user?id=xlayn" class="hnuser">xlayn</a>
+        <span class="age">11 hours ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/18/47431671.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47431671" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion revolves around the validity and implications of duplicating layers in large language models (LLMs) to improve reasoning performance without retraining. Commenters debate the plausibility of the approach, its connection to known model behaviors like pruning and residual connections, and the need for rigorous benchmarking.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+    <p class="no-critique">Only 16 of 17 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47431671" rel="noopener">View the full thread on HN</a>.</p>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=4bpp" class="hnuser">4bpp</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Assuming the benchmarks are sound (rather than capturing a fluke), the provided explanation still does not pass the smell test. As far as I can tell, there is nothing about the training process of these models that would encourage them to make the output of any layer apart from (n-1) meaningful as the input of layer n, unless perhaps these layers were initialised as identity and the training process did not get to change them much. (Plausible for middle layers?)<p>Considering this, I think (again, assuming the benchmarks themselves are sound) the most plausible explanation for the observations is (1) the layers being duplicated are close to the identity function on most inputs; (2) something happened to the model in training (RLHF?) that forcefully degraded its reasoning performance; (3) the mechanism causing the degradation involves the duplicated layers, so their duplication has the effect of breaking the reasoning-degrading mechanism (e.g. by clobbering a &quot;refusal&quot; &quot;circuit&quot; that emerged in post-training).<p>More concisely, I&#x27;m positing that this is an approach that can only ever break things, and rather than boosting reasoning, it is selectively breaking things deleterious to reasoning.</div>
+      <div class="comment-analysis"><em>This comment provides a nuanced hypothesis grounded in model training behavior and residual connections, offering a plausible explanation for observed effects while cautioning about potential selective breaking rather than true improvement.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=taliesinb" class="hnuser">taliesinb</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">There is an obvious implication: since the initial models were trained <i>without</i> loops, it is exceedingly unlikely that a single stack of consecutive N layers represents <i>only</i> a single, repeatable circuit that can be safely looped. It is much more likely that the loopable circuits are superposed across multiple layers and have different effective depths.<p>That you <i>can</i> profitably loop some say 3-layer stack is likely a happy accident, where the performance <i>loss</i> from looping 3&#x2F;4 of mystery circuit X that partially overlaps that stack is more than outweighed by the performance <i>gain</i> from looping 3&#x2F;3 of mystery circuit Y that exactly aligns with that stack.<p>So, if you are willing to train from scratch, just build the looping in during training and let each circuit find its place, in disentangled stacks of various depths. Middle of transformer is:<p>(X₁)ᴹ ⊕  (Y₁∘Y₂)ᴺ ⊕ (Z₁∘Z₂∘Z₃)ᴾ ⊕ …<p>Notation: Xᵢ is a layer (of very small width) in a circuit of depth 1..i..D, ⊕ is parallel composition (which sums the width up to rest of transformer), ∘ is serial composition (stacking), and ᴹ is looping. The values of ᴹ shouldnt matter as long as they are &gt; 1, the point is to crank them up after training.<p>Ablating these individual circuits will tell you whether you needed them at all, but also roughly what they were <i>for</i> in the first place, which would be very interesting.</div>
+      <div class="comment-analysis"><em>This comment insightfully discusses the structural complexity of transformer layers and suggests that looping effectiveness may be accidental rather than systematic, advocating for training with looping built-in.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=kgeist" class="hnuser">kgeist</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Heh, for a couple last days, I&#x27;ve been doing this exact kind of &quot;neuroanatomy&quot; on Qwen2.5&#x2F;Qwen3 too. Fascinating stuff. To make it easier to fiddle with the network, I created a small inference engine that is stripped of all the framework magic, just raw matmuls and all (main inference loop is just 50 lines of code!). For example, it&#x27;s trivial to remove a layer: i just skip it in code with a simple &quot;if&quot;. I&#x27;ve found that removing some layers doesn&#x27;t appear to change anything (based on the vibes at least). If you remove some later layers, the model forgets how to insert the EOS token and keeps chatting ad finitum (still coherently). Removing earliest layers makes the model generate random garbage. Turns out abliteration is not hard to do, 10 examples was enough to find the refusal vector and cancel most refusals. Interestingly, I&#x27;ve found that refusal happens in the middle layers too (I think, layer 12 out of 26)<p>From what I understand, transformers are resistant to network corruption (without complete collapse) thanks to residual connections.<p>I tried to repeat some layers too but got garbage results. I guess I need to automate finding the reasoning layers too, instead of just guessing.</div>
+      <div class="comment-analysis"><em>This firsthand experimentation supports the idea that some layers can be removed or duplicated with limited impact, aligning with known transformer robustness due to residual connections.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=zhangchen" class="hnuser">zhangchen</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">this lines up with what pruning papers have been finding, the middle layers carry most of the reasoning weight and you can often drop the outer ones without much loss. cool to see the inverse also works, just stacking them for extra passes.</div>
+      <div class="comment-analysis"><em>This comment connects the discussed technique with established pruning research, reinforcing the idea that middle layers are critical and can be manipulated for performance effects.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=rao-v" class="hnuser">rao-v</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I’d love to believe this is real, but I’m pretty sure you will lose performance on a “fair” mix of tasks, even after fine tuning. I know multiple teams have explored recurrent layers (great for limited VRAM) but I don’t think it’s ever been found to be optimal.</div>
+      <div class="comment-analysis"><em>This comment provides a cautious perspective based on broader research experience, warning that improvements on some tasks may not generalize and that recurrent approaches have limitations.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=snats" class="hnuser">snats</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">likely-true</span> <span class="indicator">constructive</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">you can also have removed layers of models and keep the same score in benchmarks [1].<p>i feel that sometimes a lot of the layers might just be redundant and are not fully needed once a model is trained.<p>[1] <a href="https:&#x2F;&#x2F;snats.xyz&#x2F;pages&#x2F;articles&#x2F;pruningg.html" rel="nofollow">https:&#x2F;&#x2F;snats.xyz&#x2F;pages&#x2F;articles&#x2F;pruningg.html</a></div>
+      <div class="comment-analysis"><em>This comment references pruning evidence supporting redundancy in layers, which aligns with the idea that some layers can be duplicated or removed without major performance loss.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=SyzygyRhythm" class="hnuser">SyzygyRhythm</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">If running twice is good, then is running N times even better? I wonder if you could even loop until some kind of convergence, say hitting a fixed point (input equals output). I wonder if there&#x27;s even a sort of bifurcation property where it sometimes loops A-&gt;A-&gt;A, but other times A-&gt;B-&gt;A, or more, rather like the logistic map fractal.</div>
+      <div class="comment-analysis"><em>This comment speculates on iterative looping effects and convergence, which is an interesting theoretical angle but lacks empirical backing here.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Karuma" class="hnuser">Karuma</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Wow, every single word in the original post and on that README.md is pure LLM. How sad.<p>In any case, this has been done at least since the very first public releases of Llama by Meta... It also works for image models. There are even a few ComfyUI nodes that let you pick layers to duplicate on the fly, so you can test as many as you want really quickly.</div>
+      <div class="comment-analysis"><em>This comment provides historical context and practical tools, supporting the idea that layer duplication is not novel and is applicable beyond LLMs.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=m3kw9" class="hnuser">m3kw9</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">What, just randomly choose some &quot;layer&quot; and duplicate it and give some arbitrary reasoning went from 0.2 -&gt; 0.7, i don&#x27;t know man. You need to use real benchmarks.</div>
+      <div class="comment-analysis"><em>This comment expresses justified skepticism about the validity of reported improvements without rigorous benchmarking.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=nowittyusername" class="hnuser">nowittyusername</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">There&#x27;s still a lot of low hanging fruit left IMO. Good find and rather funny to think about as you can have someone simply clone the various layers multiple times and instead of spending millions of dollars retraining the model increase performance significantly with &quot;this one trick&quot;.</div>
+      <div class="comment-analysis"><em>This comment is optimistic but somewhat speculative, highlighting the appeal of the method but lacking critical evaluation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=XCSme" class="hnuser">XCSme</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">But if it got worse on other tests, it doesn&#x27;t do much good, right?</div>
+      <div class="comment-analysis"><em>This comment raises a valid point about the importance of overall performance across diverse tasks rather than isolated gains.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=christianqchung" class="hnuser">christianqchung</a>
+        &nbsp;|&nbsp;rank #12
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Why test on Qwen 2.5 when Qwen 3 has been out for about a year, and Qwen 3.5 for a month? My problem with this is ironically entirely vibes based: that for some reason, LLMs love to talk about Qwen 2.5 instead of anything newer.</div>
+      <div class="comment-analysis"><em>This comment questions the relevance of the test model choice, suggesting the results might be outdated or less meaningful.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=colejhudson" class="hnuser">colejhudson</a>
+        &nbsp;|&nbsp;rank #13
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">Would you be able to publish the individual benchmarks for Qwen2.5-Coder-32B? GSM8K specifically would be useful to look at.</div>
+      <div class="comment-analysis"><em>This comment constructively requests more detailed benchmark data to better evaluate the claims.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=getnormality" class="hnuser">getnormality</a>
+        &nbsp;|&nbsp;rank #14
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">Didn&#x27;t we recently see another hack, where you could get better performance by repeating the prompt?<p>I wonder if they work for similar reasons.</div>
+      <div class="comment-analysis"><em>This comment draws a parallel to prompt repetition hacks, suggesting a possible common mechanism worth investigating.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=woadwarrior01" class="hnuser">woadwarrior01</a>
+        &nbsp;|&nbsp;rank #15
+        &nbsp;|&nbsp;
+        <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Reminds me of Solar 10.7B, which was a very good model for its size ~2 year ago and the &quot;Depth Up-Scaling&quot; technique behind it. Although, that involved continued training after repeating the layers.<p><a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2312.15166" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2312.15166</a></div>
+      <div class="comment-analysis"><em>This comment references a related technique that requires retraining, contrasting with the no-training claim here.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Singlaw" class="hnuser">Singlaw</a>
+        &nbsp;|&nbsp;rank #16
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">What does this do?</div>
+      <div class="comment-analysis"><em>This comment is a brief question without substantive content or insight.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-19 08:53 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+
