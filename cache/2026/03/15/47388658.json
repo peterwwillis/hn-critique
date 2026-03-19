@@ -22,7 +22,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around Nvidia GreenBoost's approach to extending GPU VRAM using system RAM, with participants debating its practicality, performance benchmarks, and comparisons to existing methods like CPU offloading and llama.cpp. Some highlight engineering interest and potential use cases, while others point out limitations such as slow speeds and unclear benchmarking.",
+    "summary": "The discussion revolves around Nvidia GreenBoost's approach to extending GPU VRAM using system RAM and the practical implications of this method. Commenters debate the performance trade-offs, benchmarking clarity, and comparisons to existing solutions like llama.cpp and Windows shared memory usage.",
     "comments": [
       {
         "id": 47432620,
@@ -30,36 +30,50 @@
         "text": "You can already do this with some GPU drivers:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  GRUB_CMDLINE_LINUX_DEFAULT=\u0026quot;quiet splash amdttm.pages_limit=5242880 ttm.pages_limit=5242880\u0026quot;\n\u003c/code\u003e\u003c/pre\u003e\nOne downside is your kernel isn\u0026#x27;t going to reserve that memory away from userland. You will still see all the memory at system level as \u0026quot;free\u0026quot;. As the GPU driver starts using it, other apps\u0026#x2F;the OS will try to use the \u0026quot;free\u0026quot; memory, not knowing how much of it is in use (it may show up as \u0026quot;cache\u0026quot;, or not at all). Then OOM killer starts going or programs start crashing, and at some point the OS tips over or GPU driver crashes. You can add loads of swap as a compromise and it works okay, if a bit slow.\u003cp\u003eIn any case, loading a gigantic model just to use system RAM is absurdly slow (due to mem bandwidth), like 1-5 t\u0026#x2F;s, so it\u0026#x27;s not practical. It\u0026#x27;d take a whole day to process one 86k token request. Just pay a cloud provider $0.01 to do it in 10 seconds.",
         "indicators": [
           "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed technical explanation of current GPU driver behavior and practical limitations of using system RAM for large models, making it highly accurate and informative."
+        "analysis": "Provides a detailed technical explanation of existing methods and their limitations, highlighting practical performance issues and memory management challenges."
       },
       {
         "id": 47433081,
         "author": "nl",
         "text": "This is really interesting engineering, but I agree with the other commentators that the benchmarking makes it hard to understand the contribution various factors are having.\u003cp\u003eThe \u003ci\u003eExLlamaV3 EXL3 2bpw (8 GB, full VRAM)\u003c/i\u003e row is an order of magnitude faster than the baseline - but the baseline seems to be the 32GB model running with the  KV cache shared to system memory only (I think?)\u003cp\u003eBut if a 8GB model gives sufficient quality then it seems like that would have worked without the shared memory thing?\u003cp\u003eI \u003ci\u003ethink\u003c/i\u003e the useful apples-to-apples benchmark is currently the \u003ci\u003eOllama + GreenBoost shim (baseline)\u003c/i\u003e (2-5 tps) vs \u003ci\u003eExLlamaV3 + GreenBoost cache\u003c/i\u003e (8–20 tps) comparison.\u003cp\u003eIt would be really useful to see this compared with the existing llama CPU\u0026#x2F;memory offload. There is a note at the start (\u0026quot;Offload layers to CPU — works, but drops token\u0026#x2F;s by 5–10× because CPU RAM has no CUDA coherence\u0026quot;) - but it is unclear if that 5-10x token speed drop is compared to running a model completely in GPU or compared to the greenboost approach.\u003cp\u003eI think it is vs GPU, in which case it seems likely the performance is similar to what greenboost is giving but probably much more stable.",
         "indicators": [
-          "thoughtful",
           "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment thoughtfully critiques the benchmarking data and suggests clearer comparisons, showing a nuanced understanding of performance metrics and system behavior."
+        "analysis": "Offers a nuanced critique of the benchmarking methodology and suggests useful comparisons, demonstrating an understanding of performance metrics and model configurations."
       },
       {
         "id": 47432995,
         "author": "ma2kx",
         "text": "The physical bottleneck to system memory remains. Therefore, I assume that better results are achieved by manually adjusting which layers are offloaded.\u003cp\u003eI would prefer to use system memory to cache different models, focusing on things like embedding, rerankers, and TTS. This is sufficient to run a more complex RAG locally, for example, via Mem0, and then use a larger LLM via the cloud.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment correctly identifies system memory bandwidth as a bottleneck and proposes practical strategies for optimizing model offloading, aligning with known hardware constraints."
+        "analysis": "Insightfully points out memory bandwidth as a bottleneck and proposes practical strategies for optimizing system memory usage in complex workflows."
+      },
+      {
+        "id": 47432863,
+        "author": "Havoc",
+        "text": "\u0026gt; The best strategy is to shrink the model until it fits — either with EXL3 quantization or ModelOpt PTQ — and use GreenBoost\u0026#x27;s DDR4 pool for KV cache only.\u003cp\u003eDoes this make sense? I\u0026#x27;d have thought the KV is guaranteed to be used 100% of the time while say in a MoE the same can\u0026#x27;t be said of the weights.\u003cp\u003eThough I suppose if you\u0026#x27;re shooting for huge context then having that allocation go into ram makes sense specially when its allocated but not used yet",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Raises valid questions about memory allocation strategies and the usage patterns of KV cache versus weights, contributing to the technical discussion."
       },
       {
         "id": 47432452,
@@ -69,30 +83,8 @@
           "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "Offers a constructive use case for the technology, suggesting practical applications that leverage spare RAM for less time-sensitive tasks."
-      },
-      {
-        "id": 47432863,
-        "author": "Havoc",
-        "text": "\u0026gt; The best strategy is to shrink the model until it fits — either with EXL3 quantization or ModelOpt PTQ — and use GreenBoost\u0026#x27;s DDR4 pool for KV cache only.\u003cp\u003eDoes this make sense? I\u0026#x27;d have thought the KV is guaranteed to be used 100% of the time while say in a MoE the same can\u0026#x27;t be said of the weights.\u003cp\u003eThough I suppose if you\u0026#x27;re shooting for huge context then having that allocation go into ram makes sense specially when its allocated but not used yet",
-        "indicators": [
-          "thoughtful",
-          "intelligent"
-        ],
         "accuracyRank": 5,
-        "analysis": "Raises a valid question about memory usage patterns in models, indicating a good understanding but lacking definitive conclusions."
-      },
-      {
-        "id": 47434143,
-        "author": "armada651",
-        "text": "Doesn\u0026#x27;t Windows already do this by default? I can already run models bigger than my GPU VRAM and it will start using up to 50% of my system RAM as \u0026quot;shared memory\u0026quot;. This is on a Desktop PC without a shared memory architecture.",
-        "indicators": [
-          "likely-true",
-          "thoughtful"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Provides a relevant observation about existing OS-level memory management, though it may oversimplify differences between architectures."
+        "analysis": "Suggests practical applications for the technology, highlighting potential use cases that leverage spare system resources effectively."
       },
       {
         "id": 47432696,
@@ -102,8 +94,41 @@
           "constructive",
           "thoughtful"
         ],
+        "accuracyRank": 6,
+        "analysis": "Constructively requests more comprehensive benchmarking data to better understand the performance trade-offs."
+      },
+      {
+        "id": 47434143,
+        "author": "armada651",
+        "text": "Doesn\u0026#x27;t Windows already do this by default? I can already run models bigger than my GPU VRAM and it will start using up to 50% of my system RAM as \u0026quot;shared memory\u0026quot;. This is on a Desktop PC without a shared memory architecture.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
         "accuracyRank": 7,
-        "analysis": "Constructively requests more comprehensive benchmarking to better understand performance trade-offs."
+        "analysis": "Provides a relevant comparison to existing OS-level memory management, though lacks technical depth."
+      },
+      {
+        "id": 47432379,
+        "author": "daneel_w",
+        "text": "Related, a couple of years ago: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;old.reddit.com\u0026#x2F;r\u0026#x2F;Amd\u0026#x2F;comments\u0026#x2F;15t0lsm\u0026#x2F;i_turned_a_95_amd_apu_into_a_16gb_vram_gpu_and_it\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;old.reddit.com\u0026#x2F;r\u0026#x2F;Amd\u0026#x2F;comments\u0026#x2F;15t0lsm\u0026#x2F;i_turned_a_95_...\u003c/a\u003e\u003cp\u003e\u0026quot;I turned a $95 AMD APU into a 16GB VRAM GPU and it can run stable diffusion!\u0026quot;",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Shares an anecdotal example related to extending GPU memory, adding context but limited technical detail."
+      },
+      {
+        "id": 47435164,
+        "author": "NooneAtAll3",
+        "text": "nvidia failed to provide gpu with actually meaningful amount of vram\u003cp\u003eand instead of improving the actual product, it decided to \u0026quot;solve the problem in software\u0026quot;\u003cp\u003eI expect this greenboost to fall and burn, honestly...",
+        "indicators": [
+          "emotional",
+          "belligerent"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Expresses a strong negative opinion without technical support, reducing its constructive value."
       },
       {
         "id": 47432071,
@@ -113,30 +138,8 @@
           "emotional",
           "belligerent"
         ],
-        "accuracyRank": 8,
-        "analysis": "Expresses a blunt negative opinion without supporting evidence, reducing its usefulness."
-      },
-      {
-        "id": 47433302,
-        "author": "Insanity",
-        "text": "Extend your VRAM using RAM, then extend your RAM using Swap.",
-        "indicators": [
-          "useless",
-          "trolling"
-        ],
-        "accuracyRank": 9,
-        "analysis": "A simplistic and somewhat sarcastic comment that adds little substantive value to the discussion."
-      },
-      {
-        "id": 47432379,
-        "author": "daneel_w",
-        "text": "Related, a couple of years ago: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;old.reddit.com\u0026#x2F;r\u0026#x2F;Amd\u0026#x2F;comments\u0026#x2F;15t0lsm\u0026#x2F;i_turned_a_95_amd_apu_into_a_16gb_vram_gpu_and_it\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;old.reddit.com\u0026#x2F;r\u0026#x2F;Amd\u0026#x2F;comments\u0026#x2F;15t0lsm\u0026#x2F;i_turned_a_95_...\u003c/a\u003e\u003cp\u003e\u0026quot;I turned a $95 AMD APU into a 16GB VRAM GPU and it can run stable diffusion!\u0026quot;",
-        "indicators": [
-          "likely-true",
-          "thoughtful"
-        ],
         "accuracyRank": 10,
-        "analysis": "Shares an anecdotal example relevant to the topic, though it lacks detailed technical context."
+        "analysis": "Offers a blunt negative assessment lacking detailed explanation or evidence."
       }
     ]
   }

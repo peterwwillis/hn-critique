@@ -21,67 +21,20 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the release of a large Hacker News archive dataset in Parquet format, updated frequently. Participants debate the technical choices, legal concerns, and potential uses of the dataset, with some highlighting limitations and others expressing enthusiasm for the resource.",
+    "summary": "The discussion revolves around a Hacker News archive dataset released as Parquet files updated every 5 minutes. Commenters debate the technical aspects, legal concerns, update frequency, and potential uses of the dataset.",
     "comments": [
       {
-        "id": 47432774,
-        "author": "6thbit",
-        "text": "From YC \u0026#x2F;legal\u003cp\u003e\u0026gt; Except as expressly authorized by Y Combinator, you agree not to modify, copy, frame, scrape, rent, lease, loan, sell, distribute or create derivative works based on the Site or the Site Content, in whole or in part\u003cp\u003eNot to pretend this isn\u0026#x27;t widely happening behind the curtains already, but coming from a \u0026quot;Show HN\u0026quot; seems daring.",
+        "id": 47433345,
+        "author": "jiggawatts",
+        "text": "I could have used this just yesterday!\u003cp\u003eI\u0026#x27;ve been evaluating Gemini Embedding 2 using Hacker News comments and I wasted half a day making a wrapper for the HN API to collect some sample data to play with.\u003cp\u003eIn case anyone is curious:\u003cp\u003e- The ability to simply truncate the provided embedding to a prefix (and then renormalize) is useful because it lets users re-use the same (paid!) embedding API response for multiple indexes at different qualities.\u003cp\u003e- Traditional enterprise software vendors are struggling to keep up with the pace of AI development. Microsoft SQL Server for example can\u0026#x27;t store a 3072 element vector with 32-bit floats (because that would be 12 KB and the page size is only 8 KB). It supports bfloat16 but... the SQL client doesn\u0026#x27;t! Or Entity Framework. Or anything else.\u003cp\u003e- Holy cow everything is \u003ci\u003eso slow\u003c/i\u003e compared to full text search! The model is deployed in only one US region, so from Australia the turnaround time is something like 900 milliseconds. Then the vector search over just a few thousand entries with DiskANN is another 600-800 ms! I guess search-as-you-type is out of the question for... a while.\u003cp\u003e- Speaking of slow, the \u003ci\u003efirst thing\u003c/i\u003e I had to do was write an asynchronous parallel bounded queue data processor utility class in C# that supports chunking of the input and rate limit retries. This feels like it ought to be baked into the standard library or at least the AI SDKs because it\u0026#x27;s pretty much mandatory if working with anything other than \u0026quot;hello world\u0026quot; scenarios.\u003cp\u003e- Gemini Embedding 2 has the headline feature of multi-modal input, but they forgot to implement anything other than \u0026quot;string\u0026quot; for their IEmbeddingGenerator abstraction when used with Microsoft libraries. I guess the next \u0026quot;Preview v0.0.3-alpha\u0026quot; version or whatever will include it.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately highlights the legal restrictions imposed by Y Combinator on Hacker News content and the tension between those terms and common practices."
-      },
-      {
-        "id": 47428932,
-        "author": "0cf8612b2e1e",
-        "text": "Under the Known Limitations section\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  deleted and dead are integers. They are stored as 0\u0026#x2F;1 rather than booleans.\n\u003c/code\u003e\u003c/pre\u003e\nIs there a technical reason to do this? You have the type right there.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "Raises a valid technical question about data representation which could impact efficiency or compatibility, showing attention to detail."
-      },
-      {
-        "id": 47428939,
-        "author": "gkbrk",
-        "text": "My Hacker News items table in ClickHouse has 47,428,860 items, and it\u0026#x27;s 5.82 GB compressed and 18.18 GB uncompressed. What makes Parquet compression worse here, when both formats are columnar?",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "Provides a relevant comparison of storage formats and compression, prompting useful discussion about performance trade-offs."
-      },
-      {
-        "id": 47430512,
-        "author": "vovavili",
-        "text": "Replacing an 11.6GB Parquet file every 5 minutes strikes me as a bit wasteful. I would probably use Apache Iceberg here.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "Offers a constructive suggestion to improve efficiency by using a more suitable data management format for frequent updates."
-      },
-      {
-        "id": 47431352,
-        "author": "trwhite",
-        "text": "Hello. I didn’t consent to any of my HN comments being used in this way. Please kindly remove them.",
-        "indicators": [
-          "emotional",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Expresses a legitimate privacy and consent concern regarding the use of user-generated content in datasets."
+        "analysis": "This comment provides detailed, experience-based insights into embedding technology and search performance, reflecting a deep understanding of practical challenges."
       },
       {
         "id": 47430798,
@@ -89,11 +42,10 @@
         "text": "This is great. I\u0026#x27;ve soured on this site over the past few years due to the heavy partisanship that wasn\u0026#x27;t as present in the early days (eternal September), but there are still quite a few people whose opinions remain thought-provoking and insightful.  I\u0026#x27;m going to use this corpus to make a local self-hosted version of HN with the ability to a) show inline article summaries and b) follow those folks.",
         "indicators": [
           "thoughtful",
-          "constructive",
-          "likely-true"
+          "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Shows a practical and positive use case for the dataset, demonstrating its value for personal projects."
+        "accuracyRank": 2,
+        "analysis": "The comment shows a constructive and realistic use case for the dataset, indicating thoughtful engagement with the data's potential."
       },
       {
         "id": 47430209,
@@ -101,33 +53,77 @@
         "text": "As someone who had made a project analysing hackernews who had used clickhouse, I really feel like this is a project made for me (especially the updated every 5 minute aspect which could\u0026#x27;ve helped my project back then too!)\u003cp\u003eYour project actually helps me out a ton in making one of the new project ideas that I had about hackernews that I had put into the back-burner.\u003cp\u003eI had thought of making a ping website where people can just @Username and a service which can detect it and then send mail to said username if the username has signed up to the service (similar to a service run by someone from HN community which mails you everytime someone responds to your thread directly, but this time in a sort of ping)\u003cp\u003e[The previous idea came as I tried to ping someone to show them something relevant and thought that wait a minute, something like ping which mails might be interesting and then tried to see if I can use algolia or any service to hook things up but not many\u0026#x2F;any service made much sense back then sadly so I had the idea in back of my mind but this service sort of solves it by having it being updated every 5 minutes]\u003cp\u003eYour 5 minute updates really make it possible. I will look what I can do with that in some days but I am seeing some discrepancy in the 5 minute update as last seems to be 16 march in the readme so I would love to know more about if its being updated every 5 minutes because it truly feels phenomenal if true and its exciting to think of some new possibilities unlocked with it.",
         "indicators": [
           "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Provides a plausible perspective on how frequent updates can unlock new applications, though some uncertainty remains about actual update frequency."
+      },
+      {
+        "id": 47428939,
+        "author": "gkbrk",
+        "text": "My Hacker News items table in ClickHouse has 47,428,860 items, and it\u0026#x27;s 5.82 GB compressed and 18.18 GB uncompressed. What makes Parquet compression worse here, when both formats are columnar?",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Raises a valid technical question about compression differences between data formats, showing technical awareness."
+      },
+      {
+        "id": 47430512,
+        "author": "vovavili",
+        "text": "Replacing an 11.6GB Parquet file every 5 minutes strikes me as a bit wasteful. I would probably use Apache Iceberg here.",
+        "indicators": [
+          "intelligent",
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 7,
-        "analysis": "Provides user perspective on the dataset’s usefulness and raises a valid question about update frequency accuracy."
+        "accuracyRank": 5,
+        "analysis": "Offers a reasonable critique of the update strategy and suggests a more efficient alternative, reflecting knowledge of data storage technologies."
       },
       {
-        "id": 47432444,
-        "author": "lhoestq",
-        "text": "Clickhouse should implement Parquet CDC to enable deduplication and faster uploads\u0026#x2F;downloads on HF",
-        "indicators": [
-          "intelligent",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Suggests a technical improvement that could optimize data handling, showing knowledge of database technologies."
-      },
-      {
-        "id": 47428709,
-        "author": "palmotea",
-        "text": "\u0026gt; At midnight UTC, the entire current month is refetched from the source as a single authoritative Parquet file, and today\u0026#x27;s individual 5-minute blocks are removed from the today\u0026#x2F; directory.\u003cp\u003eWouldn\u0026#x27;t that lose deleted\u0026#x2F;moderated comments?",
+        "id": 47432774,
+        "author": "6thbit",
+        "text": "From YC \u0026#x2F;legal\u003cp\u003e\u0026gt; Except as expressly authorized by Y Combinator, you agree not to modify, copy, frame, scrape, rent, lease, loan, sell, distribute or create derivative works based on the Site or the Site Content, in whole or in part\u003cp\u003eNot to pretend this isn\u0026#x27;t widely happening behind the curtains already, but coming from a \u0026quot;Show HN\u0026quot; seems daring.",
         "indicators": [
           "thoughtful",
-          "constructive"
+          "likely-true",
+          "emotional"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Raises legitimate legal concerns about the dataset's release, though the enforcement and practical implications remain uncertain."
+      },
+      {
+        "id": 47431352,
+        "author": "trwhite",
+        "text": "Hello. I didn’t consent to any of my HN comments being used in this way. Please kindly remove them.",
+        "indicators": [
+          "emotional"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Expresses a personal privacy concern, highlighting ethical issues but without addressing legal or technical context."
+      },
+      {
+        "id": 47428932,
+        "author": "0cf8612b2e1e",
+        "text": "Under the Known Limitations section\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  deleted and dead are integers. They are stored as 0\u0026#x2F;1 rather than booleans.\n\u003c/code\u003e\u003c/pre\u003e\nIs there a technical reason to do this? You have the type right there.",
+        "indicators": [
+          "intelligent",
+          "thoughtful"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Asks a reasonable technical question about data schema design, though the answer may depend on implementation details."
+      },
+      {
+        "id": 47429940,
+        "author": "tonymet",
+        "text": "what\u0026#x27;s the license for HN content?",
+        "indicators": [
+          "thoughtful"
         ],
         "accuracyRank": 9,
-        "analysis": "Raises a valid concern about data integrity and completeness related to the update strategy."
+        "analysis": "Raises an important question about data usage rights but does not provide further insight."
       },
       {
         "id": 47428547,
@@ -138,7 +134,72 @@
           "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "Requests a practical feature to improve usability for educational purposes, reflecting user needs."
+        "analysis": "Suggests a practical use case for the dataset, focusing on educational applications."
+      },
+      {
+        "id": 47432444,
+        "author": "lhoestq",
+        "text": "Clickhouse should implement Parquet CDC to enable deduplication and faster uploads\u0026#x2F;downloads on HF",
+        "indicators": [
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 11,
+        "analysis": "Provides a technical suggestion to improve data handling efficiency, showing familiarity with database features."
+      },
+      {
+        "id": 47429284,
+        "author": "mlhpdx",
+        "text": "Static web content and dynamic data?\u003cp\u003e\u0026gt; The archive currently spans from 2006-10 to 2026-03-16 23:55 UTC, with 47,358,772 items committed.\u003cp\u003eThat’s more than 5 minutes ago by a day or two. No big deal, but a little bit depressing this is still how we do things in 2026.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 12,
+        "analysis": "Comments on the latency of updates, reflecting a realistic but somewhat negative view on data freshness."
+      },
+      {
+        "id": 47428709,
+        "author": "palmotea",
+        "text": "\u0026gt; At midnight UTC, the entire current month is refetched from the source as a single authoritative Parquet file, and today\u0026#x27;s individual 5-minute blocks are removed from the today\u0026#x2F; directory.\u003cp\u003eWouldn\u0026#x27;t that lose deleted\u0026#x2F;moderated comments?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 13,
+        "analysis": "Raises a valid concern about data consistency and handling of deletions in the update process."
+      },
+      {
+        "id": 47429958,
+        "author": "lokimoon",
+        "text": "You are the product",
+        "indicators": [
+          "emotional",
+          "trolling"
+        ],
+        "accuracyRank": 14,
+        "analysis": "A brief, somewhat cynical remark about data usage, lacking constructive content."
+      },
+      {
+        "id": 47428618,
+        "author": "bstsb",
+        "text": "what’s the license? “do whatever the fuck you want with the data as long as you don’t get caught”? or does that only work for massive corporations",
+        "indicators": [
+          "emotional",
+          "trolling"
+        ],
+        "accuracyRank": 15,
+        "analysis": "Expresses cynicism about licensing enforcement, but does not contribute factual information."
+      },
+      {
+        "id": 47430411,
+        "author": "robotswantdata",
+        "text": "Where’s the opt out ?",
+        "indicators": [
+          "emotional"
+        ],
+        "accuracyRank": 16,
+        "analysis": "Raises a privacy concern but without elaboration or constructive suggestions."
       }
     ]
   }
