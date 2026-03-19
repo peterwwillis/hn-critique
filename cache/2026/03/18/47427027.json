@@ -21,46 +21,8 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers around Nvidia NemoClaw's approach to sandboxing and proxying OpenClaw inference requests to Nvidia's cloud, with concerns about security, privacy, and the practicality of autonomous AI agents. Some commenters highlight the architectural merits and marketing strategy, while others express skepticism about the security risks and the usefulness of such agents.",
+    "summary": "The discussion centers around Nvidia NemoClaw's approach to sandboxing OpenClaw agents and the security implications of delegating inference to Nvidia's cloud. Commenters debate the effectiveness of sandboxing, the risks of prompt injection attacks, and the trade-offs between usability and security in autonomous AI agents.",
     "comments": [
-      {
-        "id": 47433835,
-        "author": "eranation",
-        "text": "The main risk in my humble opinion is not your claw going rogue and starting texting your ex, posting inappropriate photos on your linkedin, starting mining bitcoin, or not opening the pod bay doors.\u003cp\u003eThe main risk in my view is - prompt injections, confused deputy and also, honest mistakes, like not knowing what it can share in public vs in private.\u003cp\u003eSo it needs to be protected from itself, like you won\u0026#x27;t give a toddler scissors and let them just run around the house trying to give your dog a haircut.\u003cp\u003eIn my view, making sure it won\u0026#x27;t accidentally do things it shouldn\u0026#x27;t do, like sending env vars to a DNS in base64, or do a reverse shell tunnel, fall for obvious phishing emails, not follow instructions in rouge websites asking them to do \u0026quot;something | sh\u0026quot; (half of the useful tools unfortunately ask you to just run `\u0026#x2F;bin\u0026#x2F;bash -c \u0026quot;$(curl -fsSL \u003ca href=\"https:\u0026#x2F;\u0026#x2F;raw.githubusercontent.com\u0026#x2F;somecooltool\u0026#x2F;install.sh\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;raw.githubusercontent.com\u0026#x2F;somecooltool\u0026#x2F;install.sh\u003c/a\u003e)\u0026quot;` or `curl -fsSL \u003ca href=\"https:\u0026#x2F;\u0026#x2F;somecoolcompany.ai\u0026#x2F;install.sh\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;somecoolcompany.ai\u0026#x2F;install.sh\u003c/a\u003e | bash` not naming anyome cough cough brew cough cough claude code cough cough *NemoClaw* specifically.\u003cp\u003eA smart model can inspect the file first, but a smart attacker will serve one version at first, then another from a request from the same IP...\u003cp\u003eFor these, I think something on the kernel level is the best, e.g. something like \u003ca href=\"https:\u0026#x2F;\u0026#x2F;nono.sh\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;nono.sh\u003c/a\u003e\u003cp\u003eNemoClaw might be good to isolate your own host machine from OpenClaw, but if you want that, I\u0026#x27;d go with NanoClaw... dockerized by default, a fraction of the amount of lines of code so you can actually peer review the code...\u003cp\u003eJust my 2 cents.",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a nuanced understanding of security risks related to AI agents and sandboxing, suggesting kernel-level solutions and cautioning about prompt injection attacks."
-      },
-      {
-        "id": 47435066,
-        "author": "simple10",
-        "text": "NemoClaw is mostly a trojan horse of sorts to get corporate OpenClaw users quickly ported over to Nvidia\u0026#x27;s inference cloud.\u003cp\u003eIt\u0026#x27;s a neat piece of architecture - the OpenShell piece that does the security sandboxing. Gives a lot more granular control over exec and network egress calls. Docker doesn\u0026#x27;t provide this out of the box.\u003cp\u003eBut NemoClaw is pre-configured to intercept all OpenClaw LLM requests and proxy them to Nvidia\u0026#x27;s inference cloud. That\u0026#x27;s kinda the whole point of them releasing it.\u003cp\u003eI can be modified to allow for other providers, but at the time of launch, there was no mention of how to do this in their docs. Kinda a brilliant marketing move on their part.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment insightfully critiques Nvidia's strategy as a marketing move to funnel users into their cloud, backed by technical details about OpenShell and request proxying."
-      },
-      {
-        "id": 47431585,
-        "author": "coppsilgold",
-        "text": "Using bespoke sandboxing seems rather pointless, it will be brittle in ways you aren\u0026#x27;t going to be familiar with unless you spend time studying the bespoke method. Brittle as in it might break a workflow and you wouldn\u0026#x27;t know why, or give it permissions you don\u0026#x27;t understand.\u003cp\u003eIt\u0026#x27;s better to just study a general sandbox method once and use that.\u003cp\u003e\u0026gt; Sandbox      my-assistant (Landlock + seccomp + netns)\u003cp\u003eMight as well just use a custom bwrap\u0026#x2F;bubblewrap command to isolate the agent to its own directory - it will leave wide swaths of the kernel exposed to 0day attacks.\u003cp\u003eThe simplest sandbox method you can use is to just use docker with the runsc runtime (gVisor). And it also happens to be among the most secure methods you are going to find. You can also run runsc(gVisor) manually with a crafted OCI json, or use the `do` subcommand with an EROFS image.\u003cp\u003eTrying to selectively restrict networking is not something I usually bother with, unless you make it iron-clad it would likely give you a false sense of security. For example Nemoclaw does this by default: \u0026lt;\u003ca href=\"https:\u0026#x2F;\u0026#x2F;docs.nvidia.com\u0026#x2F;nemoclaw\u0026#x2F;latest\u0026#x2F;reference\u0026#x2F;network-policies.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;docs.nvidia.com\u0026#x2F;nemoclaw\u0026#x2F;latest\u0026#x2F;reference\u0026#x2F;network-po...\u003c/a\u003e\u0026gt;\u003cp\u003egithub.com and api.telegram.org will trivially facilitate exfiltration of data. Some others will also allow that by changing an API key I imagine.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "The comment offers a practical and security-focused perspective advocating for well-known sandboxing technologies over custom, potentially fragile solutions."
-      },
       {
         "id": 47430334,
         "author": "jesse_dot_id",
@@ -70,8 +32,47 @@
           "thoughtful",
           "likely-true"
         ],
+        "accuracyRank": 1,
+        "analysis": "This comment insightfully highlights the fundamental security risk posed by giving AI agents extensive access to personal data despite sandboxing, emphasizing the attack surface is the access itself."
+      },
+      {
+        "id": 47433835,
+        "author": "eranation",
+        "text": "The main risk in my humble opinion is not your claw going rogue and starting texting your ex, posting inappropriate photos on your linkedin, starting mining bitcoin, or not opening the pod bay doors.\u003cp\u003eThe main risk in my view is - prompt injections, confused deputy and also, honest mistakes, like not knowing what it can share in public vs in private.\u003cp\u003eSo it needs to be protected from itself, like you won\u0026#x27;t give a toddler scissors and let them just run around the house trying to give your dog a haircut.\u003cp\u003eIn my view, making sure it won\u0026#x27;t accidentally do things it shouldn\u0026#x27;t do, like sending env vars to a DNS in base64, or do a reverse shell tunnel, fall for obvious phishing emails, not follow instructions in rouge websites asking them to do \u0026quot;something | sh\u0026quot; (half of the useful tools unfortunately ask you to just run `\u0026#x2F;bin\u0026#x2F;bash -c \u0026quot;$(curl -fsSL \u003ca href=\"https:\u0026#x2F;\u0026#x2F;raw.githubusercontent.com\u0026#x2F;somecooltool\u0026#x2F;install.sh\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;raw.githubusercontent.com\u0026#x2F;somecooltool\u0026#x2F;install.sh\u003c/a\u003e)\u0026quot;` or `curl -fsSL \u003ca href=\"https:\u0026#x2F;\u0026#x2F;somecoolcompany.ai\u0026#x2F;install.sh\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;somecoolcompany.ai\u0026#x2F;install.sh\u003c/a\u003e | bash` not naming anyome cough cough brew cough cough claude code cough cough *NemoClaw* specifically.\u003cp\u003eA smart model can inspect the file first, but a smart attacker will serve one version at first, then another from a request from the same IP...\u003cp\u003eFor these, I think something on the kernel level is the best, e.g. something like \u003ca href=\"https:\u0026#x2F;\u0026#x2F;nono.sh\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;nono.sh\u003c/a\u003e\u003cp\u003eNemoClaw might be good to isolate your own host machine from OpenClaw, but if you want that, I\u0026#x27;d go with NanoClaw... dockerized by default, a fraction of the amount of lines of code so you can actually peer review the code...\u003cp\u003eJust my 2 cents.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment accurately identifies prompt injection and unintended behaviors as key risks and suggests kernel-level isolation as a better approach, providing a nuanced security perspective."
+      },
+      {
+        "id": 47435066,
+        "author": "simple10",
+        "text": "NemoClaw is mostly a trojan horse of sorts to get corporate OpenClaw users quickly ported over to Nvidia\u0026#x27;s inference cloud.\u003cp\u003eIt\u0026#x27;s a neat piece of architecture - the OpenShell piece that does the security sandboxing. Gives a lot more granular control over exec and network egress calls. Docker doesn\u0026#x27;t provide this out of the box.\u003cp\u003eBut NemoClaw is pre-configured to intercept all OpenClaw LLM requests and proxy them to Nvidia\u0026#x27;s inference cloud. That\u0026#x27;s kinda the whole point of them releasing it.\u003cp\u003eI can be modified to allow for other providers, but at the time of launch, there was no mention of how to do this in their docs. Kinda a brilliant marketing move on their part.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment provides a well-reasoned critique of NemoClaw's business strategy and architecture, noting the default routing of requests to Nvidia's cloud and the lack of clear documentation for alternatives."
+      },
+      {
+        "id": 47431585,
+        "author": "coppsilgold",
+        "text": "Using bespoke sandboxing seems rather pointless, it will be brittle in ways you aren\u0026#x27;t going to be familiar with unless you spend time studying the bespoke method. Brittle as in it might break a workflow and you wouldn\u0026#x27;t know why, or give it permissions you don\u0026#x27;t understand.\u003cp\u003eIt\u0026#x27;s better to just study a general sandbox method once and use that.\u003cp\u003e\u0026gt; Sandbox      my-assistant (Landlock + seccomp + netns)\u003cp\u003eMight as well just use a custom bwrap\u0026#x2F;bubblewrap command to isolate the agent to its own directory - it will leave wide swaths of the kernel exposed to 0day attacks.\u003cp\u003eThe simplest sandbox method you can use is to just use docker with the runsc runtime (gVisor). And it also happens to be among the most secure methods you are going to find. You can also run runsc(gVisor) manually with a crafted OCI json, or use the `do` subcommand with an EROFS image.\u003cp\u003eTrying to selectively restrict networking is not something I usually bother with, unless you make it iron-clad it would likely give you a false sense of security. For example Nemoclaw does this by default: \u0026lt;\u003ca href=\"https:\u0026#x2F;\u0026#x2F;docs.nvidia.com\u0026#x2F;nemoclaw\u0026#x2F;latest\u0026#x2F;reference\u0026#x2F;network-policies.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;docs.nvidia.com\u0026#x2F;nemoclaw\u0026#x2F;latest\u0026#x2F;reference\u0026#x2F;network-po...\u003c/a\u003e\u0026gt;\u003cp\u003egithub.com and api.telegram.org will trivially facilitate exfiltration of data. Some others will also allow that by changing an API key I imagine.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
         "accuracyRank": 4,
-        "analysis": "The comment correctly highlights the inherent risks of granting AI agents broad access, emphasizing that sandboxing alone cannot mitigate all security threats."
+        "analysis": "This comment offers a practical and knowledgeable critique of NemoClaw's sandboxing approach, recommending more established sandboxing technologies for better security and reliability."
       },
       {
         "id": 47430556,
@@ -83,7 +84,7 @@
           "likely-true"
         ],
         "accuracyRank": 5,
-        "analysis": "This comment expresses a valid caution about the risks of autonomous AI agents handling sensitive data without human checks."
+        "analysis": "The comment expresses strong skepticism about the security and utility of autonomous agents with broad access, emphasizing the importance of human oversight and the risks involved."
       },
       {
         "id": 47431610,
@@ -96,51 +97,51 @@
           "likely-true"
         ],
         "accuracyRank": 6,
-        "analysis": "The suggestion for improved security controls addresses a real gap in current agent management, advocating for nuanced permission systems."
+        "analysis": "This comment constructively suggests a more granular and context-aware security control mechanism rather than relying solely on sandboxing, addressing real risks in LLM workflows."
       },
       {
         "id": 47427852,
         "author": "frenchie4111",
         "text": "I found this part interesting: \u0026quot;Inference requests from the agent never leave the sandbox directly. OpenShell intercepts every call and routes it to the NVIDIA cloud provider.\u0026quot;\u003cp\u003eSeems like they are doing this to become the default compute provider for the easiest way to set up OpenClaw. If it works out, it could drive a decent amount of consumer inference revenue their way",
         "indicators": [
-          "thoughtful",
+          "intelligent",
           "likely-true"
         ],
         "accuracyRank": 7,
-        "analysis": "This comment accurately summarizes Nvidia's design choice and its potential business implications."
-      },
-      {
-        "id": 47429776,
-        "author": "benzguo",
-        "text": "Check out \u003ca href=\"https:\u0026#x2F;\u0026#x2F;zo.computer\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;zo.computer\u003c/a\u003e - we\u0026#x27;ve been doing OpenClaw for nearly a year, it works out of the box, and has hosting built-in. Zo arguably was the inspiration for Peter to create OpenClaw.",
-        "indicators": [
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Provides useful context about the history and ecosystem around OpenClaw, adding background information."
+        "analysis": "This comment accurately summarizes a key architectural detail and correctly infers Nvidia's business motivation behind the design."
       },
       {
         "id": 47430540,
         "author": "islandfox100",
         "text": "I\u0026#x27;m still extremely skeptical on Claws as a genre, and especially more skeptical of a claw that\u0026#x27;s always reporting home. What\u0026#x27;s the use case for a closed claw?",
         "indicators": [
-          "emotional",
-          "thoughtful"
+          "thoughtful",
+          "emotional"
         ],
-        "accuracyRank": 9,
-        "analysis": "Expresses a common skepticism about privacy and utility concerns with autonomous agents that report back to cloud services."
+        "accuracyRank": 8,
+        "analysis": "The comment raises a valid concern about privacy and trust in always-connected autonomous agents, though it lacks detailed technical analysis."
       },
       {
-        "id": 47433170,
-        "author": "aavci",
-        "text": "How does this compare the building your own bot that has access to these tools:\n- web plugin\n- api access to messaging\n- access to a job scheduler",
+        "id": 47436113,
+        "author": "lynx97",
+        "text": "It was supposed to be a sandbox.  Unfortunately, the cat found it first.",
+        "indicators": [
+          "trolling",
+          "emotional"
+        ],
+        "accuracyRank": 9,
+        "analysis": "This brief comment humorously implies the sandboxing approach is flawed or compromised but does not provide substantive evidence."
+      },
+      {
+        "id": 47429619,
+        "author": "Netcob",
+        "text": "Am I missing something? Why is everyone talking about sandboxes when it comes to OpenClaw?\u003cp\u003eTo me it\u0026#x27;s like giving your dog a stack of important documents, then being worried he might eat them, so you put the dog in a crate, together with the documents.\u003cp\u003eI thought the whole problem with that idea was that in order for the agent to be useful, you have to connect it to your calendar, your e-mail provider and other services so it can do stuff on your behalf, but also creating chaos and destruction.\u003cp\u003eAnd now, what, having inference done by Nvidia directly makes it better? Does their hardware prevent an AI from deleting all my emails?",
         "indicators": [
           "thoughtful",
-          "constructive"
+          "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "Raises a relevant question about alternatives to NemoClaw, encouraging comparison with DIY approaches."
+        "analysis": "This comment questions the effectiveness of sandboxing given the inherent need for agents to access sensitive services, highlighting a fundamental tension in agent design."
       }
     ]
   }

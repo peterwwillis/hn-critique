@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">337 points</span>
+        <span class="score">384 points</span>
         by <a href="https://news.ycombinator.com/user?id=mmastrac" class="hnuser">mmastrac</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/15/47388658.html">critique article</a>
@@ -47,12 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on Nvidia GreenBoost, a project that extends GPU VRAM using system RAM or NVMe. Commenters debate its practicality, performance benchmarks, and comparisons with existing solutions like llama.cpp and CPU offloading, while some express skepticism about the project&#39;s quality and utility.</p>
+      <p>The discussion revolves around Nvidia GreenBoost, a project aiming to extend GPU VRAM using system RAM or NVMe. Commenters debate its practicality, performance trade-offs, and comparisons to existing solutions, with some skepticism about its efficiency and code quality.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 22 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47388658" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 9 of 25 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47388658" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -61,113 +61,102 @@
         <a href="https://news.ycombinator.com/user?id=0xbadcafebee" class="hnuser">0xbadcafebee</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">You can already do this with some GPU drivers:<p><pre><code>  GRUB_CMDLINE_LINUX_DEFAULT=&quot;quiet splash amdttm.pages_limit=5242880 ttm.pages_limit=5242880&quot;
 </code></pre>
 One downside is your kernel isn&#x27;t going to reserve that memory away from userland. You will still see all the memory at system level as &quot;free&quot;. As the GPU driver starts using it, other apps&#x2F;the OS will try to use the &quot;free&quot; memory, not knowing how much of it is in use (it may show up as &quot;cache&quot;, or not at all). Then OOM killer starts going or programs start crashing, and at some point the OS tips over or GPU driver crashes. You can add loads of swap as a compromise and it works okay, if a bit slow.<p>In any case, loading a gigantic model just to use system RAM is absurdly slow (due to mem bandwidth), like 1-5 t&#x2F;s, so it&#x27;s not practical. It&#x27;d take a whole day to process one 86k token request. Just pay a cloud provider $0.01 to do it in 10 seconds.</div>
-      <div class="comment-analysis"><em>This comment provides a detailed technical explanation of the limitations of using system RAM as GPU VRAM and highlights the practical performance drawbacks, offering a realistic perspective.</em></div>
+      <div class="comment-analysis"><em>This comment provides a detailed and accurate explanation of existing methods and their limitations, emphasizing the impracticality of relying on system RAM for large models due to bandwidth constraints.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ninjagoo" class="hnuser">ninjagoo</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This is awesome! Normally, offloading layers to the CPU RAM means that the compute for those layers occurs on the CPU instead of the GPU, generally speaking. The CPU is orders of magnitude slower than the GPU.<p>With this approach the compute occurs on the GPU, with the tradeoff that layers in RAM have to be moved back-and-forth through PCI-DMA. It seems to me that this should offer a speedup vs compute split between GPU and CPU. The amount of speedup will depend on how many layers would have been on CPU compute, minus the reduction due to moving those layers between RAM and the GPU.<p>What&#x27;s slower? Compute on the CPU or moving data from RAM to GPU through PCI-DMA?</div>
+      <div class="comment-analysis"><em>The comment thoughtfully analyzes the trade-offs between CPU compute and data transfer overhead, highlighting the potential benefits of GreenBoost&#39;s approach.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=nl" class="hnuser">nl</a>
-        &nbsp;|&nbsp;rank #2
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">This is really interesting engineering, but I agree with the other commentators that the benchmarking makes it hard to understand the contribution various factors are having.<p>The <i>ExLlamaV3 EXL3 2bpw (8 GB, full VRAM)</i> row is an order of magnitude faster than the baseline - but the baseline seems to be the 32GB model running with the  KV cache shared to system memory only (I think?)<p>But if a 8GB model gives sufficient quality then it seems like that would have worked without the shared memory thing?<p>I <i>think</i> the useful apples-to-apples benchmark is currently the <i>Ollama + GreenBoost shim (baseline)</i> (2-5 tps) vs <i>ExLlamaV3 + GreenBoost cache</i> (8–20 tps) comparison.<p>It would be really useful to see this compared with the existing llama CPU&#x2F;memory offload. There is a note at the start (&quot;Offload layers to CPU — works, but drops token&#x2F;s by 5–10× because CPU RAM has no CUDA coherence&quot;) - but it is unclear if that 5-10x token speed drop is compared to running a model completely in GPU or compared to the greenboost approach.<p>I think it is vs GPU, in which case it seems likely the performance is similar to what greenboost is giving but probably much more stable.</div>
-      <div class="comment-analysis"><em>The comment thoughtfully critiques the benchmarking methodology and suggests clearer comparisons, showing an understanding of the technical nuances involved.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=ma2kx" class="hnuser">ma2kx</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">The physical bottleneck to system memory remains. Therefore, I assume that better results are achieved by manually adjusting which layers are offloaded.<p>I would prefer to use system memory to cache different models, focusing on things like embedding, rerankers, and TTS. This is sufficient to run a more complex RAG locally, for example, via Mem0, and then use a larger LLM via the cloud.</div>
-      <div class="comment-analysis"><em>This comment correctly identifies system memory bandwidth as a bottleneck and suggests practical strategies for optimization, reflecting a good grasp of system architecture.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=paultendo" class="hnuser">paultendo</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Could be a very useful way to do some overnight tasks using spare RAM. Possibly things like LLM-based categorisation, labelling, data cleansing. That&#x27;s what comes to mind for me anyway.</div>
-      <div class="comment-analysis"><em>The comment offers a constructive use case for the technology, emphasizing practical applications where performance trade-offs might be acceptable.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Berazu" class="hnuser">Berazu</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
-      </div>
-      <div class="comment-text">I wish there was a way to extend RAM&#x2F;NVMe with GPU VRAM. :(</div>
-      <div class="comment-analysis"><em>This is an expression of desire rather than a technical contribution, adding little to the discussion.</em></div>
+      <div class="comment-text">This is really interesting engineering, but I agree with the other commentators that the benchmarking makes it hard to understand the contribution various factors are having.<p>The <i>ExLlamaV3 EXL3 2bpw (8 GB, full VRAM)</i> row is an order of magnitude faster than the baseline - but the baseline seems to be the 32GB model running with the  KV cache shared to system memory only (I think?)<p>But if a 8GB model gives sufficient quality then it seems like that would have worked without the shared memory thing?<p>I <i>think</i> the useful apples-to-apples benchmark is currently the <i>Ollama + GreenBoost shim (baseline)</i> (2-5 tps) vs <i>ExLlamaV3 + GreenBoost cache</i> (8–20 tps) comparison.<p>It would be really useful to see this compared with the existing llama CPU&#x2F;memory offload. There is a note at the start (&quot;Offload layers to CPU — works, but drops token&#x2F;s by 5–10× because CPU RAM has no CUDA coherence&quot;) - but it is unclear if that 5-10x token speed drop is compared to running a model completely in GPU or compared to the greenboost approach.<p>I think it is vs GPU, in which case it seems likely the performance is similar to what greenboost is giving but probably much more stable.</div>
+      <div class="comment-analysis"><em>This comment critically evaluates the benchmarking data and calls for clearer comparisons, showing a good understanding of the technical nuances.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=152334H" class="hnuser">152334H</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">belligerent</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">belligerent</span> 
       </div>
       <div class="comment-text">Nobody mentioning how this project is vibecoded slop?<p><pre><code>  &gt; The code is really bad with completely uneeded parts. The LLM (Qwen 2.5 7B) has hardcoded the i9 14700KF topology, and has variables related to it never used... It&#x27;s even funnier that the show hardware function always prints the same string. There are even random pip log files. Why did this slop got coverage here?
 </code></pre>
 <a href="https:&#x2F;&#x2F;www.phoronix.com&#x2F;forums&#x2F;forum&#x2F;linux-graphics-x-org-drivers&#x2F;open-source-nvidia-linux-nouveau&#x2F;1619572-open-source-greenboost-driver-aims-to-augment-nvidia-gpus-vram-with-system-ram-nvme-to-handle-larger-llms?p=1619635#post1619635" rel="nofollow">https:&#x2F;&#x2F;www.phoronix.com&#x2F;forums&#x2F;forum&#x2F;linux-graphics-x-org-d...</a></div>
-      <div class="comment-analysis"><em>While the comment raises valid concerns about code quality, its tone is dismissive and lacks constructive feedback.</em></div>
+      <div class="comment-analysis"><em>While the critique about code quality might be valid, the tone is dismissive and lacks constructive suggestions, reducing its overall usefulness.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-red">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=NooneAtAll3" class="hnuser">NooneAtAll3</a>
-        &nbsp;|&nbsp;rank #7
+        <a href="https://news.ycombinator.com/user?id=ma2kx" class="hnuser">ma2kx</a>
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">belligerent</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">nvidia failed to provide gpu with actually meaningful amount of vram<p>and instead of improving the actual product, it decided to &quot;solve the problem in software&quot;<p>I expect this greenboost to fall and burn, honestly...</div>
-      <div class="comment-analysis"><em>This comment reflects frustration with Nvidia&#39;s hardware limitations and skepticism about software solutions, though it lacks detailed technical support.</em></div>
+      <div class="comment-text">The physical bottleneck to system memory remains. Therefore, I assume that better results are achieved by manually adjusting which layers are offloaded.<p>I would prefer to use system memory to cache different models, focusing on things like embedding, rerankers, and TTS. This is sufficient to run a more complex RAG locally, for example, via Mem0, and then use a larger LLM via the cloud.</div>
+      <div class="comment-analysis"><em>This comment correctly identifies system memory bandwidth as a bottleneck and suggests practical strategies for optimizing usage.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=paultendo" class="hnuser">paultendo</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Could be a very useful way to do some overnight tasks using spare RAM. Possibly things like LLM-based categorisation, labelling, data cleansing. That&#x27;s what comes to mind for me anyway.</div>
+      <div class="comment-analysis"><em>Offers a constructive use case for the technology, showing practical thinking about its potential applications.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=armada651" class="hnuser">armada651</a>
-        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">likely-true</span> <span class="indicator">intelligent</span> 
       </div>
       <div class="comment-text">Doesn&#x27;t Windows already do this by default? I can already run models bigger than my GPU VRAM and it will start using up to 50% of my system RAM as &quot;shared memory&quot;. This is on a Desktop PC without a shared memory architecture.</div>
-      <div class="comment-analysis"><em>This comment correctly notes that Windows uses system RAM as shared memory for GPUs, providing relevant context to the discussion.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=yjtpesesu2" class="hnuser">yjtpesesu2</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">How does this differ from anything llama.cpp offers, regarding offloading layers? The repo consistently refers to &quot;DDR4&quot;. Is there a reason DDR5 won&#x27;t work with this?</div>
-      <div class="comment-analysis"><em>The comment raises a valid question about the novelty of the project compared to existing solutions, encouraging further clarification.</em></div>
+      <div class="comment-analysis"><em>Provides relevant context by comparing the project to existing OS-level memory sharing features, adding useful perspective.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=bandrami" class="hnuser">bandrami</a>
-        &nbsp;|&nbsp;rank #10
+        <a href="https://news.ycombinator.com/user?id=NooneAtAll3" class="hnuser">NooneAtAll3</a>
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">trolling</span> <span class="indicator">useless</span> 
+        <span class="indicator">emotional</span> <span class="indicator">belligerent</span> <span class="indicator">likely-untrue</span> 
       </div>
-      <div class="comment-text">Qu&#x27;ils mangent de la brioche</div>
-      <div class="comment-analysis"><em>This comment is a non-sequitur phrase with no relevance to the discussion.</em></div>
+      <div class="comment-text">nvidia failed to provide gpu with actually meaningful amount of vram<p>and instead of improving the actual product, it decided to &quot;solve the problem in software&quot;<p>I expect this greenboost to fall and burn, honestly...</div>
+      <div class="comment-analysis"><em>This comment is largely opinionated and dismissive without technical backing, reducing its credibility.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=holoduke" class="hnuser">holoduke</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">The is extremely slow and not useful in my opinion.</div>
+      <div class="comment-analysis"><em>A brief negative opinion without explanation or evidence, offering little value to the discussion.</em></div>
     </div>
     
 
@@ -179,7 +168,7 @@ One downside is your kernel isn&#x27;t going to reserve that memory away from us
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-19 10:50 UTC &nbsp;|&nbsp;
+    Generated 2026-03-19 13:14 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

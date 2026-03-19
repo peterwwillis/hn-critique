@@ -22,73 +22,149 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the nature of specifications versus code, the role of natural language and formal descriptions in software development, and the potential of AI and LLMs to generate, interpret, and refine specifications and code. Participants debate whether detailed specs are necessary, the limitations of natural language, and how AI tools influence the development process.",
+    "summary": "The discussion revolves around the relationship between specifications and code, debating whether a sufficiently detailed spec can be considered code. Many commenters highlight the nuances between formal specs, natural language ambiguity, and the role of AI in bridging gaps, while others emphasize the limitations and practical challenges.",
     "comments": [
-      {
-        "id": 47436353,
-        "author": "CraigJPerry",
-        "text": "\u0026gt;\u0026gt; Misconception 1: specification documents are simpler than the corresponding code\u003cp\u003eI used to be on that side of the argument - clearly code is more precise so it MUST be simpler than wrangling with the uncertainty of prose. But precision isn\u0026#x27;t the only factor in play.\u003cp\u003eThe argument here is that essential complexity lives on and you can only convert between expressions of it - that is certainly true but it\u0026#x27;s is overlooking both accidental complexity and germane complexity.\u003cp\u003eSpecs in prose give you an opportunity to simplify by right-sizing germane complexity in a way that code can\u0026#x27;t.\u003cp\u003eYou might say \u0026quot;well i could create a library or a framework and teach everyone how to use it\u0026quot; and so when we\u0026#x27;re implementing the code to address the essential complexity, we benefit from the germane complexity of the library. True, but now consider the infinite abstraction possible in prose. Which has more power to simplify by replacing essential complexity with germane complexity?\u003cp\u003eBuild me a minecraft clone - there\u0026#x27;s almost zero precision here, if it weren\u0026#x27;t for the fact that word minecraft is incredibly load bearing in this sentence, then you\u0026#x27;d have no chance of building the right thing. One sentence. Contrast with the code you\u0026#x27;d have to write and read to express the same.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment highlights the advantage of natural language in managing complexity, emphasizing its flexibility over code, which is a nuanced and accurate point."
-      },
       {
         "id": 47436202,
         "author": "bad_username",
         "text": "\u0026gt; There is no world where you input a document lacking clarity and detail and get a coding agent to reliably fill in that missing clarity and detail\u003cp\u003eThat is not true, and the proof is that LLMs _can_ reliably generate (relatively small amounts of) working code from relatively terse descriptions. Code is the detail being filled in. Furthermore, LLMs are the ultimate detail fillers, because they are language interpolation\u0026#x2F;extrapolation machines. And their popularity is precisely because they are usually very good at filling in details: LLMs use their vast knowledge to guess what detail to generate, so the result usually makes sense.\u003cp\u003eThis doesn\u0026#x27;t detract much from the main point of the article though. Sometimes the interpolated detail is wrong (and indeterministic), so, if reliable result is to be achieved, important details have to be constrained, and for that they have to be specified. And whereas we have decades of tools and culture for coding, we largely don\u0026#x27;t have that for extremely detailed specs (except maybe at NASA or similar places). We could figure it out in the future, but we haven\u0026#x27;t yet.",
         "indicators": [
+          "intelligent",
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment accurately captures the current capabilities and limitations of LLMs in code generation, acknowledging both their strength in filling details and the necessity of precise specifications for reliability."
+      },
+      {
+        "id": 47436323,
+        "author": "angry_octet",
+        "text": "A spec is an envelope that contains all programs that comply. Creating this spec is often going to be harder than writing a single compliant program.\u003cp\u003eSince every invocation of an LLM may create a different program, just like people, we will see that the spec will leave much room for good and bad implementations, and highlight the imprecision in the spec.\u003cp\u003eOnce we start using a particular implementation it often becomes the spec for subsequent versions, because it\u0026#x27;s interfaces expose surface texture that other programs and people will begin to rely on.\u003cp\u003eI\u0026#x27;m not sure how well LLMs will fare are brownfield software development. There is no longer a clean specification. Regenerating the code from scratch isn\u0026#x27;t acceptable. You need TPS reports.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment accurately recognizes the strengths of LLMs in generating code from minimal prompts, though it acknowledges their limitations in reliability."
+        "analysis": "The comment insightfully discusses the complexity of specs and variability in LLM-generated code, highlighting challenges in using specs as definitive guides."
       },
       {
-        "id": 47435847,
-        "author": "trane_project",
-        "text": "I\u0026#x27;ve been trying codex and claude code for the past month or so. Here\u0026#x27;s the workflow that I\u0026#x27;ve ended up with for making significant changes.\u003cp\u003e- Define the data structures in the code yourself. Add comments on what each struct\u0026#x2F;enum\u0026#x2F;field does.\u003cp\u003e- Write the definitions of any classes\u0026#x2F;traits\u0026#x2F;functions\u0026#x2F;interfaces that you will add or change. Either leave the implementations empty or write them yourself if they end up being small or important enough to write by hand (or with AI\u0026#x2F;IDE autocompletion).\u003cp\u003e- Write the signatures of the tests with a comment on what it\u0026#x27;s verifying. Ideally you would write the tests yourself, specially if they are short, but you can leave them empty.\u003cp\u003e- Then at this point you involve the agent and tell it to plan how to complete the changes without barely having to specify anything in the prompt. Then execute the plan and ask the agent to iterate until all tests and lints are green.\u003cp\u003e- Go through the agent\u0026#x27;s changes and perform clean up. Usually it\u0026#x27;s just nitpicks and changes to conform to my specific style.\u003cp\u003eIf the change is small enough, I find that I can complete this with just copilot in about the same amount of time it would take to write an ambiguous prompt. If the change is bigger, I can either have the agent do it all or do the fun stuff myself and task the agent with finishing the boring stuff.\u003cp\u003eSo I would agree with the title and the gist of the post but for different reasons.\u003cp\u003eExample of a large change using that strategy: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;trane-project\u0026#x2F;trane\u0026#x2F;commit\u0026#x2F;d5d95cfd331c304ecb46e40e849d12c6c600171f\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;trane-project\u0026#x2F;trane\u0026#x2F;commit\u0026#x2F;d5d95cfd331c30...\u003c/a\u003e",
+        "id": 47436353,
+        "author": "CraigJPerry",
+        "text": "\u0026gt;\u0026gt; Misconception 1: specification documents are simpler than the corresponding code\u003cp\u003eI used to be on that side of the argument - clearly code is more precise so it MUST be simpler than wrangling with the uncertainty of prose. But precision isn\u0026#x27;t the only factor in play.\u003cp\u003eThe argument here is that essential complexity lives on and you can only convert between expressions of it - that is certainly true but it\u0026#x27;s is overlooking both accidental complexity and germane complexity.\u003cp\u003eSpecs in prose give you an opportunity to simplify by right-sizing germane complexity in a way that code can\u0026#x27;t.\u003cp\u003eYou might say \u0026quot;well i could create a library or a framework and teach everyone how to use it\u0026quot; and so when we\u0026#x27;re implementing the code to address the essential complexity, we benefit from the germane complexity of the library. True, but now consider the infinite abstraction possible in prose. Which has more power to simplify by replacing essential complexity with germane complexity?\u003cp\u003eBuild me a minecraft clone - there\u0026#x27;s almost zero precision here, if it weren\u0026#x27;t for the fact that word minecraft is incredibly load bearing in this sentence, then you\u0026#x27;d have no chance of building the right thing. One sentence. Contrast with the code you\u0026#x27;d have to write and read to express the same.",
         "indicators": [
+          "intelligent",
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment presents a practical perspective on integrating AI into coding workflows, emphasizing collaboration rather than full automation."
+        "analysis": "This comment provides a nuanced view on complexity in specs versus code, emphasizing the value of prose in managing complexity beyond mere precision."
       },
       {
-        "id": 47435539,
-        "author": "ozozozd",
-        "text": "Such amazing writing. And clear articulation of what I’ve been struggling to put into words - almost having to endure a mental mute state. I keep thinking it’s obvious, but it’s not, and this article explains it very elegantly.\u003cp\u003eI also enjoyed the writing style so much that I felt bad for myself for not getting to read this kind of writing enough. We are drowning in slop. We all deserve better!",
+        "id": 47436144,
+        "author": "prohobo",
+        "text": "Why is everyone still talking about markdown files as the only form of spec? The argument is true for text-based specs, but that\u0026#x27;s not the only option. Stop being so text-file-brained?\u003cp\u003eThis article is really attacking vague prose that pushes ambiguity onto the agent - okay, fair enough. But that\u0026#x27;s a tooling problem. What if you could express structure and relationships at a higher level than text, or map domain concepts directly to library components? People are already working on new workflows and tools to do just that!\u003cp\u003eAlso, dismissing the idea that \u0026quot;some day we\u0026#x27;ll be able to just write the specs and the program will write itself\u0026quot; is especially perplexing. We\u0026#x27;re already doing it, aren\u0026#x27;t we? Yes, it has major issues but you can\u0026#x27;t deny that AI agents are enabling literally that. Those issues will get fixed.\u003cp\u003eThe historical parallel matters here as well. Grady Booch (co-creator of UML) argues we\u0026#x27;re in the third golden age of software engineering:\u003cp\u003e- 1940s: abstracted away the machine -\u0026gt; structured programming\u003cp\u003e- 1970s: abstracted away the algorithm -\u0026gt; OOP, standard libraries, UML\u003cp\u003e- Now: abstracting away the code itself\u003cp\u003eRecent interview here: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=OfMAtaocvJw\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=OfMAtaocvJw\u003c/a\u003e\u003cp\u003eEach previous transition had engineers raising the same objections: \u0026quot;this isn\u0026#x27;t safe\u0026quot;, \u0026quot;you\u0026#x27;re abstracting away my craft\u0026quot;. They were right that something was lost, but wrong that it was fatal. Eventually the new tools worked well enough to be used in production.",
         "indicators": [
+          "intelligent",
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "It correctly distinguishes the different purposes of specs, aligning with established views on their roles in project management and engineering."
+        "analysis": "This comment broadens the discussion by pointing out advances in tooling and AI that move beyond traditional text specs, supporting the possibility of spec-driven development."
       },
       {
-        "id": 47435511,
-        "author": "kikkupico",
-        "text": "Natural language is fluid and ambiguous while code is rigid and deterministic. Spec-driven development appears to be the best of both worlds. But really, it is the worst of both. LLMs are language models - their breakthrough capability is handling natural language. Code is meant to be unambiguous and deterministic. A spec is neither fluid nor deterministic.",
+        "id": 47435556,
+        "author": "causalityltd",
+        "text": "The cognitive dissonance comes from the tension between the-spec-as-management-artifact vs the-spec-as-engineering-artifact. Author is right that advocates are selling the first but second is the only one which works.\u003cp\u003eFor a manager, the spec exists in order to create a delgation ticket, something you assign to someone and done. \nBut for a builder, it exists as a thinking tool that evolves with the code to sharpen the understanding\u0026#x2F;thinking.\u003cp\u003eI also think, that some builders are being fooled into thinking like managers because ease, but they figure it out pretty quickly.",
         "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment thoughtfully distinguishes different purposes of specs, highlighting their evolving role in engineering beyond mere management."
+      },
+      {
+        "id": 47435837,
+        "author": "bob1029",
+        "text": "It helps to decouple the business requirements from the technical ones. It\u0026#x27;s often not possible to completely separate these areas, but I\u0026#x27;ve been on countless calls where the extra technical detail completely drowns out the central value proposition or customer concern. The specification should say who, what, where, when, why. The code should say how.\u003cp\u003eThe code will always be an imperfect projection of the specification, and that is a feature. It must be decoupled to some extent or everything would become incredibly brittle. You do not need your business analysts worrying about which SQLite provider is to be used in the final shipped product. Forcing code to be isomorphic with spec means everyone needs to know everything all the time. It can work in small tech startups, but it doesn\u0026#x27;t work anywhere else.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment provides practical insight into the separation of concerns between specs and code, emphasizing real-world organizational challenges."
+      },
+      {
+        "id": 47437094,
+        "author": "sornaensis",
+        "text": "Trying to go the Spec -\u0026gt; LLM route is just a lost cause. And seems wasteful to me even if it worked.\u003cp\u003eLLM -\u0026gt; Spec is easier, especially with good tools that can communicate why the spec fails to validate\u0026#x2F;compile back to the LLM. Better languages that can codify things like what can actually be called at a certain part of the codebase, or describe highly detailed constraints on the data model, are just going to win out long term because models don\u0026#x27;t get tired trying to figure this stuff out and put the lego bricks in the right place to make the code work, and developers don\u0026#x27;t have to worry about UB or nasty bugs sneaking in at the edges.\u003cp\u003eWith a good \u0026#x27;compilable spec\u0026#x27; and documentation in\u0026#x2F;around it, the next LLM run can have an easier time figuring out what is going on.\u003cp\u003eTrying to create \u0026#x27;validated english\u0026#x27; is just injecting a ton of complexity away from the area you are trying to get actual work done: the code that actually runs and does stuff.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment offers a pragmatic perspective on the workflow between specs and code generation using LLMs, favoring iterative refinement over upfront spec completeness."
+      },
+      {
+        "id": 47435617,
+        "author": "quotemstr",
+        "text": "No, a spec is not code. It\u0026#x27;s possible to describe simple behavior that\u0026#x27;s nevertheless difficult to implement. Consider, say,\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  fn sin(x: f16) -\u0026gt; f16\n\u003c/code\u003e\u003c/pre\u003e\nThere are only 64k different f16s. Easy enough to test them all.  A given sin() is either correct or it\u0026#x27;s not.\u003cp\u003eYet sin() here can have a large number of different implementations. The spec alone under-determines the actual code.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment correctly points out that specifications often leave room for multiple valid implementations, underscoring the difference between spec and code."
+      },
+      {
+        "id": 47436352,
+        "author": "ACV001",
+        "text": "I don\u0026#x27;t agree. The code is much more than the spec. In fact, the typical project code is 90% scaffolding and infrastructure code to put together and in fact contains implementation details specific to the framework you use. And only 10% or less is actual \u0026quot;business logic\u0026quot;. The spec doesn\u0026#x27;t have to deal with language, framework details, so by definition spec is the minimum amount of text necessary to express the business logic and behaviour of the system.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 9,
+        "analysis": "This comment accurately describes the practical composition of codebases and the narrower scope of specifications."
+      },
+      {
+        "id": 47435851,
+        "author": "wazHFsRy",
+        "text": "Maybe an argument can be made that this definitely holds for some areas of the feature one is building. But in ever task there might be areas where the spec, even less descriptive than code, is enough, because many solutions are just „good enough“?\nOne example for me are integration tests in our production application. I can spec them with single lines, way less dense than code, and the llms code is good enough. \nIt may decide to assert one way or another, but I do not care as long as the essence is there.\u003cp\u003eCould be that the truth is somewhere in between?",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 10,
+        "analysis": "This comment offers a balanced view that not all specs require full detail, and LLMs can suffice for less critical or simpler components."
+      },
+      {
+        "id": 47437953,
+        "author": "xinan",
+        "text": "I’ve noticed that the so-called industry is always fixated on the most crappy language.  First it was JavaScript, then Python, now English.  They have the common problem of being too flexible and ambiguous, causing bugs that are incredibly hard to find.  Yet somehow they always become the most popular, and there’s always a cult about it, mostly consist of people who aren’t real computer scientists.\u003cp\u003e“This time is different” are the famous last words.",
+        "indicators": [
+          "emotional",
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "This comment accurately captures the fundamental challenge of using natural language as a specification medium for AI and code generation."
-      },
-      {
-        "id": 47436319,
-        "author": "amtamt",
-        "text": "\u0026gt; On two occasions I have been asked [by members of Parliament], \u0026#x27;Pray, Mr. Babbage, if you put into the machine wrong figures, will the right answers come out?\u0026#x27; I am not able rightly to apprehend the kind of confusion of ideas that could provoke such a question.\u003cp\u003eI guess many of us quality for british parliament.",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "The statement underscores the importance of specifications in defining expected behavior, a well-accepted principle in software engineering."
+        "accuracyRank": 11,
+        "analysis": "This comment expresses a critical opinion on popular languages and natural language ambiguity, reflecting a common frustration though somewhat emotional."
       },
       {
         "id": 47435238,
@@ -98,19 +174,54 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment appropriately references Brooks' argument, emphasizing that detailed specs alone cannot solve all complexity issues."
+        "accuracyRank": 12,
+        "analysis": "This comment highlights practical user expectations from AI code generation, suggesting that perfect detail is often unnecessary."
       },
       {
-        "id": 47437094,
-        "author": "sornaensis",
-        "text": "Trying to go the Spec -\u0026gt; LLM route is just a lost cause. And seems wasteful to me even if it worked.\u003cp\u003eLLM -\u0026gt; Spec is easier, especially with good tools that can communicate why the spec fails to validate\u0026#x2F;compile back to the LLM. Better languages that can codify things like what can actually be called at a certain part of the codebase, or describe highly detailed constraints on the data model, are just going to win out long term because models don\u0026#x27;t get tired trying to figure this stuff out and put the lego bricks in the right place to make the code work, and developers don\u0026#x27;t have to worry about UB or nasty bugs sneaking in at the edges.\u003cp\u003eWith a good \u0026#x27;compilable spec\u0026#x27; and documentation in\u0026#x2F;around it, the next LLM run can have an easier time figuring out what is going on.\u003cp\u003eTrying to create \u0026#x27;validated english\u0026#x27; is just injecting a ton of complexity away from the area you are trying to get actual work done: the code that actually runs and does stuff.",
+        "id": 47435377,
+        "author": "ulrikrasmussen",
+        "text": "A corollary of this statement is that code without a spec is not code. No \u0026#x2F;s, I think that is true - code without a spec certainly does something, but it is, by the absence of a detailed spec, undefined behavior.",
         "indicators": [
-          "emotional",
+          "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "It realistically assesses the current limitations of AI in fully automating code generation from specifications."
+        "accuracyRank": 13,
+        "analysis": "This comment correctly emphasizes the importance of specifications in defining expected code behavior."
+      },
+      {
+        "id": 47434651,
+        "author": "measurablefunc",
+        "text": "I agree with the overall structure of the argument but I like to think of specifications like polynomial equations defining some set of zeroes. Specifications are not really code but a good specification will cut out a definable subset of expected behaviors that can then be further refined with an executable implementation. For example, if a specification calls for a lock-free queue then there are any number of potential implementations w\u0026#x2F; different trade-offs that I would not expect to be in the specification.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 14,
+        "analysis": "This comment provides a useful analogy to explain the nature of specifications as defining constraints rather than exact code."
+      },
+      {
+        "id": 47435511,
+        "author": "kikkupico",
+        "text": "Natural language is fluid and ambiguous while code is rigid and deterministic. Spec-driven development appears to be the best of both worlds. But really, it is the worst of both. LLMs are language models - their breakthrough capability is handling natural language. Code is meant to be unambiguous and deterministic. A spec is neither fluid nor deterministic.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 15,
+        "analysis": "This comment points out the fundamental differences between natural language specs and code, highlighting challenges in spec-driven development."
+      },
+      {
+        "id": 47436293,
+        "author": "svara",
+        "text": "The vibe coding maximalist position can be stated in information theory terms: That there exists a decoder that can decode the space of useful programs from a much smaller prompt space.\u003cp\u003eThe compression ratio is the vibe coding gain.\u003cp\u003eI think that way of phrasing it makes it easier to think about boundaries of vibe coding.\u003cp\u003e\u0026quot;A class that represents (A) concept, using the (B) data structure and (C) algorithms for methods (D), in programming language (E).\u0026quot;\u003cp\u003eThat\u0026#x27;s decodeable, at least to a narrow enough distribution.\u003cp\u003e\u0026quot;A commercially successful team communication app built around the concept of channels, like in IRC.\u0026quot;\u003cp\u003eWithout already knowing Slack, that\u0026#x27;s not decodable.\u003cp\u003eThinking about what is \u003ci\u003emissing\u003c/i\u003e is very helpful. Obviously, the business strategic positioning, non technical stakeholder inputs, UX design.\u003cp\u003eBut I think it goes beyond that: In sufficiently complex apps, even purely technical \u0026quot;software engineering\u0026quot; decisions are to some degree learnt from experiment.\u003cp\u003eThis also makes it more clear how to use AI coding effectively:\u003cp\u003e* Prompt in increments of components that can be encoded in a short prompt.\u003cp\u003e* If possible, add pre-existing information to the prompt (documentation, prior attempts at implementation).",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 16,
+        "analysis": "This comment offers a theoretical framing of code generation from prompts and practical advice for effective AI-assisted coding."
       }
     ]
   }
