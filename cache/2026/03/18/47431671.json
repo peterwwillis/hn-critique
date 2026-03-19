@@ -25,7 +25,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the idea of duplicating certain layers in large language models (LLMs) to improve reasoning performance without retraining. Commenters debate the validity of the approach, its novelty, and possible explanations for the observed improvements, while some share related research and personal experiments.",
+    "summary": "The discussion revolves around the claim that duplicating certain layers in large language models (LLMs) can improve reasoning without retraining. Commenters debate the validity of the claim, referencing prior work, possible mechanisms, and limitations, while some express skepticism about the generality and robustness of the approach.",
     "comments": [
       {
         "id": 47434231,
@@ -38,7 +38,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a plausible and nuanced interpretation of the phenomenon, considering training dynamics and model behavior, making it a strong and credible analysis."
+        "analysis": "This comment provides a nuanced hypothesis grounded in understanding of model training and layer behavior, offering a plausible alternative explanation that fits known transformer properties."
       },
       {
         "id": 47433868,
@@ -51,7 +51,7 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Offers a sophisticated theoretical perspective on circuit looping and suggests future training strategies, showing deep understanding of model internals."
+        "analysis": "This comment insightfully discusses the architectural and training implications, suggesting that the observed effect is accidental and advocating for more principled training approaches."
       },
       {
         "id": 47434535,
@@ -60,11 +60,11 @@
         "indicators": [
           "intelligent",
           "thoughtful",
-          "constructive",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "Shares practical experimentation and observations supporting the idea of layer-specific functions and robustness due to residual connections, adding empirical weight."
+        "analysis": "This comment shares practical experimental experience supporting the idea that some layers may be redundant or have specific roles, aligning with known transformer robustness due to residuals."
       },
       {
         "id": 47437002,
@@ -76,20 +76,7 @@
           "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Correctly points out prior work and aligns with the original claim, though somewhat dismissive of the novelty, providing useful context."
-      },
-      {
-        "id": 47439055,
-        "author": "the_harpia_io",
-        "text": "the \u0026quot;reasoning circuits\u0026quot; framing is doing a lot of work here. tidy story, fits the result, but I\u0026#x27;m not sure it explains anything - you duplicated layers and got better scores, everything else is interpretation. that said .22→.76 is hard to dismiss as noise. been poking at similar questions from a code analysis angle, which layers actually \u0026quot;understand\u0026quot; semantic structure vs just pattern-matching tokens, and the results are messier - no clean 3-4 layer cognitive units. might be that logical deduction tasks are just uniquely susceptible to this",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Offers a cautious interpretation, acknowledging the improvement but questioning the explanatory power of the reasoning circuits concept."
+        "analysis": "This comment correctly points out prior art and contextualizes the claim, though it somewhat dismisses the new findings as already known without deeper critique."
       },
       {
         "id": 47438449,
@@ -100,54 +87,20 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Supports the main claim with external research evidence, enhancing credibility though details are limited."
-      },
-      {
-        "id": 47433797,
-        "author": "Karuma",
-        "text": "Wow, every single word in the original post and on that README.md is pure LLM. How sad.\u003cp\u003eIn any case, this has been done at least since the very first public releases of Llama by Meta... It also works for image models. There are even a few ComfyUI nodes that let you pick layers to duplicate on the fly, so you can test as many as you want really quickly.",
-        "indicators": [
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Provides historical context and practical tools, indicating the idea is not novel but well-known in some communities."
-      },
-      {
-        "id": 47436865,
-        "author": "Imanari",
-        "text": "Fascinating! I wonder if new training techniques could emerge from this. \nIf we say layer-1=translater, layer2-5=reasoner, layer6 retranslater, could we train small 6 layer models but evaluate their performance in a 1\u0026gt;n*(2-5)\u0026gt;6 setup to directly train towards optimal middle-layers that can be looped? You\u0026#x27;d only have to train 6 layers but get the duplication-benefit of the middle layers for free.",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Presents an interesting hypothesis for future training methods inspired by the duplication findings, showing creative thinking."
+        "accuracyRank": 5,
+        "analysis": "This comment supports the claim with independent research evidence, lending credibility to the idea of localized reasoning circuits."
       },
       {
         "id": 47433692,
         "author": "zhangchen",
         "text": "this lines up with what pruning papers have been finding, the middle layers carry most of the reasoning weight and you can often drop the outer ones without much loss. cool to see the inverse also works, just stacking them for extra passes.",
         "indicators": [
+          "intelligent",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 9,
-        "analysis": "Connects the duplication idea with pruning literature, reinforcing the importance of middle layers in reasoning."
-      },
-      {
-        "id": 47434267,
-        "author": "m3kw9",
-        "text": "What, just randomly choose some \u0026quot;layer\u0026quot; and duplicate it and give some arbitrary reasoning went from 0.2 -\u0026gt; 0.7, i don\u0026#x27;t know man. You need to use real benchmarks.",
-        "indicators": [
-          "thoughtful",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 10,
-        "analysis": "Raises a valid concern about the rigor of the benchmarks and the need for careful validation."
+        "accuracyRank": 6,
+        "analysis": "This comment aligns the layer duplication idea with pruning literature, reinforcing the importance of middle layers in reasoning."
       },
       {
         "id": 47433537,
@@ -158,8 +111,77 @@
           "likely-true",
           "constructive"
         ],
+        "accuracyRank": 7,
+        "analysis": "This comment provides a skeptical but informed perspective based on prior attempts with recurrent layers, cautioning about generalization."
+      },
+      {
+        "id": 47433797,
+        "author": "Karuma",
+        "text": "Wow, every single word in the original post and on that README.md is pure LLM. How sad.\u003cp\u003eIn any case, this has been done at least since the very first public releases of Llama by Meta... It also works for image models. There are even a few ComfyUI nodes that let you pick layers to duplicate on the fly, so you can test as many as you want really quickly.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment adds historical context and practical tooling information, indicating the technique is not novel."
+      },
+      {
+        "id": 47436865,
+        "author": "Imanari",
+        "text": "Fascinating! I wonder if new training techniques could emerge from this. \nIf we say layer-1=translater, layer2-5=reasoner, layer6 retranslater, could we train small 6 layer models but evaluate their performance in a 1\u0026gt;n*(2-5)\u0026gt;6 setup to directly train towards optimal middle-layers that can be looped? You\u0026#x27;d only have to train 6 layers but get the duplication-benefit of the middle layers for free.",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "intelligent"
+        ],
+        "accuracyRank": 9,
+        "analysis": "This comment offers a constructive suggestion for future training methods to exploit the observed phenomenon more systematically."
+      },
+      {
+        "id": 47433484,
+        "author": "colejhudson",
+        "text": "Would you be able to publish the individual benchmarks for Qwen2.5-Coder-32B? GSM8K specifically would be useful to look at.",
+        "indicators": [
+          "constructive",
+          "intelligent"
+        ],
+        "accuracyRank": 10,
+        "analysis": "This comment calls for transparency and detailed data to better evaluate the claims, which is important for validation."
+      },
+      {
+        "id": 47433647,
+        "author": "XCSme",
+        "text": "But if it got worse on other tests, it doesn\u0026#x27;t do much good, right?",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
         "accuracyRank": 11,
-        "analysis": "Expresses skepticism based on experience with recurrent layers, highlighting potential limitations of the approach."
+        "analysis": "This comment raises a valid concern about potential trade-offs and the overall utility of the method."
+      },
+      {
+        "id": 47434357,
+        "author": "snats",
+        "text": "you can also have removed layers of models and keep the same score in benchmarks [1].\u003cp\u003ei feel that sometimes a lot of the layers might just be redundant and are not fully needed once a model is trained.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;snats.xyz\u0026#x2F;pages\u0026#x2F;articles\u0026#x2F;pruningg.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;snats.xyz\u0026#x2F;pages\u0026#x2F;articles\u0026#x2F;pruningg.html\u003c/a\u003e",
+        "indicators": [
+          "likely-true",
+          "constructive",
+          "intelligent"
+        ],
+        "accuracyRank": 12,
+        "analysis": "This comment supports the idea of redundancy in layers, consistent with pruning research."
+      },
+      {
+        "id": 47433538,
+        "author": "SyzygyRhythm",
+        "text": "If running twice is good, then is running N times even better? I wonder if you could even loop until some kind of convergence, say hitting a fixed point (input equals output). I wonder if there\u0026#x27;s even a sort of bifurcation property where it sometimes loops A-\u0026gt;A-\u0026gt;A, but other times A-\u0026gt;B-\u0026gt;A, or more, rather like the logistic map fractal.",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 13,
+        "analysis": "This comment explores theoretical implications and possible dynamic behaviors, showing curiosity but speculative."
       },
       {
         "id": 47433716,
@@ -167,11 +189,10 @@
         "text": "There\u0026#x27;s still a lot of low hanging fruit left IMO. Good find and rather funny to think about as you can have someone simply clone the various layers multiple times and instead of spending millions of dollars retraining the model increase performance significantly with \u0026quot;this one trick\u0026quot;.",
         "indicators": [
           "emotional",
-          "constructive",
-          "likely-true"
+          "constructive"
         ],
-        "accuracyRank": 12,
-        "analysis": "Optimistic about the practical impact of the technique, though somewhat speculative."
+        "accuracyRank": 14,
+        "analysis": "This comment is positive but lacks technical depth, focusing on the novelty and humor of the approach."
       },
       {
         "id": 47438460,
@@ -181,8 +202,19 @@
           "emotional",
           "useless"
         ],
-        "accuracyRank": 13,
-        "analysis": "A lighthearted, non-technical comment that adds little analytical value."
+        "accuracyRank": 15,
+        "analysis": "This comment is lighthearted and adds little analytical value."
+      },
+      {
+        "id": 47434173,
+        "author": "christianqchung",
+        "text": "Why test on Qwen 2.5 when Qwen 3 has been out for about a year, and Qwen 3.5 for a month? My problem with this is ironically entirely vibes based: that for some reason, LLMs love to talk about Qwen 2.5 instead of anything newer.",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 16,
+        "analysis": "This comment expresses skepticism but is vague and does not contribute technical insight."
       },
       {
         "id": 47438382,
@@ -191,8 +223,8 @@
         "indicators": [
           "useless"
         ],
-        "accuracyRank": 14,
-        "analysis": "Too brief and vague to provide meaningful insight."
+        "accuracyRank": 17,
+        "analysis": "This comment is a brief mention without context or explanation."
       },
       {
         "id": 47438507,
@@ -201,8 +233,84 @@
         "indicators": [
           "useless"
         ],
-        "accuracyRank": 15,
-        "analysis": "Off-topic question unrelated to the technical discussion."
+        "accuracyRank": 18,
+        "analysis": "This comment is off-topic and does not address the discussion."
+      },
+      {
+        "id": 47438462,
+        "author": "BoredomIsFun",
+        "text": "please post it on \u0026#x2F;r\u0026#x2F;localllama",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 19,
+        "analysis": "This comment is a request unrelated to the technical discussion."
+      },
+      {
+        "id": 47437434,
+        "author": "Lerc",
+        "text": "That weird part is kind of what I was expecting.\u003cp\u003eThis goes to the thing that I posted on the thread a couple of days ago.  \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47327132\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47327132\u003c/a\u003e\u003cp\u003eWhat you need is a mechanism to pick the right looping pattern,  Then it really does seem to be Mixture of experts on a different level.\u003cp\u003eBreak the model into input path,  thinking, output path.   and make the thinking phase a single looping layer of many experts.  Then the router gets to decide 13,13,14,14,15,15,16.\u003cp\u003eTraining the router left as an exercise to the reader.",
+        "indicators": [
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 20,
+        "analysis": "This comment proposes an interesting architectural idea to improve the looping mechanism, though speculative."
+      },
+      {
+        "id": 47434797,
+        "author": "kristianp",
+        "text": "The method used here by David Ng, was discussed a few days ago at \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47322887\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47322887\u003c/a\u003e",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 21,
+        "analysis": "This comment provides a reference to prior discussion, helping contextualize the claim."
+      },
+      {
+        "id": 47433396,
+        "author": "woadwarrior01",
+        "text": "Reminds me of Solar 10.7B, which was a very good model for its size ~2 year ago and the \u0026quot;Depth Up-Scaling\u0026quot; technique behind it. Although, that involved continued training after repeating the layers.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2312.15166\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2312.15166\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 22,
+        "analysis": "This comment relates the current claim to known techniques that require retraining, highlighting a difference."
+      },
+      {
+        "id": 47434657,
+        "author": "getnormality",
+        "text": "Didn\u0026#x27;t we recently see another hack, where you could get better performance by repeating the prompt?\u003cp\u003eI wonder if they work for similar reasons.",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 23,
+        "analysis": "This comment draws a parallel to prompt repetition, suggesting a possible common mechanism worth investigating."
+      },
+      {
+        "id": 47434267,
+        "author": "m3kw9",
+        "text": "What, just randomly choose some \u0026quot;layer\u0026quot; and duplicate it and give some arbitrary reasoning went from 0.2 -\u0026gt; 0.7, i don\u0026#x27;t know man. You need to use real benchmarks.",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 24,
+        "analysis": "This comment rightly calls for rigorous benchmarking and skepticism about arbitrary layer duplication claims."
+      },
+      {
+        "id": 47434111,
+        "author": "Singlaw",
+        "text": "What does this do?",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 25,
+        "analysis": "This comment is a vague question without context or contribution."
       }
     ]
   }

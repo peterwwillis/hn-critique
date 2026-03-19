@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">44 points</span>
+        <span class="score">84 points</span>
         by <a href="https://news.ycombinator.com/user?id=ibobev" class="hnuser">ibobev</a>
-        <span class="age">2 hours ago</span>
+        <span class="age">4 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/19/47438490.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47438490" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the capacity and behavior of CPU branch predictors, with users sharing insights on how branch predictors memorize patterns, trade-offs in CPU design, and differences between CPU models. Some comments speculate on the practical utility of large branch prediction buffers and the impact on performance.</p>
+      <p>The discussion revolves around the effectiveness and real-world relevance of CPU branch predictors, with users debating how branch predictors learn patterns, their capacity limits, and the practical implications of benchmark tests. Some comments highlight the trade-offs CPU designers face, while others question the artificial nature of the benchmark and its applicability to real workloads.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,46 +56,46 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jeffbee" class="hnuser">jeffbee</a>
+        <a href="https://news.ycombinator.com/user?id=stephencanon" class="hnuser">stephencanon</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">There are charts for branch target buffer size estimation on Chips and Cheese for various CPU models, and manufacturers sometimes say how many they have. Zen v5 has a 16k L1 BTB, which is wild, and that&#x27;s why it beats the others in this chart. Zen v1 had only 256 L1 BTB entries and that is the main reason it got lapped by Skylake. I think the increasingly gigantic branch buffers of later Zen models are an expression of that institutional memory.</div>
-      <div class="comment-analysis"><em>This comment provides concrete data about branch target buffer sizes from a reputable source, explaining differences between CPU models which aligns well with technical understanding.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=stephencanon" class="hnuser">stephencanon</a>
-        &nbsp;|&nbsp;rank #2
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Enlarging a branch predictor requires area and timing tradeoffs. CPU designers have to balance branch predictor improvements against other improvements they could make with the same area and timing resources. What this tells you is that either Intel is more constrained for one reason or another, or Intel&#x27;s designers think that they net larger wins by deploying those resources elsewhere in the CPU (which might be because they have identified larger opportunities for improvement, or because they are basing their decision making on a different sample of software, or both).</div>
-      <div class="comment-analysis"><em>Offers a nuanced explanation of CPU design trade-offs affecting branch predictor size, reflecting a realistic perspective on engineering constraints.</em></div>
+      <div class="comment-analysis"><em>This comment accurately explains the engineering trade-offs in CPU design, providing a realistic perspective on why branch predictor sizes vary between manufacturers.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=OskarS" class="hnuser">OskarS</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Hmm, that&#x27;s interesting. The code as written only has one branch, the if statement (well, two, the while loop exit clause as well). My mental model of the branch predictor was that for each branch, the CPU maintained some internal state like &quot;probably taken&#x2F;not taken&quot; or &quot;indeterminate&quot;, and it &quot;learned&quot; by executing the branch many times.<p>But that&#x27;s clearly not right, because apparently the specific data it&#x27;s branching off matters too? Like, &quot;test memory location X, and branch at location Y&quot;, and it remembers <i>both</i> the specific memory location and which specific branch branches off of it? That&#x27;s really impressive, I didn&#x27;t think branch predictors worked like that.<p>Or does it learn the exact pattern? &quot;After the pattern ...0101101011000 (each 0&#x2F;1 representing the branch not taken&#x2F;taken), it&#x27;s probably 1 next time&quot;?</div>
-      <div class="comment-analysis"><em>The comment reflects a thoughtful attempt to understand branch predictor behavior, correctly noting that predictors learn patterns but slightly uncertain about exact mechanisms.</em></div>
+      <div class="comment-analysis"><em>The comment shows a good understanding of branch predictors and correctly notes that predictors can consider complex patterns, though the exact mechanisms vary by CPU.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=bee_rider" class="hnuser">bee_rider</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I guess the generate_random_value function uses the same seed every time, so the expectation is that the branch predictor should be able to memorize it with perfect accuracy.<p>But the memorization capacity of the branch predictor must be a trade-off, right? I guess this generate_random_value function is impossible to predict using heuristics, so I guess the question is how often we encounter 30k long branch patterns like that.<p>Which isn’t to say I have evidence to the contrary. I just have no idea how useful this capacity actually is, haha.</div>
-      <div class="comment-analysis"><em>Raises a reasonable point about the predictability of repeated patterns and questions the practical usefulness of large branch prediction capacities, though admits lack of evidence.</em></div>
+      <div class="comment-analysis"><em>This comment sensibly questions the practical usefulness of memorizing long branch patterns, highlighting the trade-off between predictor capacity and real-world application.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Night_Thastus" class="hnuser">Night_Thastus</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">AMD CPUs have been killing it lately, but this benchmark feels quite artificial.<p>It&#x27;s a tiny, trivial example with 1 branch that behaves in a pseudo-random way (random, but fixed seed). I&#x27;m not sure that&#x27;s a really good example of real world branching.<p>How would the various branch predictors perform when the branch taken varies from 0% likely to 100% likely, in say, 5% increments?<p>How would they perform when the contents of both paths are very heavy, which involves a lot of pipeline&#x2F;SE flushing?<p>How would they perform when many <i>different</i> branches all occur in sequence?<p>How costly are their branch mispredictions, relative to one another?<p>Without info like that, this feels a little pointless.</div>
+      <div class="comment-analysis"><em>The critique about the artificial nature of the benchmark is valid, emphasizing the need for more comprehensive testing to assess branch predictors realistically.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -106,7 +106,7 @@
         <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Using random values defeats the purpose of the branch predictor. The best branch predictor for this test would be one that always predicts the branch taken or not taken.</div>
-      <div class="comment-analysis"><em>Correctly points out that random values are inherently unpredictable and that simple static prediction might outperform complex heuristics in such cases.</em></div>
+      <div class="comment-analysis"><em>This comment correctly points out that random inputs limit the effectiveness of branch predictors, which rely on pattern recognition rather than random guessing.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -117,7 +117,29 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Before switching to a hot and branchless code path, I was seeing strangely lower performance on Intel vs. AMD under load. Realizing the branch predictor was the most likely cause was a little surprising.</div>
-      <div class="comment-analysis"><em>Shares a personal anecdote linking branch prediction to performance differences, which is plausible but anecdotal and less generalizable.</em></div>
+      <div class="comment-analysis"><em>This personal anecdote aligns with known differences in branch prediction performance between CPU architectures, though it is anecdotal evidence.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=user070223" class="hnuser">user070223</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Does any JIT&#x2F;AOT&#x2F;hot code optimization&#x2F;techniques&#x2F;compilers&#x2F;runtime takes into account whether the branch prediction is saturated and try to recompile to go branchless</div>
+      <div class="comment-analysis"><em>This question is relevant and shows awareness of compiler optimizations, though it does not provide an answer or evidence.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=valueandtime15" class="hnuser">valueandtime15</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">impressive specs but real world performance depends on so many other factors</div>
+      <div class="comment-analysis"><em>A valid reminder that branch predictor specs alone do not determine overall CPU performance, emphasizing the complexity of real-world workloads.</em></div>
     </div>
     
 
@@ -129,7 +151,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-19 15:01 UTC &nbsp;|&nbsp;
+    Generated 2026-03-19 17:12 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

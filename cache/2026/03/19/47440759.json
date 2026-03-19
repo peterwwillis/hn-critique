@@ -1,0 +1,142 @@
+{
+  "story_id": 47440759,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article reports a bug in macOS 26.3.1 where the /etc/resolver/ mechanism for custom DNS suffixes no longer works for non-IANA root zone TLDs. The system's mDNSResponder intercepts queries for these custom TLDs and treats them as multicast DNS, bypassing the specified unicast DNS servers and causing resolution failures for local development and private network domains.",
+    "mainPoints": [
+      "macOS 26.3.1 breaks the /etc/resolver/ supplemental DNS feature for custom TLDs not in the IANA root zone.",
+      "mDNSResponder intercepts queries for these custom/private TLDs and handles them as mDNS, ignoring unicast DNS servers specified in /etc/resolver/ files.",
+      "This change breaks local development workflows relying on dnsmasq or similar local DNS servers for domains like .internal, .test, .home.arpa, .lan, and arbitrary custom TLDs.",
+      "Standard TLDs like google.com and bbc.co.uk continue to resolve correctly.",
+      "The only workaround is manually adding entries to /etc/hosts, which is impractical for dynamic environments.",
+      "The issue was confirmed by tests showing no DNS queries reaching local dnsmasq and mDNSResponder returning cached negative responses with large TTLs.",
+      "The problem represents a regression from macOS 25.x where these setups worked correctly."
+    ],
+    "truthfulness": "The claims in the article are consistent with documented macOS behavior and developer reports. The /etc/resolver/ mechanism is a known macOS feature for per-domain DNS resolution, and the described regression aligns with changes in mDNSResponder's handling of special-use and custom TLDs. The article provides detailed reproduction steps, diagnostic commands, and references to official documentation and RFCs, supporting the accuracy of the reported bug. However, the article is a user-generated bug report on GitHub Gist and does not cite multiple independent sources or official Apple statements, so while the technical details appear credible and verifiable, the broader impact and official recognition of the bug are not confirmed.",
+    "considerations": [
+      "Apple's official stance or response to this DNS regression is not included and would be important for understanding if this is intentional behavior or a bug to be fixed.",
+      "Potential security or privacy reasons behind mDNSResponder's change in handling custom TLDs are not discussed.",
+      "The impact on enterprise or non-developer users relying on custom DNS configurations is not explored.",
+      "Alternative DNS resolution mechanisms or future macOS updates that might address or mitigate this issue are not mentioned.",
+      "The article does not clarify the version numbering confusion between macOS and Darwin kernel versions, which may affect user understanding."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around recent macOS updates breaking custom DNS settings, with users sharing frustrations, workarounds, and related issues. Some comments highlight the impact on development workflows and question Apple's software decisions, while others provide technical insights or express broader dissatisfaction with macOS.",
+    "comments": [
+      {
+        "id": 47441526,
+        "author": "binaryturtle",
+        "text": "I run a setup like that on my (outdated) Yosemite machine to provide multiple private TLDs for local deployment\u0026#x2F;development needs.\u003cp\u003eI set that up in like 2014? Even back then it was known already that the quick \u0026#x2F;etc\u0026#x2F;resolver way was the deprecated way to do things. So I guess they finally killed that feature off?\u003cp\u003eThe proper (more awkward) way is to use scutil directly (which then stores the settings in some binary plist somewhere, I assume).\u003cp\u003eMaybe try this and see if it still works afterwards?",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a knowledgeable explanation of DNS configuration on macOS and suggests a valid alternative approach, reflecting practical experience."
+      },
+      {
+        "id": 47441724,
+        "author": "mrbuttons454",
+        "text": "Papercuts like this are why I moved away from macOS.\u003cp\u003eI will say, I don\u0026#x27;t love the use of LLMs to write these bug reports. It\u0026#x27;s probably fine if reviewed, but at least review for things like \u0026quot;worked on macOS 25\u0026quot;, which obviously didn\u0026#x27;t exist. If that wasn\u0026#x27;t caught, how sure are you that the rest of the report is accurate? We all want the bugs fixed, but people are going to start throwing out the obviously LLM written reports rather than have to validate each claim, since the author probably didn\u0026#x27;t.",
+        "indicators": [
+          "thoughtful",
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment raises a valid concern about the accuracy of bug reports possibly generated by LLMs and expresses frustration with macOS issues, adding a critical perspective."
+      },
+      {
+        "id": 47442323,
+        "author": "MoonWalk",
+        "text": "A couple iOS versions ago, Apple broke self-signed certificates... crippling mobile development by preventing the use of HTTPS to communicate with a local server.\u003cp\u003eIt makes you wonder why they were messing around in these areas at all at this point.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment provides a relevant example of Apple breaking developer workflows in the past, supporting the theme of the discussion with credible experience."
+      },
+      {
+        "id": 47441763,
+        "author": "neilsharma425",
+        "text": "Has anyone found a working workaround yet? I use dnsmasq for .local dev routing and held off updating after seeing this but curious if there is a viable path forward short of waiting for Apple to patch it.",
+        "indicators": [
+          "constructive",
+          "thoughtful"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment is a practical inquiry seeking solutions, reflecting user engagement and concern about the issue's impact on development."
+      },
+      {
+        "id": 47441993,
+        "author": "ProllyInfamous",
+        "text": "I am not familiar with dnsmasq at all (is this machine-local?), but absolutely love my PiHole hardware — you can even create rules which intercept hard-coded-IP DNS request and\u0026#x2F;or httpsDNS. You can also hard-code\u0026#x2F;intercept .TLD to local service IPs.\u003cp\u003ePrograms like LittleSnitch never really seem like \u0026quot;enough\u0026quot; for me, because the computer has to boot before DNS filtering comes online. It also has the design error (IMHO) of pre-resolving IP addresses before clicking Accept\u0026#x2F;Deny(all).\u003cp\u003eA great blockrule for your personal firewalls would be to ban (at top level) icloud.com, apple.com, \u0026amp;c; system updates can then be performed manually using guides like \u0026lt;\u003ca href=\"http:\u0026#x2F;\u0026#x2F;www.mrmacintosh.com\" rel=\"nofollow\"\u003ehttp:\u0026#x2F;\u0026#x2F;www.mrmacintosh.com\u003c/a\u003e\u0026gt;. Of course: this \u003ci\u003ebreaks everything\u003c/i\u003e (in exactly the way I prefer to compute).",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "The comment shares an alternative DNS filtering approach and personal preferences, adding useful information to the discussion."
+      },
+      {
+        "id": 47442414,
+        "author": "jiveturkey",
+        "text": "\u0026gt; Regression from: macOS 25.x\u003cp\u003eThere is no 25.x though.",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment fact-checks a detail in the original report, pointing out an inaccuracy regarding macOS version numbering."
+      },
+      {
+        "id": 47441837,
+        "author": "ramon156",
+        "text": "Bit off-topic. I mostly use Linux and I\u0026#x27;m of the opinion that it\u0026#x27;s miles better than Windows, but I don\u0026#x27;t fully understand why people say MacOS looks bad?\u003cp\u003eIgnoring the current Tahoe mess, MacOS felt relatively polished. I\u0026#x27;m purely talking about UX here, as the OS is evidently buggy. The most popular Gnome themes are a re-impl of MacOS, so I can\u0026#x27;t be the only one.",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "While somewhat off-topic, this comment offers a balanced perspective on macOS user experience, contributing to the broader conversation."
+      },
+      {
+        "id": 47441822,
+        "author": "hk1337",
+        "text": "I\u0026#x27;ve been using macOS since OS X Tiger and I wasn\u0026#x27;t aware of this feature.",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment reflects a user's unfamiliarity with the DNS feature in question, indicating the feature's obscurity or limited awareness."
+      },
+      {
+        "id": 47441824,
+        "author": "Razengan",
+        "text": "It also seemingly broke removing Safari cookies on a per website basis, something I often used to stop Google\u0026#x27;s scummy tracking across all their services if you just want to sign into YouTube.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 9,
+        "analysis": "The comment highlights another macOS issue related to privacy controls, expressing frustration but likely based on real user experience."
+      },
+      {
+        "id": 47441831,
+        "author": "lapcat",
+        "text": "\u0026gt; \u003ca href=\"https:\u0026#x2F;\u0026#x2F;feedbackassistant.apple.com\u0026#x2F;feedback\u0026#x2F;22280434\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;feedbackassistant.apple.com\u0026#x2F;feedback\u0026#x2F;22280434\u003c/a\u003e (that seems to need a login?).\u003cp\u003eAll Feedbacks that you file are private to your own Apple Account.",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 10,
+        "analysis": "This comment clarifies the privacy of feedback reports filed with Apple, providing useful context about the bug reporting process."
+      }
+    ]
+  }
+}

@@ -22,32 +22,46 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on Nvidia GreenBoost, a project to extend GPU VRAM using system RAM and NVMe. Commenters debate its practicality, performance compared to existing solutions, and potential limitations such as speed and code quality.",
+    "summary": "The discussion centers around Nvidia GreenBoost, a project that extends GPU VRAM using system RAM or NVMe. Commenters debate the technical approach, performance implications, existing alternatives, and practical use cases, with some skepticism about the project's design and utility.",
     "comments": [
+      {
+        "id": 47441692,
+        "author": "rnrn",
+        "text": "Why is there a new kernel driver here at all? It appears that all it does it allocate system RAM (“DDR4”) and export it as a dmabuf for import to cuda as mapped external memory. Then a userspace shim hijacks APIs to use that if gpu memory is full. cuda already supports allocating mapped system memory, so AFAICT this could be implemented in the userspace shim with no new kernel driver.\u003cp\u003eAlso as other commenters have mentioned, redirecting allocations to managed memory would also enable similar oversubscription\u003cp\u003eAnd the hijack approach only makes sense for making apps have this behavior with no changes, and could be done with minor app changes (e.g. PyTorch has a pluggable allocator interface). App changes also enable intentionally placing specific allocations.\u003cp\u003eMy impression is that this is vibe from beginning to end, starting from a design that only makes sense if you are hallucinating",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed technical critique highlighting redundancy and design issues, making a strong, well-reasoned argument about implementation alternatives."
+      },
       {
         "id": 47432620,
         "author": "0xbadcafebee",
         "text": "You can already do this with some GPU drivers:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  GRUB_CMDLINE_LINUX_DEFAULT=\u0026quot;quiet splash amdttm.pages_limit=5242880 ttm.pages_limit=5242880\u0026quot;\n\u003c/code\u003e\u003c/pre\u003e\nOne downside is your kernel isn\u0026#x27;t going to reserve that memory away from userland. You will still see all the memory at system level as \u0026quot;free\u0026quot;. As the GPU driver starts using it, other apps\u0026#x2F;the OS will try to use the \u0026quot;free\u0026quot; memory, not knowing how much of it is in use (it may show up as \u0026quot;cache\u0026quot;, or not at all). Then OOM killer starts going or programs start crashing, and at some point the OS tips over or GPU driver crashes. You can add loads of swap as a compromise and it works okay, if a bit slow.\u003cp\u003eIn any case, loading a gigantic model just to use system RAM is absurdly slow (due to mem bandwidth), like 1-5 t\u0026#x2F;s, so it\u0026#x27;s not practical. It\u0026#x27;d take a whole day to process one 86k token request. Just pay a cloud provider $0.01 to do it in 10 seconds.",
         "indicators": [
           "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed technical explanation of existing methods and highlights the impracticality of using system RAM for large models due to slow memory bandwidth, making it highly accurate."
+        "accuracyRank": 2,
+        "analysis": "The comment accurately describes practical limitations of oversubscribing GPU memory with system RAM, including performance bottlenecks and system risks."
       },
       {
         "id": 47433081,
         "author": "nl",
         "text": "This is really interesting engineering, but I agree with the other commentators that the benchmarking makes it hard to understand the contribution various factors are having.\u003cp\u003eThe \u003ci\u003eExLlamaV3 EXL3 2bpw (8 GB, full VRAM)\u003c/i\u003e row is an order of magnitude faster than the baseline - but the baseline seems to be the 32GB model running with the  KV cache shared to system memory only (I think?)\u003cp\u003eBut if a 8GB model gives sufficient quality then it seems like that would have worked without the shared memory thing?\u003cp\u003eI \u003ci\u003ethink\u003c/i\u003e the useful apples-to-apples benchmark is currently the \u003ci\u003eOllama + GreenBoost shim (baseline)\u003c/i\u003e (2-5 tps) vs \u003ci\u003eExLlamaV3 + GreenBoost cache\u003c/i\u003e (8–20 tps) comparison.\u003cp\u003eIt would be really useful to see this compared with the existing llama CPU\u0026#x2F;memory offload. There is a note at the start (\u0026quot;Offload layers to CPU — works, but drops token\u0026#x2F;s by 5–10× because CPU RAM has no CUDA coherence\u0026quot;) - but it is unclear if that 5-10x token speed drop is compared to running a model completely in GPU or compared to the greenboost approach.\u003cp\u003eI think it is vs GPU, in which case it seems likely the performance is similar to what greenboost is giving but probably much more stable.",
         "indicators": [
-          "thoughtful",
           "intelligent",
-          "likely-true",
-          "constructive"
+          "thoughtful",
+          "constructive",
+          "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "The comment thoughtfully critiques the benchmarking methodology and suggests more meaningful comparisons, showing a good understanding of performance evaluation."
+        "accuracyRank": 3,
+        "analysis": "This comment provides a nuanced analysis of the benchmarks, emphasizing the need for clearer comparisons to properly evaluate the project's effectiveness."
       },
       {
         "id": 47438175,
@@ -59,20 +73,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment accurately explains the technical tradeoffs between CPU and GPU compute and data transfer overhead, providing a nuanced view of the approach's potential benefits."
-      },
-      {
-        "id": 47432995,
-        "author": "ma2kx",
-        "text": "The physical bottleneck to system memory remains. Therefore, I assume that better results are achieved by manually adjusting which layers are offloaded.\u003cp\u003eI would prefer to use system memory to cache different models, focusing on things like embedding, rerankers, and TTS. This is sufficient to run a more complex RAG locally, for example, via Mem0, and then use a larger LLM via the cloud.",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 4,
-        "analysis": "This comment correctly identifies system memory bandwidth as a bottleneck and suggests practical usage scenarios, showing a realistic understanding of the technology."
+        "analysis": "The comment correctly identifies the tradeoffs between CPU compute and PCI-DMA data transfer, offering a balanced perspective on potential performance benefits."
       },
       {
         "id": 47436696,
@@ -80,34 +82,23 @@
         "text": "Nobody mentioning how this project is vibecoded slop?\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  \u0026gt; The code is really bad with completely uneeded parts. The LLM (Qwen 2.5 7B) has hardcoded the i9 14700KF topology, and has variables related to it never used... It\u0026#x27;s even funnier that the show hardware function always prints the same string. There are even random pip log files. Why did this slop got coverage here?\n\u003c/code\u003e\u003c/pre\u003e\n\u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.phoronix.com\u0026#x2F;forums\u0026#x2F;forum\u0026#x2F;linux-graphics-x-org-drivers\u0026#x2F;open-source-nvidia-linux-nouveau\u0026#x2F;1619572-open-source-greenboost-driver-aims-to-augment-nvidia-gpus-vram-with-system-ram-nvme-to-handle-larger-llms?p=1619635#post1619635\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.phoronix.com\u0026#x2F;forums\u0026#x2F;forum\u0026#x2F;linux-graphics-x-org-d...\u003c/a\u003e",
         "indicators": [
           "emotional",
-          "likely-true",
-          "belligerent"
-        ],
-        "accuracyRank": 5,
-        "analysis": "While the comment raises valid concerns about code quality, its tone is emotional and dismissive, reducing its constructive value despite likely accuracy."
-      },
-      {
-        "id": 47432452,
-        "author": "paultendo",
-        "text": "Could be a very useful way to do some overnight tasks using spare RAM. Possibly things like LLM-based categorisation, labelling, data cleansing. That\u0026#x27;s what comes to mind for me anyway.",
-        "indicators": [
-          "thoughtful",
-          "constructive",
+          "belligerent",
           "likely-true"
         ],
-        "accuracyRank": 6,
-        "analysis": "This comment constructively suggests practical use cases for the technology, showing a positive and realistic perspective."
+        "accuracyRank": 5,
+        "analysis": "While the critique on code quality may be valid, the tone is dismissive and lacks constructive suggestions, reducing its helpfulness."
       },
       {
-        "id": 47434143,
-        "author": "armada651",
-        "text": "Doesn\u0026#x27;t Windows already do this by default? I can already run models bigger than my GPU VRAM and it will start using up to 50% of my system RAM as \u0026quot;shared memory\u0026quot;. This is on a Desktop PC without a shared memory architecture.",
+        "id": 47435164,
+        "author": "NooneAtAll3",
+        "text": "nvidia failed to provide gpu with actually meaningful amount of vram\u003cp\u003eand instead of improving the actual product, it decided to \u0026quot;solve the problem in software\u0026quot;\u003cp\u003eI expect this greenboost to fall and burn, honestly...",
         "indicators": [
-          "likely-true",
-          "thoughtful"
+          "emotional",
+          "belligerent",
+          "likely-untrue"
         ],
-        "accuracyRank": 7,
-        "analysis": "The comment correctly notes that Windows uses shared system RAM for GPU memory overflow, providing relevant context though not deeply technical."
+        "accuracyRank": 6,
+        "analysis": "This comment is largely opinionated and speculative without technical backing, reflecting frustration rather than informed analysis."
       },
       {
         "id": 47432071,
@@ -115,32 +106,10 @@
         "text": "The is extremely slow and not useful in my opinion.",
         "indicators": [
           "emotional",
-          "likely-true"
+          "belligerent"
         ],
-        "accuracyRank": 8,
-        "analysis": "While brief and subjective, this comment aligns with other remarks about speed limitations, though it lacks detailed justification."
-      },
-      {
-        "id": 47439231,
-        "author": "bguberfain",
-        "text": "\u0026quot;A watchdog kernel thread monitors RAM and NVMe pressure and signals userspace before things get dangerous.\u0026quot; - which kind of danger this type of solution can have?",
-        "indicators": [
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 9,
-        "analysis": "This comment raises a relevant question about system stability and potential risks, contributing constructively to the discussion."
-      },
-      {
-        "id": 47436827,
-        "author": "Berazu",
-        "text": "I wish there was a way to extend RAM\u0026#x2F;NVMe with GPU VRAM. :(",
-        "indicators": [
-          "emotional",
-          "useless"
-        ],
-        "accuracyRank": 10,
-        "analysis": "This comment expresses a wishful idea but lacks technical insight or constructive contribution."
+        "accuracyRank": 7,
+        "analysis": "The comment is a blunt negative opinion without elaboration or evidence, limiting its value to the discussion."
       }
     ]
   }

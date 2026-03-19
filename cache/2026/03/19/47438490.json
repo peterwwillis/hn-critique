@@ -21,31 +21,20 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the capacity and behavior of CPU branch predictors, with users sharing insights on how branch predictors memorize patterns, trade-offs in CPU design, and differences between CPU models. Some comments speculate on the practical utility of large branch prediction buffers and the impact on performance.",
+    "summary": "The discussion revolves around the effectiveness and real-world relevance of CPU branch predictors, with users debating how branch predictors learn patterns, their capacity limits, and the practical implications of benchmark tests. Some comments highlight the trade-offs CPU designers face, while others question the artificial nature of the benchmark and its applicability to real workloads.",
     "comments": [
-      {
-        "id": 47440409,
-        "author": "jeffbee",
-        "text": "There are charts for branch target buffer size estimation on Chips and Cheese for various CPU models, and manufacturers sometimes say how many they have. Zen v5 has a 16k L1 BTB, which is wild, and that\u0026#x27;s why it beats the others in this chart. Zen v1 had only 256 L1 BTB entries and that is the main reason it got lapped by Skylake. I think the increasingly gigantic branch buffers of later Zen models are an expression of that institutional memory.",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides concrete data about branch target buffer sizes from a reputable source, explaining differences between CPU models which aligns well with technical understanding."
-      },
       {
         "id": 47439789,
         "author": "stephencanon",
         "text": "Enlarging a branch predictor requires area and timing tradeoffs. CPU designers have to balance branch predictor improvements against other improvements they could make with the same area and timing resources. What this tells you is that either Intel is more constrained for one reason or another, or Intel\u0026#x27;s designers think that they net larger wins by deploying those resources elsewhere in the CPU (which might be because they have identified larger opportunities for improvement, or because they are basing their decision making on a different sample of software, or both).",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "Offers a nuanced explanation of CPU design trade-offs affecting branch predictor size, reflecting a realistic perspective on engineering constraints."
+        "accuracyRank": 1,
+        "analysis": "This comment accurately explains the engineering trade-offs in CPU design, providing a realistic perspective on why branch predictor sizes vary between manufacturers."
       },
       {
         "id": 47440371,
@@ -56,8 +45,8 @@
           "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "The comment reflects a thoughtful attempt to understand branch predictor behavior, correctly noting that predictors learn patterns but slightly uncertain about exact mechanisms."
+        "accuracyRank": 2,
+        "analysis": "The comment shows a good understanding of branch predictors and correctly notes that predictors can consider complex patterns, though the exact mechanisms vary by CPU."
       },
       {
         "id": 47439913,
@@ -65,10 +54,23 @@
         "text": "I guess the generate_random_value function uses the same seed every time, so the expectation is that the branch predictor should be able to memorize it with perfect accuracy.\u003cp\u003eBut the memorization capacity of the branch predictor must be a trade-off, right? I guess this generate_random_value function is impossible to predict using heuristics, so I guess the question is how often we encounter 30k long branch patterns like that.\u003cp\u003eWhich isn’t to say I have evidence to the contrary. I just have no idea how useful this capacity actually is, haha.",
         "indicators": [
           "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment sensibly questions the practical usefulness of memorizing long branch patterns, highlighting the trade-off between predictor capacity and real-world application."
+      },
+      {
+        "id": 47440997,
+        "author": "Night_Thastus",
+        "text": "AMD CPUs have been killing it lately, but this benchmark feels quite artificial.\u003cp\u003eIt\u0026#x27;s a tiny, trivial example with 1 branch that behaves in a pseudo-random way (random, but fixed seed). I\u0026#x27;m not sure that\u0026#x27;s a really good example of real world branching.\u003cp\u003eHow would the various branch predictors perform when the branch taken varies from 0% likely to 100% likely, in say, 5% increments?\u003cp\u003eHow would they perform when the contents of both paths are very heavy, which involves a lot of pipeline\u0026#x2F;SE flushing?\u003cp\u003eHow would they perform when many \u003ci\u003edifferent\u003c/i\u003e branches all occur in sequence?\u003cp\u003eHow costly are their branch mispredictions, relative to one another?\u003cp\u003eWithout info like that, this feels a little pointless.",
+        "indicators": [
+          "thoughtful",
+          "constructive",
           "likely-true"
         ],
         "accuracyRank": 4,
-        "analysis": "Raises a reasonable point about the predictability of repeated patterns and questions the practical usefulness of large branch prediction capacities, though admits lack of evidence."
+        "analysis": "The critique about the artificial nature of the benchmark is valid, emphasizing the need for more comprehensive testing to assess branch predictors realistically."
       },
       {
         "id": 47439990,
@@ -79,7 +81,7 @@
           "constructive"
         ],
         "accuracyRank": 5,
-        "analysis": "Correctly points out that random values are inherently unpredictable and that simple static prediction might outperform complex heuristics in such cases."
+        "analysis": "This comment correctly points out that random inputs limit the effectiveness of branch predictors, which rely on pattern recognition rather than random guessing."
       },
       {
         "id": 47439594,
@@ -90,7 +92,30 @@
           "likely-true"
         ],
         "accuracyRank": 6,
-        "analysis": "Shares a personal anecdote linking branch prediction to performance differences, which is plausible but anecdotal and less generalizable."
+        "analysis": "This personal anecdote aligns with known differences in branch prediction performance between CPU architectures, though it is anecdotal evidence."
+      },
+      {
+        "id": 47441613,
+        "author": "user070223",
+        "text": "Does any JIT\u0026#x2F;AOT\u0026#x2F;hot code optimization\u0026#x2F;techniques\u0026#x2F;compilers\u0026#x2F;runtime takes into account whether the branch prediction is saturated and try to recompile to go branchless",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This question is relevant and shows awareness of compiler optimizations, though it does not provide an answer or evidence."
+      },
+      {
+        "id": 47442271,
+        "author": "valueandtime15",
+        "text": "impressive specs but real world performance depends on so many other factors",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "A valid reminder that branch predictor specs alone do not determine overall CPU performance, emphasizing the complexity of real-world workloads."
       }
     ]
   }
