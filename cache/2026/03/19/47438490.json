@@ -1,0 +1,97 @@
+{
+  "story_id": 47438490,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article discusses the branch prediction capabilities of modern CPUs, highlighting a benchmark test that measures how many branches different processors can predict perfectly. The author reports that AMD Zen 5 predicts 30,000 branches, Apple M4 predicts 10,000, and Intel Emerald Rapids predicts 5,000, expressing disappointment with Intel's performance.",
+    "mainPoints": [
+      "Modern CPUs can execute many instructions per cycle by predicting branches.",
+      "Benchmarking branch prediction is challenging due to processors learning branch patterns over repeated tests.",
+      "A benchmark using random values tests branch prediction accuracy by forcing mispredictions approximately half the time.",
+      "AMD Zen 5 can perfectly predict 30,000 branches, Apple M4 10,000, and Intel Emerald Rapids 5,000.",
+      "The author provides source code for the benchmark and expresses disappointment with Intel's lower performance."
+    ],
+    "truthfulness": "The claims about branch prediction capabilities are based on the author's own benchmark tests using a specific method and code he provides. While the general concept that modern CPUs use branch prediction to improve performance is accurate and well-established, the specific numeric results for AMD, Apple, and Intel processors are anecdotal and not independently verified by multiple sources. The article lacks citations from other studies or official CPU documentation to corroborate these exact figures. Therefore, the claims should be viewed as the author's experimental findings rather than definitive, universally accepted facts.",
+    "considerations": [
+      "Branch prediction performance can vary widely depending on workload, processor microarchitecture, and specific benchmark conditions.",
+      "The benchmark uses repeated runs with the same random values, which may not reflect real-world scenarios where branch patterns are more complex and less predictable.",
+      "No comparison with official CPU specifications or third-party benchmarks is provided to validate the results.",
+      "The article does not discuss the impact of other CPU features such as pipeline depth, cache behavior, or simultaneous multithreading on branch prediction.",
+      "Processor models like Apple M4 and Intel Emerald Rapids mentioned are future or hypothetical models as of early 2024, which may affect the credibility of the claims."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around the capacity and behavior of CPU branch predictors, with users sharing insights on how branch predictors memorize patterns, trade-offs in CPU design, and differences between CPU models. Some comments speculate on the practical utility of large branch prediction buffers and the impact on performance.",
+    "comments": [
+      {
+        "id": 47440409,
+        "author": "jeffbee",
+        "text": "There are charts for branch target buffer size estimation on Chips and Cheese for various CPU models, and manufacturers sometimes say how many they have. Zen v5 has a 16k L1 BTB, which is wild, and that\u0026#x27;s why it beats the others in this chart. Zen v1 had only 256 L1 BTB entries and that is the main reason it got lapped by Skylake. I think the increasingly gigantic branch buffers of later Zen models are an expression of that institutional memory.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides concrete data about branch target buffer sizes from a reputable source, explaining differences between CPU models which aligns well with technical understanding."
+      },
+      {
+        "id": 47439789,
+        "author": "stephencanon",
+        "text": "Enlarging a branch predictor requires area and timing tradeoffs. CPU designers have to balance branch predictor improvements against other improvements they could make with the same area and timing resources. What this tells you is that either Intel is more constrained for one reason or another, or Intel\u0026#x27;s designers think that they net larger wins by deploying those resources elsewhere in the CPU (which might be because they have identified larger opportunities for improvement, or because they are basing their decision making on a different sample of software, or both).",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "Offers a nuanced explanation of CPU design trade-offs affecting branch predictor size, reflecting a realistic perspective on engineering constraints."
+      },
+      {
+        "id": 47440371,
+        "author": "OskarS",
+        "text": "Hmm, that\u0026#x27;s interesting. The code as written only has one branch, the if statement (well, two, the while loop exit clause as well). My mental model of the branch predictor was that for each branch, the CPU maintained some internal state like \u0026quot;probably taken\u0026#x2F;not taken\u0026quot; or \u0026quot;indeterminate\u0026quot;, and it \u0026quot;learned\u0026quot; by executing the branch many times.\u003cp\u003eBut that\u0026#x27;s clearly not right, because apparently the specific data it\u0026#x27;s branching off matters too? Like, \u0026quot;test memory location X, and branch at location Y\u0026quot;, and it remembers \u003ci\u003eboth\u003c/i\u003e the specific memory location and which specific branch branches off of it? That\u0026#x27;s really impressive, I didn\u0026#x27;t think branch predictors worked like that.\u003cp\u003eOr does it learn the exact pattern? \u0026quot;After the pattern ...0101101011000 (each 0\u0026#x2F;1 representing the branch not taken\u0026#x2F;taken), it\u0026#x27;s probably 1 next time\u0026quot;?",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The comment reflects a thoughtful attempt to understand branch predictor behavior, correctly noting that predictors learn patterns but slightly uncertain about exact mechanisms."
+      },
+      {
+        "id": 47439913,
+        "author": "bee_rider",
+        "text": "I guess the generate_random_value function uses the same seed every time, so the expectation is that the branch predictor should be able to memorize it with perfect accuracy.\u003cp\u003eBut the memorization capacity of the branch predictor must be a trade-off, right? I guess this generate_random_value function is impossible to predict using heuristics, so I guess the question is how often we encounter 30k long branch patterns like that.\u003cp\u003eWhich isn’t to say I have evidence to the contrary. I just have no idea how useful this capacity actually is, haha.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Raises a reasonable point about the predictability of repeated patterns and questions the practical usefulness of large branch prediction capacities, though admits lack of evidence."
+      },
+      {
+        "id": 47439990,
+        "author": "rayiner",
+        "text": "Using random values defeats the purpose of the branch predictor. The best branch predictor for this test would be one that always predicts the branch taken or not taken.",
+        "indicators": [
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Correctly points out that random values are inherently unpredictable and that simple static prediction might outperform complex heuristics in such cases."
+      },
+      {
+        "id": 47439594,
+        "author": "withinboredom",
+        "text": "Before switching to a hot and branchless code path, I was seeing strangely lower performance on Intel vs. AMD under load. Realizing the branch predictor was the most likely cause was a little surprising.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Shares a personal anecdote linking branch prediction to performance differences, which is plausible but anecdotal and less generalizable."
+      }
+    ]
+  }
+}

@@ -25,20 +25,8 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on a recent experiment duplicating layers in large language models (LLMs) to enhance reasoning without retraining. Participants debate the validity of the findings, referencing prior work, potential mechanisms, and implications for model training and architecture.",
+    "summary": "The discussion revolves around the idea of duplicating certain layers in large language models (LLMs) to improve reasoning performance without retraining. Commenters debate the validity of the approach, its novelty, and possible explanations for the observed improvements, while some share related research and personal experiments.",
     "comments": [
-      {
-        "id": 47437002,
-        "author": "simgt",
-        "text": "\u0026gt; I replicated David Ng\u0026#x27;s RYS method [...] found something I didn\u0026#x27;t expect.\u003cp\u003e\u0026gt; Transformers appear to have discrete \u0026quot;reasoning circuits\u0026quot; — contiguous blocks of 3-4 layers that act as indivisible cognitive units. Duplicate the right block and the model runs its reasoning pipeline twice. No weights change. No training. The model just thinks longer.\u003cp\u003eHow did you not expect that if you read his post? That\u0026#x27;s literally what he discovered, two years ago.\u003cp\u003eFor anyone interested, there\u0026#x27;s more meat in the post and comments from last week: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47322887\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47322887\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment correctly references prior work by David Ng, providing context and credibility to the claim about reasoning circuits in transformers."
-      },
       {
         "id": 47434231,
         "author": "4bpp",
@@ -49,8 +37,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "Offers a nuanced critique of the experiment's explanation, proposing a plausible alternative hypothesis involving identity-like layers and degradation mechanisms."
+        "accuracyRank": 1,
+        "analysis": "This comment provides a plausible and nuanced interpretation of the phenomenon, considering training dynamics and model behavior, making it a strong and credible analysis."
       },
       {
         "id": 47433868,
@@ -62,8 +50,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "Provides a sophisticated theoretical perspective on the architecture and training of transformers, emphasizing the complexity of circuit looping and suggesting training from scratch with looping."
+        "accuracyRank": 2,
+        "analysis": "Offers a sophisticated theoretical perspective on circuit looping and suggests future training strategies, showing deep understanding of model internals."
       },
       {
         "id": 47434535,
@@ -71,23 +59,95 @@
         "text": "Heh, for a couple last days, I\u0026#x27;ve been doing this exact kind of \u0026quot;neuroanatomy\u0026quot; on Qwen2.5\u0026#x2F;Qwen3 too. Fascinating stuff. To make it easier to fiddle with the network, I created a small inference engine that is stripped of all the framework magic, just raw matmuls and all (main inference loop is just 50 lines of code!). For example, it\u0026#x27;s trivial to remove a layer: i just skip it in code with a simple \u0026quot;if\u0026quot;. I\u0026#x27;ve found that removing some layers doesn\u0026#x27;t appear to change anything (based on the vibes at least). If you remove some later layers, the model forgets how to insert the EOS token and keeps chatting ad finitum (still coherently). Removing earliest layers makes the model generate random garbage. Turns out abliteration is not hard to do, 10 examples was enough to find the refusal vector and cancel most refusals. Interestingly, I\u0026#x27;ve found that refusal happens in the middle layers too (I think, layer 12 out of 26)\u003cp\u003eFrom what I understand, transformers are resistant to network corruption (without complete collapse) thanks to residual connections.\u003cp\u003eI tried to repeat some layers too but got garbage results. I guess I need to automate finding the reasoning layers too, instead of just guessing.",
         "indicators": [
           "intelligent",
+          "thoughtful",
           "constructive",
           "likely-true"
         ],
+        "accuracyRank": 3,
+        "analysis": "Shares practical experimentation and observations supporting the idea of layer-specific functions and robustness due to residual connections, adding empirical weight."
+      },
+      {
+        "id": 47437002,
+        "author": "simgt",
+        "text": "\u0026gt; I replicated David Ng\u0026#x27;s RYS method [...] found something I didn\u0026#x27;t expect.\u003cp\u003e\u0026gt; Transformers appear to have discrete \u0026quot;reasoning circuits\u0026quot; — contiguous blocks of 3-4 layers that act as indivisible cognitive units. Duplicate the right block and the model runs its reasoning pipeline twice. No weights change. No training. The model just thinks longer.\u003cp\u003eHow did you not expect that if you read his post? That\u0026#x27;s literally what he discovered, two years ago.\u003cp\u003eFor anyone interested, there\u0026#x27;s more meat in the post and comments from last week: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47322887\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47322887\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 4,
-        "analysis": "Shares practical experimentation insights that support the idea of layer redundancy and robustness in transformers, adding empirical weight to the discussion."
+        "analysis": "Correctly points out prior work and aligns with the original claim, though somewhat dismissive of the novelty, providing useful context."
+      },
+      {
+        "id": 47439055,
+        "author": "the_harpia_io",
+        "text": "the \u0026quot;reasoning circuits\u0026quot; framing is doing a lot of work here. tidy story, fits the result, but I\u0026#x27;m not sure it explains anything - you duplicated layers and got better scores, everything else is interpretation. that said .22→.76 is hard to dismiss as noise. been poking at similar questions from a code analysis angle, which layers actually \u0026quot;understand\u0026quot; semantic structure vs just pattern-matching tokens, and the results are messier - no clean 3-4 layer cognitive units. might be that logical deduction tasks are just uniquely susceptible to this",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Offers a cautious interpretation, acknowledging the improvement but questioning the explanatory power of the reasoning circuits concept."
+      },
+      {
+        "id": 47438449,
+        "author": "hackpert",
+        "text": "We found evidence of specific layer-localized \u0026quot;reasoning\u0026quot; circuits in a few models last year too! A very much work-in-progress paper is here: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;openreview.net\u0026#x2F;forum?id=mTjGBrkdtz\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;openreview.net\u0026#x2F;forum?id=mTjGBrkdtz\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Supports the main claim with external research evidence, enhancing credibility though details are limited."
+      },
+      {
+        "id": 47433797,
+        "author": "Karuma",
+        "text": "Wow, every single word in the original post and on that README.md is pure LLM. How sad.\u003cp\u003eIn any case, this has been done at least since the very first public releases of Llama by Meta... It also works for image models. There are even a few ComfyUI nodes that let you pick layers to duplicate on the fly, so you can test as many as you want really quickly.",
+        "indicators": [
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Provides historical context and practical tools, indicating the idea is not novel but well-known in some communities."
+      },
+      {
+        "id": 47436865,
+        "author": "Imanari",
+        "text": "Fascinating! I wonder if new training techniques could emerge from this. \nIf we say layer-1=translater, layer2-5=reasoner, layer6 retranslater, could we train small 6 layer models but evaluate their performance in a 1\u0026gt;n*(2-5)\u0026gt;6 setup to directly train towards optimal middle-layers that can be looped? You\u0026#x27;d only have to train 6 layers but get the duplication-benefit of the middle layers for free.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Presents an interesting hypothesis for future training methods inspired by the duplication findings, showing creative thinking."
       },
       {
         "id": 47433692,
         "author": "zhangchen",
         "text": "this lines up with what pruning papers have been finding, the middle layers carry most of the reasoning weight and you can often drop the outer ones without much loss. cool to see the inverse also works, just stacking them for extra passes.",
         "indicators": [
-          "intelligent",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 5,
-        "analysis": "Connects the experiment to existing pruning research, reinforcing the idea that middle layers are crucial for reasoning and that duplication might enhance performance."
+        "accuracyRank": 9,
+        "analysis": "Connects the duplication idea with pruning literature, reinforcing the importance of middle layers in reasoning."
+      },
+      {
+        "id": 47434267,
+        "author": "m3kw9",
+        "text": "What, just randomly choose some \u0026quot;layer\u0026quot; and duplicate it and give some arbitrary reasoning went from 0.2 -\u0026gt; 0.7, i don\u0026#x27;t know man. You need to use real benchmarks.",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Raises a valid concern about the rigor of the benchmarks and the need for careful validation."
       },
       {
         "id": 47433537,
@@ -98,62 +158,41 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Offers a skeptical but informed viewpoint grounded in experience, cautioning about generalizing improvements and noting limitations of recurrent layers."
-      },
-      {
-        "id": 47433396,
-        "author": "woadwarrior01",
-        "text": "Reminds me of Solar 10.7B, which was a very good model for its size ~2 year ago and the \u0026quot;Depth Up-Scaling\u0026quot; technique behind it. Although, that involved continued training after repeating the layers.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2312.15166\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2312.15166\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Provides a relevant example from literature that relates to the current experiment, highlighting differences such as the need for continued training."
-      },
-      {
-        "id": 47433538,
-        "author": "SyzygyRhythm",
-        "text": "If running twice is good, then is running N times even better? I wonder if you could even loop until some kind of convergence, say hitting a fixed point (input equals output). I wonder if there\u0026#x27;s even a sort of bifurcation property where it sometimes loops A-\u0026gt;A-\u0026gt;A, but other times A-\u0026gt;B-\u0026gt;A, or more, rather like the logistic map fractal.",
-        "indicators": [
-          "thoughtful",
-          "intelligent"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Speculates on extending the concept to multiple iterations and convergence, introducing interesting theoretical ideas though without empirical support."
+        "accuracyRank": 11,
+        "analysis": "Expresses skepticism based on experience with recurrent layers, highlighting potential limitations of the approach."
       },
       {
         "id": 47433716,
         "author": "nowittyusername",
         "text": "There\u0026#x27;s still a lot of low hanging fruit left IMO. Good find and rather funny to think about as you can have someone simply clone the various layers multiple times and instead of spending millions of dollars retraining the model increase performance significantly with \u0026quot;this one trick\u0026quot;.",
         "indicators": [
+          "emotional",
           "constructive",
-          "thoughtful"
+          "likely-true"
         ],
-        "accuracyRank": 9,
-        "analysis": "Encourages exploration of simple hacks to improve model performance, though somewhat optimistic without addressing potential limitations."
+        "accuracyRank": 12,
+        "analysis": "Optimistic about the practical impact of the technique, though somewhat speculative."
       },
       {
         "id": 47438460,
         "author": "puppykito",
         "text": "I find it so cute that making the LLM think twice before outputting something makes it smarter.",
         "indicators": [
-          "emotional"
+          "emotional",
+          "useless"
         ],
-        "accuracyRank": 10,
-        "analysis": "Expresses a lighthearted emotional reaction rather than substantive analysis."
+        "accuracyRank": 13,
+        "analysis": "A lighthearted, non-technical comment that adds little analytical value."
       },
       {
-        "id": 47438462,
+        "id": 47438382,
         "author": "BoredomIsFun",
-        "text": "please post it on \u0026#x2F;r\u0026#x2F;localllama",
+        "text": "Phi-4-25 is another example.",
         "indicators": [
           "useless"
         ],
-        "accuracyRank": 11,
-        "analysis": "Off-topic request without analytical content."
+        "accuracyRank": 14,
+        "analysis": "Too brief and vague to provide meaningful insight."
       },
       {
         "id": 47438507,
@@ -162,8 +201,8 @@
         "indicators": [
           "useless"
         ],
-        "accuracyRank": 12,
-        "analysis": "A question unrelated to the technical discussion about layer duplication or reasoning circuits."
+        "accuracyRank": 15,
+        "analysis": "Off-topic question unrelated to the technical discussion."
       }
     ]
   }

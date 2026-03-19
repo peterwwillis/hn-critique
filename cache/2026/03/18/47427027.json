@@ -21,7 +21,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers around Nvidia NemoClaw's approach to sandboxing OpenClaw agents and the security implications of delegating inference to Nvidia's cloud. Commenters debate the effectiveness of sandboxing, the risks of prompt injection attacks, and the trade-offs between usability and security in autonomous AI agents.",
+    "summary": "The discussion centers on Nvidia NemoClaw's approach to sandboxing and security for autonomous AI agents, with skepticism about its effectiveness given inherent risks like prompt injections and the need for broad access. Several commenters highlight the trade-offs between security and functionality, the marketing strategy behind Nvidia's cloud inference proxy, and alternative architectural suggestions.",
     "comments": [
       {
         "id": 47430334,
@@ -33,7 +33,7 @@
           "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment insightfully highlights the fundamental security risk posed by giving AI agents extensive access to personal data despite sandboxing, emphasizing the attack surface is the access itself."
+        "analysis": "This comment insightfully highlights the fundamental security risk of granting AI agents broad access to personal data, which is a core concern beyond just sandboxing or hardware protections."
       },
       {
         "id": 47433835,
@@ -46,7 +46,7 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment accurately identifies prompt injection and unintended behaviors as key risks and suggests kernel-level isolation as a better approach, providing a nuanced security perspective."
+        "analysis": "Provides a nuanced view of security risks including prompt injection attacks and suggests kernel-level or simpler sandboxing alternatives, reinforcing the complexity of securing AI agents."
       },
       {
         "id": 47435066,
@@ -54,12 +54,23 @@
         "text": "NemoClaw is mostly a trojan horse of sorts to get corporate OpenClaw users quickly ported over to Nvidia\u0026#x27;s inference cloud.\u003cp\u003eIt\u0026#x27;s a neat piece of architecture - the OpenShell piece that does the security sandboxing. Gives a lot more granular control over exec and network egress calls. Docker doesn\u0026#x27;t provide this out of the box.\u003cp\u003eBut NemoClaw is pre-configured to intercept all OpenClaw LLM requests and proxy them to Nvidia\u0026#x27;s inference cloud. That\u0026#x27;s kinda the whole point of them releasing it.\u003cp\u003eI can be modified to allow for other providers, but at the time of launch, there was no mention of how to do this in their docs. Kinda a brilliant marketing move on their part.",
         "indicators": [
           "intelligent",
-          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment provides a well-reasoned critique of NemoClaw's business strategy and architecture, noting the default routing of requests to Nvidia's cloud and the lack of clear documentation for alternatives."
+        "analysis": "Accurately identifies the strategic business motive behind NemoClaw and acknowledges the technical merits of its sandboxing approach, providing a balanced critique."
+      },
+      {
+        "id": 47440411,
+        "author": "brian_r_hall",
+        "text": "The permission scope debate always ends up in the same place. Lock it down too much and it\u0026#x27;s useless, loosen it up and you\u0026#x27;re back to square one. And the boundary keeps moving as the agent gets more capable anyway.\u003cp\u003eWhat nobody\u0026#x27;s really talking about is the moment of action itself. Not whether the agent has bash access but whether this specific call should run given what it\u0026#x27;s actually trying to do right now. That\u0026#x27;s a completely different problem and nobody\u0026#x27;s really solved it.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Highlights a key unresolved challenge in AI agent security: context-aware permission enforcement at the moment of action, which is critical but often overlooked."
       },
       {
         "id": 47431585,
@@ -67,24 +78,11 @@
         "text": "Using bespoke sandboxing seems rather pointless, it will be brittle in ways you aren\u0026#x27;t going to be familiar with unless you spend time studying the bespoke method. Brittle as in it might break a workflow and you wouldn\u0026#x27;t know why, or give it permissions you don\u0026#x27;t understand.\u003cp\u003eIt\u0026#x27;s better to just study a general sandbox method once and use that.\u003cp\u003e\u0026gt; Sandbox      my-assistant (Landlock + seccomp + netns)\u003cp\u003eMight as well just use a custom bwrap\u0026#x2F;bubblewrap command to isolate the agent to its own directory - it will leave wide swaths of the kernel exposed to 0day attacks.\u003cp\u003eThe simplest sandbox method you can use is to just use docker with the runsc runtime (gVisor). And it also happens to be among the most secure methods you are going to find. You can also run runsc(gVisor) manually with a crafted OCI json, or use the `do` subcommand with an EROFS image.\u003cp\u003eTrying to selectively restrict networking is not something I usually bother with, unless you make it iron-clad it would likely give you a false sense of security. For example Nemoclaw does this by default: \u0026lt;\u003ca href=\"https:\u0026#x2F;\u0026#x2F;docs.nvidia.com\u0026#x2F;nemoclaw\u0026#x2F;latest\u0026#x2F;reference\u0026#x2F;network-policies.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;docs.nvidia.com\u0026#x2F;nemoclaw\u0026#x2F;latest\u0026#x2F;reference\u0026#x2F;network-po...\u003c/a\u003e\u0026gt;\u003cp\u003egithub.com and api.telegram.org will trivially facilitate exfiltration of data. Some others will also allow that by changing an API key I imagine.",
         "indicators": [
           "intelligent",
-          "thoughtful",
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment offers a practical and knowledgeable critique of NemoClaw's sandboxing approach, recommending more established sandboxing technologies for better security and reliability."
-      },
-      {
-        "id": 47430556,
-        "author": "dmje",
-        "text": "I think the whole thing is batshit, honestly.\u003cp\u003eMuch as I love using Claude or whatever to help me write some code, it\u0026#x27;s under some level of oversight, with me as human checking stuff hasn\u0026#x27;t been changed in some weirdly strange way. As we all know by now, this can be 1. Just weird because the AI slept funny and suddenly decided to do Thing It Has Been Doing Consistently A Totally Different Way Today or 2. Weird because it\u0026#x27;s plain wrong and a terrible implementation of whatever it was you asked for\u003cp\u003eIt seems blindingly, blindingly obvious to me that EVEN IF I had the MOST TRUSTED secretary that had been with me for 10 years, I\u0026#x27;d STILL want to have some input into the content they were interacting with and pushing out into the world with my name on.\u003cp\u003eThe entire \u0026quot;claw\u0026quot; thing seems to be some bizarre \u0026quot;finger in ears, pretend it\u0026#x27;s all fine\u0026quot; thing where people just haven\u0026#x27;t thought in the slightest about what is actually going on here. It\u0026#x27;s incredibly obvious to me that giving unfettered access to your email or calendar or mobile or whatever is a security disaster, no matter what \u0026quot;security context\u0026quot; you pretend it\u0026#x27;s wrapped up in. A proxy email account is still sending email on your behalf, a proxy calendar is still organising things on your calendar. The irony is that for this thing to be useful, it\u0026#x27;s got to be ...useful - which means it has at some level to have pretty full access to your stuff.\u003cp\u003eAnd... that\u0026#x27;s a hard no from me, at least right now given what we all know about the state of current agents.\u003cp\u003ePlus... I\u0026#x27;m just not sure of the upside. Am I seriously that busy that I need something to \u0026quot;organise my day\u0026quot; for me? Not really.",
-        "indicators": [
-          "emotional",
-          "thoughtful",
-          "likely-true"
-        ],
         "accuracyRank": 5,
-        "analysis": "The comment expresses strong skepticism about the security and utility of autonomous agents with broad access, emphasizing the importance of human oversight and the risks involved."
+        "analysis": "Offers practical advice favoring established sandboxing technologies over custom solutions, emphasizing maintainability and security."
       },
       {
         "id": 47431610,
@@ -97,7 +95,19 @@
           "likely-true"
         ],
         "accuracyRank": 6,
-        "analysis": "This comment constructively suggests a more granular and context-aware security control mechanism rather than relying solely on sandboxing, addressing real risks in LLM workflows."
+        "analysis": "Suggests an innovative approach focusing on controlling AI instructions and data flow rather than solely relying on sandboxing, addressing nuanced security needs."
+      },
+      {
+        "id": 47430556,
+        "author": "dmje",
+        "text": "I think the whole thing is batshit, honestly.\u003cp\u003eMuch as I love using Claude or whatever to help me write some code, it\u0026#x27;s under some level of oversight, with me as human checking stuff hasn\u0026#x27;t been changed in some weirdly strange way. As we all know by now, this can be 1. Just weird because the AI slept funny and suddenly decided to do Thing It Has Been Doing Consistently A Totally Different Way Today or 2. Weird because it\u0026#x27;s plain wrong and a terrible implementation of whatever it was you asked for\u003cp\u003eIt seems blindingly, blindingly obvious to me that EVEN IF I had the MOST TRUSTED secretary that had been with me for 10 years, I\u0026#x27;d STILL want to have some input into the content they were interacting with and pushing out into the world with my name on.\u003cp\u003eThe entire \u0026quot;claw\u0026quot; thing seems to be some bizarre \u0026quot;finger in ears, pretend it\u0026#x27;s all fine\u0026quot; thing where people just haven\u0026#x27;t thought in the slightest about what is actually going on here. It\u0026#x27;s incredibly obvious to me that giving unfettered access to your email or calendar or mobile or whatever is a security disaster, no matter what \u0026quot;security context\u0026quot; you pretend it\u0026#x27;s wrapped up in. A proxy email account is still sending email on your behalf, a proxy calendar is still organising things on your calendar. The irony is that for this thing to be useful, it\u0026#x27;s got to be ...useful - which means it has at some level to have pretty full access to your stuff.\u003cp\u003eAnd... that\u0026#x27;s a hard no from me, at least right now given what we all know about the state of current agents.\u003cp\u003ePlus... I\u0026#x27;m just not sure of the upside. Am I seriously that busy that I need something to \u0026quot;organise my day\u0026quot; for me? Not really.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Expresses strong skepticism about the safety and utility of autonomous agents with broad access, reflecting common concerns about current AI capabilities."
       },
       {
         "id": 47427852,
@@ -107,41 +117,31 @@
           "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment accurately summarizes a key architectural detail and correctly infers Nvidia's business motivation behind the design."
-      },
-      {
-        "id": 47430540,
-        "author": "islandfox100",
-        "text": "I\u0026#x27;m still extremely skeptical on Claws as a genre, and especially more skeptical of a claw that\u0026#x27;s always reporting home. What\u0026#x27;s the use case for a closed claw?",
-        "indicators": [
-          "thoughtful",
-          "emotional"
-        ],
         "accuracyRank": 8,
-        "analysis": "The comment raises a valid concern about privacy and trust in always-connected autonomous agents, though it lacks detailed technical analysis."
+        "analysis": "Accurately describes the technical mechanism and business implications of Nvidia's cloud inference proxy strategy."
       },
       {
-        "id": 47436113,
-        "author": "lynx97",
-        "text": "It was supposed to be a sandbox.  Unfortunately, the cat found it first.",
+        "id": 47438184,
+        "author": "jFriedensreich",
+        "text": "this runs kubernetes in a vm on your machine and is targeted at enterprises. we need some of these sandbox and policy primitives but please a bit more lightweight and docker compose!",
         "indicators": [
-          "trolling",
-          "emotional"
+          "intelligent",
+          "constructive",
+          "likely-true"
         ],
         "accuracyRank": 9,
-        "analysis": "This brief comment humorously implies the sandboxing approach is flawed or compromised but does not provide substantive evidence."
+        "analysis": "Provides a practical perspective on deployment complexity and suggests the need for lighter-weight solutions for enterprise use."
       },
       {
-        "id": 47429619,
-        "author": "Netcob",
-        "text": "Am I missing something? Why is everyone talking about sandboxes when it comes to OpenClaw?\u003cp\u003eTo me it\u0026#x27;s like giving your dog a stack of important documents, then being worried he might eat them, so you put the dog in a crate, together with the documents.\u003cp\u003eI thought the whole problem with that idea was that in order for the agent to be useful, you have to connect it to your calendar, your e-mail provider and other services so it can do stuff on your behalf, but also creating chaos and destruction.\u003cp\u003eAnd now, what, having inference done by Nvidia directly makes it better? Does their hardware prevent an AI from deleting all my emails?",
+        "id": 47429776,
+        "author": "benzguo",
+        "text": "Check out \u003ca href=\"https:\u0026#x2F;\u0026#x2F;zo.computer\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;zo.computer\u003c/a\u003e - we\u0026#x27;ve been doing OpenClaw for nearly a year, it works out of the box, and has hosting built-in. Zo arguably was the inspiration for Peter to create OpenClaw.",
         "indicators": [
-          "thoughtful",
+          "intelligent",
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment questions the effectiveness of sandboxing given the inherent need for agents to access sensitive services, highlighting a fundamental tension in agent design."
+        "analysis": "Adds historical context and points to a mature alternative implementation, enriching the discussion with relevant background."
       }
     ]
   }
