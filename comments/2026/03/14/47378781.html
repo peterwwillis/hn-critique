@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">253 points</span>
+        <span class="score">295 points</span>
         by <a href="https://news.ycombinator.com/user?id=tamnd" class="hnuser">tamnd</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/14/47378781.html">critique article</a>
@@ -47,70 +47,68 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the Hacker News data archive released as Parquet files, with comments addressing technical aspects of the dataset, update frequency, compression comparisons, legal concerns, and potential uses. Some users express interest in the update mechanism and data licensing, while others raise questions about data accuracy and privacy.</p>
+      <p>The discussion revolves around a Hacker News archive dataset updated every 5 minutes, with comments addressing its technical aspects, legal concerns, and potential uses. Some users highlight the challenges of data freshness, licensing issues, and technical limitations, while others appreciate the resource for AI and data projects.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 22 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47378781" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 25 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47378781" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=gkbrk" class="hnuser">gkbrk</a>
+        <a href="https://news.ycombinator.com/user?id=jiggawatts" class="hnuser">jiggawatts</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
+      <div class="comment-text">I could have used this just yesterday!<p>I&#x27;ve been evaluating Gemini Embedding 2 using Hacker News comments and I wasted half a day making a wrapper for the HN API to collect some sample data to play with.<p>In case anyone is curious:<p>- The ability to simply truncate the provided embedding to a prefix (and then renormalize) is useful because it lets users re-use the same (paid!) embedding API response for multiple indexes at different qualities.<p>- Traditional enterprise software vendors are struggling to keep up with the pace of AI development. Microsoft SQL Server for example can&#x27;t store a 3072 element vector with 32-bit floats (because that would be 12 KB and the page size is only 8 KB). It supports bfloat16 but... the SQL client doesn&#x27;t! Or Entity Framework. Or anything else.<p>- Holy cow everything is <i>so slow</i> compared to full text search! The model is deployed in only one US region, so from Australia the turnaround time is something like 900 milliseconds. Then the vector search over just a few thousand entries with DiskANN is another 600-800 ms! I guess search-as-you-type is out of the question for... a while.<p>- Speaking of slow, the <i>first thing</i> I had to do was write an asynchronous parallel bounded queue data processor utility class in C# that supports chunking of the input and rate limit retries. This feels like it ought to be baked into the standard library or at least the AI SDKs because it&#x27;s pretty much mandatory if working with anything other than &quot;hello world&quot; scenarios.<p>- Gemini Embedding 2 has the headline feature of multi-modal input, but they forgot to implement anything other than &quot;string&quot; for their IEmbeddingGenerator abstraction when used with Microsoft libraries. I guess the next &quot;Preview v0.0.3-alpha&quot; version or whatever will include it.</div>
+      <div class="comment-analysis"><em>This comment provides a detailed, technically sound analysis of embedding usage and system constraints, reflecting real-world experience and practical insights.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=gkbrk" class="hnuser">gkbrk</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
       <div class="comment-text">My Hacker News items table in ClickHouse has 47,428,860 items, and it&#x27;s 5.82 GB compressed and 18.18 GB uncompressed. What makes Parquet compression worse here, when both formats are columnar?</div>
-      <div class="comment-analysis"><em>This comment provides a thoughtful technical comparison between ClickHouse and Parquet compression, raising a valid question about compression efficiency that is relevant and likely accurate.</em></div>
+      <div class="comment-analysis"><em>Raises a valid technical question about compression efficiency between formats, showing familiarity with data storage and compression concepts.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=vovavili" class="hnuser">vovavili</a>
-        &nbsp;|&nbsp;rank #2
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Replacing an 11.6GB Parquet file every 5 minutes strikes me as a bit wasteful. I would probably use Apache Iceberg here.</div>
-      <div class="comment-analysis"><em>The comment insightfully critiques the update strategy and suggests a more efficient technology, showing understanding of data engineering trade-offs.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=mlhpdx" class="hnuser">mlhpdx</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Static web content and dynamic data?<p>&gt; The archive currently spans from 2006-10 to 2026-03-16 23:55 UTC, with 47,358,772 items committed.<p>That’s more than 5 minutes ago by a day or two. No big deal, but a little bit depressing this is still how we do things in 2026.</div>
-      <div class="comment-analysis"><em>This comment points out a minor inconsistency in update timing, which is a reasonable and likely accurate observation about the data freshness.</em></div>
+      <div class="comment-text">Replacing an 11.6GB Parquet file every 5 minutes strikes me as a bit wasteful. I would probably use Apache Iceberg here.</div>
+      <div class="comment-analysis"><em>Offers a reasonable critique of the update strategy and proposes a more efficient alternative, indicating knowledge of data lake technologies.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=alstonite" class="hnuser">alstonite</a>
+        <a href="https://news.ycombinator.com/user?id=palmotea" class="hnuser">palmotea</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">What happened between 2023 and 2024 to cause the usage dropoff?</div>
-      <div class="comment-analysis"><em>The comment raises a valid question about a noticeable trend in the data, encouraging further investigation into usage patterns.</em></div>
+      <div class="comment-text">&gt; At midnight UTC, the entire current month is refetched from the source as a single authoritative Parquet file, and today&#x27;s individual 5-minute blocks are removed from the today&#x2F; directory.<p>Wouldn&#x27;t that lose deleted&#x2F;moderated comments?</div>
+      <div class="comment-analysis"><em>Raises a pertinent concern about data integrity and handling of deletions, which is important for maintaining accurate archives.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=0cf8612b2e1e" class="hnuser">0cf8612b2e1e</a>
+        <a href="https://news.ycombinator.com/user?id=6thbit" class="hnuser">6thbit</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">Under the Known Limitations section<p><pre><code>  deleted and dead are integers. They are stored as 0&#x2F;1 rather than booleans.
-</code></pre>
-Is there a technical reason to do this? You have the type right there.</div>
-      <div class="comment-analysis"><em>This comment constructively questions a data design choice, showing technical insight and prompting clarification.</em></div>
+      <div class="comment-text">From YC &#x2F;legal<p>&gt; Except as expressly authorized by Y Combinator, you agree not to modify, copy, frame, scrape, rent, lease, loan, sell, distribute or create derivative works based on the Site or the Site Content, in whole or in part<p>Not to pretend this isn&#x27;t widely happening behind the curtains already, but coming from a &quot;Show HN&quot; seems daring.</div>
+      <div class="comment-analysis"><em>Accurately cites legal restrictions and highlights the tension between community practices and official terms, adding a legal perspective.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
@@ -121,51 +119,51 @@ Is there a technical reason to do this? You have the type right there.</div>
         <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Hello. I didn’t consent to any of my HN comments being used in this way. Please kindly remove them.</div>
-      <div class="comment-analysis"><em>This comment expresses a privacy and consent concern, which is important but may not fully consider the legal terms of public data usage.</em></div>
+      <div class="comment-analysis"><em>Expresses a personal privacy concern which is valid from a user perspective, though the legality depends on site terms and data usage policies.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=GeoAtreides" class="hnuser">GeoAtreides</a>
+        <a href="https://news.ycombinator.com/user?id=robotswantdata" class="hnuser">robotswantdata</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">is the legal page a placeholder, do words have no meaning?<p><a href="https:&#x2F;&#x2F;www.ycombinator.com&#x2F;legal&#x2F;">https:&#x2F;&#x2F;www.ycombinator.com&#x2F;legal&#x2F;</a><p>Mods, enforce your license terms, you&#x27;re playing fast and loose with the law (GDPR&#x2F;CPRA)</div>
-      <div class="comment-analysis"><em>Raises serious legal and compliance concerns about data usage and licensing, reflecting a thoughtful but somewhat confrontational stance.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=maxloh" class="hnuser">maxloh</a>
-        &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">Could you also release the source code behind the automatic update system?</div>
-      <div class="comment-analysis"><em>A constructive request that would increase transparency and trust in the project.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=imhoguy" class="hnuser">imhoguy</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
-      </div>
-      <div class="comment-text">Yay! So much knowledge in just 11GB. Adding to my end of the World hoarding stash!</div>
-      <div class="comment-analysis"><em>An enthusiastic but not substantive comment, adding little analytical value.</em></div>
+      <div class="comment-text">Where’s the opt out ?</div>
+      <div class="comment-analysis"><em>Briefly questions user consent and opt-out options, reflecting common concerns about data privacy and user control.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=tonymet" class="hnuser">tonymet</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">what&#x27;s the license for HN content?</div>
-      <div class="comment-analysis"><em>A simple but important question about licensing, reflecting common concerns about data reuse.</em></div>
+      <div class="comment-analysis"><em>Raises an important question about content licensing that affects the legality and ethical use of the dataset.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=epogrebnyak" class="hnuser">epogrebnyak</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Wonder why median votes count is 0, seems every post is getting at least a few votes - maybe this was not the case in the past</div>
+      <div class="comment-analysis"><em>Observes a data anomaly that could indicate historical voting patterns or data issues, showing attention to dataset quality.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Imustaskforhelp" class="hnuser">Imustaskforhelp</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">As someone who had made a project analysing hackernews who had used clickhouse, I really feel like this is a project made for me (especially the updated every 5 minute aspect which could&#x27;ve helped my project back then too!)<p>Your project actually helps me out a ton in making one of the new project ideas that I had about hackernews that I had put into the back-burner.<p>I had thought of making a ping website where people can just @Username and a service which can detect it and then send mail to said username if the username has signed up to the service (similar to a service run by someone from HN community which mails you everytime someone responds to your thread directly, but this time in a sort of ping)<p>[The previous idea came as I tried to ping someone to show them something relevant and thought that wait a minute, something like ping which mails might be interesting and then tried to see if I can use algolia or any service to hook things up but not many&#x2F;any service made much sense back then sadly so I had the idea in back of my mind but this service sort of solves it by having it being updated every 5 minutes]<p>Your 5 minute updates really make it possible. I will look what I can do with that in some days but I am seeing some discrepancy in the 5 minute update as last seems to be 16 march in the readme so I would love to know more about if its being updated every 5 minutes because it truly feels phenomenal if true and its exciting to think of some new possibilities unlocked with it.</div>
+      <div class="comment-analysis"><em>Provides a user perspective on the utility of the dataset and questions update frequency accuracy, contributing constructive feedback.</em></div>
     </div>
     
 
@@ -177,7 +175,7 @@ Is there a technical reason to do this? You have the type right there.</div>
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-18 22:43 UTC &nbsp;|&nbsp;
+    Generated 2026-03-19 02:06 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
