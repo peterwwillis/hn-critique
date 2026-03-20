@@ -22,18 +22,44 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the performance of language models on esoteric programming languages, highlighting their limitations in genuine reasoning and understanding. Several commenters express skepticism about the models' capabilities and suggest alternative approaches to testing their reasoning skills.",
+    "summary": "The discussion centers on the recently introduced Esolang-Bench benchmark, which tests large language models' (LLMs) ability to reason in esoteric programming languages. Commenters debate whether the poor performance on esolangs reflects a lack of genuine reasoning or simply the inherent difficulty of esoteric languages, with some sharing related experiments and others emphasizing the limitations of current models.",
     "comments": [
+      {
+        "id": 47449994,
+        "author": "paraschopra",
+        "text": "(founder of Lossfunk, the lab behind this research.)\u003cp\u003eEsolang-Bench went viral on X. A lot of discussion ensued; addressing some of the common points that came up. Addressing a few questions about our Esolang-Bench. Hope it helps.\u003cp\u003ea) Why do it? Does it measure anything useful?\u003cp\u003eIt was a curiosity-driven project. We\u0026#x27;re interested in how humans exhibit sample-efficiency in learning and OOD generalization. So we simply asked: if models can zero\u0026#x2F;few shot correct answers for simple programming problems in Python, can they do the same in esoteric languages as well?\u003cp\u003eThe benchmark is what it is. Different people can interpret its usefulness differently, and we encourage that.\u003cp\u003eb) But humans can\u0026#x27;t also write esoteric languages well. It\u0026#x27;s an unfair comparison.\u003cp\u003ePrimarily, we\u0026#x27;re interested in measuring LLM capabilities. With the talk of ASI, it is supposed that their capabilities will soon be super-human. So, our primary motivation wasn\u0026#x27;t to compare to humans but to check what they can do this by-construction difficult benchmark.\u003cp\u003eHowever, we do believe that humans are able to teach themselves a new domain by transferring their old skills. So this benchmark was to set a starting point to explore how AI systems can do the same as well (which is what we\u0026#x27;re exploring now)\u003cp\u003ec) But Claude Code crushes it. You limited models artificially.\u003cp\u003eYes, we tested models in zero and few shot capabilities. And in the agentic loop we describe in the paper, we limit the number of iterations. As we wrote above, we wanted to understand their performance from a comparative point of view (say on highly represented languages like Python) and that\u0026#x27;s by the benchmark by design is like this.\u003cp\u003eAfter the paper was finalized, we experimented with agentic systems where we gave models tools like bash and allowed unlimited iterations (but limited submission attempts). They indeed perform much better.\u003cp\u003eThe question that\u0026#x27;s relevant is what makes these models perform so well when you give them tools and iterations v\u0026#x2F;s when you don\u0026#x27;t. Are they reasoning \u0026#x2F; learning like humans or is it something else?\u003cp\u003ed) So, are LLMs hyped? Or is our study clickbait?\u003cp\u003eThe paper, code and benchmark are all open source.\u003cp\u003eWe encourage whoever is interested to read it, and make up their own minds.\u003cp\u003e(We couldn\u0026#x27;t help notice that the \u003ci\u003esame\u003c/i\u003e set of results were interpreted wildly differently within the community. A debate between opposing camps of LLMs ensued. Perhaps that\u0026#x27;s a good thing?)",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 1,
+        "analysis": "As the founder of the project, this comment provides a well-rounded explanation of the benchmark's purpose, methodology, and limitations, making it the most authoritative and accurate."
+      },
+      {
+        "id": 47449472,
+        "author": "robot-wrangler",
+        "text": "\u0026gt;  Frontier models score ~90% on Python but only 3.8% on esoteric languages, exposing how current code generation relies on training data memorization rather than genuine programming reasoning.\u003cp\u003eFinally!  This is a \u003ci\u003ereally\u003c/i\u003e obvious test-case that I\u0026#x27;ve wondered about myself, and have seen many casual skeptics and cautiously optimistic people independently raising for several years now.  When megacorp is not crowing about such a test, the silence is deafening, and it was practically guaranteed that they tested, didn\u0026#x27;t like the results, and didn\u0026#x27;t publish.\u003cp\u003eI\u0026#x27;m still surprised it took this long for academics to try it, and skimming cites, I don\u0026#x27;t see anything similar.  Anyone know if this is the first paper to try this kind of thing, or just the first paper to put together a especially good suite of reusable benchies?\u003cp\u003eIf this benchmark becomes popular, then presumably to avoid such embarrassments synthetic data is eventually added to training sets to make sure even esolangs are somewhat more in-distro, and then we gradually run out of esolangs to do honest testing with.  SAT is a whole different animal admittedly, but comparable honest tests might involve just forcing models to use randomly generated but easily checked EBNF grammar?  I don\u0026#x27;t have a quick link to the relevant papers, but afaik benchmarks of strict adherence to non-simple JSON schemas is also still pretty bad, and we\u0026#x27;re just  working around it with lots of retries\u0026#x2F;tokens.  \u0026quot;But look how well it works for 10k lines of kubernetes manifests!\u0026quot; Well yeah, maybe, but it barely needs to \u003ci\u003ereally\u003c/i\u003e follow a schema since that is more stuff that\u0026#x27;s in the training set..",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment insightfully highlights the core implication of the benchmark results, suggesting that LLMs rely heavily on memorization rather than reasoning, which aligns with the benchmark's findings."
+      },
       {
         "id": 47448111,
         "author": "rubyn00bie",
         "text": "I am not surprised by this, and am glad to see a test like this. One thing that keeps popping up for me when using LLMs is the lack of actual understanding. I write Elixir primarily and I can say without a doubt, that none of the frontier models understand concurrency in OTP\u0026#x2F;Beam. They look like they do, but they’ll often resort to weird code that doesn’t understand how “actors” work. It’s an imitation of understanding that is averaging all the concurrency code it has seen in training. With the end result being huge amount of noise, when those averages aren’t enough, guarding against things that won’t happen, because they can’t… or they actively introduce race conditions because they don’t understand how message passing works.\u003cp\u003eCurrent frontier models are really good at generating boiler plate, and really good at summarizing, but really lack the ability to actually comprehend and reason about what’s going on. I think this sort of test really highlights that. And is a nice reminder that, the LLMs, are only as good as their training data.\u003cp\u003eWhen an LLM or some other kind of model does start to score well on tests like this, I’d expect to see better them discovering \u003ci\u003enew\u003c/i\u003e results, solutions, and approaches to questions\u0026#x2F;problems. Compared to how they work now, where they generally only seem to uncover answers that have been obfuscated but are present.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed critique of LLMs, emphasizing their shortcomings in understanding complex programming concepts, which aligns with the article's focus."
+        "accuracyRank": 3,
+        "analysis": "This comment provides a domain-specific example supporting the benchmark's implication that LLMs do not truly understand complex concepts but rather mimic patterns from training data."
       },
       {
         "id": 47447332,
@@ -41,65 +67,44 @@
         "text": "\u0026gt; Frontier models score ~90% on Python but only 3.8% on esoteric languages, exposing how current code generation relies on training data memorization rather than genuine programming reasoning.\u003cp\u003eI would probably score about the same, does this prove I also rely on training data memorization rather than genuine programming reasoning?\u003cp\u003eOr does this simply show that esolangs are hard to reason in by design? A more honest approach would use a \u0026quot;real\u0026quot;, but relatively unpopular, language. Make them use CoffeeScript or Ada or PL\u0026#x2F;I or Odin or that other systems programming language that that very opinionated guy is implementing on top of QBE.",
         "indicators": [
           "thoughtful",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Raises a valid point about the difficulty of esoteric languages and suggests alternative benchmarks, providing a nuanced perspective on interpreting the results."
+      },
+      {
+        "id": 47450054,
+        "author": "chromaton",
+        "text": "I did something very similar last year, but with programming languages that were REALLY out of distribution; they were generated specifically for the benchmark. I call it TiānshūBench (天书Bench): \u003ca href=\"https:\u0026#x2F;\u0026#x2F;jeepytea.github.io\u0026#x2F;general\u0026#x2F;introduction\u0026#x2F;2025\u0026#x2F;05\u0026#x2F;29\u0026#x2F;tianshubenchintro.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;jeepytea.github.io\u0026#x2F;general\u0026#x2F;introduction\u0026#x2F;2025\u0026#x2F;05\u0026#x2F;29\u0026#x2F;t...\u003c/a\u003e\u003cp\u003eSome models were OK at solving very simple problems, but nearly all of them would, for example, hallucinate control structures that did not exist in the target language.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "The suggestion to use less common programming languages for testing is insightful and reflects a deeper understanding of the challenges faced by LLMs."
+        "accuracyRank": 5,
+        "analysis": "Shares relevant independent work that corroborates the difficulty LLMs have with novel or synthetic languages, reinforcing the discussion's main theme."
       },
       {
         "id": 47446465,
         "author": "bwestergard",
         "text": "I\u0026#x27;m shocked to see how poorly these models, which I find useful day to day, do in solving virtually \u003ci\u003eany\u003c/i\u003e of the problems in Unlambda.\u003cp\u003eBefore looking at the results my guess was that scores would be higher for Unlambda than any of the others, because humans that learn Scheme don\u0026#x27;t find it all that hard to learn about the lambda calculus and combinatory logic.\u003cp\u003eBut the model that did the best, Qwen-235B, got virtually every problem wrong.",
         "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment expresses surprise and disappointment, which adds an emotional layer to the discussion, although it lacks a deeper analytical perspective."
-      },
-      {
-        "id": 47448938,
-        "author": "sathish316",
-        "text": "Does this imply LLMs will not work well on novel reasoning problems?",
-        "indicators": [
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "The question posed is relevant and prompts further discussion about the capabilities of LLMs, though it lacks specific examples or evidence."
-      },
-      {
-        "id": 47448231,
-        "author": "groar",
-        "text": "I guess if you tell codex to build a transpiler from a subset of python to brainfuck, then solve in that subset of python, it would work much better. Would that be cheating?",
-        "indicators": [
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "This comment offers a creative solution but lacks clarity on how it would address the underlying issues with LLM reasoning."
-      },
-      {
-        "id": 47446603,
-        "author": "simianwords",
-        "text": "I bet I can do better by allowing this: the llm can pull documentation of the language from the web to understand how it works.\u003cp\u003eIf the llm has “skills” for that language, it will definitely increase accuracy.",
-        "indicators": [
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 6,
-        "analysis": "While the idea of pulling documentation is interesting, it oversimplifies the complexity of genuine reasoning required for programming."
+        "analysis": "Provides an anecdotal observation that supports the benchmark's findings, though it is limited to one esolang and personal expectations."
       },
       {
-        "id": 47446459,
-        "author": "__alexs",
-        "text": "I had hope we might finally be ushering in a bold new era of programming in Malbolge but apparently that was too optimistic.",
+        "id": 47448681,
+        "author": "gverrilla",
+        "text": "\u0026quot;Genuine Reasoning\u0026quot;",
         "indicators": [
-          "emotional",
-          "trolling"
+          "useless"
         ],
         "accuracyRank": 7,
-        "analysis": "This comment reflects a humorous and cynical take on the situation but does not contribute substantively to the discussion."
+        "analysis": "This comment is too brief and vague to contribute meaningful insight or analysis to the discussion."
       },
       {
         "id": 47448445,
@@ -110,18 +115,7 @@
           "likely-true"
         ],
         "accuracyRank": 8,
-        "analysis": "The comment provides a personal anecdote about LLM struggles but lacks broader implications or insights about the models' reasoning capabilities."
-      },
-      {
-        "id": 47448681,
-        "author": "gverrilla",
-        "text": "\u0026quot;Genuine Reasoning\u0026quot;",
-        "indicators": [
-          "trolling",
-          "useless"
-        ],
-        "accuracyRank": 9,
-        "analysis": "This comment is overly simplistic and does not contribute meaningfully to the discussion, serving more as a sarcastic remark."
+        "analysis": "Provides a practical anecdote highlighting inconsistencies in model capabilities, supporting the idea that LLMs' performance varies widely by language and context."
       },
       {
         "id": 47446381,
@@ -129,10 +123,23 @@
         "text": "Mhh... my hunch is that part of this is that all python keywords are 1 token, I assume. And for those very weird languages, tokenizing might make it harder to reason over those tokens.\u003cp\u003eWould love to see how the benchmarks results change if the esoteric languages are changed a bit to make them have 1-token keywords only.",
         "indicators": [
           "thoughtful",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Offers a plausible technical hypothesis about tokenization impacting model reasoning, suggesting a direction for further investigation."
+      },
+      {
+        "id": 47446603,
+        "author": "simianwords",
+        "text": "I bet I can do better by allowing this: the llm can pull documentation of the language from the web to understand how it works.\u003cp\u003eIf the llm has “skills” for that language, it will definitely increase accuracy.",
+        "indicators": [
+          "thoughtful",
+          "constructive",
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "While the comment presents an interesting hypothesis about tokenization, it lacks empirical support and does not engage deeply with the main topic."
+        "analysis": "Proposes a constructive approach to enhance model reasoning by integrating external knowledge, aligning with current trends in model augmentation."
       }
     ]
   }
