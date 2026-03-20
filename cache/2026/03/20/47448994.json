@@ -23,7 +23,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around multiple Azure security and logging issues, highlighting real-world incidents of audit log inaccuracies, bypass vulnerabilities, and systemic complexity in Azure's identity and access management. Commenters share personal experiences and critiques of Microsoft's cloud services, emphasizing concerns about trustworthiness and transparency in audit logs and the challenges posed by Azure's architecture.",
+    "summary": "The discussion centers around multiple Azure security and logging issues, highlighting bugs and design flaws in Azure's audit logs and identity management systems. Commenters share personal experiences and broader concerns about Microsoft's cloud security and complexity.",
     "comments": [
       {
         "id": 47450462,
@@ -35,31 +35,42 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed, plausible explanation of a specific audit log inconsistency based on personal experience, illustrating a real-world issue with Azure's logging fidelity."
+        "analysis": "This comment provides a detailed, firsthand account of a specific Azure audit log bug, illustrating a real-world impact and offering a nuanced view on the reliability of audit logs."
       },
       {
         "id": 47451294,
         "author": "jiggawatts",
-        "text": "Reminds me of an Azure Support ticket I submitted a few years ago when some developer clicked the \u0026quot;Fix this now\u0026quot; button in Application Insights, which then proceeded to double the scale of an already too-large App Service Plan. [1]\u003cp\u003eThe Audit log showed the service identity of Application Insights, \u003ci\u003enot\u003c/i\u003e the user that pressed the button! The cloud ops team changed the size back, and then the mysterious anonymous developer... changed it back. We had to have an \u0026quot;all hands\u0026quot; meeting to basically yell at the whole room to \u003ci\u003ecut that out\u003c/i\u003e. Nobody fessed up, so we still don\u0026#x27;t know who it was.\u003cp\u003eThe Azure Support tech argued with me vehemently that \u003ci\u003ethis was by design\u003c/i\u003e, that Azure purposefully obscures the identity of users in audit logs!!!\u003cp\u003eAt first I was absolutely flabbergasted that anyone even remotely associated with a security audit log design could be \u003ci\u003ethis\u003c/i\u003e stupid, but then something clicked for me and it all started making sense:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    Entra Id logs are an evolution of Office 365 logs.\n\u003c/code\u003e\u003c/pre\u003e\nMicrosoft developed Entra ID (original Azure Active Directory) initially for the \u003ci\u003esole purpose\u003c/i\u003e of Microsoft 365, \u003ci\u003enot\u003c/i\u003e for the modern Azure Public Cloud!\u003cp\u003eThey have a legitimate need to protect customer PII, hence the logs don\u0026#x27;t always contain their customers\u0026#x27; private information. I.e.: Microsoft\u0026#x27;s subcontractors and outsourced support staff don\u0026#x27;t need and shouldn\u0026#x27;t see some of this information!\u003cp\u003eThe problem was that they re-used the same code, the same architecture decisions, the same security tradeoffs for what are essentially 100% private systems. We need to see who on \u003ci\u003eour payroll\u003c/i\u003e is monkeying around with \u003ci\u003eour servers!\u003c/i\u003e There is NO expectation of privacy! GDPR does NOT apply! We\u0026#x27;re not even in Europe for crying out loud!\u003cp\u003eTo this day I still see gaps in their logging where someone just \u0026quot;oops\u0026quot; forgot to log the identity of the account triggering the action. The most frustrating one for me is that Deployments don\u0026#x27;t log the user! It\u0026#x27;s one of only three administrative APIs that they have!\u003cp\u003e[1] As an aside: The plan had a 3-year Reservation on it, which meant that we were now paying for the original plan \u003ci\u003eand\u003c/i\u003e something twice the size and non-Reserved! This was something like 5x the original cost, with \u003ci\u003eno warning\u003c/i\u003e and no obvious way to see from the Portal UI that you\u0026#x27;re changing away from a Reserved size.",
+        "text": "Reminds me of an Azure Support ticket I submitted a few years ago when some developer clicked the \u0026quot;Fix this now\u0026quot; button in Application Insights, which then proceeded to double the scale of an already too-large App Service Plan. [1]\u003cp\u003eThe Audit log showed the service identity of Application Insights, \u003ci\u003enot\u003c/i\u003e the user that pressed the button! The cloud ops team changed the size back, and then the mysterious anonymous developer... changed it back. We had to have an \u0026quot;all hands\u0026quot; meeting to basically yell at the whole room to \u003ci\u003ecut that out\u003c/i\u003e. Nobody fessed up, so we still don\u0026#x27;t know who it was.\u003cp\u003eThe Azure Support tech argued with me vehemently that \u003ci\u003ethis was by design\u003c/i\u003e, that Azure purposefully obscures the identity of users in audit logs!!! He mumbled something about GDPR, which is \u003ci\u003enonsense\u003c/i\u003e, because we\u0026#x27;re on the opposite side of the planet from Europe.\u003cp\u003eAt first I was absolutely flabbergasted that anyone even remotely associated with a security audit log design could be \u003ci\u003ethis\u003c/i\u003e stupid, but then something clicked for me and it all started making sense:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    Entra Id logs are an evolution of Office 365 logs.\n\u003c/code\u003e\u003c/pre\u003e\nMicrosoft developed Entra ID (original Azure Active Directory) initially for Microsoft 365, with the Azure Public Cloud platform a mere afterthought.\u003cp\u003eThey have a legitimate need to protect customer PII, hence the logs don\u0026#x27;t contain their customers\u0026#x27; private information when this isn\u0026#x27;t strictly necessary. I.e.: Microsoft\u0026#x27;s subcontractors and outsourced support staff don\u0026#x27;t need and shouldn\u0026#x27;t see some of this information!\u003cp\u003eThe problem was that they re-used the same code, the same architecture decisions, the same security tradeoffs for what are essentially 100% private systems. We need to see who on \u003ci\u003eour payroll\u003c/i\u003e is monkeying around with \u003ci\u003eour servers!\u003c/i\u003e There is NO expectation of privacy for staff! GDPR does NOT apply to non-European government departments! Etc...\u003cp\u003eTo this day I still see gaps in their logging where some Microsoft dev just \u0026quot;oops\u0026quot; forgot to log the identity of the account triggering the action. The most frustrating one for me is that Deployments don\u0026#x27;t log the identity of the user. It\u0026#x27;s one of only three administrative APIs that they have!\u003cp\u003e[1] As an aside: The plan had a 3-year Reservation on it, which meant that we were now paying for the original plan \u003ci\u003eand\u003c/i\u003e something twice the size and non-Reserved! This was something like 5x the original cost, with \u003ci\u003eno warning\u003c/i\u003e and no obvious way to see from the Portal UI that you\u0026#x27;re changing away from a Reserved size.",
         "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment offers an insightful analysis of why Azure's audit logs lack user detail, linking it to legacy design choices and privacy considerations, which aligns with known challenges in cloud audit logging."
+        "analysis": "This comment explains the architectural reasons behind Azure's audit log limitations, providing context that aligns with known privacy regulations and legacy system constraints."
+      },
+      {
+        "id": 47451969,
+        "author": "vaylian",
+        "text": "\u0026gt; Having done a fair bit of logging to databases with various scripts, I believe this was a simple matter of overflowing the SQL column length for a field, causing the entire INSERT to fail. This is a common beginner mistake when you first start to work with databases.\u003cp\u003eI\u0026#x27;m not sure if I understand this part. I\u0026#x27;m trying to put it into my own words. Is the following correct? The attacker provided an input that was so long, that it was rejected by the database. And the program that submitted the SQL query to the database did not have any logic for handling a query failure, which is why there is no trace of the login attempt  in the log or elsewhere.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The explanation is plausible and aligns with common database handling errors, though it is speculative without direct confirmation from the original vulnerability details."
       },
       {
         "id": 47450296,
         "author": "kjellsbells",
         "text": "Puts me in mind of this scathing report from CISA on how a state-sponsored group broke into Microsoft and then into the State Department and a bunch of other agencies. Reads like a heist movie.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.cisa.gov\u0026#x2F;sites\u0026#x2F;default\u0026#x2F;files\u0026#x2F;2024-03\u0026#x2F;CSRB%20Review%20of%20the%20Summer%202023%20MEO%20Intrusion%20Final_508c.pdf\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.cisa.gov\u0026#x2F;sites\u0026#x2F;default\u0026#x2F;files\u0026#x2F;2024-03\u0026#x2F;CSRB%20Revi...\u003c/a\u003e\u003cp\u003eWhat I found most incredible about the story is that it wasn\u0026#x27;t Microsoft who found the intrusion. It was some sysadmin at State who saw that some mail logs did not look right and investigated.",
         "indicators": [
-          "intelligent",
-          "likely-true",
-          "thoughtful"
+          "thoughtful",
+          "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment references a credible external CISA report and highlights the importance of vigilant internal monitoring, adding context to Azure security concerns."
+        "accuracyRank": 4,
+        "analysis": "This comment references an external credible report and highlights the importance of vigilant monitoring, adding valuable context to the discussion."
       },
       {
         "id": 47451136,
@@ -69,8 +80,8 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "The comment provides a reasoned comparison of cloud IAM systems, reflecting common industry perceptions about Azure's complexity versus competitors."
+        "accuracyRank": 5,
+        "analysis": "The comment offers a comparative perspective on cloud complexity, which is subjective but consistent with common industry opinions."
       },
       {
         "id": 47449934,
@@ -80,29 +91,19 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "This comment contextualizes the discussed bypasses as relatively minor compared to other known vulnerabilities, offering a prioritization perspective."
+        "accuracyRank": 6,
+        "analysis": "This brief comment provides a prioritization viewpoint but lacks detailed explanation or evidence."
       },
       {
         "id": 47450924,
         "author": "epistasis",
         "text": "There\u0026#x27;s a big tradeoff here though: IT admins really love buying Microsoft. And when the dog tries to complain about the dogfood, the dogfood purchaser tends to not understand very well.",
         "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This is a general observation about customer behavior and product criticism, less technical but relevant to understanding market dynamics."
-      },
-      {
-        "id": 47450990,
-        "author": "dfedbeef",
-        "text": "\u0026gt; It\u0026#x27;s not often that you see a demo of an actual Azure vulnerability, as they get patched and are gone forever. However, because Microsoft was having trouble replicating this complicated bypass, and asked for a video, I come bearing receipts.\u003cp\u003eAbsolutely savage lol\u003cp\u003e[If you didn\u0026#x27;t read the thing, it\u0026#x27;s one curl command.]",
-        "indicators": [
-          "emotional",
+          "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 7,
-        "analysis": "While brief and informal, the comment underscores the accessibility of the exploit, reinforcing the seriousness of the vulnerability."
+        "analysis": "This comment reflects a common industry dynamic between product users and decision-makers, though it is more opinion than fact."
       },
       {
         "id": 47450884,
@@ -114,7 +115,7 @@
           "useless"
         ],
         "accuracyRank": 8,
-        "analysis": "This comment is an emotional outburst lacking detail or constructive content, reducing its analytical value."
+        "analysis": "This comment is purely emotional and lacks constructive or factual content."
       },
       {
         "id": 47450712,
@@ -125,7 +126,18 @@
           "likely-true"
         ],
         "accuracyRank": 9,
-        "analysis": "This personal anecdote highlights billing and support frustrations but does not contribute technical insight into the discussed vulnerabilities."
+        "analysis": "While expressing frustration, this comment is anecdotal and does not add substantive analysis to the discussion."
+      },
+      {
+        "id": 47450990,
+        "author": "dfedbeef",
+        "text": "\u0026gt; It\u0026#x27;s not often that you see a demo of an actual Azure vulnerability, as they get patched and are gone forever. However, because Microsoft was having trouble replicating this complicated bypass, and asked for a video, I come bearing receipts.\u003cp\u003eAbsolutely savage lol\u003cp\u003e[If you didn\u0026#x27;t read the thing, it\u0026#x27;s one curl command.]",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 10,
+        "analysis": "This comment highlights the simplicity of the exploit, adding some insight but limited technical detail."
       },
       {
         "id": 47449829,
@@ -135,8 +147,8 @@
           "emotional",
           "likely-true"
         ],
-        "accuracyRank": 10,
-        "analysis": "This comment references external media criticism, adding context but without technical detail or personal experience."
+        "accuracyRank": 11,
+        "analysis": "This comment references external journalism but offers no additional analysis or personal insight."
       }
     ]
   }

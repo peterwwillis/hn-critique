@@ -19,8 +19,21 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the complexity and realism of CPU branch prediction benchmarks, with commenters debating the representativeness of the test, the architecture of branch predictors, and the trade-offs in CPU design. Some highlight the artificial nature of the benchmark, while others discuss technical details of branch prediction mechanisms and their implications.",
+    "summary": "The discussion revolves around the complexity and effectiveness of CPU branch predictors, with users debating the realism of benchmarks, the architecture trade-offs in predictor design, and the impact of code structure on prediction accuracy. Several comments highlight the limitations of synthetic tests and the nuances of different CPU implementations, while others share personal learning experiences and technical insights.",
     "comments": [
+      {
+        "id": 47439789,
+        "author": "stephencanon",
+        "text": "Enlarging a branch predictor requires area and timing tradeoffs. CPU designers have to balance branch predictor improvements against other improvements they could make with the same area and timing resources. What this tells you is that either Intel is more constrained for one reason or another, or Intel\u0026#x27;s designers think that they net larger wins by deploying those resources elsewhere in the CPU (which might be because they have identified larger opportunities for improvement, or because they are basing their decision making on a different sample of software, or both).",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment accurately reflects the practical engineering trade-offs in CPU design, providing a plausible explanation for observed differences in branch predictor sizes."
+      },
       {
         "id": 47449082,
         "author": "Paul_Clayton",
@@ -31,21 +44,20 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed and plausible technical critique about the limitations of the benchmark and the indexing methods used in branch predictors, showing deep understanding."
+        "accuracyRank": 2,
+        "analysis": "The comment offers a detailed and technically sound critique of the benchmark methodology and branch predictor internals, highlighting potential limitations of the test."
       },
       {
-        "id": 47450843,
-        "author": "stevefan1999",
-        "text": "I still remember learning about TAGE and preceptron predictors, and how machine learning and neural networks has long been, in some form, been used in CPU architecture design.\u003cp\u003eThe simplest binary saturating counter, ala bimodal predictor, already achieved more than 90% success rate. What comes next is just extension around that, but the core idea that treating the branch prediction using a Bayesian approach, never fades.\u003cp\u003eIt is a combined effort between hardware design and software compiler, though.",
+        "id": 47440997,
+        "author": "Night_Thastus",
+        "text": "AMD CPUs have been killing it lately, but this benchmark feels quite artificial.\u003cp\u003eIt\u0026#x27;s a tiny, trivial example with 1 branch that behaves in a pseudo-random way (random, but fixed seed). I\u0026#x27;m not sure that\u0026#x27;s a really good example of real world branching.\u003cp\u003eHow would the various branch predictors perform when the branch taken varies from 0% likely to 100% likely, in say, 5% increments?\u003cp\u003eHow would they perform when the contents of both paths are very heavy, which involves a lot of pipeline\u0026#x2F;SE flushing?\u003cp\u003eHow would they perform when many \u003ci\u003edifferent\u003c/i\u003e branches all occur in sequence?\u003cp\u003eHow costly are their branch mispredictions, relative to one another?\u003cp\u003eWithout info like that, this feels a little pointless.",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "The comment accurately references advanced branch prediction techniques and the use of machine learning concepts, providing useful context on the evolution of predictors."
+        "accuracyRank": 3,
+        "analysis": "This comment rightly questions the representativeness of the benchmark and calls for more realistic and comprehensive testing scenarios."
       },
       {
         "id": 47439913,
@@ -55,33 +67,8 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment thoughtfully questions the practical usefulness of memorizing long random branch patterns and acknowledges the trade-offs in branch predictor capacity."
-      },
-      {
-        "id": 47440997,
-        "author": "Night_Thastus",
-        "text": "AMD CPUs have been killing it lately, but this benchmark feels quite artificial.\u003cp\u003eIt\u0026#x27;s a tiny, trivial example with 1 branch that behaves in a pseudo-random way (random, but fixed seed). I\u0026#x27;m not sure that\u0026#x27;s a really good example of real world branching.\u003cp\u003eHow would the various branch predictors perform when the branch taken varies from 0% likely to 100% likely, in say, 5% increments?\u003cp\u003eHow would they perform when the contents of both paths are very heavy, which involves a lot of pipeline\u0026#x2F;SE flushing?\u003cp\u003eHow would they perform when many \u003ci\u003edifferent\u003c/i\u003e branches all occur in sequence?\u003cp\u003eHow costly are their branch mispredictions, relative to one another?\u003cp\u003eWithout info like that, this feels a little pointless.",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 4,
-        "analysis": "The comment raises valid concerns about the artificiality of the benchmark and suggests additional tests to better evaluate branch predictors in realistic scenarios."
-      },
-      {
-        "id": 47439789,
-        "author": "stephencanon",
-        "text": "Enlarging a branch predictor requires area and timing tradeoffs. CPU designers have to balance branch predictor improvements against other improvements they could make with the same area and timing resources. What this tells you is that either Intel is more constrained for one reason or another, or Intel\u0026#x27;s designers think that they net larger wins by deploying those resources elsewhere in the CPU (which might be because they have identified larger opportunities for improvement, or because they are basing their decision making on a different sample of software, or both).",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "This comment correctly highlights the practical design trade-offs in CPU architecture, explaining why branch predictor size and complexity might be limited."
+        "analysis": "The comment correctly identifies the trade-off in predictor capacity and questions the practical relevance of very long branch histories."
       },
       {
         "id": 47450819,
@@ -92,30 +79,21 @@
           "intelligent",
           "likely-true"
         ],
+        "accuracyRank": 5,
+        "analysis": "Insightful observation about AMD's predictor behavior and the possible influence of hashing and PRNG choice on benchmark results."
+      },
+      {
+        "id": 47451595,
+        "author": "rsmtjohn",
+        "text": "The Rust borrow checker has indirectly made me more aware of branch patterns -- it sometimes forces code restructuring that changes what the predictor actually sees.\u003cp\u003eThe clearest wins I\u0026#x27;ve found: replacing conditional returns in hot loops with branchless arithmetic. The predictor loves it when you stop giving it choices. Lookup tables for small bounded ranges are another one that consistently surprises me with how much headroom there still is.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 6,
-        "analysis": "The comment insightfully analyzes the benchmark results and speculates on hashing and branch history depth, suggesting further robustness testing."
-      },
-      {
-        "id": 47450254,
-        "author": "infinitewars",
-        "text": "By the no-free-lunch theorem, and the fact this 30k random branch pattern is so atypical in the real world, it would imply the loser here (Intel) is more likely to be the best branch predictor in actual benchmarks.\u003cp\u003eAt least that\u0026#x27;s my prediction.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "The comment applies theoretical reasoning to suggest that real-world performance may differ from benchmark results due to the atypical test pattern."
-      },
-      {
-        "id": 47439990,
-        "author": "rayiner",
-        "text": "Using random values defeats the purpose of the branch predictor. The best branch predictor for this test would be one that always predicts the branch taken or not taken.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 8,
-        "analysis": "This comment correctly points out that random patterns are inherently difficult to predict and that a static prediction might outperform complex predictors in such tests."
+        "analysis": "Provides practical experience on how code structure affects branch prediction, supporting the discussion with real-world programming insights."
       },
       {
         "id": 47449461,
@@ -126,8 +104,30 @@
           "constructive",
           "likely-true"
         ],
+        "accuracyRank": 7,
+        "analysis": "A valid point emphasizing the benefits of improved understanding of branch predictors for software development and simulation."
+      },
+      {
+        "id": 47439990,
+        "author": "rayiner",
+        "text": "Using random values defeats the purpose of the branch predictor. The best branch predictor for this test would be one that always predicts the branch taken or not taken.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Correctly notes that random or pseudo-random branches limit the effectiveness of branch predictors, making simple static predictions optimal."
+      },
+      {
+        "id": 47450254,
+        "author": "infinitewars",
+        "text": "By the no-free-lunch theorem, and the fact this 30k random branch pattern is so atypical in the real world, it would imply the loser here (Intel) is more likely to be the best branch predictor in actual benchmarks.\u003cp\u003eAt least that\u0026#x27;s my prediction.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
         "accuracyRank": 9,
-        "analysis": "The comment constructively expresses a desire for better reverse engineering to improve simulation accuracy, which is a recognized challenge in CPU research."
+        "analysis": "Makes a reasonable inference that performance on artificial tests may not reflect real-world effectiveness."
       },
       {
         "id": 47440371,
@@ -139,7 +139,98 @@
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment shows curiosity and attempts to understand branch predictor internals, correctly noting the role of pattern history in prediction."
+        "analysis": "Shows curiosity and partial understanding of branch predictor mechanisms, though some details may be speculative."
+      },
+      {
+        "id": 47450843,
+        "author": "stevefan1999",
+        "text": "I still remember learning about TAGE and preceptron predictors, and how machine learning and neural networks has long been, in some form, been used in CPU architecture design.\u003cp\u003eThe simplest binary saturating counter, ala bimodal predictor, already achieved more than 90% success rate. What comes next is just extension around that, but the core idea that treating the branch prediction using a Bayesian approach, never fades.\u003cp\u003eIt is a combined effort between hardware design and software compiler, though.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 11,
+        "analysis": "Accurately summarizes advanced branch prediction techniques and their theoretical basis."
+      },
+      {
+        "id": 47449908,
+        "author": "themafia",
+        "text": "The testing function seems a little simple since branch density is a factor.  I still love this reference:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;blog.cloudflare.com\u0026#x2F;branch-predictor\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;blog.cloudflare.com\u0026#x2F;branch-predictor\u0026#x2F;\u003c/a\u003e\u003cp\u003eShould be titled:  How I Learned to Stop Worrying and Love the Branch Predictor",
+        "indicators": [
+          "constructive",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 12,
+        "analysis": "Offers a useful resource and points out the importance of branch density in prediction performance."
+      },
+      {
+        "id": 47439594,
+        "author": "withinboredom",
+        "text": "Before switching to a hot and branchless code path, I was seeing strangely lower performance on Intel vs. AMD under load. Realizing the branch predictor was the most likely cause was a little surprising.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 13,
+        "analysis": "Shares a personal anecdote that aligns with known impacts of branch prediction on performance."
+      },
+      {
+        "id": 47441613,
+        "author": "user070223",
+        "text": "Does any JIT\u0026#x2F;AOT\u0026#x2F;hot code optimization\u0026#x2F;techniques\u0026#x2F;compilers\u0026#x2F;runtime takes into account whether the branch prediction is saturated and try to recompile to go branchless",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 14,
+        "analysis": "Raises a relevant question about compiler optimizations related to branch prediction, though no answer is provided."
+      },
+      {
+        "id": 47450280,
+        "author": "tonetegeatinst",
+        "text": "Intel is currently looking into replacing their branch prediction with a system based on astrology, tarot cards and crystal balls.",
+        "indicators": [
+          "trolling",
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 15,
+        "analysis": "Clearly a sarcastic and non-serious comment, adding no constructive value."
+      },
+      {
+        "id": 47444912,
+        "author": "piinbinary",
+        "text": "How does the benchmark tell how many branches were mispredicted? Is that something the processor exposes?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 16,
+        "analysis": "A valid technical question about the methodology of measuring branch prediction accuracy."
+      },
+      {
+        "id": 47450018,
+        "author": "intrasight",
+        "text": "I was self-taught in high school on computer architecture by reading book. I didn\u0026#x27;t own a computer, understand, but these book served the same purpose in terms of learning CPU architectures and machine language programming. The 6502 was the CPU I studied.\u003cp\u003eIn 1985 as an EE student, I took a course in modern CPU architectures. I still recall having my mind blown when learning about branch prediction and speculative execution. It was a humbling moment - as was pretty much all of my studies as CMU.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 17,
+        "analysis": "Personal anecdote that adds context but limited technical insight."
+      },
+      {
+        "id": 47450635,
+        "author": "ww520",
+        "text": "Branch prediction works really well on loops. The looping condition is mostly true except for the very last time. The loop body is always predicted to run. If you structure the loop body to have no data dependence between iterations, multiple iterations of the loop can run in parallel. Greatly improve the performance.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 18,
+        "analysis": "Accurately describes a known optimization related to branch prediction and loop execution."
       }
     ]
   }

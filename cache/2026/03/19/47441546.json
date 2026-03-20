@@ -21,31 +21,43 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the new Kitten TTS models, highlighting their small size and impressive quality for on-device text-to-speech applications. Users discuss installation size, voice quality, expressive capabilities, training data transparency, and potential future improvements such as multilingual support and voice cloning.",
+    "summary": "The discussion centers on the impressive small size of the Kitten TTS models and their practical usability, especially on edge devices. Users highlight tradeoffs in voice quality, pronunciation issues with numbers, dependency sizes, and potential applications, while also expressing interest in further improvements and features.",
     "comments": [
       {
-        "id": 47448356,
-        "author": "dawdler-purge",
-        "text": "I created a CLI wrapper for Kitten TTS: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;newptcai\u0026#x2F;purr\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;newptcai\u0026#x2F;purr\u003c/a\u003e\u003cp\u003eBTW, it seems that kitten (the Python package) has the following chain of dependencies: kittentts → misaki[en] → spacy-curated-transformers\u003cp\u003eSo if you install it directly via uv, it will pull torch and NVIDIA CUDA packages (several GB), which are not needed to run kitten.",
+        "id": 47451826,
+        "author": "bobokaytop",
+        "text": "The size\u0026#x2F;quality tradeoff here is interesting. 25MB for a TTS model that\u0026#x27;s usable is a real achievement, but the practical bottleneck for most edge deployments isn\u0026#x27;t model size -- it\u0026#x27;s the inference latency on low-power hardware and the audio streaming architecture around it. Curious how this performs on something like a Raspberry Pi 4 for real-time synthesis. The voice quality tradeoff at that size usually shows up most in prosody and sentence-final intonation rather than phoneme accuracy.",
         "indicators": [
-          "intelligent",
-          "constructive",
-          "likely-true"
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed and accurate insight into the dependency bloat issue, which is important for users concerned about installation size."
+        "analysis": "This comment provides a nuanced and accurate perspective on the real-world challenges of deploying small TTS models, emphasizing latency over size."
       },
       {
         "id": 47442196,
         "author": "kevin42",
         "text": "What I love about OpenClaw is that I was able to send it a message on Discord with just this github URL and it started sending me voice messages using it within a few minutes. It also gave me a bunch of different benchmarks and sample audio.\u003cp\u003eI\u0026#x27;m impressed with the quality given the size. I don\u0026#x27;t love the voices, but it\u0026#x27;s not bad. Running on an intel 9700 CPU, it\u0026#x27;s about 1.5x realtime using the 80M model. It wasn\u0026#x27;t any faster running on a 3080 GPU though.",
         "indicators": [
-          "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment offers practical performance benchmarks and user experience, adding valuable context about real-world usage and efficiency."
+        "analysis": "Provides concrete performance benchmarks that align with expected hardware capabilities, adding valuable practical insight."
+      },
+      {
+        "id": 47451591,
+        "author": "rsmtjohn",
+        "text": "The \u0026lt;25MB figure is what stands out. Been wanting to add TTS to a few Next.js projects for offline\u0026#x2F;edge scenarios but model sizes have always made it impractical to ship.\u003cp\u003eAt 25MB you can actually bundle it with the app. Going to test whether this works in a Vercel Edge Function context -- if latency is acceptable there it opens up a lot of use cases that currently require a round-trip to a hosted API.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Highlights the significance of the small model size for edge deployment and practical integration, reflecting realistic use cases."
       },
       {
         "id": 47447271,
@@ -56,42 +68,31 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This user provides a specific example of a limitation, which is useful for understanding the model's current weaknesses."
+        "accuracyRank": 4,
+        "analysis": "Accurately points out a common limitation in small TTS models regarding number pronunciation, supported by a specific example."
       },
       {
-        "id": 47449764,
-        "author": "jacquesm",
-        "text": "Good on device TTS is an amazing accessibility tool. Thank you for building this. Way too many of devices that use it rely on online services, this is much preferred.",
+        "id": 47451657,
+        "author": "Stevvo",
+        "text": "Found they struggle with numbers. Like, give them a random four digit number in a sentence and it fumbles.",
         "indicators": [
           "thoughtful",
-          "constructive",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "Highlights the importance of on-device TTS for accessibility and privacy, a well-recognized advantage in the field."
-      },
-      {
-        "id": 47443934,
-        "author": "armcat",
-        "text": "This is awesome, well done. Been doing lot of work with voice assistants, if you can replicate voice cloning Qwen3-TTS into this small factor, you will be absolute legends!",
-        "indicators": [
-          "thoughtful",
-          "constructive"
-        ],
         "accuracyRank": 5,
-        "analysis": "Suggests a valuable future direction, emphasizing the potential impact of combining voice cloning with small models."
+        "analysis": "Concise observation consistent with other comments about numerical pronunciation issues."
       },
       {
-        "id": 47448275,
-        "author": "jamamp",
-        "text": "The Github readme doesn\u0026#x27;t list this: what data trained this? Was it done by the voices of the creators, or was this trained on data scraped from the internet or other archives?",
+        "id": 47448356,
+        "author": "dawdler-purge",
+        "text": "I created a CLI wrapper for Kitten TTS: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;newptcai\u0026#x2F;purr\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;newptcai\u0026#x2F;purr\u003c/a\u003e\u003cp\u003eBTW, it seems that kitten (the Python package) has the following chain of dependencies: kittentts → misaki[en] → spacy-curated-transformers\u003cp\u003eSo if you install it directly via uv, it will pull torch and NVIDIA CUDA packages (several GB), which are not needed to run kitten.",
         "indicators": [
           "intelligent",
+          "likely-true",
           "constructive"
         ],
         "accuracyRank": 6,
-        "analysis": "Raises an important question about data provenance and transparency, which is critical for ethical and quality considerations."
+        "analysis": "Provides useful technical insight into dependency bloat, which is important for evaluating the practicality of deployment."
       },
       {
         "id": 47447368,
@@ -99,11 +100,10 @@
         "text": "I ran install instructions and it took 7.1GB of deps, tf you mean \u0026quot;tiny\u0026quot; ?",
         "indicators": [
           "emotional",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
         "accuracyRank": 7,
-        "analysis": "Points out a practical concern about the actual installation footprint, which contrasts with the advertised model size."
+        "analysis": "Expresses frustration about large dependency sizes, a valid concern though somewhat emotional in tone."
       },
       {
         "id": 47442901,
@@ -111,11 +111,22 @@
         "text": "A lot of good small TTS models in recent times. Most seem to struggle hard on prosody though.\u003cp\u003eKokoro TTS for example has a very good Norwegian voice but the rhythm and emphasizing is often so out of whack the generated speech is almost incomprehensible.\u003cp\u003eHaven\u0026#x27;t had time to check this model out yet, how does it fare here? What\u0026#x27;s needed to improve the models in this area now that the voice part is more or less solved?",
         "indicators": [
           "intelligent",
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Insightful comment about a common quality issue in small TTS models, providing context for evaluating Kitten TTS prosody."
+      },
+      {
+        "id": 47442179,
+        "author": "altruios",
+        "text": "One of the core features I look for is expressive control.\u003cp\u003eEither in the form of the api via pitch\u0026#x2F;speed\u0026#x2F;volume controls, for more deterministic controls.\u003cp\u003eOr in expressive tags such as [coughs], [urgently], or [laughs in melodic ascending and descending arpeggiated gibberish babbles].\u003cp\u003ethe 25MB model is amazingly good for being 25MB. How does it handle expressive tags?",
+        "indicators": [
           "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 8,
-        "analysis": "Provides a knowledgeable critique on a common TTS challenge and invites discussion on model quality beyond voice clarity."
+        "accuracyRank": 9,
+        "analysis": "Raises a relevant question about advanced features that affect usability and expressiveness in TTS systems."
       },
       {
         "id": 47442112,
@@ -125,20 +136,8 @@
           "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 9,
-        "analysis": "Raises relevant concerns about commercial usability and customization, important for potential business users."
-      },
-      {
-        "id": 47449268,
-        "author": "deathanatos",
-        "text": "So, one thing I noticed, and this could easily be user error, is that if I set the text \u0026amp; voice in the example to:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  text =\u0026quot;\u0026quot;\u0026quot;\n  Hello world. This is Kitten TTS.\n  Look, it\u0026#x27;s working!\n  \u0026quot;\u0026quot;\u0026quot;\n\n  voice = \u0026#x27;Luna\u0026#x27;\n\u003c/code\u003e\u003c/pre\u003e\nOn macOS, I get \u0026quot;Kitten TTS\u0026quot;, but on Linux, I get \u0026quot;Kit… TTS\u0026quot;. Both OSes generate the same phonemes of,\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  Phonemes: ðɪs ɪz kˈɪʔn ̩ tˌiːtˌiːˈɛs ,\n\u003c/code\u003e\u003c/pre\u003e\nwhich makes me really confused as to where it\u0026#x27;s going off the rails on Linux, since from there it should just be invoking the model.\u003cp\u003eedit: it really helps to use the same model \u003ci\u003efacepalm\u003c/i\u003e. It\u0026#x27;s the 80M model, and it happens on both OS. Wildly the nano gets it better? I\u0026#x27;m going to join the Discord lol.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 10,
-        "analysis": "Provides a detailed troubleshooting report that could help developers identify cross-platform issues."
+        "analysis": "Addresses practical concerns about customization and commercial usability, important for potential adopters."
       }
     ]
   }

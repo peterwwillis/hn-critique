@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">386 points</span>
+        <span class="score">415 points</span>
         by <a href="https://news.ycombinator.com/user?id=rohan_joshi" class="hnuser">rohan_joshi</a>
-        <span class="age">15 hours ago</span>
+        <span class="age">17 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/19/47441546.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47441546" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the new Kitten TTS models, highlighting their small size and impressive quality for on-device text-to-speech applications. Users discuss installation size, voice quality, expressive capabilities, training data transparency, and potential future improvements such as multilingual support and voice cloning.</p>
+      <p>The discussion centers on the impressive small size of the Kitten TTS models and their practical usability, especially on edge devices. Users highlight tradeoffs in voice quality, pronunciation issues with numbers, dependency sizes, and potential applications, while also expressing interest in further improvements and features.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -58,13 +58,13 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=dawdler-purge" class="hnuser">dawdler-purge</a>
+        <a href="https://news.ycombinator.com/user?id=bobokaytop" class="hnuser">bobokaytop</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I created a CLI wrapper for Kitten TTS: <a href="https:&#x2F;&#x2F;github.com&#x2F;newptcai&#x2F;purr" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;newptcai&#x2F;purr</a><p>BTW, it seems that kitten (the Python package) has the following chain of dependencies: kittentts → misaki[en] → spacy-curated-transformers<p>So if you install it directly via uv, it will pull torch and NVIDIA CUDA packages (several GB), which are not needed to run kitten.</div>
-      <div class="comment-analysis"><em>This comment provides a detailed and accurate insight into the dependency bloat issue, which is important for users concerned about installation size.</em></div>
+      <div class="comment-text">The size&#x2F;quality tradeoff here is interesting. 25MB for a TTS model that&#x27;s usable is a real achievement, but the practical bottleneck for most edge deployments isn&#x27;t model size -- it&#x27;s the inference latency on low-power hardware and the audio streaming architecture around it. Curious how this performs on something like a Raspberry Pi 4 for real-time synthesis. The voice quality tradeoff at that size usually shows up most in prosody and sentence-final intonation rather than phoneme accuracy.</div>
+      <div class="comment-analysis"><em>This comment provides a nuanced and accurate perspective on the real-world challenges of deploying small TTS models, emphasizing latency over size.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -72,54 +72,54 @@
         <a href="https://news.ycombinator.com/user?id=kevin42" class="hnuser">kevin42</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">What I love about OpenClaw is that I was able to send it a message on Discord with just this github URL and it started sending me voice messages using it within a few minutes. It also gave me a bunch of different benchmarks and sample audio.<p>I&#x27;m impressed with the quality given the size. I don&#x27;t love the voices, but it&#x27;s not bad. Running on an intel 9700 CPU, it&#x27;s about 1.5x realtime using the 80M model. It wasn&#x27;t any faster running on a 3080 GPU though.</div>
-      <div class="comment-analysis"><em>The comment offers practical performance benchmarks and user experience, adding valuable context about real-world usage and efficiency.</em></div>
+      <div class="comment-analysis"><em>Provides concrete performance benchmarks that align with expected hardware capabilities, adding valuable practical insight.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=rsmtjohn" class="hnuser">rsmtjohn</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">The &lt;25MB figure is what stands out. Been wanting to add TTS to a few Next.js projects for offline&#x2F;edge scenarios but model sizes have always made it impractical to ship.<p>At 25MB you can actually bundle it with the app. Going to test whether this works in a Vercel Edge Function context -- if latency is acceptable there it opens up a lot of use cases that currently require a round-trip to a hosted API.</div>
+      <div class="comment-analysis"><em>Highlights the significance of the small model size for edge deployment and practical integration, reflecting realistic use cases.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=__fst__" class="hnuser">__fst__</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Was playing around a bit and for its size it&#x27;s very impressive. Just has issues pronounciating numbers. I tried to let it generate &quot;Startup finished in 135 ms.&quot;<p>I didn&#x27;t expect it to pronounciate &#x27;ms&#x27; correctly, but the number sounded just like noise. Eventually I got an acceptable result for the string &quot;Startup finished in one hundred and thirty five seconds.</div>
-      <div class="comment-analysis"><em>This user provides a specific example of a limitation, which is useful for understanding the model&#39;s current weaknesses.</em></div>
+      <div class="comment-analysis"><em>Accurately points out a common limitation in small TTS models regarding number pronunciation, supported by a specific example.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jacquesm" class="hnuser">jacquesm</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Good on device TTS is an amazing accessibility tool. Thank you for building this. Way too many of devices that use it rely on online services, this is much preferred.</div>
-      <div class="comment-analysis"><em>Highlights the importance of on-device TTS for accessibility and privacy, a well-recognized advantage in the field.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=armcat" class="hnuser">armcat</a>
+        <a href="https://news.ycombinator.com/user?id=Stevvo" class="hnuser">Stevvo</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">This is awesome, well done. Been doing lot of work with voice assistants, if you can replicate voice cloning Qwen3-TTS into this small factor, you will be absolute legends!</div>
-      <div class="comment-analysis"><em>Suggests a valuable future direction, emphasizing the potential impact of combining voice cloning with small models.</em></div>
+      <div class="comment-text">Found they struggle with numbers. Like, give them a random four digit number in a sentence and it fumbles.</div>
+      <div class="comment-analysis"><em>Concise observation consistent with other comments about numerical pronunciation issues.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jamamp" class="hnuser">jamamp</a>
+        <a href="https://news.ycombinator.com/user?id=dawdler-purge" class="hnuser">dawdler-purge</a>
         &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">The Github readme doesn&#x27;t list this: what data trained this? Was it done by the voices of the creators, or was this trained on data scraped from the internet or other archives?</div>
-      <div class="comment-analysis"><em>Raises an important question about data provenance and transparency, which is critical for ethical and quality considerations.</em></div>
+      <div class="comment-text">I created a CLI wrapper for Kitten TTS: <a href="https:&#x2F;&#x2F;github.com&#x2F;newptcai&#x2F;purr" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;newptcai&#x2F;purr</a><p>BTW, it seems that kitten (the Python package) has the following chain of dependencies: kittentts → misaki[en] → spacy-curated-transformers<p>So if you install it directly via uv, it will pull torch and NVIDIA CUDA packages (several GB), which are not needed to run kitten.</div>
+      <div class="comment-analysis"><em>Provides useful technical insight into dependency bloat, which is important for evaluating the practicality of deployment.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
@@ -127,10 +127,10 @@
         <a href="https://news.ycombinator.com/user?id=PunchyHamster" class="hnuser">PunchyHamster</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">I ran install instructions and it took 7.1GB of deps, tf you mean &quot;tiny&quot; ?</div>
-      <div class="comment-analysis"><em>Points out a practical concern about the actual installation footprint, which contrasts with the advertised model size.</em></div>
+      <div class="comment-analysis"><em>Expresses frustration about large dependency sizes, a valid concern though somewhat emotional in tone.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -138,41 +138,32 @@
         <a href="https://news.ycombinator.com/user?id=magicalhippo" class="hnuser">magicalhippo</a>
         &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">A lot of good small TTS models in recent times. Most seem to struggle hard on prosody though.<p>Kokoro TTS for example has a very good Norwegian voice but the rhythm and emphasizing is often so out of whack the generated speech is almost incomprehensible.<p>Haven&#x27;t had time to check this model out yet, how does it fare here? What&#x27;s needed to improve the models in this area now that the voice part is more or less solved?</div>
-      <div class="comment-analysis"><em>Provides a knowledgeable critique on a common TTS challenge and invites discussion on model quality beyond voice clarity.</em></div>
+      <div class="comment-analysis"><em>Insightful comment about a common quality issue in small TTS models, providing context for evaluating Kitten TTS prosody.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=altruios" class="hnuser">altruios</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">One of the core features I look for is expressive control.<p>Either in the form of the api via pitch&#x2F;speed&#x2F;volume controls, for more deterministic controls.<p>Or in expressive tags such as [coughs], [urgently], or [laughs in melodic ascending and descending arpeggiated gibberish babbles].<p>the 25MB model is amazingly good for being 25MB. How does it handle expressive tags?</div>
+      <div class="comment-analysis"><em>Raises a relevant question about advanced features that affect usability and expressiveness in TTS systems.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=ilaksh" class="hnuser">ilaksh</a>
-        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Thanks for open sourcing this.<p>Is there any way to do a custom voice as a DIY? Or we need to go through you? If so, would you consider making a pricing page for purchasing a license&#x2F;alternative voice? All but one of the voices are unusable in a business context.</div>
-      <div class="comment-analysis"><em>Raises relevant concerns about commercial usability and customization, important for potential business users.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=deathanatos" class="hnuser">deathanatos</a>
-        &nbsp;|&nbsp;rank #10
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">So, one thing I noticed, and this could easily be user error, is that if I set the text &amp; voice in the example to:<p><pre><code>  text =&quot;&quot;&quot;
-  Hello world. This is Kitten TTS.
-  Look, it&#x27;s working!
-  &quot;&quot;&quot;
-
-  voice = &#x27;Luna&#x27;
-</code></pre>
-On macOS, I get &quot;Kitten TTS&quot;, but on Linux, I get &quot;Kit… TTS&quot;. Both OSes generate the same phonemes of,<p><pre><code>  Phonemes: ðɪs ɪz kˈɪʔn ̩ tˌiːtˌiːˈɛs ,
-</code></pre>
-which makes me really confused as to where it&#x27;s going off the rails on Linux, since from there it should just be invoking the model.<p>edit: it really helps to use the same model <i>facepalm</i>. It&#x27;s the 80M model, and it happens on both OS. Wildly the nano gets it better? I&#x27;m going to join the Discord lol.</div>
-      <div class="comment-analysis"><em>Provides a detailed troubleshooting report that could help developers identify cross-platform issues.</em></div>
+      <div class="comment-analysis"><em>Addresses practical concerns about customization and commercial usability, important for potential adopters.</em></div>
     </div>
     
 
@@ -184,7 +175,7 @@ which makes me really confused as to where it&#x27;s going off the rails on Linu
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-20 07:04 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 08:51 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
