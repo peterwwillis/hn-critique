@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">6 points</span>
+        <span class="score">53 points</span>
         by <a href="https://news.ycombinator.com/user?id=nolta" class="hnuser">nolta</a>
         <span class="age">3 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47413879.html">critique article</a>
@@ -44,7 +44,83 @@
     </div>
 
     
-    <p class="no-critique">Analysis could not be generated for this story's comments.</p>
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion centers around the new drawvg filter in FFmpeg, with users highlighting its usefulness for video editing tasks such as obscuring overlays in tutorial videos. Some users appreciate the flexibility of drawvg compared to older filters, while others comment on the complexity of FFmpeg&#39;s filter syntax compared to alternatives like Avisynth.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jasode" class="hnuser">jasode</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">drawvg is very useful.  Before drawvg, I was always fine using the stable FFmpeg releases such as 8.0.1 but when I saw drawvg added to the master branch[1], I didn&#x27;t want to wait for the next stable release and immediately re-built ffmpeg from master to start using it.<p>My main use case is modifying youtube videos of tech tutorials where the speaker overlays a video of themselves in a corner of the video.  drawvg is used to blackout that area of the video.  I&#x27;m sure some viewers like having a visible talking head shown on the same screen as the code but I find the constant motion of someone&#x27;s lips moving and eyes blinking in my peripheral vision extremely distracting.  Our vision is very tuned into paying attention to faces so the brain constantly fighting that urge so it can concentrate on the code.  (A low-tech solution is to just put a yellow sticky know on the monitor to cover up the speaker but that means you can&#x27;t easily resize&#x2F;move the window playing the video  ... so ffmpeg to the rescue.)<p>If the overlay was a rectangle, you can use the older drawbox filter and don&#x27;t need drawvg.  However, some content creaters use circles and that&#x27;s where drawvg works better.   Instead of creating a separate .vgs file, I just use the inline syntax like this:<p><pre><code>  ffmpeg -i input.webm -filter_complex &quot;[0:v]drawvg=&#x27;circle 3388 1670 400 setcolor black fill&#x27;[v2];[0:a]atempo=1.5[a2]&quot; -map &quot;[v2]&quot; -map &quot;[a2]&quot; output.mp4
+</code></pre>
+That puts a black filled circle on the bottom right corner of a 4k vid to cover up the speaker.  Different vids from different creators will require different x,y,radius coordinates.<p>[1] <a href="https:&#x2F;&#x2F;git.ffmpeg.org&#x2F;gitweb&#x2F;ffmpeg.git&#x2F;commit&#x2F;016d767c8e9d6c8b3a445bb573cd07a07912a671" rel="nofollow">https:&#x2F;&#x2F;git.ffmpeg.org&#x2F;gitweb&#x2F;ffmpeg.git&#x2F;commit&#x2F;016d767c8e9d...</a></div>
+      <div class="comment-analysis"><em>This comment provides a detailed, practical use case for drawvg and explains its advantages over older filters, demonstrating a good understanding of the tool&#39;s capabilities.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=shevy-java" class="hnuser">shevy-java</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">That&#x27;s quite cool. I guess ffmpeg would kind of technically be a replacement for avisynth at this point.<p>Still, I find the syntax it uses horrible:<p><pre><code>  ffmpeg -an -ss 12 -t 3 -i bigbuckbunny.mov -vf &#x27;crop=iw-1, drawvg=file=progress.vgs, format=yuv420p&#x27; -c:v libvpx-vp9 output.webm
+</code></pre>
+I understand that most of this comes from simplicity of use from the
+shell, so if you take this point of view, the above makes a lot of sense.<p>My poor, feeble brain, though, has a hard time deducing all of this. Yes,
+I can kind of know what it does to some extent ... start at 12 seconds 
+right? during 3 seconds ... apply the specified filter in the specified format,
+use libvpx-vp9 as the video codec ... but the above example is somewhat 
+simple. There are total monsters in actual use when it comes to the filter
+subsystem in ffmpeg. Avisynth was fairly easy on my brain; ffmpeg does not,
+and nobody among the ffmpeg dev team seems to think that complicated uses are an issue. I even wrote a small ruby script that expands shortcut options as above, into the corresponding long names, simply because the long names are a bit easier to remember. Even that fails when it comes to complex filters used.<p>It&#x27;s a shame because ffmpeg is otherwise really great.</div>
+      <div class="comment-analysis"><em>This comment offers a critical perspective on FFmpeg&#39;s syntax complexity compared to Avisynth, reflecting a common user experience and providing constructive feedback.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=fercircularbuf" class="hnuser">fercircularbuf</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This could be a great and easy way to add annotations to technical instruction videos in a way that is self-documenting and programmable.</div>
+      <div class="comment-analysis"><em>The comment insightfully suggests a potential use case for drawvg, emphasizing its programmability and utility in educational content.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=arc-in-space" class="hnuser">arc-in-space</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Oh, I was not expecting an entire DSL for this. This looks really useful.</div>
+      <div class="comment-analysis"><em>A brief but relevant observation about the existence of a domain-specific language for drawvg, indicating surprise and appreciation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=torginus" class="hnuser">torginus</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">One of the strangest discoveries of my life was that vector graphics is a solved problem, and the solution is turtle graphics that I was taught in primary school.</div>
+      <div class="comment-analysis"><em>This comment reflects on the foundational concepts of vector graphics, linking them to simple educational tools, which is an insightful but somewhat tangential remark.</em></div>
+    </div>
+    
+
     
 
   </td></tr>
@@ -53,7 +129,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-20 08:51 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 10:46 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

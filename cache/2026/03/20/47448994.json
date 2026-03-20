@@ -23,43 +23,91 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around multiple Azure security and logging issues, highlighting bugs and design flaws in Azure's audit logs and identity management systems. Commenters share personal experiences and broader concerns about Microsoft's cloud security and complexity.",
+    "summary": "The discussion revolves around vulnerabilities, logging issues, and systemic flaws in Azure and Microsoft cloud services, highlighting security concerns, user experience, and trust in audit logs.",
     "comments": [
+      {
+        "id": 47451294,
+        "author": "jiggawatts",
+        "text": "Reminds me of an Azure Support ticket I submitted a few years ago when some developer clicked the \u0026quot;Fix this now\u0026quot; button in Application Insights, which then proceeded to double the scale of an already too-large App Service Plan. [1]\u003cp\u003eThe Audit log showed the service identity of Application Insights, \u003ci\u003enot\u003c/i\u003e the user that pressed the button! The cloud ops team changed the size back, and then the mysterious anonymous developer... changed it back. We had to have an \u0026quot;all hands\u0026quot; meeting to basically yell at the whole room to \u003ci\u003ecut that out\u003c/i\u003e. Nobody fessed up, so we still don\u0026#x27;t know who it was.\u003cp\u003eThe Azure Support tech argued with me vehemently that \u003ci\u003ethis was by design\u003c/i\u003e, that Azure purposefully obscures the identity of users in audit logs!!! He mumbled something about GDPR, which is \u003ci\u003enonsense\u003c/i\u003e, because we\u0026#x27;re on the opposite side of the planet from Europe.\u003cp\u003eAt first I was absolutely flabbergasted that anyone even remotely associated with a security audit log design could be \u003ci\u003ethis\u003c/i\u003e stupid, but then something clicked for me and it all started making sense:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    Entra Id logs are an evolution of Office 365 logs.\n\u003c/code\u003e\u003c/pre\u003e\nMicrosoft developed Entra ID (original Azure Active Directory) initially for Microsoft 365, with the Azure Public Cloud platform a mere afterthought.\u003cp\u003eThey have a legitimate need to protect customer PII, hence the logs don\u0026#x27;t contain their customers\u0026#x27; private information when this isn\u0026#x27;t strictly necessary. I.e.: Microsoft\u0026#x27;s subcontractors and outsourced support staff don\u0026#x27;t need and shouldn\u0026#x27;t see some of this information!\u003cp\u003eThe problem was that they re-used the same code, the same architecture decisions, the same security tradeoffs for what are essentially 100% private systems. We need to see who on \u003ci\u003eour payroll\u003c/i\u003e is monkeying around with \u003ci\u003eour servers!\u003c/i\u003e There is NO expectation of privacy for staff! GDPR does NOT apply to non-European government departments! Etc...\u003cp\u003eTo this day I still see gaps in their logging where some Microsoft dev just \u0026quot;oops\u0026quot; forgot to log the identity of the account triggering the action. The most frustrating one for me is that Deployments don\u0026#x27;t log the identity of the user. It\u0026#x27;s one of only three administrative APIs that they have!\u003cp\u003e[1] As an aside: The plan had a 3-year Reservation on it, which meant that we were now paying for the original plan \u003ci\u003eand\u003c/i\u003e something twice the size and non-Reserved! This was something like 5x the original cost, with \u003ci\u003eno warning\u003c/i\u003e and no obvious way to see from the Portal UI that you\u0026#x27;re changing away from a Reserved size.",
+        "indicators": [
+          "belligerent",
+          "likely-true"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed real-world example illustrating systemic issues with Azure's audit logging and operational transparency, supporting its credibility."
+      },
+      {
+        "id": 47450884,
+        "author": "fuckinpuppers",
+        "text": "It is shocking how absolutely garbage azure is.",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 2,
+        "analysis": "While expressing strong dissatisfaction, this comment lacks specific evidence but reflects a common sentiment about Azure's perceived quality."
+      },
       {
         "id": 47450462,
         "author": "deathanatos",
         "text": "IIRC, (\u0026amp; I don\u0026#x27;t remember if I reported it), but Azure\u0026#x27;s audit logs don\u0026#x27;t reflect reality when you delete a client secret from the UI, either.\u003cp\u003eIf I remember the issue right, we lost a client secret (it just vanished!) and I went to the audit logs to see who dun it. According to the logs, \u003ci\u003eI had done it.\u003c/i\u003e And yet, I also knew that I had not done it.\u003cp\u003eI eventually reconstructed the bug to an old page load. I had the page loaded when there were just secrets \u0026quot;A\u0026quot; \u0026amp; \u0026quot;B\u0026quot;. When I then clicked the delete icon for \u0026quot;B\u0026quot;, Azure deleted secrets \u0026quot;B\u0026quot; \u003ci\u003eand\u003c/i\u003e \u0026quot;C\u0026quot; … which had been added since the page load. Essentially, the UI said \u0026quot;delete this row\u0026quot; but the API was \u0026quot;set the set of secrets to {A}\u0026quot;. The audit log then logged the API \u0026quot;correctly\u0026quot; in the sense of, yes, my credentials did execute that API call, I suppose, but utterly incorrectly in the sense of any reasonable real-world view as to what I had done.\u003cp\u003eThankfully we got it sorted, but it sort of shook my faith in Azure\u0026#x27;s logs in particular, and a little bit of audit logs in \u003ci\u003egeneral\u003c/i\u003e. You have to make sure you\u0026#x27;ve actually audited \u003ci\u003ewhat the human did\u003c/i\u003e. Or, conversely, if you\u0026#x27;re trying to reason with audit logs, … you\u0026#x27;d best understand how they were generated.\u003cp\u003eI don\u0026#x27;t think I would ever accept audit logs in court, if I were on a jury. Audit logs being hot lies is within reasonable doubt.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed, firsthand account of a specific Azure audit log bug, illustrating a real-world impact and offering a nuanced view on the reliability of audit logs."
-      },
-      {
-        "id": 47451294,
-        "author": "jiggawatts",
-        "text": "Reminds me of an Azure Support ticket I submitted a few years ago when some developer clicked the \u0026quot;Fix this now\u0026quot; button in Application Insights, which then proceeded to double the scale of an already too-large App Service Plan. [1]\u003cp\u003eThe Audit log showed the service identity of Application Insights, \u003ci\u003enot\u003c/i\u003e the user that pressed the button! The cloud ops team changed the size back, and then the mysterious anonymous developer... changed it back. We had to have an \u0026quot;all hands\u0026quot; meeting to basically yell at the whole room to \u003ci\u003ecut that out\u003c/i\u003e. Nobody fessed up, so we still don\u0026#x27;t know who it was.\u003cp\u003eThe Azure Support tech argued with me vehemently that \u003ci\u003ethis was by design\u003c/i\u003e, that Azure purposefully obscures the identity of users in audit logs!!! He mumbled something about GDPR, which is \u003ci\u003enonsense\u003c/i\u003e, because we\u0026#x27;re on the opposite side of the planet from Europe.\u003cp\u003eAt first I was absolutely flabbergasted that anyone even remotely associated with a security audit log design could be \u003ci\u003ethis\u003c/i\u003e stupid, but then something clicked for me and it all started making sense:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    Entra Id logs are an evolution of Office 365 logs.\n\u003c/code\u003e\u003c/pre\u003e\nMicrosoft developed Entra ID (original Azure Active Directory) initially for Microsoft 365, with the Azure Public Cloud platform a mere afterthought.\u003cp\u003eThey have a legitimate need to protect customer PII, hence the logs don\u0026#x27;t contain their customers\u0026#x27; private information when this isn\u0026#x27;t strictly necessary. I.e.: Microsoft\u0026#x27;s subcontractors and outsourced support staff don\u0026#x27;t need and shouldn\u0026#x27;t see some of this information!\u003cp\u003eThe problem was that they re-used the same code, the same architecture decisions, the same security tradeoffs for what are essentially 100% private systems. We need to see who on \u003ci\u003eour payroll\u003c/i\u003e is monkeying around with \u003ci\u003eour servers!\u003c/i\u003e There is NO expectation of privacy for staff! GDPR does NOT apply to non-European government departments! Etc...\u003cp\u003eTo this day I still see gaps in their logging where some Microsoft dev just \u0026quot;oops\u0026quot; forgot to log the identity of the account triggering the action. The most frustrating one for me is that Deployments don\u0026#x27;t log the identity of the user. It\u0026#x27;s one of only three administrative APIs that they have!\u003cp\u003e[1] As an aside: The plan had a 3-year Reservation on it, which meant that we were now paying for the original plan \u003ci\u003eand\u003c/i\u003e something twice the size and non-Reserved! This was something like 5x the original cost, with \u003ci\u003eno warning\u003c/i\u003e and no obvious way to see from the Portal UI that you\u0026#x27;re changing away from a Reserved size.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment explains the architectural reasons behind Azure's audit log limitations, providing context that aligns with known privacy regulations and legacy system constraints."
+        "accuracyRank": 3,
+        "analysis": "This comment offers a technical critique based on personal experience, highlighting a significant flaw in Azure's logging system."
       },
       {
         "id": 47451969,
         "author": "vaylian",
         "text": "\u0026gt; Having done a fair bit of logging to databases with various scripts, I believe this was a simple matter of overflowing the SQL column length for a field, causing the entire INSERT to fail. This is a common beginner mistake when you first start to work with databases.\u003cp\u003eI\u0026#x27;m not sure if I understand this part. I\u0026#x27;m trying to put it into my own words. Is the following correct? The attacker provided an input that was so long, that it was rejected by the database. And the program that submitted the SQL query to the database did not have any logic for handling a query failure, which is why there is no trace of the login attempt  in the log or elsewhere.",
         "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
+          "thoughtful",
+          "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "The explanation is plausible and aligns with common database handling errors, though it is speculative without direct confirmation from the original vulnerability details."
+        "accuracyRank": 4,
+        "analysis": "Provides a comparative analysis based on experience, emphasizing complexity issues in Azure's system architecture."
+      },
+      {
+        "id": 47449934,
+        "author": "ronbenton",
+        "text": "Bypassing logging feels relatively unimportant compared to some of the recent EntraID vulns we’ve seen",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment downplays the importance of logging bypasses, but lacks detailed context or evidence to support its claim."
+      },
+      {
+        "id": 47450712,
+        "author": "strbean",
+        "text": "Maybe I can use one of these to get in to my organization azure account from my alma mater. The email was deleted right after I graduated, but Microsoft has been trying to bill me (for a reserved IP or something) for close to a decade. Support is useless of course.",
+        "indicators": [
+          "trolling"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Expresses frustration with billing issues, but the comment is more anecdotal and not directly related to security vulnerabilities."
+      },
+      {
+        "id": 47450924,
+        "author": "epistasis",
+        "text": "There\u0026#x27;s a big tradeoff here though: IT admins really love buying Microsoft. And when the dog tries to complain about the dogfood, the dogfood purchaser tends to not understand very well.",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 7,
+        "analysis": "A cynical remark about user preferences, lacking technical detail or evidence."
+      },
+      {
+        "id": 47449829,
+        "author": "throwoutway",
+        "text": "Yesterday ProPublica and ArsTechnica published a takedown of Azure: \u0026quot;Federal cyber experts called Microsoft’s cloud a “pile of shit,” approved it anyway\u0026quot; ...\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;arstechnica.com\u0026#x2F;information-technology\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;federal-cyber-experts-called-microsofts-cloud-a-pile-of-shit-approved-it-anyway\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arstechnica.com\u0026#x2F;information-technology\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;feder...\u003c/a\u003e",
+        "indicators": [
+          "belligerent",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "References external reports to support claims about Azure's security reputation, adding credibility."
       },
       {
         "id": 47450296,
@@ -69,86 +117,8 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment references an external credible report and highlights the importance of vigilant monitoring, adding valuable context to the discussion."
-      },
-      {
-        "id": 47451136,
-        "author": "cyberax",
-        "text": "Azure Entra is an example of making a system so complex that nobody can understand it entirely. I\u0026#x27;m fairly experienced in access control systems, OIDC, crypto, etc. but I was not able to understand how it all fits together.\u003cp\u003eGoogle Cloud is simplistic in comparison. AWS is full of legacy complexity (IAM policies, sigh) but it\u0026#x27;s fairly self-contained and can be worked around by splitting stuff into accounts.\u003cp\u003eI have not looked at Oracle cloud yet. Is it any better than MS?",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "The comment offers a comparative perspective on cloud complexity, which is subjective but consistent with common industry opinions."
-      },
-      {
-        "id": 47449934,
-        "author": "ronbenton",
-        "text": "Bypassing logging feels relatively unimportant compared to some of the recent EntraID vulns we’ve seen",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This brief comment provides a prioritization viewpoint but lacks detailed explanation or evidence."
-      },
-      {
-        "id": 47450924,
-        "author": "epistasis",
-        "text": "There\u0026#x27;s a big tradeoff here though: IT admins really love buying Microsoft. And when the dog tries to complain about the dogfood, the dogfood purchaser tends to not understand very well.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment reflects a common industry dynamic between product users and decision-makers, though it is more opinion than fact."
-      },
-      {
-        "id": 47450884,
-        "author": "fuckinpuppers",
-        "text": "It is shocking how absolutely garbage azure is.",
-        "indicators": [
-          "emotional",
-          "belligerent",
-          "useless"
-        ],
-        "accuracyRank": 8,
-        "analysis": "This comment is purely emotional and lacks constructive or factual content."
-      },
-      {
-        "id": 47450712,
-        "author": "strbean",
-        "text": "Maybe I can use one of these to get in to my organization azure account from my alma mater. The email was deleted right after I graduated, but Microsoft has been trying to bill me (for a reserved IP or something) for close to a decade. Support is useless of course.",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
         "accuracyRank": 9,
-        "analysis": "While expressing frustration, this comment is anecdotal and does not add substantive analysis to the discussion."
-      },
-      {
-        "id": 47450990,
-        "author": "dfedbeef",
-        "text": "\u0026gt; It\u0026#x27;s not often that you see a demo of an actual Azure vulnerability, as they get patched and are gone forever. However, because Microsoft was having trouble replicating this complicated bypass, and asked for a video, I come bearing receipts.\u003cp\u003eAbsolutely savage lol\u003cp\u003e[If you didn\u0026#x27;t read the thing, it\u0026#x27;s one curl command.]",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 10,
-        "analysis": "This comment highlights the simplicity of the exploit, adding some insight but limited technical detail."
-      },
-      {
-        "id": 47449829,
-        "author": "throwoutway",
-        "text": "Yesterday ProPublica and ArsTechnica published a takedown of Azure: \u0026quot;Federal cyber experts called Microsoft’s cloud a “pile of shit,” approved it anyway\u0026quot; ...\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;arstechnica.com\u0026#x2F;information-technology\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;federal-cyber-experts-called-microsofts-cloud-a-pile-of-shit-approved-it-anyway\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arstechnica.com\u0026#x2F;information-technology\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;feder...\u003c/a\u003e",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 11,
-        "analysis": "This comment references external journalism but offers no additional analysis or personal insight."
+        "analysis": "Provides a summarized account of a significant security incident, emphasizing the importance of vigilant monitoring."
       }
     ]
   }

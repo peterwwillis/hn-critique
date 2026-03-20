@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">140 points</span>
+        <span class="score">149 points</span>
         by <a href="https://news.ycombinator.com/user?id=sdpmas" class="hnuser">sdpmas</a>
-        <span class="age">14 hours ago</span>
+        <span class="age">16 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/19/47444072.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47444072" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the data efficiency claims of NanoGPT Slowrun, with commenters questioning the human baseline for learning, practical implications of compute costs, and the relevance of the proposed methods compared to current industry practices. Some express skepticism about the paper&#39;s assumptions and scaling arguments, while others highlight interesting future directions like self-improving LLMs and related projects.</p>
+      <p>The discussion centers on the concept of data efficiency in training large language models, with participants debating the practicality and implications of the NanoGPT Slowrun approach. Comments question the definition of data efficiency, the cost-effectiveness of training and serving models, and comparisons to human learning and existing scaling laws.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,80 +56,113 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=littlestymaar" class="hnuser">littlestymaar</a>
+        <a href="https://news.ycombinator.com/user?id=pastescreenshot" class="hnuser">pastescreenshot</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">&gt; Data efficiency matters because compute grows much faster than data 
-[2] (referencing a paper from 2022)<p>I&#x27;m not convinced this is particularly true in today&#x27;s world, if you have more compute, you can simply generate more, and higher quality, artificial data. That&#x27;s what all labs have been doing since at least 2023.<p>Also, the post references the Chinchilla-optimal training as a comparison baseline, but everyone has moved far beyond Chinchilla scaling, small models are routinely trained on 10-400 times more data than (1-40T tokens) than the Chinchilla-optimal number, so the entire industry went the complete opposite of what they are proposing.<p>That doesn&#x27;t mean the techniques presented here are useless or anything (I&#x27;m not qualified to judge) but you should take the introduction with a grain of salt.</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced critique of the paper&#39;s assumptions about data efficiency and scaling, referencing recent industry trends and suggesting caution in interpreting the introduction.</em></div>
+      <div class="comment-text">The result is interesting, but the practical question for me is where the compute bill lands once you include both training and serving. If a fixed-data regime pushes you toward ensembles plus chain distillation, is the endgame “serve the ensemble”, or do you expect most of the gain can be compressed back into a single deployable model later? That seems like the difference between a neat scaling result and a generally usable recipe.</div>
+      <div class="comment-analysis"><em>This comment raises a valid and practical concern about the total computational cost and deployment feasibility, reflecting an informed perspective on model scaling.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=pastescreenshot" class="hnuser">pastescreenshot</a>
+        <a href="https://news.ycombinator.com/user?id=abeppu" class="hnuser">abeppu</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">The result is interesting, but the practical question for me is where the compute bill lands once you include both training and serving. If a fixed-data regime pushes you toward ensembles plus chain distillation, is the endgame “serve the ensemble”, or do you expect most of the gain can be compressed back into a single deployable model later? That seems like the difference between a neat scaling result and a generally usable recipe.</div>
-      <div class="comment-analysis"><em>Raises an important practical consideration about the total compute cost and deployment implications, highlighting a key factor often overlooked in scaling discussions.</em></div>
+      <div class="comment-text">In their little algorithm box on Chain Distillation, they have at step 2b some expression that involves multiplying and dividing by `T`, and then they say &quot;where α = 0.5, T = 1.0&quot;.<p>I think someone during the copy-editing process told them this needed to look more complicated?</div>
+      <div class="comment-analysis"><em>The comment insightfully critiques a possibly superficial complexity in the paper&#39;s presentation, indicating attention to detail and understanding of the method.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=littlestymaar" class="hnuser">littlestymaar</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&gt; Data efficiency matters because compute grows much faster than data 
+[2] (referencing a paper from 2022)<p>I&#x27;m not convinced this is particularly true in today&#x27;s world, if you have more compute, you can simply generate more, and higher quality, artificial data. That&#x27;s what all labs have been doing since at least 2023.<p>Also, the post references the Chinchilla-optimal training as a comparison baseline, but everyone has moved far beyond Chinchilla scaling, small models are routinely trained on 10-400 times more data than (1-40T tokens) than the Chinchilla-optimal number, so the entire industry went the complete opposite of what they are proposing.<p>That doesn&#x27;t mean the techniques presented here are useless or anything (I&#x27;m not qualified to judge) but you should take the introduction with a grain of salt.</div>
+      <div class="comment-analysis"><em>This comment provides a knowledgeable counterpoint based on recent industry trends, urging caution in interpreting the paper&#39;s assumptions.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=NooneAtAll3" class="hnuser">NooneAtAll3</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I thought &quot;data efficiency&quot; meant same quality with less parameters<p>instead it&#x27;s more parameters with less training data... but I don&#x27;t really see any quality control?</div>
+      <div class="comment-analysis"><em>This comment questions the definition of data efficiency used, highlighting potential confusion or lack of clarity in the original post.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=QubridAI" class="hnuser">QubridAI</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">It&#x27;s an interesting connection to the GPU-autoresearch post; once agents have the real infrastructure, sandboxing isn&#x27;t just optional anymore it becomes a bottleneck.</div>
+      <div class="comment-analysis"><em>The comment connects the topic to broader infrastructure concerns, though it is somewhat abstract and less directly related to data efficiency.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=andai" class="hnuser">andai</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
       </div>
       <div class="comment-text">What&#x27;s the human baseline? How many cats does a human need to see to learn what a cat is, vs an AI?<p>Maybe not quite a fair comparison since my human brain has been &quot;learning&quot; for half a billion years before I was born.<p>I wonder if there&#x27;s an equivalent of that for AI. Evolving the architectures?</div>
-      <div class="comment-analysis"><em>Offers a thoughtful analogy questioning the baseline for learning efficiency, emphasizing the evolutionary context behind human learning versus AI training.</em></div>
+      <div class="comment-analysis"><em>This comment offers an interesting analogy but is speculative and less grounded in technical specifics.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=nsnzjznzbx" class="hnuser">nsnzjznzbx</a>
-        &nbsp;|&nbsp;rank #4
+        <a href="https://news.ycombinator.com/user?id=phr4ts" class="hnuser">phr4ts</a>
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">The brain does optimization during sleep. Is that something llms can benefit from?</div>
+      <div class="comment-analysis"><em>An intriguing idea drawing inspiration from biology, though it lacks concrete evidence or implementation details.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=nsnzjznzbx" class="hnuser">nsnzjznzbx</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">We will get to the point where you can quickly bootstrap i.e. an LLM can train a better LLM in a loop, leave it and it can really learn. Like learn learn.<p>&quot;Train yourself to solve this problem see OBJECTIVE.md&quot;</div>
-      <div class="comment-analysis"><em>Speculates on future capabilities of LLMs self-improving through iterative training, a plausible but still speculative concept.</em></div>
+      <div class="comment-analysis"><em>This comment is optimistic and speculative about future AI capabilities, reflecting hopeful but unproven concepts.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=naasking" class="hnuser">naasking</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">Great project. On the matter of data efficiency and regularization, I&#x27;d love to see someone try scaling GrokAlign!</div>
-      <div class="comment-analysis"><em>Positively engages with the project and suggests a related direction for exploration, showing constructive interest.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=abeppu" class="hnuser">abeppu</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">trolling</span> <span class="indicator">emotional</span> 
-      </div>
-      <div class="comment-text">In their little algorithm box on Chain Distillation, they have at step 2b some expression that involves multiplying and dividing by `T`, and then they say &quot;where α = 0.5, T = 1.0&quot;.<p>I think someone during the copy-editing process told them this needed to look more complicated?</div>
-      <div class="comment-analysis"><em>Appears to mock the presentation of the algorithm without substantive critique, reducing the comment&#39;s constructive value.</em></div>
+      <div class="comment-analysis"><em>A brief but constructive suggestion to explore related techniques, though it lacks depth.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=yorwba" class="hnuser">yorwba</a>
-        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
         <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Related: Discussion on the initial NanoGPT Slowrun announcement: <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47251259">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47251259</a> (185 points 15 days ago, 39 comments)</div>
-      <div class="comment-analysis"><em>Provides a link to a previous discussion but adds no original analysis or insight.</em></div>
+      <div class="comment-analysis"><em>This comment provides a link to related content but adds no substantive analysis or insight.</em></div>
     </div>
     
 
@@ -141,7 +174,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-20 08:51 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 10:46 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">129 points</span>
+        <span class="score">147 points</span>
         by <a href="https://news.ycombinator.com/user?id=nyxgeek" class="hnuser">nyxgeek</a>
-        <span class="age">8 hours ago</span>
+        <span class="age">10 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47448994.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47448994" rel="noopener">original on HN</a>
       </p>
@@ -47,134 +47,114 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around multiple Azure security and logging issues, highlighting bugs and design flaws in Azure&#39;s audit logs and identity management systems. Commenters share personal experiences and broader concerns about Microsoft&#39;s cloud security and complexity.</p>
+      <p>The discussion revolves around vulnerabilities, logging issues, and systemic flaws in Azure and Microsoft cloud services, highlighting security concerns, user experience, and trust in audit logs.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
+    <p class="no-critique">Only 9 of 11 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47448994" rel="noopener">View the full thread on HN</a>.</p>
+    
 
     
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=deathanatos" class="hnuser">deathanatos</a>
-        &nbsp;|&nbsp;rank #1
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">IIRC, (&amp; I don&#x27;t remember if I reported it), but Azure&#x27;s audit logs don&#x27;t reflect reality when you delete a client secret from the UI, either.<p>If I remember the issue right, we lost a client secret (it just vanished!) and I went to the audit logs to see who dun it. According to the logs, <i>I had done it.</i> And yet, I also knew that I had not done it.<p>I eventually reconstructed the bug to an old page load. I had the page loaded when there were just secrets &quot;A&quot; &amp; &quot;B&quot;. When I then clicked the delete icon for &quot;B&quot;, Azure deleted secrets &quot;B&quot; <i>and</i> &quot;C&quot; … which had been added since the page load. Essentially, the UI said &quot;delete this row&quot; but the API was &quot;set the set of secrets to {A}&quot;. The audit log then logged the API &quot;correctly&quot; in the sense of, yes, my credentials did execute that API call, I suppose, but utterly incorrectly in the sense of any reasonable real-world view as to what I had done.<p>Thankfully we got it sorted, but it sort of shook my faith in Azure&#x27;s logs in particular, and a little bit of audit logs in <i>general</i>. You have to make sure you&#x27;ve actually audited <i>what the human did</i>. Or, conversely, if you&#x27;re trying to reason with audit logs, … you&#x27;d best understand how they were generated.<p>I don&#x27;t think I would ever accept audit logs in court, if I were on a jury. Audit logs being hot lies is within reasonable doubt.</div>
-      <div class="comment-analysis"><em>This comment provides a detailed, firsthand account of a specific Azure audit log bug, illustrating a real-world impact and offering a nuanced view on the reliability of audit logs.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jiggawatts" class="hnuser">jiggawatts</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">belligerent</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Reminds me of an Azure Support ticket I submitted a few years ago when some developer clicked the &quot;Fix this now&quot; button in Application Insights, which then proceeded to double the scale of an already too-large App Service Plan. [1]<p>The Audit log showed the service identity of Application Insights, <i>not</i> the user that pressed the button! The cloud ops team changed the size back, and then the mysterious anonymous developer... changed it back. We had to have an &quot;all hands&quot; meeting to basically yell at the whole room to <i>cut that out</i>. Nobody fessed up, so we still don&#x27;t know who it was.<p>The Azure Support tech argued with me vehemently that <i>this was by design</i>, that Azure purposefully obscures the identity of users in audit logs!!! He mumbled something about GDPR, which is <i>nonsense</i>, because we&#x27;re on the opposite side of the planet from Europe.<p>At first I was absolutely flabbergasted that anyone even remotely associated with a security audit log design could be <i>this</i> stupid, but then something clicked for me and it all started making sense:<p><pre><code>    Entra Id logs are an evolution of Office 365 logs.
 </code></pre>
 Microsoft developed Entra ID (original Azure Active Directory) initially for Microsoft 365, with the Azure Public Cloud platform a mere afterthought.<p>They have a legitimate need to protect customer PII, hence the logs don&#x27;t contain their customers&#x27; private information when this isn&#x27;t strictly necessary. I.e.: Microsoft&#x27;s subcontractors and outsourced support staff don&#x27;t need and shouldn&#x27;t see some of this information!<p>The problem was that they re-used the same code, the same architecture decisions, the same security tradeoffs for what are essentially 100% private systems. We need to see who on <i>our payroll</i> is monkeying around with <i>our servers!</i> There is NO expectation of privacy for staff! GDPR does NOT apply to non-European government departments! Etc...<p>To this day I still see gaps in their logging where some Microsoft dev just &quot;oops&quot; forgot to log the identity of the account triggering the action. The most frustrating one for me is that Deployments don&#x27;t log the identity of the user. It&#x27;s one of only three administrative APIs that they have!<p>[1] As an aside: The plan had a 3-year Reservation on it, which meant that we were now paying for the original plan <i>and</i> something twice the size and non-Reserved! This was something like 5x the original cost, with <i>no warning</i> and no obvious way to see from the Portal UI that you&#x27;re changing away from a Reserved size.</div>
-      <div class="comment-analysis"><em>This comment explains the architectural reasons behind Azure&#39;s audit log limitations, providing context that aligns with known privacy regulations and legacy system constraints.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=vaylian" class="hnuser">vaylian</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">&gt; Having done a fair bit of logging to databases with various scripts, I believe this was a simple matter of overflowing the SQL column length for a field, causing the entire INSERT to fail. This is a common beginner mistake when you first start to work with databases.<p>I&#x27;m not sure if I understand this part. I&#x27;m trying to put it into my own words. Is the following correct? The attacker provided an input that was so long, that it was rejected by the database. And the program that submitted the SQL query to the database did not have any logic for handling a query failure, which is why there is no trace of the login attempt  in the log or elsewhere.</div>
-      <div class="comment-analysis"><em>The explanation is plausible and aligns with common database handling errors, though it is speculative without direct confirmation from the original vulnerability details.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=kjellsbells" class="hnuser">kjellsbells</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Puts me in mind of this scathing report from CISA on how a state-sponsored group broke into Microsoft and then into the State Department and a bunch of other agencies. Reads like a heist movie.<p><a href="https:&#x2F;&#x2F;www.cisa.gov&#x2F;sites&#x2F;default&#x2F;files&#x2F;2024-03&#x2F;CSRB%20Review%20of%20the%20Summer%202023%20MEO%20Intrusion%20Final_508c.pdf" rel="nofollow">https:&#x2F;&#x2F;www.cisa.gov&#x2F;sites&#x2F;default&#x2F;files&#x2F;2024-03&#x2F;CSRB%20Revi...</a><p>What I found most incredible about the story is that it wasn&#x27;t Microsoft who found the intrusion. It was some sysadmin at State who saw that some mail logs did not look right and investigated.</div>
-      <div class="comment-analysis"><em>This comment references an external credible report and highlights the importance of vigilant monitoring, adding valuable context to the discussion.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=cyberax" class="hnuser">cyberax</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Azure Entra is an example of making a system so complex that nobody can understand it entirely. I&#x27;m fairly experienced in access control systems, OIDC, crypto, etc. but I was not able to understand how it all fits together.<p>Google Cloud is simplistic in comparison. AWS is full of legacy complexity (IAM policies, sigh) but it&#x27;s fairly self-contained and can be worked around by splitting stuff into accounts.<p>I have not looked at Oracle cloud yet. Is it any better than MS?</div>
-      <div class="comment-analysis"><em>The comment offers a comparative perspective on cloud complexity, which is subjective but consistent with common industry opinions.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=ronbenton" class="hnuser">ronbenton</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Bypassing logging feels relatively unimportant compared to some of the recent EntraID vulns we’ve seen</div>
-      <div class="comment-analysis"><em>This brief comment provides a prioritization viewpoint but lacks detailed explanation or evidence.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=epistasis" class="hnuser">epistasis</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">There&#x27;s a big tradeoff here though: IT admins really love buying Microsoft. And when the dog tries to complain about the dogfood, the dogfood purchaser tends to not understand very well.</div>
-      <div class="comment-analysis"><em>This comment reflects a common industry dynamic between product users and decision-makers, though it is more opinion than fact.</em></div>
+      <div class="comment-analysis"><em>This comment provides a detailed real-world example illustrating systemic issues with Azure&#39;s audit logging and operational transparency, supporting its credibility.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=fuckinpuppers" class="hnuser">fuckinpuppers</a>
-        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">belligerent</span> <span class="indicator">useless</span> 
+        <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">It is shocking how absolutely garbage azure is.</div>
-      <div class="comment-analysis"><em>This comment is purely emotional and lacks constructive or factual content.</em></div>
+      <div class="comment-analysis"><em>While expressing strong dissatisfaction, this comment lacks specific evidence but reflects a common sentiment about Azure&#39;s perceived quality.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=deathanatos" class="hnuser">deathanatos</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">IIRC, (&amp; I don&#x27;t remember if I reported it), but Azure&#x27;s audit logs don&#x27;t reflect reality when you delete a client secret from the UI, either.<p>If I remember the issue right, we lost a client secret (it just vanished!) and I went to the audit logs to see who dun it. According to the logs, <i>I had done it.</i> And yet, I also knew that I had not done it.<p>I eventually reconstructed the bug to an old page load. I had the page loaded when there were just secrets &quot;A&quot; &amp; &quot;B&quot;. When I then clicked the delete icon for &quot;B&quot;, Azure deleted secrets &quot;B&quot; <i>and</i> &quot;C&quot; … which had been added since the page load. Essentially, the UI said &quot;delete this row&quot; but the API was &quot;set the set of secrets to {A}&quot;. The audit log then logged the API &quot;correctly&quot; in the sense of, yes, my credentials did execute that API call, I suppose, but utterly incorrectly in the sense of any reasonable real-world view as to what I had done.<p>Thankfully we got it sorted, but it sort of shook my faith in Azure&#x27;s logs in particular, and a little bit of audit logs in <i>general</i>. You have to make sure you&#x27;ve actually audited <i>what the human did</i>. Or, conversely, if you&#x27;re trying to reason with audit logs, … you&#x27;d best understand how they were generated.<p>I don&#x27;t think I would ever accept audit logs in court, if I were on a jury. Audit logs being hot lies is within reasonable doubt.</div>
+      <div class="comment-analysis"><em>This comment offers a technical critique based on personal experience, highlighting a significant flaw in Azure&#39;s logging system.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=vaylian" class="hnuser">vaylian</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">&gt; Having done a fair bit of logging to databases with various scripts, I believe this was a simple matter of overflowing the SQL column length for a field, causing the entire INSERT to fail. This is a common beginner mistake when you first start to work with databases.<p>I&#x27;m not sure if I understand this part. I&#x27;m trying to put it into my own words. Is the following correct? The attacker provided an input that was so long, that it was rejected by the database. And the program that submitted the SQL query to the database did not have any logic for handling a query failure, which is why there is no trace of the login attempt  in the log or elsewhere.</div>
+      <div class="comment-analysis"><em>Provides a comparative analysis based on experience, emphasizing complexity issues in Azure&#39;s system architecture.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ronbenton" class="hnuser">ronbenton</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">Bypassing logging feels relatively unimportant compared to some of the recent EntraID vulns we’ve seen</div>
+      <div class="comment-analysis"><em>This comment downplays the importance of logging bypasses, but lacks detailed context or evidence to support its claim.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=strbean" class="hnuser">strbean</a>
-        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">trolling</span> 
       </div>
       <div class="comment-text">Maybe I can use one of these to get in to my organization azure account from my alma mater. The email was deleted right after I graduated, but Microsoft has been trying to bill me (for a reserved IP or something) for close to a decade. Support is useless of course.</div>
-      <div class="comment-analysis"><em>While expressing frustration, this comment is anecdotal and does not add substantive analysis to the discussion.</em></div>
+      <div class="comment-analysis"><em>Expresses frustration with billing issues, but the comment is more anecdotal and not directly related to security vulnerabilities.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=dfedbeef" class="hnuser">dfedbeef</a>
-        &nbsp;|&nbsp;rank #10
+        <a href="https://news.ycombinator.com/user?id=epistasis" class="hnuser">epistasis</a>
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">useless</span> 
       </div>
-      <div class="comment-text">&gt; It&#x27;s not often that you see a demo of an actual Azure vulnerability, as they get patched and are gone forever. However, because Microsoft was having trouble replicating this complicated bypass, and asked for a video, I come bearing receipts.<p>Absolutely savage lol<p>[If you didn&#x27;t read the thing, it&#x27;s one curl command.]</div>
-      <div class="comment-analysis"><em>This comment highlights the simplicity of the exploit, adding some insight but limited technical detail.</em></div>
+      <div class="comment-text">There&#x27;s a big tradeoff here though: IT admins really love buying Microsoft. And when the dog tries to complain about the dogfood, the dogfood purchaser tends to not understand very well.</div>
+      <div class="comment-analysis"><em>A cynical remark about user preferences, lacking technical detail or evidence.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=throwoutway" class="hnuser">throwoutway</a>
-        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">belligerent</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Yesterday ProPublica and ArsTechnica published a takedown of Azure: &quot;Federal cyber experts called Microsoft’s cloud a “pile of shit,” approved it anyway&quot; ...<p><a href="https:&#x2F;&#x2F;arstechnica.com&#x2F;information-technology&#x2F;2026&#x2F;03&#x2F;federal-cyber-experts-called-microsofts-cloud-a-pile-of-shit-approved-it-anyway&#x2F;" rel="nofollow">https:&#x2F;&#x2F;arstechnica.com&#x2F;information-technology&#x2F;2026&#x2F;03&#x2F;feder...</a></div>
-      <div class="comment-analysis"><em>This comment references external journalism but offers no additional analysis or personal insight.</em></div>
+      <div class="comment-analysis"><em>References external reports to support claims about Azure&#39;s security reputation, adding credibility.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=kjellsbells" class="hnuser">kjellsbells</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Puts me in mind of this scathing report from CISA on how a state-sponsored group broke into Microsoft and then into the State Department and a bunch of other agencies. Reads like a heist movie.<p><a href="https:&#x2F;&#x2F;www.cisa.gov&#x2F;sites&#x2F;default&#x2F;files&#x2F;2024-03&#x2F;CSRB%20Review%20of%20the%20Summer%202023%20MEO%20Intrusion%20Final_508c.pdf" rel="nofollow">https:&#x2F;&#x2F;www.cisa.gov&#x2F;sites&#x2F;default&#x2F;files&#x2F;2024-03&#x2F;CSRB%20Revi...</a><p>What I found most incredible about the story is that it wasn&#x27;t Microsoft who found the intrusion. It was some sysadmin at State who saw that some mail logs did not look right and investigated.</div>
+      <div class="comment-analysis"><em>Provides a summarized account of a significant security incident, emphasizing the importance of vigilant monitoring.</em></div>
     </div>
     
 
@@ -186,7 +166,7 @@ Microsoft developed Entra ID (original Azure Active Directory) initially for Mic
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-20 08:51 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 10:46 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

@@ -19,5 +19,69 @@
       "The article assumes familiarity with FFmpeg command-line usage and scripting, which might limit accessibility for beginners."
     ],
     "rating": "reliable"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers around the new drawvg filter in FFmpeg, with users highlighting its usefulness for video editing tasks such as obscuring overlays in tutorial videos. Some users appreciate the flexibility of drawvg compared to older filters, while others comment on the complexity of FFmpeg's filter syntax compared to alternatives like Avisynth.",
+    "comments": [
+      {
+        "id": 47452560,
+        "author": "jasode",
+        "text": "drawvg is very useful.  Before drawvg, I was always fine using the stable FFmpeg releases such as 8.0.1 but when I saw drawvg added to the master branch[1], I didn\u0026#x27;t want to wait for the next stable release and immediately re-built ffmpeg from master to start using it.\u003cp\u003eMy main use case is modifying youtube videos of tech tutorials where the speaker overlays a video of themselves in a corner of the video.  drawvg is used to blackout that area of the video.  I\u0026#x27;m sure some viewers like having a visible talking head shown on the same screen as the code but I find the constant motion of someone\u0026#x27;s lips moving and eyes blinking in my peripheral vision extremely distracting.  Our vision is very tuned into paying attention to faces so the brain constantly fighting that urge so it can concentrate on the code.  (A low-tech solution is to just put a yellow sticky know on the monitor to cover up the speaker but that means you can\u0026#x27;t easily resize\u0026#x2F;move the window playing the video  ... so ffmpeg to the rescue.)\u003cp\u003eIf the overlay was a rectangle, you can use the older drawbox filter and don\u0026#x27;t need drawvg.  However, some content creaters use circles and that\u0026#x27;s where drawvg works better.   Instead of creating a separate .vgs file, I just use the inline syntax like this:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  ffmpeg -i input.webm -filter_complex \u0026quot;[0:v]drawvg=\u0026#x27;circle 3388 1670 400 setcolor black fill\u0026#x27;[v2];[0:a]atempo=1.5[a2]\u0026quot; -map \u0026quot;[v2]\u0026quot; -map \u0026quot;[a2]\u0026quot; output.mp4\n\u003c/code\u003e\u003c/pre\u003e\nThat puts a black filled circle on the bottom right corner of a 4k vid to cover up the speaker.  Different vids from different creators will require different x,y,radius coordinates.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;git.ffmpeg.org\u0026#x2F;gitweb\u0026#x2F;ffmpeg.git\u0026#x2F;commit\u0026#x2F;016d767c8e9d6c8b3a445bb573cd07a07912a671\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;git.ffmpeg.org\u0026#x2F;gitweb\u0026#x2F;ffmpeg.git\u0026#x2F;commit\u0026#x2F;016d767c8e9d...\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed, practical use case for drawvg and explains its advantages over older filters, demonstrating a good understanding of the tool's capabilities."
+      },
+      {
+        "id": 47452494,
+        "author": "shevy-java",
+        "text": "That\u0026#x27;s quite cool. I guess ffmpeg would kind of technically be a replacement for avisynth at this point.\u003cp\u003eStill, I find the syntax it uses horrible:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  ffmpeg -an -ss 12 -t 3 -i bigbuckbunny.mov -vf \u0026#x27;crop=iw-1, drawvg=file=progress.vgs, format=yuv420p\u0026#x27; -c:v libvpx-vp9 output.webm\n\u003c/code\u003e\u003c/pre\u003e\nI understand that most of this comes from simplicity of use from the\nshell, so if you take this point of view, the above makes a lot of sense.\u003cp\u003eMy poor, feeble brain, though, has a hard time deducing all of this. Yes,\nI can kind of know what it does to some extent ... start at 12 seconds \nright? during 3 seconds ... apply the specified filter in the specified format,\nuse libvpx-vp9 as the video codec ... but the above example is somewhat \nsimple. There are total monsters in actual use when it comes to the filter\nsubsystem in ffmpeg. Avisynth was fairly easy on my brain; ffmpeg does not,\nand nobody among the ffmpeg dev team seems to think that complicated uses are an issue. I even wrote a small ruby script that expands shortcut options as above, into the corresponding long names, simply because the long names are a bit easier to remember. Even that fails when it comes to complex filters used.\u003cp\u003eIt\u0026#x27;s a shame because ffmpeg is otherwise really great.",
+        "indicators": [
+          "thoughtful",
+          "emotional",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment offers a critical perspective on FFmpeg's syntax complexity compared to Avisynth, reflecting a common user experience and providing constructive feedback."
+      },
+      {
+        "id": 47452503,
+        "author": "fercircularbuf",
+        "text": "This could be a great and easy way to add annotations to technical instruction videos in a way that is self-documenting and programmable.",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The comment insightfully suggests a potential use case for drawvg, emphasizing its programmability and utility in educational content."
+      },
+      {
+        "id": 47452633,
+        "author": "arc-in-space",
+        "text": "Oh, I was not expecting an entire DSL for this. This looks really useful.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "A brief but relevant observation about the existence of a domain-specific language for drawvg, indicating surprise and appreciation."
+      },
+      {
+        "id": 47452034,
+        "author": "torginus",
+        "text": "One of the strangest discoveries of my life was that vector graphics is a solved problem, and the solution is turtle graphics that I was taught in primary school.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment reflects on the foundational concepts of vector graphics, linking them to simple educational tools, which is an insightful but somewhat tangential remark."
+      }
+    ]
   }
 }
