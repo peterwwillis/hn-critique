@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Critique: We rewrote our Rust WASM Parser in TypeScript – and it got 3x Faster | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://www.openui.com/blog/rust-wasm-parser" rel="noreferrer noopener">We rewrote our Rust WASM Parser in TypeScript – and it got 3x Faster</a>
+        <span class="sitebit"> (openui.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">7 points</span>
+        by <a href="https://news.ycombinator.com/user?id=zahlekhan" class="hnuser">zahlekhan</a>
+        <span class="age">49 minutes ago</span>
+        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/20/47461094.html">2&nbsp;comments critique</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47461094" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+    <div class="critique-content">
+
+      <section class="critique-section">
+        <h3>Summary</h3>
+        <p>The article describes how rewriting a Rust-based WASM parser in TypeScript resulted in a 2-4.6x speed improvement due to eliminating the costly WASM-JS boundary overhead and improving the streaming parsing algorithm from O(N²) to O(N). It explains that the main bottleneck was not Rust&#39;s parsing speed but the data transfer and serialization costs between WASM and JavaScript.</p>
+      </section>
+
+      <section class="critique-section">
+        <h3>Main Points &amp; Arguments</h3>
+        <ul>
+          <li>The original Rust WASM parser suffered from significant overhead due to copying and serializing data across the WASM-JS boundary.</li><li>Attempting to skip JSON serialization by returning JS objects directly from WASM was slower due to many fine-grained conversions.</li><li>Porting the parser fully to TypeScript eliminated the boundary overhead and improved per-call parsing speed by 2.2-4.6x.</li><li>The streaming parser was optimized by caching completed statement ASTs, reducing complexity from O(N²) to O(N) and improving total streaming parse time by 2.6-3.3x.</li><li>WASM is more suitable for compute-bound tasks with minimal interop, not for frequently called small-input parsing tasks due to boundary crossing costs.</li><li>Algorithmic improvements in parsing complexity had a larger impact on performance than the choice of implementation language.</li>
+        </ul>
+      </section>
+
+      <section class="critique-section">
+        <h3>Truthfulness Assessment</h3>
+        <div class="rating-badge rating-needs-citation">
+          Needs Citation
+        </div>
+        <p>The article&#39;s claims are consistent with known performance characteristics of WASM and JavaScript interop. WASM-JS boundary crossing overhead is a well-documented bottleneck, especially for frequent calls with small data. The benchmarks and explanations about serialization costs and memory layout differences align with established technical understanding. The streaming parsing optimization from O(N²) to O(N) is a standard algorithmic improvement that logically leads to performance gains. The article provides detailed benchmark data and technical reasoning, supporting the accuracy of its claims.</p>
+      </section>
+
+      
+      <section class="critique-section">
+        <h3>Additional Considerations</h3>
+        <ul>
+          <li>The benchmarks are specific to this particular parser and workload; results may vary for other applications or more complex Rust code.</li><li>The article does not discuss potential trade-offs in maintainability or type safety when moving from Rust to TypeScript.</li><li>Performance gains might depend on the JavaScript engine (V8) and could differ in other environments or browsers.</li><li>The article does not provide external sources or third-party validation of the benchmarks.</li><li>The impact of JIT optimizations in V8 on TypeScript performance is mentioned but not deeply analyzed.</li>
+        </ul>
+      </section>
+      
+
+    </div>
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-20 22:37 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>

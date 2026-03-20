@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Critique: Work_mem: It&#39;s a Trap | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://mydbanotebook.org/posts/work_mem-its-a-trap/" rel="noreferrer noopener">Work_mem: It&#39;s a Trap</a>
+        <span class="sitebit"> (mydbanotebook.org)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">14 points</span>
+        by <a href="https://news.ycombinator.com/user?id=enz" class="hnuser">enz</a>
+        <span class="age">2 days ago</span>
+        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/18/47431304.html">0&nbsp;comments critique</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47431304" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+    <div class="critique-content">
+
+      <section class="critique-section">
+        <h3>Summary</h3>
+        <p>The article discusses a surprising behavior in PostgreSQL&#39;s memory management where a query caused excessive RAM usage despite a low work_mem setting, leading to an out-of-memory (OOM) kill on a large production cluster. It explains that work_mem limits memory per operation, but memory is only freed at the end of the entire query execution, which can cause unexpectedly high memory consumption if many allocations accumulate in a single memory context.</p>
+      </section>
+
+      <section class="critique-section">
+        <h3>Main Points &amp; Arguments</h3>
+        <ul>
+          <li>A production PostgreSQL cluster with 2 TB RAM was killed by the OOM killer due to a single query consuming excessive memory despite work_mem being set to 2 MB.</li><li>PostgreSQL&#39;s work_mem limits memory per hash or sort operation, but memory is only released at the end of the query, not during execution.</li><li>The memory context system in PostgreSQL frees memory in one shot at query completion, which can cause large memory accumulation if many chunks are allocated within a single context.</li><li>A specific query structure involving a plpgsql function used in a join caused over 500,000 memory chunks to accumulate, leading to the massive memory usage.</li><li>There is no hard cap on memory usage per backend in PostgreSQL; prevention strategies include fixing statistics, rewriting bad queries, using query timeouts, and monitoring memory with pg_log_backend_memory_contexts.</li>
+        </ul>
+      </section>
+
+      <section class="critique-section">
+        <h3>Truthfulness Assessment</h3>
+        <div class="rating-badge rating-reliable">
+          Reliable
+        </div>
+        <p>The article accurately describes PostgreSQL&#39;s memory management behavior, specifically how work_mem limits apply per operation and how memory contexts are freed only at the end of query execution. The explanation aligns with PostgreSQL documentation and expert community knowledge. The use of pg_log_backend_memory_contexts as a diagnostic tool is factual and introduced in PostgreSQL 14. The article&#39;s claim that no hard cap exists on backend memory usage is consistent with PostgreSQL&#39;s design. The anecdotal example and detailed memory log excerpts support the technical points made. Overall, the article provides a truthful and well-supported analysis of a complex PostgreSQL memory issue.</p>
+      </section>
+
+      
+      <section class="critique-section">
+        <h3>Additional Considerations</h3>
+        <ul>
+          <li>The article does not discuss potential configuration or architectural approaches such as resource groups or external query governors that might help limit memory usage in some PostgreSQL setups.</li><li>It does not mention newer PostgreSQL features or extensions that might mitigate such memory issues beyond PostgreSQL 14.</li><li>The impact of parallel workers and their memory consumption could be further elaborated to understand total memory usage better.</li><li>The article focuses on a single case study and may not represent all scenarios where work_mem limits are exceeded.</li>
+        </ul>
+      </section>
+      
+
+    </div>
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-20 22:37 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>

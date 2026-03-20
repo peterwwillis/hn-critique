@@ -1,0 +1,22 @@
+{
+  "story_id": 47431304,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article discusses a surprising behavior in PostgreSQL's memory management where a query caused excessive RAM usage despite a low work_mem setting, leading to an out-of-memory (OOM) kill on a large production cluster. It explains that work_mem limits memory per operation, but memory is only freed at the end of the entire query execution, which can cause unexpectedly high memory consumption if many allocations accumulate in a single memory context.",
+    "mainPoints": [
+      "A production PostgreSQL cluster with 2 TB RAM was killed by the OOM killer due to a single query consuming excessive memory despite work_mem being set to 2 MB.",
+      "PostgreSQL's work_mem limits memory per hash or sort operation, but memory is only released at the end of the query, not during execution.",
+      "The memory context system in PostgreSQL frees memory in one shot at query completion, which can cause large memory accumulation if many chunks are allocated within a single context.",
+      "A specific query structure involving a plpgsql function used in a join caused over 500,000 memory chunks to accumulate, leading to the massive memory usage.",
+      "There is no hard cap on memory usage per backend in PostgreSQL; prevention strategies include fixing statistics, rewriting bad queries, using query timeouts, and monitoring memory with pg_log_backend_memory_contexts."
+    ],
+    "truthfulness": "The article accurately describes PostgreSQL's memory management behavior, specifically how work_mem limits apply per operation and how memory contexts are freed only at the end of query execution. The explanation aligns with PostgreSQL documentation and expert community knowledge. The use of pg_log_backend_memory_contexts as a diagnostic tool is factual and introduced in PostgreSQL 14. The article's claim that no hard cap exists on backend memory usage is consistent with PostgreSQL's design. The anecdotal example and detailed memory log excerpts support the technical points made. Overall, the article provides a truthful and well-supported analysis of a complex PostgreSQL memory issue.",
+    "considerations": [
+      "The article does not discuss potential configuration or architectural approaches such as resource groups or external query governors that might help limit memory usage in some PostgreSQL setups.",
+      "It does not mention newer PostgreSQL features or extensions that might mitigate such memory issues beyond PostgreSQL 14.",
+      "The impact of parallel workers and their memory consumption could be further elaborated to understand total memory usage better.",
+      "The article focuses on a single case study and may not represent all scenarios where work_mem limits are exceeded."
+    ],
+    "rating": "reliable"
+  }
+}
