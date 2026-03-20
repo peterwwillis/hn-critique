@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">284 points</span>
+        <span class="score">326 points</span>
         by <a href="https://news.ycombinator.com/user?id=adamamyl" class="hnuser">adamamyl</a>
-        <span class="age">8 hours ago</span>
+        <span class="age">11 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/19/47440759.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47440759" rel="noopener">original on HN</a>
       </p>
@@ -47,12 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the recent issues introduced in macOS 26, particularly around DNS resolution and other breaking changes affecting developers and power users. Several commenters share detailed technical problems, workarounds, and frustrations with Apple&#39;s approach to system updates and software design.</p>
+      <p>The discussion centers on issues introduced by macOS 26, particularly breaking custom DNS settings and developer workflows. Several users share detailed examples of problems, workarounds, and frustrations with Apple&#39;s changes, while others discuss alternative approaches and broader opinions on macOS.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 34 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47440759" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 9 of 36 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47440759" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -64,106 +64,104 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">macOS 26 has to be the most breaking version so far, its problems and intended breaking changes making my app dev life so hard this year. Just to name a few:<p>- Reference Presets no longer allow setting arbitrary SDR nits, making it impossible to natively unlock 1600nits of brightness on MacBook Pros or 2000nits on Studio Display XDR which breaks my Lunar app [0] (this seems to be intended, no idea what hurt Apple that they had to block this under SIP)<p>- The orange microphone dot indicator and its very colored friends can no longer have their brightness changed for dimming them, which made my YellowDot app useless [1] (I guess this is for privacy, I still think this could have a setting guarded under TouchID like Accessibility Permissions works)<p>- Floating non-titled windows don&#x27;t accept mouse events (thankfully this got fixed) [2]<p>- Gamma table changes don&#x27;t work on MacBook Neo and M5 Pro&#x2F;Max which breaks Sub-zero Dimming and dimming external monitors that don&#x27;t support DDC (thankfully, Apple is looking into it) [3]<p>- The resizing area thing on very rounded windows which drives everyone nuts, I had to add custom resize handlers to some of my windows<p>- The `com.apple.SwiftUI.Drag-` temporary file paths that get generated for any file that gets dragged from a drag&amp;drop handler which makes it impossible to get to the original file when dragging images from Clop [4] or file shelf apps like Yoink, Dropover etc.<p>- NSImage returning different pixel count for .size than what the image actually has, breaking workflows that depended on that to determine the image DPI<p>[0] <a href="https:&#x2F;&#x2F;lunar.fyi&#x2F;#xdr" rel="nofollow">https:&#x2F;&#x2F;lunar.fyi&#x2F;#xdr</a><p>[1] <a href="https:&#x2F;&#x2F;github.com&#x2F;FuzzyIdeas&#x2F;YellowDot&#x2F;issues&#x2F;18" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;FuzzyIdeas&#x2F;YellowDot&#x2F;issues&#x2F;18</a><p>[2] <a href="https:&#x2F;&#x2F;developer.apple.com&#x2F;forums&#x2F;&#x2F;thread&#x2F;814798" rel="nofollow">https:&#x2F;&#x2F;developer.apple.com&#x2F;forums&#x2F;&#x2F;thread&#x2F;814798</a><p>[3] <a href="https:&#x2F;&#x2F;developer.apple.com&#x2F;forums&#x2F;thread&#x2F;819331" rel="nofollow">https:&#x2F;&#x2F;developer.apple.com&#x2F;forums&#x2F;thread&#x2F;819331</a><p>[4] <a href="https:&#x2F;&#x2F;lowtechguys.com&#x2F;clop" rel="nofollow">https:&#x2F;&#x2F;lowtechguys.com&#x2F;clop</a></div>
-      <div class="comment-analysis"><em>This comment provides a detailed and specific list of issues with macOS 26, supported by links to relevant projects and bug reports, indicating a well-informed and credible perspective.</em></div>
+      <div class="comment-analysis"><em>This comment provides a detailed, specific list of issues with macOS 26, supported by links and examples, indicating a well-informed and accurate perspective on the update&#39;s impact.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=patabyte" class="hnuser">patabyte</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Interesting - I run a nearly identical set, with many TLDs configured in `&#x2F;etc&#x2F;resolver&#x2F;X` and dnsmasq handling the resolve and I have not had a single issue.<p>the resolver confs all contain this content:<p><pre><code>    # &#x2F;etc&#x2F;resolver&#x2F;example-private
+    nameserver: 127.0.0.1
+    domain example-private
+</code></pre>
+I noticed in the author&#x27;s bug report they do not include `domain`, which is documented in `man 5 resolver` as:<p><pre><code>    # The domain directive is only necessary, if your local
+    # router advertises something like localdomain and you have
+    # set up your hostnames via an external domain.
+</code></pre>
+In the real world though, I&#x27;ve found the `domain` setting to be required nearly every time. I wonder if adding it will resolve the issue?</div>
+      <div class="comment-analysis"><em>This comment offers a practical insight into DNS configuration on macOS, suggesting a potential cause for the reported issues and a possible solution, demonstrating technical knowledge.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=philo23" class="hnuser">philo23</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">It&#x27;s not quite the same, but I&#x27;ve moved to using *.localhost for all my local web dev work. All modern browsers will resolve *.localhost to 127.0.0.1 internally. No need to setup any DNS resolvers or edit your hosts file.<p>But that only really helps you when you&#x27;re dealing with websites in a browser, and when you want the address to resolve back to your local machine. So it wont help you with other programs like python&#x2F;wget&#x2F;etc or any calls you make to getaddrinfo()</div>
-      <div class="comment-analysis"><em>This comment accurately describes a practical workaround for local web development using the reserved .localhost domain, clarifying its limitations outside browser contexts.</em></div>
+      <div class="comment-analysis"><em>This comment provides a useful alternative for local development DNS resolution that avoids some of the issues with custom DNS settings, though it notes limitations for non-browser applications.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=binaryturtle" class="hnuser">binaryturtle</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">I run a setup like that on my (outdated) Yosemite machine to provide multiple private TLDs for local deployment&#x2F;development needs.<p>I set that up in like 2014? Even back then it was known already that the quick &#x2F;etc&#x2F;resolver way was the deprecated way to do things. So I guess they finally killed that feature off?<p>The proper (more awkward) way is to use scutil directly (which then stores the settings in some binary plist somewhere, I assume).<p>Maybe try this and see if it still works afterwards?</div>
-      <div class="comment-analysis"><em>The comment provides historical context and a technical explanation of macOS DNS configuration changes, suggesting a viable method to manage local DNS settings.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=bdcravens" class="hnuser">bdcravens</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">&gt; The only reliable workaround is to add entries manually to &#x2F;etc&#x2F;hosts, which bypasses mDNSResponder entirely. This is impractical for dynamic use cases (e.g. Docker container DNS, where host entries change frequently) and requires sudo for every change.<p>I suppose I&#x27;m lazy - I&#x27;ve always used &#x2F;etc&#x2F;hosts, but then again, I&#x27;ve never had use cases like those mentioned in the linked gist.</div>
-      <div class="comment-analysis"><em>This comment thoughtfully discusses the limitations of manual hosts file edits as a workaround, especially for dynamic environments like Docker, reflecting practical experience.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=justinsaccount" class="hnuser">justinsaccount</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">intelligent</span> 
-      </div>
-      <div class="comment-text">&gt; none of my dockers<p>Containers ran using docker are called containers, not dockers.</div>
-      <div class="comment-analysis"><em>While minor, this comment corrects terminology, contributing to clarity and professionalism in the discussion.</em></div>
+      <div class="comment-text">I run a setup like that on my (outdated) Yosemite machine to provide multiple private TLDs for local deployment&#x2F;development needs.<p>I set that up in like 2014? Even back then it was known already that the quick &#x2F;etc&#x2F;resolver way was the deprecated way to do things. So I guess they finally killed that feature off?<p>The proper (more awkward) way is to use scutil directly (which then stores the settings in some binary plist somewhere, I assume).<p>Maybe try this and see if it still works afterwards?</div>
+      <div class="comment-analysis"><em>This comment adds historical context and suggests that the traditional method of setting custom DNS resolvers in /etc/resolver is deprecated, implying that changes in macOS 26 might be a continuation of this trend.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=mrbuttons454" class="hnuser">mrbuttons454</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Papercuts like this are why I moved away from macOS.<p>I will say, I don&#x27;t love the use of LLMs to write these bug reports. It&#x27;s probably fine if reviewed, but at least review for things like &quot;worked on macOS 25&quot;, which obviously didn&#x27;t exist. If that wasn&#x27;t caught, how sure are you that the rest of the report is accurate? We all want the bugs fixed, but people are going to start throwing out the obviously LLM written reports rather than have to validate each claim, since the author probably didn&#x27;t.</div>
-      <div class="comment-analysis"><em>This comment expresses frustration with macOS issues and skepticism about AI-generated bug reports, raising valid concerns about accuracy and trustworthiness.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=hk1337" class="hnuser">hk1337</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">I&#x27;ve been using macOS since OS X Tiger and I wasn&#x27;t aware of this feature.</div>
-      <div class="comment-analysis"><em>A personal anecdote highlighting that some macOS features are not widely known even among experienced users, which is relevant to the discussion about DNS and system behavior.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Razengan" class="hnuser">Razengan</a>
-        &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">It also seemingly broke removing Safari cookies on a per website basis, something I often used to stop Google&#x27;s scummy tracking across all their services if you just want to sign into YouTube.</div>
-      <div class="comment-analysis"><em>This comment adds another example of macOS 26 breaking user privacy controls, reflecting user frustration though without technical detail.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=thedougd" class="hnuser">thedougd</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">I had to abandon Apple MacOS container because it has so many issues with networking and DNS. I&#x27;m looking forward to try it again if they can get it fixed.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;container&#x2F;issues?q=is%3Aissue%20state%3Aopen%20dns" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;apple&#x2F;container&#x2F;issues?q=is%3Aissue%20sta...</a></div>
-      <div class="comment-analysis"><em>A relevant user experience report about container networking issues on macOS, supporting the broader theme of networking problems in the new OS version.</em></div>
+      <div class="comment-analysis"><em>The comment expresses frustration with macOS issues and skepticism about the accuracy of LLM-generated bug reports, raising a valid concern about the reliability of automated reports but with some emotional bias.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=pfortuny" class="hnuser">pfortuny</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">Lo and behold, just FYI. Trying to help.</div>
-      <div class="comment-analysis"><em>A minor correction of a phrase, showing attentiveness but limited substantive contribution to the technical discussion.</em></div>
+      <div class="comment-analysis"><em>A brief comment aimed at correcting a phrase usage; while polite and constructive, it adds little substantive value to the technical discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=JimmaDaRustla" class="hnuser">JimmaDaRustla</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Again? This happened like 6 or 7 years ago. I had so many issues with macOS in the few years I was forced to use a MacBook that I refused to use it. Not surprised to see this stuff still happening.</div>
+      <div class="comment-analysis"><em>This comment reflects personal frustration and historical perspective on recurring macOS issues, which is likely accurate but lacks technical detail or constructive suggestions.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=bpicolo" class="hnuser">bpicolo</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Another funny thing about Mac networking.<p>There&#x27;s a game I play (Old School Runescape) that does network ticks every .6s. Mac does some sort of aggressive optimization on the network hardware&#x2F;software, so network this infrequent doesn&#x27;t keep the layers &quot;hot&quot;, and you end up getting delayed ticks regularly, meaning you learn what should be happening in the game .2-.5s late. This optimization for (I assume) battery life makes the software not work as intended.<p>Playing anything that streams, like video, or triggering TCP connections (e.g. curl) at a more frequent clip while the game is running fixes the problem.<p>No way other than hacks that I&#x27;ve found to fix it, and I have no idea how you could report this to the right team at Apple to get it actually fixed.</div>
+      <div class="comment-analysis"><em>This comment provides a detailed example of macOS network optimizations causing unintended side effects for certain applications, showing technical insight though it lacks a clear solution.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=intrasight" class="hnuser">intrasight</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">Honest question:
+How would this affect me and the vast majority of macOS users who use the device for media consumption and productivity applications?<p>Next question: what reason would Apple have to make a change that would interfere with developers using their operating system?</div>
+      <div class="comment-analysis"><em>This comment raises reasonable questions about the impact of the changes on typical users and Apple&#39;s motivations, encouraging reflection though it does not provide direct technical insight.</em></div>
     </div>
     
 
@@ -175,7 +173,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-19 22:38 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 02:01 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
