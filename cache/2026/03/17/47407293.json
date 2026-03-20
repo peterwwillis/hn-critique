@@ -23,19 +23,19 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the use of Vulkan compute shaders for video encoding and decoding, highlighting their advantages for performance and GPU acceleration in editing workflows. Some comments emphasize the technical challenges of hardware decoding, while others debate the necessity and complexity of hardware video encoding versus software solutions.",
+    "summary": "The discussion centers on the use of Vulkan compute shaders for video encoding and decoding, highlighting performance improvements for complex codecs and workflows, especially in non-linear editing. Some comments debate the practicality and necessity of GPU acceleration versus CPU encoding, while others discuss hardware limitations and the evolving capabilities of GPU architectures.",
     "comments": [
       {
         "id": 47455241,
         "author": "pandaforce",
         "text": "The main target for this are NLEs like Blender. Performance is a large part of the issue. Most users still just create TIFF files per frame before importing them into a \u0026quot;real editor\u0026quot; like Resolve.\nApple may have ASICs for ProRes decoding, and Resolve may be the standard editor that everyone uses.\u003cp\u003eBut this goes beyond what even Apple has, by making it possible to work directly with compressed lossless video on consumer GPUs. You can get hundreds of FPS encoding or decoding 4k 16-bit FFv1 on a 4080, while only reading a few gigabits of video per second, rather than tens and even hundreds of gigabits that SSDs can\u0026#x27;t keep up. No need to have image degradation when passing intermediate copies between CG programs and editing either.",
         "indicators": [
-          "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed and plausible explanation of the practical benefits of Vulkan compute shaders for video workflows, emphasizing performance gains and real-world application."
+        "analysis": "This comment accurately identifies the target use case and performance benefits of GPU-accelerated video processing, providing relevant context about current workflows."
       },
       {
         "id": 47454943,
@@ -47,7 +47,19 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment accurately highlights the technical improvements Vulkan compute shaders bring to codec acceleration, particularly by reducing latency compared to hybrid GPU-CPU approaches."
+        "analysis": "This comment correctly explains how Vulkan compute shaders improve GPU acceleration by eliminating CPU-GPU latency bottlenecks, which is a key technical advantage."
+      },
+      {
+        "id": 47454182,
+        "author": "positron26",
+        "text": "\u0026gt; Most popular codecs were designed decades ago, when video resolutions were far smaller. As resolutions have exploded, those fixed-size minimum units now represent a much smaller fraction of a frame — which means far more of them can be processed in parallel. Modern GPUs have also gained features enabling cross-invocation communication, opening up further optimization opportunities.\u003cp\u003eOne only needs to look at GPU driven rendering and ray tracing in shaders to deduce that shader cores and memory subsystems these days have become flexible enough to do work besides lock-step uniform parallelism where the only difference was the thread ID.\u003cp\u003eNobody strives for random access memory read patterns, but the universal popularity of buffer device address and descriptor arrays can be taken somewhat as proof that these indirections are no longer the friction for GPU architectures that they were ten years ago.\u003cp\u003eAt the same time, the languages are no longer as restrictive as they once were.  People are recording commands on the GPU.  This kind of fiddly serial work is an indication that the ergonomics of CPU programming have less of a relative advantage, and that cuts deeply into the tradeoff costs.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment insightfully discusses the evolution of codecs and GPU architectures, highlighting how modern GPUs can better handle parallelism and complex workloads."
       },
       {
         "id": 47453765,
@@ -58,20 +70,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment insightfully discusses the limitations and risks of hardware decoding, including potential crashes and the need for fallback to software decoding, which is a known issue in video processing."
-      },
-      {
-        "id": 47454182,
-        "author": "positron26",
-        "text": "\u0026gt; Most popular codecs were designed decades ago, when video resolutions were far smaller. As resolutions have exploded, those fixed-size minimum units now represent a much smaller fraction of a frame — which means far more of them can be processed in parallel. Modern GPUs have also gained features enabling cross-invocation communication, opening up further optimization opportunities.\u003cp\u003eOne only needs to look at GPU driven rendering and ray tracing in shaders to deduce that shader cores and memory subsystems these days have become flexible enough to do work besides lock-step uniform parallelism where the only difference was the thread ID.\u003cp\u003eNobody strives for random access memory read patterns, but the universal popularity of buffer device address and descriptor arrays can be taken somewhat as proof that these indirections are no longer the friction for GPU architectures that they were ten years ago.\u003cp\u003eAt the same time, the languages are no longer as restrictive as they once were.  People are recording commands on the GPU.  This kind of fiddly serial work is an indication that the ergonomics of CPU programming have less of a relative advantage, and that cuts deeply into the tradeoff costs.",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 4,
-        "analysis": "This comment provides a thoughtful analysis of how modern GPU architectures and shader languages enable new optimization opportunities for video codecs, reflecting current trends in GPU computing."
+        "analysis": "This comment provides a nuanced view on hardware decoding limitations and the benefits of software or conservative shader approaches, reflecting real-world hardware issues."
       },
       {
         "id": 47454336,
@@ -79,12 +79,45 @@
         "text": "What is the use case? Okay, ultra low latency streaming. That is good. But. If you are sending the frames via some protocol over the network, like WebRTC, it will be touching the CPU anyway. Software encoding of 4K h264 is real time on a single thread on 65w, decade old CPUs, with low latency. The CPU encoders are much better quality and more flexible. So it\u0026#x27;s very difficult to justify the level of complexity needed for hardware video encoding. Absolutely no need for it for TV streaming for example. But people keep being obsessed with it who have no need for it.\u003cp\u003eIMO vendors should stop reinventing hardware video encoding and instead assign the programmer time to making libwebrtc and libvpx better suit their particular use case.",
         "indicators": [
           "thoughtful",
+          "emotional",
           "likely-true",
-          "constructive",
-          "emotional"
+          "constructive"
         ],
         "accuracyRank": 5,
-        "analysis": "While the comment raises valid points about software encoding efficiency and questions the need for complex hardware encoding, it somewhat downplays the benefits of hardware acceleration in specific use cases."
+        "analysis": "This comment raises valid points about the efficiency and quality of CPU encoding for many use cases, though it may understate scenarios where hardware acceleration is beneficial."
+      },
+      {
+        "id": 47456302,
+        "author": "jokoon",
+        "text": "I once asked on #ffmpeg@libera if the GPU could be used to encode h264, and apparently yes, but it\u0026#x27;s not really worth it compared to CPU.\u003cp\u003eI don\u0026#x27;t know much about video compression, does that mean that a codec like h264 is not parallelizable?",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "The comment correctly notes that GPU encoding of h264 exists but is often less efficient, and raises a reasonable question about codec parallelizability, though it lacks technical depth."
+      },
+      {
+        "id": 47455728,
+        "author": "fhn",
+        "text": "This article assumes all GPUs are on a PCIe bus but some are part of the CPU so the distance problem is minimal and offloading to GPU might still be net +. Might because I haven\u0026#x27;t tested this",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment provides a valid caveat about integrated GPUs reducing data transfer latency, which can affect the performance tradeoffs of GPU offloading."
+      },
+      {
+        "id": 47455850,
+        "author": "kvbev",
+        "text": "could this have an AV1 decoder for low power hardware that are without AV1 gpu accelerated decoding? for my N4020 laptop.\u003cp\u003emaybe a raspberry pi 4 too.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment expresses a practical user concern about hardware support for AV1 decoding on low-power devices, relevant to the discussion but speculative about implementation."
       }
     ]
   }

@@ -1,0 +1,64 @@
+{
+  "story_id": 47410871,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article discusses the reconstruction of VisiCalc, the first spreadsheet software created in 1979, by implementing a minimal clone in C. It explains the core concepts of spreadsheets such as cells, formulas, and recalculation, and demonstrates how to build a simple text-based user interface similar to the original VisiCalc.",
+    "mainPoints": [
+      "VisiCalc was the first spreadsheet software, created by Dan Bricklin and Bob Frankston in 1979, and was a killer app for the Apple II.",
+      "The article reconstructs a minimal VisiCalc clone using C, focusing on the data model, formula evaluation, and a simple terminal UI.",
+      "Formulas in VisiCalc start with a '+' instead of '=', and the implementation supports basic arithmetic, cell references, and some functions like SUM and ABS.",
+      "Recalculation is done by repeatedly evaluating all formulas until no changes occur, mimicking VisiCalc's manual recalculation approach.",
+      "A modal text-based user interface is built using the ncurses library, replicating VisiCalc's screen layout and interaction style.",
+      "The article acknowledges missing features such as file I/O, advanced commands, and larger grids but covers the essential spreadsheet mechanics."
+    ],
+    "truthfulness": "The article accurately describes the history and significance of VisiCalc, including its creators, release year, and impact on personal computing. The technical details about the spreadsheet data model, formula parsing, and recalculation methods are consistent with known implementations of early spreadsheet software. The description of the user interface and modal input aligns with documented behavior of VisiCalc. The code examples and explanations are plausible and reflect a faithful minimal re-implementation. The article does not make unsupported factual claims and provides links to source code for verification.",
+    "considerations": [
+      "The article does not discuss the limitations of the minimal implementation in terms of performance or scalability compared to modern spreadsheets.",
+      "There is no mention of how the reconstructed VisiCalc handles circular references or error propagation beyond using NAN.",
+      "The user interface is limited to terminal environments and does not cover graphical interfaces or modern usability improvements.",
+      "The article omits discussion of file saving/loading, which is critical for practical spreadsheet use.",
+      "Security considerations, such as injection risks in formula parsing, are not addressed."
+    ],
+    "rating": "reliable"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around the technical aspects and potential modern adaptations of VisiCalc, including memory management on the Apple II, programming language choices for similar projects, and the usability of command-line spreadsheet interfaces.",
+    "comments": [
+      {
+        "id": 47456387,
+        "author": "afandian",
+        "text": "Quote:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  #define MAXIN 128  \u0026#x2F;\u0026#x2F; max cell input length\n  enum { EMPTY, NUM, LABEL, FORMULA };  \u0026#x2F;\u0026#x2F; cell types\n  struct cell {\n    int type;\n    float val;\n    char text[MAXIN];  \u0026#x2F;\u0026#x2F; raw user input\n  };\n  #define NCOL 26    \u0026#x2F;\u0026#x2F; max number of columns (A..Z)\n  #define NROW 50    \u0026#x2F;\u0026#x2F; max number of rows\n  struct grid {\n    struct cell cells[NCOL][NROW];\n  };\n\u003c/code\u003e\u003c/pre\u003e\nI doubt that 171 KB of static allocation would fly on an Apple II! I do wonder how they did memory allocation, it must have been tricky with all the fragmentation.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "intelligent"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a realistic technical concern about memory constraints on the Apple II, showing understanding of hardware limitations and memory management challenges."
+      },
+      {
+        "id": 47456626,
+        "author": "tracker1",
+        "text": "Kinda cool to see... TBH, I\u0026#x27;d be more inclined to reach for Rust and Ratatui myslf over C + ncurses.  I know this would likely be a much larger executable though.\u003cp\u003eWith MS Edit resurrected similarly, I wonder how hard it would be to get a flushed out text based spreadsheet closer in function to MS Excel or Lotus 123 versions for DOS, but cross platform.  Maybe even able to load\u0026#x2F;save a few different formats from CSV\u0026#x2F;TSV to XLSX (without OLE\u0026#x2F;COM embeds).",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment offers a reasonable perspective on modern programming choices for terminal applications, acknowledging trade-offs between language features and executable size."
+      },
+      {
+        "id": 47456374,
+        "author": "bonsai_spool",
+        "text": "Are there good command-line interfaces for spreadsheets? I don\u0026#x27;t do anything super financially-important and I\u0026#x27;d prefer to stay in the terminal for quick editing of things, especially if I can have Vi keybindings.",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment raises a practical question about usability and preferences for terminal-based spreadsheet tools, reflecting user needs rather than technical accuracy."
+      }
+    ]
+  }
+}

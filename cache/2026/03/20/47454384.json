@@ -24,19 +24,139 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the performance of Java compared to other languages, with some commenters highlighting JavaScript's potential speed and others advocating for Rust due to its control and tooling advantages. There is skepticism about enterprise Java's efficiency and tooling quality.",
+    "summary": "The discussion revolves around Java's performance characteristics, focusing on common pitfalls like string handling, autoboxing, and exception usage. Commenters highlight both language design issues and typical coding practices that impact speed, with some suggesting alternative languages for better control and performance.",
     "comments": [
       {
-        "id": 47455150,
-        "author": "bearjaws",
-        "text": "JavaScript can be fast too, it\u0026#x27;s just the ecosystem and decisions devs make that slow it down.\u003cp\u003eSame for Java, I have yet to in my entire career see enterprise Java be performant and not memory intensive.\u003cp\u003eAt the end of the day, if you care about performance you will use a language better suited to that.",
+        "id": 47457037,
+        "author": "spankalee",
+        "text": "Avoiding Java\u0026#x27;s string footguns is an interesting problem in programming languages design.\u003cp\u003eThe String.format() problem is most immediately a bad compiler and bad implementation, IMO. It\u0026#x27;s not difficult to special-case literal strings as the first argument, do parsing at compile time, and pass in a structured representation. The method could also do runtime caching. Even a very small LRU cache would fix a lot of common cases. At the very least they should let you make a formatter from a specific format string and reuse it, like you can with regexes, to explicitly opt into better performance.\u003cp\u003eBut ultimately the string templates proposal should come back and fix this at the language level. Better syntax and guaranteed compile-time construction of the template. The language should help the developer do the fast thing.\u003cp\u003eString concatenation is a little trickier. In a JIT\u0026#x27;ed language you have a lot of options for making a hierarchy of string implementations that optimize different usage patterns, and still be fast - and what you really want for concatenation is a RopeString, like JS VMs have, that simply references the other strings. The issue is that you don\u0026#x27;t want virtual calls for hot-path string method calls.\u003cp\u003eJava chose a single final class so all calls are direct. But they should have been able to have a very small sealed class hierarchy where most methods are final and directly callable, and the virtual methods for accessing storage are devirtualized in optimized methods that only ever see one or two classes through a call site.\u003cp\u003eTo me, that\u0026#x27;s a small complexity cost to make common string patterns fast, instead of requiring StringBuilder.",
         "indicators": [
+          "intelligent",
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed and technically sound analysis of Java string performance issues, proposing realistic improvements at both the compiler and language level."
+      },
+      {
+        "id": 47455452,
+        "author": "liampulles",
+        "text": "Understanding algorithmic complexity (in particular, avoiding rework in loops), is useful in any language, and is sage advice.\u003cp\u003eIn practice though, for most enterprise web services, a lot of real world performance comes down to how efficiently you are calling external services (including the database). Just converting a loop of queries into bulk ones can help loads (and then tweaking the query to make good use of indexes, doing upserts, removing unneeded data, etc.)\u003cp\u003eI\u0026#x27;m hopeful that improvements in LLMs mean we can ditch ORMs (under the guise that they are quicker to write queries and the inbetween mapping code with) and instead make good use of SQL to harness the powers that modern databases provide.",
+        "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a balanced view acknowledging that performance depends on ecosystem and developer choices, which is generally accurate and insightful."
+        "accuracyRank": 2,
+        "analysis": "The comment correctly emphasizes that algorithmic efficiency and database query optimization often have a greater impact on performance than language-specific micro-optimizations."
+      },
+      {
+        "id": 47456922,
+        "author": "Okx",
+        "text": "The code:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  public int parseOrDefault(String value, int defaultValue) {\n      if (value == null || value.isBlank()) return defaultValue;\n      for (int i = 0; i \u0026lt; value.length(); i++) {\n          char c = value.charAt(i);\n          if (i == 0 \u0026amp;\u0026amp; c == \u0026#x27;-\u0026#x27;) continue;\n          if (!Character.isDigit(c)) return defaultValue;\n      }\n      return Integer.parseInt(value);\n  }\n\u003c/code\u003e\u003c/pre\u003e\nIs probably worse than Integer.parseInt alone, since it can still throw NumberFormatExceptions for values that overflow (which is no longer handled!). Would maybe fix that. Unfortunately this is a major flaw in the Java standard library; parsing numbers shouldn\u0026#x27;t throw expensive exceptions.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment accurately identifies a limitation in the Java standard library's number parsing and highlights the inefficiency of exception handling in this context."
+      },
+      {
+        "id": 47456783,
+        "author": "cogman10",
+        "text": "Nitpick just because.\u003cp\u003eOrders by hour could be made faster.  The issue with it is it\u0026#x27;s using a map when an array works both faster and just fine.\u003cp\u003eOn top of that, the map boxes the \u0026quot;hour\u0026quot; which is undesirable.\u003cp\u003eThis is how I\u0026#x27;d write it\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    long[] ordersByHour = new long[24];\n    var deafultTimezone = ZoneId.systemDefault();\n    for (Order order : orders) {\n        int hour = order.timestamp().atZone(deafultTimezone).getHour();\n        ordersByHour[hour]++;\n    }\n\u003c/code\u003e\u003c/pre\u003e\nIf you know the bound of an array, it\u0026#x27;s not large, and you are directly indexing in it, you really can\u0026#x27;t do any better performance wise.\u003cp\u003eIt\u0026#x27;s also not less readable, just less familiar as Java devs don\u0026#x27;t tend to use arrays that much.",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "The suggestion to replace a map with an array for fixed-size indexing is a well-known optimization that reduces overhead and improves speed in this scenario."
+      },
+      {
+        "id": 47456436,
+        "author": "cmovq",
+        "text": "When you\u0026#x27;re using a programming language that naturally steers you to write slow code you can\u0026#x27;t only blame the programmer.\u003cp\u003eI was listening to someone say they write fast code in Java by avoiding allocations with a PoolAllocator that would \u0026quot;cache\u0026quot; small objects with poolAllocator.alloc(), poolAllocator.release(). So just manual memory management with extra steps. At that point why not use a better language for the task?",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment insightfully points out that language design influences code performance and that sometimes choosing a different language is more practical than complex workarounds."
+      },
+      {
+        "id": 47455783,
+        "author": "wood_spirit",
+        "text": "A subject close to my heart, I write a lot of heavily optimised code including a lot of hot data pipelines in Java.\u003cp\u003eAnd aside from algorithms, it usually comes down to avoiding memory allocations.\u003cp\u003eI have my go-to zero-alloc grpc and parquet and json and time libs etc and they make everything fast.\u003cp\u003eIt’s mostly how idiomatic Java uses objects for everything that makes it slow overall.\u003cp\u003eBut eventually after making a JVM app that keeps data in something like data frames etc and feels a long way from J2EE beans you can finally bump up against the limits that only c\u0026#x2F;c++\u0026#x2F;rust\u0026#x2F;etc can get you past.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "The comment provides practical insight into Java performance, emphasizing memory allocation overhead and the benefits of specialized libraries and data structures."
+      },
+      {
+        "id": 47456742,
+        "author": "kpw94",
+        "text": "The Autoboxing example imo is a case of \u0026quot;Java isn\u0026#x27;t so fast\u0026quot;. Why can\u0026#x27;t this be optimized behind the scenes by the compiler ?\u003cp\u003eRest of advice is great: things compilers can\u0026#x27;t really catch but a good code reviewer should point out.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment correctly identifies autoboxing as a performance pitfall and suggests that compiler improvements and code reviews are necessary to mitigate it."
+      },
+      {
+        "id": 47455274,
+        "author": "kyrra",
+        "text": "First request latency also can really suck in Java before hotpathed code gets through the C2 compiler.  You can warm up hotpaths by running that code during startup, but it\u0026#x27;s really annoying having to do that.  Using C++, Go, or Rust gets you around that problem without having to jump through the hoops of code path warmup.\u003cp\u003eI wish Java had a proper compiler.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "The comment accurately describes JVM warmup latency and contrasts it with languages that compile ahead of time, which have more consistent startup performance."
+      },
+      {
+        "id": 47456900,
+        "author": "jerf",
+        "text": "Any non-trivial program that has never had an optimizer run on it has a minimal-effort 50+% speedup in it.",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 9,
+        "analysis": "This is a general but true statement about the impact of compiler optimizations on performance, though it lacks specific context."
+      },
+      {
+        "id": 47455759,
+        "author": "zvqcMMV6Zcr",
+        "text": "\u0026gt; Exceptions for Control Flow\u003cp\u003eThis one is so prevalent that JVM has an optimization where it gives up on filling stack for exception, if it was thrown over and over in exact same place.",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 10,
+        "analysis": "This comment provides a factual JVM optimization detail that mitigates the cost of exceptions used for control flow."
+      },
+      {
+        "id": 47455150,
+        "author": "bearjaws",
+        "text": "JavaScript can be fast too, it\u0026#x27;s just the ecosystem and decisions devs make that slow it down.\u003cp\u003eSame for Java, I have yet to in my entire career see enterprise Java be performant and not memory intensive.\u003cp\u003eAt the end of the day, if you care about performance at the app layer, you will use a language better suited to that.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 11,
+        "analysis": "The comment insightfully compares Java and JavaScript performance issues as often stemming from ecosystem and usage patterns rather than inherent language speed."
       },
       {
         "id": 47455051,
@@ -44,23 +164,32 @@
         "text": "As much as I love Java, everybody should just be using Rust. That way you are actually in control, know what\u0026#x27;s going on, etc. Another reason specifically against Java is that the tooling, both Maven and Gradle, still stucks.",
         "indicators": [
           "emotional",
-          "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "The comment promotes Rust for control and criticizes Java tooling; while subjective, the points about Rust's control and some Java tooling frustrations are commonly acknowledged."
+        "accuracyRank": 12,
+        "analysis": "While somewhat opinionated, the comment correctly notes Rust's advantages in control and performance and points out common frustrations with Java tooling."
       },
       {
-        "id": 47455091,
-        "author": "r_lee",
-        "text": "How about no.",
+        "id": 47456003,
+        "author": "victor106",
+        "text": "this is great, so practical!!!\u003cp\u003eany other resources like this?",
         "indicators": [
           "emotional",
           "useless"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment is dismissive without providing any reasoning or constructive input, making it less useful for the discussion."
+        "accuracyRank": 13,
+        "analysis": "This comment expresses enthusiasm but adds no substantive content or analysis."
+      },
+      {
+        "id": 47455277,
+        "author": "tripple6",
+        "text": "Do good, don\u0026#x27;t do bad. Okay.",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 14,
+        "analysis": "This comment is a vague platitude without meaningful contribution to the discussion."
       }
     ]
   }
