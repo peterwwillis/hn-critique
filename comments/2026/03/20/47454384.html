@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">113 points</span>
+        <span class="score">148 points</span>
         by <a href="https://news.ycombinator.com/user?id=siegers" class="hnuser">siegers</a>
-        <span class="age">5 hours ago</span>
+        <span class="age">7 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47454384.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47454384" rel="noopener">original on HN</a>
       </p>
@@ -47,12 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around Java&#39;s performance characteristics, highlighting that while Java itself can be fast, common coding practices and language design choices often lead to slower code. Contributors emphasize the importance of algorithmic efficiency, memory allocation avoidance, and proper use of language features, while some suggest alternative languages like Rust for better control and performance.</p>
+      <p>The discussion centers on Java&#39;s performance characteristics, highlighting common pitfalls such as inefficient algorithms, memory allocations, and string handling. Commenters debate whether these issues stem from the language itself, its ecosystem, or programmer habits, with some advocating for alternative languages or better tooling.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 19 of 25 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47454384" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 15 of 29 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47454384" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -64,29 +64,29 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Understanding algorithmic complexity (in particular, avoiding rework in loops), is useful in any language, and is sage advice.<p>In practice though, for most enterprise web services, a lot of real world performance comes down to how efficiently you are calling external services (including the database). Just converting a loop of queries into bulk ones can help loads (and then tweaking the query to make good use of indexes, doing upserts, removing unneeded data, etc.)<p>I&#x27;m hopeful that improvements in LLMs mean we can ditch ORMs (under the guise that they are quicker to write queries and the inbetween mapping code with) and instead make good use of SQL to harness the powers that modern databases provide.</div>
-      <div class="comment-analysis"><em>This comment accurately highlights the importance of algorithmic complexity and database query optimization in real-world Java performance, reflecting practical experience and current trends.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=wood_spirit" class="hnuser">wood_spirit</a>
-        &nbsp;|&nbsp;rank #2
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">A subject close to my heart, I write a lot of heavily optimised code including a lot of hot data pipelines in Java.<p>And aside from algorithms, it usually comes down to avoiding memory allocations.<p>I have my go-to zero-alloc grpc and parquet and json and time libs etc and they make everything fast.<p>It’s mostly how idiomatic Java uses objects for everything that makes it slow overall.<p>But eventually after making a JVM app that keeps data in something like data frames etc and feels a long way from J2EE beans you can finally bump up against the limits that only c&#x2F;c++&#x2F;rust&#x2F;etc can get you past.</div>
-      <div class="comment-analysis"><em>The comment insightfully points out that memory allocation patterns in Java significantly affect performance, aligning with common understanding among JVM performance experts.</em></div>
+      <div class="comment-analysis"><em>This comment accurately emphasizes that algorithmic efficiency and external system interactions are critical performance factors beyond language choice.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=spankalee" class="hnuser">spankalee</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Avoiding Java&#x27;s string footguns is an interesting problem in programming languages design.<p>The String.format() problem is most immediately a bad compiler and bad implementation, IMO. It&#x27;s not difficult to special-case literal strings as the first argument, do parsing at compile time, and pass in a structured representation. The method could also do runtime caching. Even a very small LRU cache would fix a lot of common cases. At the very least they should let you make a formatter from a specific format string and reuse it, like you can with regexes, to explicitly opt into better performance.<p>But ultimately the string templates proposal should come back and fix this at the language level. Better syntax and guaranteed compile-time construction of the template. The language should help the developer do the fast thing.<p>String concatenation is a little trickier. In a JIT&#x27;ed language you have a lot of options for making a hierarchy of string implementations that optimize different usage patterns, and still be fast - and what you really want for concatenation is a RopeString, like JS VMs have, that simply references the other strings. The issue is that you don&#x27;t want virtual calls for hot-path string method calls.<p>Java chose a single final class so all calls are direct. But they should have been able to have a very small sealed class hierarchy where most methods are final and directly callable, and the virtual methods for accessing storage are devirtualized in optimized methods that only ever see one or two classes through a call site.<p>To me, that&#x27;s a small complexity cost to make common string patterns fast, instead of requiring StringBuilder.</div>
-      <div class="comment-analysis"><em>This detailed analysis of Java string performance issues and suggestions for language-level improvements shows deep understanding of JVM internals and language design.</em></div>
+      <div class="comment-analysis"><em>Provides a detailed and plausible analysis of Java string handling issues with concrete suggestions for language and compiler improvements.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=wood_spirit" class="hnuser">wood_spirit</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">A subject close to my heart, I write a lot of heavily optimised code including a lot of hot data pipelines in Java.<p>And aside from algorithms, it usually comes down to avoiding memory allocations.<p>I have my go-to zero-alloc grpc and parquet and json and time libs etc and they make everything fast.<p>It’s mostly how idiomatic Java uses objects for everything that makes it slow overall.<p>But eventually after making a JVM app that keeps data in something like data frames etc and feels a long way from J2EE beans you can finally bump up against the limits that only c&#x2F;c++&#x2F;rust&#x2F;etc can get you past.</div>
+      <div class="comment-analysis"><em>Insightfully points out that Java&#39;s object model can hinder performance and that zero-allocation techniques can help but have limits.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -104,26 +104,15 @@
     }
 </code></pre>
 If you know the bound of an array, it&#x27;s not large, and you are directly indexing in it, you really can&#x27;t do any better performance wise.<p>It&#x27;s also not less readable, just less familiar as Java devs don&#x27;t tend to use arrays that much.</div>
-      <div class="comment-analysis"><em>The suggestion to replace a map with an array for fixed-size hour indexing is a well-known optimization that improves performance and reduces overhead.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=kyrra" class="hnuser">kyrra</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">First request latency also can really suck in Java before hotpathed code gets through the C2 compiler.  You can warm up hotpaths by running that code during startup, but it&#x27;s really annoying having to do that.  Using C++, Go, or Rust gets you around that problem without having to jump through the hoops of code path warmup.<p>I wish Java had a proper compiler.</div>
-      <div class="comment-analysis"><em>This comment correctly identifies JVM warmup latency as a performance concern and contrasts it with other languages that compile ahead-of-time.</em></div>
+      <div class="comment-analysis"><em>This comment correctly identifies a micro-optimization that can improve performance and reduce overhead in a common use case.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=Okx" class="hnuser">Okx</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The code:<p><pre><code>  public int parseOrDefault(String value, int defaultValue) {
       if (value == null || value.isBlank()) return defaultValue;
@@ -136,95 +125,26 @@ If you know the bound of an array, it&#x27;s not large, and you are directly ind
   }
 </code></pre>
 Is probably worse than Integer.parseInt alone, since it can still throw NumberFormatExceptions for values that overflow (which is no longer handled!). Would maybe fix that. Unfortunately this is a major flaw in the Java standard library; parsing numbers shouldn&#x27;t throw expensive exceptions.</div>
-      <div class="comment-analysis"><em>This critique accurately points out a flaw in the example code and highlights a known limitation in Java&#39;s number parsing methods.</em></div>
+      <div class="comment-analysis"><em>Accurately critiques a code snippet for incomplete error handling and highlights a known limitation of Java&#39;s number parsing.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=kpw94" class="hnuser">kpw94</a>
-        &nbsp;|&nbsp;rank #7
+        <a href="https://news.ycombinator.com/user?id=layer8" class="hnuser">layer8</a>
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">The Autoboxing example imo is a case of &quot;Java isn&#x27;t so fast&quot;. Why can&#x27;t this be optimized behind the scenes by the compiler ?<p>Rest of advice is great: things compilers can&#x27;t really catch but a good code reviewer should point out.</div>
-      <div class="comment-analysis"><em>The comment correctly identifies autoboxing as a performance pitfall in Java and questions compiler optimizations, reflecting a common concern.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jerf" class="hnuser">jerf</a>
-        &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Any non-trivial program that has never had an optimizer run on it has a minimal-effort 50+% speedup in it.</div>
-      <div class="comment-analysis"><em>This general observation about the impact of optimization passes is accurate but somewhat broad and less specific to Java.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=cmovq" class="hnuser">cmovq</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">When you&#x27;re using a programming language that naturally steers you to write slow code you can&#x27;t only blame the programmer.<p>I was listening to someone say they write fast code in Java by avoiding allocations with a PoolAllocator that would &quot;cache&quot; small objects with poolAllocator.alloc(), poolAllocator.release(). So just manual memory management with extra steps. At that point why not use a better language for the task?</div>
-      <div class="comment-analysis"><em>The comment raises a valid point about language design influencing performance, though the suggestion to manually manage memory in Java is unconventional.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=latchkey" class="hnuser">latchkey</a>
-        &nbsp;|&nbsp;rank #10
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> 
-      </div>
-      <div class="comment-text">When they say that AI will replace programmers, I think of this article and come to terms with my own job security.<p>Most of this stuff is just central knowledge of the language that you pick up over time. Certainly, AI can also pick this stuff up instantly, but will it always pick the most efficient path when generating code for you?<p>Probably not, until we get benchmarks into the hot path of our test suite. That is something someone should work on.</div>
-      <div class="comment-analysis"><em>This comment reflects on the human expertise required for efficient coding, a thoughtful perspective though less technical.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=bearjaws" class="hnuser">bearjaws</a>
-        &nbsp;|&nbsp;rank #11
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">JavaScript can be fast too, it&#x27;s just the ecosystem and decisions devs make that slow it down.<p>Same for Java, I have yet to in my entire career see enterprise Java be performant and not memory intensive.<p>At the end of the day, if you care about performance at the app layer, you will use a language better suited to that.</div>
-      <div class="comment-analysis"><em>While somewhat opinionated, this comment correctly notes that language choice and ecosystem impact performance outcomes.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=titzer" class="hnuser">titzer</a>
-        &nbsp;|&nbsp;rank #12
-        &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">For fillInStackTrace, another trick is to define your own Exception subclass and override the method to be empty. I learned this trick 15+ years ago.<p>It doesn&#x27;t excuse the &quot;use exceptions for control flow&quot; anti-pattern, but it is a quick patch.</div>
-      <div class="comment-analysis"><em>This practical tip addresses a known JVM optimization technique for reducing exception overhead.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=sgbeal" class="hnuser">sgbeal</a>
-        &nbsp;|&nbsp;rank #13
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Slight correction:<p>&gt; StringBuilder works off a single mutable character buffer. One allocation.<p>It&#x27;s one allocation to instantiate the builder and _any_ number of allocations after that (noting that it&#x27;s optimized to reduce allocations, so it&#x27;s not allocating on every append() unless they&#x27;re huge).</div>
-      <div class="comment-analysis"><em>This correction clarifies the allocation behavior of StringBuilder, providing accurate technical detail.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=comrade1234" class="hnuser">comrade1234</a>
-        &nbsp;|&nbsp;rank #14
-        &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Also finding the right garbage collector and settings that works best for your project can help a lot.</div>
-      <div class="comment-analysis"><em>This comment correctly emphasizes the importance of JVM tuning for performance.</em></div>
+      <div class="comment-text">For #5, the “fix” [0] is incomplete, because you will still get a NumberFormatException when the value is out of range. For <i>int</i>, you could check if there are more or less than 10 digits, and use parseLong() when there are exactly 10 digits. For <i>long</i>, you can use BigInteger when there are exactly 18 digits. After skipping any leading zeros, of course. Or you could just replicate the JDK’s parsing implementation and change the part where it throws NumberFormatException (at the possible cost of foregoing JIT intrinsics).<p>A second bug is that Character.isDigit() returns true for non-ASCII Unicode digits as well, while Integer.parseInt() only supports ASCII digits.<p>Another bug is that the code will fail on the input string &quot;-&quot;.<p>Lastly, using value.isBlank() is a pessimization over value.isEmpty() (or just checking value.length(), which is read anyway in the next line), given that the loop would break on the first blank character.<p>[0]<p><pre><code>     public int parseOrDefault(String value, int defaultValue) {
+        if (value == null || value.isBlank()) return defaultValue;
+        for (int i = 0; i &lt; value.length(); i++) {
+            char c = value.charAt(i);
+            if (i == 0 &amp;&amp; c == &#x27;-&#x27;) continue;
+            if (!Character.isDigit(c)) return defaultValue;
+        }
+        return Integer.parseInt(value);
+    }</code></pre></div>
+      <div class="comment-analysis"><em>Provides a nuanced and detailed critique of number parsing code, pointing out subtle bugs and performance considerations.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
@@ -232,56 +152,104 @@ Is probably worse than Integer.parseInt alone, since it can still throw NumberFo
         <a href="https://news.ycombinator.com/user?id=taspeotis" class="hnuser">taspeotis</a>
         &nbsp;|&nbsp;rank #15
         &nbsp;|&nbsp;
-        <span class="indicator">trolling</span> <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+        <span class="indicator">emotional</span> <span class="indicator">trolling</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Knock Knock<p>Who’s there?<p><i>long pause</i><p>Java</div>
-      <div class="comment-analysis"><em>This comment is a joke that adds no substantive value to the discussion.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=spwa4" class="hnuser">spwa4</a>
-        &nbsp;|&nbsp;rank #16
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">trolling</span> 
-      </div>
-      <div class="comment-text">Java IS fast. The time between deciding to use Java and Oracle&#x27;s lawyers breaking down your door is measured in just weeks these days.</div>
-      <div class="comment-analysis"><em>This comment is more of a humorous jab at Oracle than a technical contribution.</em></div>
+      <div class="comment-analysis"><em>A humorous but uninformative comment that does not contribute to the technical discussion.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=koakuma-chan" class="hnuser">koakuma-chan</a>
-        &nbsp;|&nbsp;rank #17
+        <a href="https://news.ycombinator.com/user?id=bearjaws" class="hnuser">bearjaws</a>
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">emotional</span> 
       </div>
-      <div class="comment-text">As much as I love Java, everybody should just be using Rust. That way you are actually in control, know what&#x27;s going on, etc. Another reason specifically against Java is that the tooling, both Maven and Gradle, still stucks.</div>
-      <div class="comment-analysis"><em>While opinionated, this comment reflects a common sentiment about Rust&#39;s advantages over Java in control and performance.</em></div>
+      <div class="comment-text">JavaScript can be fast too, it&#x27;s just the ecosystem and decisions devs make that slow it down.<p>Same for Java, I have yet to in my entire career see enterprise Java be performant and not memory intensive.<p>At the end of the day, if you care about performance at the app layer, you will use a language better suited to that.</div>
+      <div class="comment-analysis"><em>Offers a balanced perspective that performance issues are often cultural and related to developer practices rather than inherent language flaws.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=cmovq" class="hnuser">cmovq</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">When you&#x27;re using a programming language that naturally steers you to write slow code you can&#x27;t only blame the programmer.<p>I was listening to someone say they write fast code in Java by avoiding allocations with a PoolAllocator that would &quot;cache&quot; small objects with poolAllocator.alloc(), poolAllocator.release(). So just manual memory management with extra steps. At that point why not use a better language for the task?</div>
+      <div class="comment-analysis"><em>Raises a valid point about the mismatch between Java&#39;s design and low-level performance needs, suggesting alternative languages may be better suited.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=kyrra" class="hnuser">kyrra</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">emotional</span> 
+      </div>
+      <div class="comment-text">First request latency also can really suck in Java before hotpathed code gets through the C2 compiler.  You can warm up hotpaths by running that code during startup, but it&#x27;s really annoying having to do that.  Using C++, Go, or Rust gets you around that problem without having to jump through the hoops of code path warmup.<p>I wish Java had a proper compiler.</div>
+      <div class="comment-analysis"><em>Correctly identifies JVM warmup as a performance drawback and contrasts it with other compiled languages.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=zahlman" class="hnuser">zahlman</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">&gt; Accidental O(n²) with Streams Inside Loops<p>Man that code looks awful. Really reminds me of why I drifted away from Java over time. Not just the algorithm, of course; the repetitiveness, the hoops that you have to jump through in order to do pretty &quot;stream processing&quot;... and then it&#x27;s not even an FP algorithm in the end, either way!<p>Honestly the only time I can imagine the &quot;process the whole [collection] per iteration&quot; thing coming up is where either you really do need to compare (or at least really are intentionally comparing) each element to each other element, or else this exact problem of building a histogram. And for the latter I honestly haven&#x27;t seen people fully fall into this trap very often. More commonly people will try to iterate over the possible buckets (here, hour values), sometimes with a first pass to figure out what those might be. That&#x27;s still extra work, but at least it&#x27;s O(kn) instead of O(n^2).<p>You <i>can</i> do this sort of thing in an elegant, &quot;functional&quot; looking way if you sort the data first and then group it by the same key. That first pass is O(n lg n) if you use a classical sort; making a histogram like this in the first place is basically equivalent to radix sort, but it&#x27;s nice to not have to write that yourself. I just want to show off what it <i>can</i> look like e.g. in Python:<p><pre><code>  def local_hour(order):
+      return datetime.datetime.fromtimestamp(order.timestamp).hour
+
+  groups = itertools.groupby(sorted(orders, key=local_hour), key=local_hour)
+  orders_by_hour = {hour: len(list(orders)) for (hour, orders) in groups}
+</code></pre>
+Anyway, overall I feel like these kinds of things are mostly done by people who don&#x27;t need to have the problem explained, who have simply been lazy or careless and simply need to be made to look in the right place to see the problem. Cf. Dan Luu&#x27;s anecdotes <a href="https:&#x2F;&#x2F;danluu.com&#x2F;algorithms-interviews&#x2F;" rel="nofollow">https:&#x2F;&#x2F;danluu.com&#x2F;algorithms-interviews&#x2F;</a> , and I can&#x27;t seem to find it right now but the story about saving a company millions of dollars finding Java code that was IIRC resizing an array one element at a time.<p>(Another edit: originally I missed that the code was only trying to count the number of orders in each hour, rather than collecting them. I fixed the code above, but the discussion makes less sense for the simplified problem. In Python we can do this with `collections.Counter`, but it wouldn&#x27;t be unreasonable to tally things up in a pre-allocated `counts_by_hour = [0] * 24` either.)<p>----<p>Edit:<p>&gt; String.format() came in last in every category. It has to... StringBuilder was consistently the fastest. The fix: [code not using StringBuilder]... Use String.format() for the numeric formatting where you need it, and let the compiler optimize the rest. Or just use a StringBuilder if you need full control.<p>Yeah, this is confused in a way that I find fairly typical of LLM output. The attitude towards `String.format` is just plain inconsistent. And there&#x27;s no acknowledgment of how multiple `+`s in a line get optimized behind the scenes. And the &quot;fix&quot; still uses `String.format` to format the floating-point value, and there&#x27;s no investigation of what that does to performance or whether it can be avoided.</div>
+      <div class="comment-analysis"><em>Provides a candid critique of Java coding culture and common algorithmic inefficiencies that degrade performance.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=titzer" class="hnuser">titzer</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">For fillInStackTrace, another trick is to define your own Exception subclass and override the method to be empty. I learned this trick 15+ years ago.<p>It doesn&#x27;t excuse the &quot;use exceptions for control flow&quot; anti-pattern, but it is a quick patch.</div>
+      <div class="comment-analysis"><em>Offers a practical tip to mitigate exception overhead while acknowledging the underlying design issue.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Izkata" class="hnuser">Izkata</a>
+        &nbsp;|&nbsp;rank #12
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">&quot;Java is slow&quot; is a reputation it earned in the 90s&#x2F;2000s because the JVM startup (at least on Windows) was extremely slow, like several seconds, with a Java-branded splash screen during that time.  Even non-technical people made the association.</div>
+      <div class="comment-analysis"><em>Provides historical context explaining Java&#39;s early performance reputation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=kpw94" class="hnuser">kpw94</a>
+        &nbsp;|&nbsp;rank #13
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">The Autoboxing example imo is a case of &quot;Java isn&#x27;t so fast&quot;. Why can&#x27;t this be optimized behind the scenes by the compiler ?<p>Rest of advice is great: things compilers can&#x27;t really catch but a good code reviewer should point out.</div>
+      <div class="comment-analysis"><em>Correctly points out that some performance issues could be addressed by compiler improvements, while others require developer attention.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jandrewrogers" class="hnuser">jandrewrogers</a>
-        &nbsp;|&nbsp;rank #18
+        &nbsp;|&nbsp;rank #14
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">You can write many of the bad examples in the article in any language. It is just far more common to see them in Java code than some other languages.<p>Java is only fast-ish even on its best day. The more typical performance is much worse because the culture around the language usually doesn&#x27;t consider performance or efficiency to be a priority. Historically it was even a bit hostile to it.</div>
-      <div class="comment-analysis"><em>This comment insightfully highlights cultural factors affecting Java code performance.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=hiyer" class="hnuser">hiyer</a>
-        &nbsp;|&nbsp;rank #19
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">I ran into 5 and 7 in a Flink app recently - was parsing a timestamp as a number first and then falling back to iso8601 string, which is what it was. The flamegraph showed 10% for the exception handling bit.
-While fixing that, also found repeated creation of datetimeformatter.
-Both were not in loops, but both were being done for every event, for 10s of 1000s of events every second.</div>
-      <div class="comment-analysis"><em>This real-world example illustrates how exception handling and object creation can impact Java application performance.</em></div>
+      <div class="comment-analysis"><em>Insightfully attributes performance problems more to developer culture than inherent language limitations.</em></div>
     </div>
     
 
@@ -293,7 +261,7 @@ Both were not in loops, but both were being done for every event, for 10s of 100
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-20 18:56 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 20:44 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

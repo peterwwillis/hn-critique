@@ -1,0 +1,73 @@
+{
+  "story_id": 47458595,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article introduces Attention Residuals (AttnRes), a novel modification to standard residual connections in Transformer models that uses learned, input-dependent attention over previous layer outputs to improve performance and training dynamics. It presents a variant called Block AttnRes to reduce memory usage and shows empirical results indicating performance gains on various benchmarks and better gradient distribution during training.",
+    "mainPoints": [
+      "Standard residual connections in Transformers accumulate all layer outputs with fixed weights, which can dilute contributions and cause unbounded growth in hidden-state magnitudes.",
+      "AttnRes replaces fixed accumulation with softmax attention over preceding layer outputs, allowing selective, content-aware aggregation of earlier representations.",
+      "Block AttnRes partitions layers into blocks to reduce memory complexity while maintaining most benefits of full AttnRes.",
+      "Empirical results show AttnRes improves performance across multiple benchmarks including MMLU, GPQA-Diamond, BBH, TriviaQA, and code generation tasks.",
+      "AttnRes mitigates PreNorm dilution by keeping output magnitudes bounded and distributing gradient norms more uniformly across layers."
+    ],
+    "truthfulness": "The claims made in the article align with known issues in Transformer architectures regarding residual connections and gradient flow, and the proposed solution of using attention over residuals is a plausible and novel approach. The repository includes a paper on arXiv (arXiv:2603.15031) which supports the technical details and experimental results presented. The reported benchmark improvements and training dynamics are consistent with the methodology described, though independent verification from multiple sources or peer-reviewed publications would strengthen confidence. Overall, the information appears accurate and credible based on the available technical documentation and results.",
+    "considerations": [
+      "The article does not discuss potential computational overhead or latency impacts of AttnRes in real-world deployment scenarios.",
+      "There is no mention of how AttnRes performs on tasks outside the reported benchmarks or with different model architectures.",
+      "The long-term stability and generalization of models trained with AttnRes under diverse conditions remain unaddressed.",
+      "The repository and paper appear to come from a research team but lack extensive third-party validation or citations from other independent research groups."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers on the Attention Residuals (AttnRes) technique, highlighting its efficiency improvements in memory and compute requirements for large-scale models. Commenters note its potential for faster iteration in research and better consumer hardware compatibility, with some technical comparisons to existing mechanisms like LSTM gates.",
+    "comments": [
+      {
+        "id": 47459736,
+        "author": "westurner",
+        "text": "ScholarlyArticle: \u0026quot;Attention Residuals\u0026quot; (2026)  \u003ca href=\"https:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2603.15031\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2603.15031\u003c/a\u003e :\u003cp\u003e\u0026gt; Abstract: \u003ci\u003eResidual connections with PreNorm are standard in modern LLMs, yet they accumulate all layer outputs with fixed unit weights. This uniform aggregation causes uncontrolled hidden-state growth with depth, progressively diluting each layer\u0026#x27;s contribution. We propose Attention Residuals (\u003c/i\u003eAttnRes\u003ci\u003e),\u003c/i\u003e which replaces this fixed accumulation with softmax attention over preceding layer outputs, \u003ci\u003eallowing each layer to selectively aggregate earlier representations with learned, input-dependent weights. To address the memory and communication overhead of attending over all preceding layer outputs for large-scale model training, we introduce\u003c/i\u003e Block AttnRes, \u003ci\u003ewhich partitions layers into blocks and attends over block-level representations, reducing the memory footprint while preserving most of the gains of full AttnRes. \u003c/i\u003e [...]",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment accurately summarizes the original paper's abstract and provides a clear, technical explanation of the method and its motivation."
+      },
+      {
+        "id": 47459484,
+        "author": "jjcm",
+        "text": "Two things stand out to me with this:\u003cp\u003e1. Drops compute required for training by ~20%. This approach wont just help the ever escalating model sizes larger companies are pushing for, it means things like autoresearch can iterate on new model architectures faster.\u003cp\u003e2. WAY lower bandwidth requirements for inference. Means with approaches like this it should run on consumer hardware far better. It apparently requires 1\u0026#x2F;6th the memory bandwidth of a traditional approach for better results.\u003cp\u003eThis is a big improvement if it can be generalized. They\u0026#x27;re claiming it\u0026#x27;s a drop in replacement, so it seems like it can as well.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment provides a reasonable interpretation of the performance improvements and practical implications, consistent with the paper's claims."
+      },
+      {
+        "id": 47460036,
+        "author": "jryio",
+        "text": "This is the key piece\u003cp\u003e\u0026gt; Full AttnRes is straightforward but requires O(Ld) memory at scale. Block AttnRes partitions layers into N blocks, accumulates within each block via standard residuals, and applies attention only over block-level representations. With ~8 blocks, it recovers most of Full AttnRes\u0026#x27;s gains while serving as a practical drop-in replacement with marginal overhead.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment correctly captures the technical approach of Block AttnRes and its trade-offs, aligning well with the paper's description."
+      },
+      {
+        "id": 47459229,
+        "author": "jszymborski",
+        "text": "This is reminds me of the input gates of an LSTM.",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 4,
+        "analysis": "While the analogy is insightful, it is a high-level comparison that may oversimplify the differences between the mechanisms."
+      }
+    ]
+  }
+}
