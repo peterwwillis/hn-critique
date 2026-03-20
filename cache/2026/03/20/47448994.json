@@ -23,20 +23,8 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on multiple Azure vulnerabilities and logging issues, highlighting concerns about audit log reliability and complexity in Azure's systems. Users share personal experiences and external reports criticizing Microsoft's cloud security and logging transparency.",
+    "summary": "The discussion centers on multiple security and reliability issues with Microsoft's Azure platform, including critical vulnerabilities, unreliable audit logs, and complexity in access control systems. Commenters share personal experiences and external reports highlighting systemic problems and skepticism about Azure's security and logging integrity.",
     "comments": [
-      {
-        "id": 47450462,
-        "author": "deathanatos",
-        "text": "IIRC, (\u0026amp; I don\u0026#x27;t remember if I reported it), but Azure\u0026#x27;s audit logs don\u0026#x27;t reflect reality when you delete a client secret from the UI, either.\u003cp\u003eIf I remember the issue right, we lost a client secret (it just vanished!) and I went to the audit logs to see who dun it. According to the logs, \u003ci\u003eI had done it.\u003c/i\u003e And yet, I also knew that I had not done it.\u003cp\u003eI eventually reconstructed the bug to an old page load. I had the page loaded when there were just secrets \u0026quot;A\u0026quot; \u0026amp; \u0026quot;B\u0026quot;. When I then clicked the delete icon for \u0026quot;B\u0026quot;, Azure deleted secrets \u0026quot;B\u0026quot; \u003ci\u003eand\u003c/i\u003e \u0026quot;C\u0026quot; … which had been added since the page load. Essentially, the UI said \u0026quot;delete this row\u0026quot; but the API was \u0026quot;set the set of secrets to {A}\u0026quot;. The audit log then logged the API \u0026quot;correctly\u0026quot; in the sense of, yes, my credentials did execute that API call, I suppose, but utterly incorrectly in the sense of any reasonable real-world view as to what I had done.\u003cp\u003eThankfully we got it sorted, but it sort of shook my faith in Azure\u0026#x27;s logs in particular, and a little bit of audit logs in \u003ci\u003egeneral\u003c/i\u003e. You have to make sure you\u0026#x27;ve actually audited \u003ci\u003ewhat the human did\u003c/i\u003e. Or, conversely, if you\u0026#x27;re trying to reason with audit logs, … you\u0026#x27;d best understand how they were generated.\u003cp\u003eI don\u0026#x27;t think I would ever accept audit logs in court, if I were on a jury. Audit logs being hot lies is within reasonable doubt.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed, plausible explanation of a specific Azure audit logging flaw, supported by personal experience, making it highly credible and insightful."
-      },
       {
         "id": 47451294,
         "author": "jiggawatts",
@@ -46,8 +34,32 @@
           "likely-true",
           "constructive"
         ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed, experience-based explanation of Azure's audit log limitations, supported by plausible reasoning about design tradeoffs and GDPR, making it highly credible."
+      },
+      {
+        "id": 47450462,
+        "author": "deathanatos",
+        "text": "IIRC, (\u0026amp; I don\u0026#x27;t remember if I reported it), but Azure\u0026#x27;s audit logs don\u0026#x27;t reflect reality when you delete a client secret from the UI, either.\u003cp\u003eIf I remember the issue right, we lost a client secret (it just vanished!) and I went to the audit logs to see who dun it. According to the logs, \u003ci\u003eI had done it.\u003c/i\u003e And yet, I also knew that I had not done it.\u003cp\u003eI eventually reconstructed the bug to an old page load. I had the page loaded when there were just secrets \u0026quot;A\u0026quot; \u0026amp; \u0026quot;B\u0026quot;. When I then clicked the delete icon for \u0026quot;B\u0026quot;, Azure deleted secrets \u0026quot;B\u0026quot; \u003ci\u003eand\u003c/i\u003e \u0026quot;C\u0026quot; … which had been added since the page load. Essentially, the UI said \u0026quot;delete this row\u0026quot; but the API was \u0026quot;set the set of secrets to {A}\u0026quot;. The audit log then logged the API \u0026quot;correctly\u0026quot; in the sense of, yes, my credentials did execute that API call, I suppose, but utterly incorrectly in the sense of any reasonable real-world view as to what I had done.\u003cp\u003eThankfully we got it sorted, but it sort of shook my faith in Azure\u0026#x27;s logs in particular, and a little bit of audit logs in \u003ci\u003egeneral\u003c/i\u003e. You have to make sure you\u0026#x27;ve actually audited \u003ci\u003ewhat the human did\u003c/i\u003e. Or, conversely, if you\u0026#x27;re trying to reason with audit logs, … you\u0026#x27;d best understand how they were generated.\u003cp\u003eI don\u0026#x27;t think I would ever accept audit logs in court, if I were on a jury. Audit logs being hot lies is within reasonable doubt.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 2,
-        "analysis": "The comment offers a nuanced critique of Azure's audit log design, explaining the rationale and consequences, which aligns with known issues around cloud logging and privacy."
+        "analysis": "The comment describes a specific, plausible bug with audit logs and UI/API mismatch, illustrating real-world implications and reinforcing concerns about audit log trustworthiness."
+      },
+      {
+        "id": 47451969,
+        "author": "vaylian",
+        "text": "\u0026gt; Having done a fair bit of logging to databases with various scripts, I believe this was a simple matter of overflowing the SQL column length for a field, causing the entire INSERT to fail. This is a common beginner mistake when you first start to work with databases.\u003cp\u003eI\u0026#x27;m not sure if I understand this part. I\u0026#x27;m trying to put it into my own words. Is the following correct? The attacker provided an input that was so long, that it was rejected by the database. And the program that submitted the SQL query to the database did not have any logic for handling a query failure, which is why there is no trace of the login attempt  in the log or elsewhere.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment provides a reasonable technical hypothesis about the vulnerability mechanism, showing understanding of database errors and logging failures."
       },
       {
         "id": 47450296,
@@ -58,8 +70,42 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "The reference to an official CISA report adds credibility, and the anecdote about discovery highlights real-world detection challenges, making this a valuable contribution."
+        "accuracyRank": 4,
+        "analysis": "This comment cites an external authoritative source and highlights a notable security incident, adding context to the discussion about Microsoft security issues."
+      },
+      {
+        "id": 47449829,
+        "author": "throwoutway",
+        "text": "Yesterday ProPublica and ArsTechnica published a takedown of Azure: \u0026quot;Federal cyber experts called Microsoft’s cloud a “pile of shit,” approved it anyway\u0026quot; ...\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;arstechnica.com\u0026#x2F;information-technology\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;federal-cyber-experts-called-microsofts-cloud-a-pile-of-shit-approved-it-anyway\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arstechnica.com\u0026#x2F;information-technology\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;feder...\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "emotional"
+        ],
+        "accuracyRank": 5,
+        "analysis": "The comment references credible investigative journalism that supports the narrative of serious Azure security problems, though the language is emotionally charged."
+      },
+      {
+        "id": 47453932,
+        "author": "b00ty4breakfast",
+        "text": "The state of cyber-security is a joke given that the entirety of civilization depends on these systems to function.   It\u0026#x27;s like we transferred all our stuff into a boat with a gaping hole in the bilge plugged with a wad of duct tape and started sailing towards the open ocean.  Forget putting the cart before the horse, the old mare is still in the barn and cart is about 3 counties over, upended in a ditch.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 6,
+        "analysis": "While the comment is metaphorical and emotional, it captures a valid sentiment about the fragility and risk in current cybersecurity practices."
+      },
+      {
+        "id": 47453937,
+        "author": "giancarlostoro",
+        "text": "Imagine if Microsoft spend more attention on making Windows suck less and Azure better, because in my eyes it is not as awful as whatever the heck AWS\u0026#x27; dashboard is supposed to be. Azure has a rich set of developer libraries for their offerings, and their dashboard isn\u0026#x27;t nearly as awful as AWS. I\u0026#x27;ve never used GCP so I can\u0026#x27;t comment on theirs, or their libraries.\u003cp\u003eIt should really horrify everybody that Microsoft is not investing more into Azure considering they host the worlds most known LLM (and used?).",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment provides a balanced perspective, acknowledging Azure's flaws but also its strengths compared to competitors, though it is somewhat subjective."
       },
       {
         "id": 47451136,
@@ -69,74 +115,8 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment reflects an experienced perspective on cloud complexity, though it is somewhat subjective and lacks concrete examples specific to the discussed vulnerabilities."
-      },
-      {
-        "id": 47451969,
-        "author": "vaylian",
-        "text": "\u0026gt; Having done a fair bit of logging to databases with various scripts, I believe this was a simple matter of overflowing the SQL column length for a field, causing the entire INSERT to fail. This is a common beginner mistake when you first start to work with databases.\u003cp\u003eI\u0026#x27;m not sure if I understand this part. I\u0026#x27;m trying to put it into my own words. Is the following correct? The attacker provided an input that was so long, that it was rejected by the database. And the program that submitted the SQL query to the database did not have any logic for handling a query failure, which is why there is no trace of the login attempt  in the log or elsewhere.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "The hypothesis is reasonable and technically plausible, though it is speculative without direct evidence from the vulnerability details."
-      },
-      {
-        "id": 47450924,
-        "author": "epistasis",
-        "text": "There\u0026#x27;s a big tradeoff here though: IT admins really love buying Microsoft. And when the dog tries to complain about the dogfood, the dogfood purchaser tends to not understand very well.",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment offers a sociological observation about customer behavior rather than technical insight, making it less relevant but still plausible."
-      },
-      {
-        "id": 47450990,
-        "author": "dfedbeef",
-        "text": "\u0026gt; It\u0026#x27;s not often that you see a demo of an actual Azure vulnerability, as they get patched and are gone forever. However, because Microsoft was having trouble replicating this complicated bypass, and asked for a video, I come bearing receipts.\u003cp\u003eAbsolutely savage lol\u003cp\u003e[If you didn\u0026#x27;t read the thing, it\u0026#x27;s one curl command.]",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "While not analytical, this comment acknowledges the significance of the exploit demonstration, adding context to the discussion."
-      },
-      {
-        "id": 47453037,
-        "author": "ralferoo",
-        "text": "Only watched a little of the video, until I saw one of the requests returned an access token with lots of repeated data. Was very surprised when I base64 decoded that and found it was just \u0026quot;\\uDFFF\\uDBFF\u0026quot; repeating over and over. Maybe that was data coming from his exploit, seems a bit weird for that to be in an access token anyway. I had the sound muted, so maybe he mentioned that.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
         "accuracyRank": 8,
-        "analysis": "The comment notes an oddity in the demo data, which could be relevant but lacks further analysis or confirmation."
-      },
-      {
-        "id": 47449934,
-        "author": "ronbenton",
-        "text": "Bypassing logging feels relatively unimportant compared to some of the recent EntraID vulns we’ve seen",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 9,
-        "analysis": "This opinion prioritizes vulnerabilities but does not provide technical detail, making it less informative."
-      },
-      {
-        "id": 47450712,
-        "author": "strbean",
-        "text": "Maybe I can use one of these to get in to my organization azure account from my alma mater. The email was deleted right after I graduated, but Microsoft has been trying to bill me (for a reserved IP or something) for close to a decade. Support is useless of course.",
-        "indicators": [
-          "emotional",
-          "useless"
-        ],
-        "accuracyRank": 10,
-        "analysis": "This comment is anecdotal and speculative about misuse, contributing little to the technical discussion."
+        "analysis": "The comment reflects an informed opinion on cloud access control complexity, which aligns with common critiques of Azure's convoluted systems."
       },
       {
         "id": 47450884,
@@ -146,8 +126,71 @@
           "emotional",
           "useless"
         ],
+        "accuracyRank": 9,
+        "analysis": "This comment is purely emotional and lacks substantive detail, contributing little to the discussion."
+      },
+      {
+        "id": 47450990,
+        "author": "dfedbeef",
+        "text": "\u0026gt; It\u0026#x27;s not often that you see a demo of an actual Azure vulnerability, as they get patched and are gone forever. However, because Microsoft was having trouble replicating this complicated bypass, and asked for a video, I come bearing receipts.\u003cp\u003eAbsolutely savage lol\u003cp\u003e[If you didn\u0026#x27;t read the thing, it\u0026#x27;s one curl command.]",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 10,
+        "analysis": "The comment adds value by highlighting the rarity of public demos and providing evidence of the vulnerability, though it is brief."
+      },
+      {
+        "id": 47450712,
+        "author": "strbean",
+        "text": "Maybe I can use one of these to get in to my organization azure account from my alma mater. The email was deleted right after I graduated, but Microsoft has been trying to bill me (for a reserved IP or something) for close to a decade. Support is useless of course.",
+        "indicators": [
+          "emotional",
+          "trolling"
+        ],
         "accuracyRank": 11,
-        "analysis": "This is a brief, emotional critique without supporting evidence or constructive content."
+        "analysis": "This comment is more of a personal grievance and borderline trolling, lacking constructive or technical content."
+      },
+      {
+        "id": 47453037,
+        "author": "ralferoo",
+        "text": "Only watched a little of the video, until I saw one of the requests returned an access token with lots of repeated data. Was very surprised when I base64 decoded that and found it was just \u0026quot;\\uDFFF\\uDBFF\u0026quot; repeating over and over. Maybe that was data coming from his exploit, seems a bit weird for that to be in an access token anyway. I had the sound muted, so maybe he mentioned that.",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 12,
+        "analysis": "The comment is observational but speculative without technical confirmation, so its accuracy is uncertain."
+      },
+      {
+        "id": 47449934,
+        "author": "ronbenton",
+        "text": "Bypassing logging feels relatively unimportant compared to some of the recent EntraID vulns we’ve seen",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 13,
+        "analysis": "This comment provides a comparative perspective but lacks detail or evidence to substantiate the claim."
+      },
+      {
+        "id": 47450924,
+        "author": "epistasis",
+        "text": "There\u0026#x27;s a big tradeoff here though: IT admins really love buying Microsoft. And when the dog tries to complain about the dogfood, the dogfood purchaser tends to not understand very well.",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 14,
+        "analysis": "The comment offers a sociological insight into enterprise purchasing behavior but does not address technical accuracy."
+      },
+      {
+        "id": 47454024,
+        "author": "Erndob",
+        "text": "Microsoft managed to introduce a critical vulnerability in Notepad, so this does not surprise me",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 15,
+        "analysis": "This comment is anecdotal and tangential, providing little direct relevance or depth to the Azure discussion."
       }
     ]
   }

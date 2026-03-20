@@ -21,18 +21,31 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the release of small, efficient TTS models, their technical details, potential applications, and limitations. Participants express interest in performance, quality, and customization options.",
+    "summary": "The discussion centers around the new Kitten TTS models, highlighting their small size and usability for edge devices. Users discuss performance, voice quality, dependency issues, and potential applications, with some requesting more details on training data and features.",
     "comments": [
       {
-        "id": 47448356,
-        "author": "dawdler-purge",
-        "text": "I created a CLI wrapper for Kitten TTS: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;newptcai\u0026#x2F;purr\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;newptcai\u0026#x2F;purr\u003c/a\u003e\u003cp\u003eBTW, it seems that kitten (the Python package) has the following chain of dependencies: kittentts → misaki[en] → spacy-curated-transformers\u003cp\u003eSo if you install it directly via uv, it will pull torch and NVIDIA CUDA packages (several GB), which are not needed to run kitten.",
+        "id": 47452981,
+        "author": "baibai008989",
+        "text": "the dependency chain issue is a real barrier for edge deployment. i\u0026#x27;ve been running tts models on a raspberry pi for a home automation project and anything that pulls torch + cuda makes the whole thing a non-starter. 25MB is genuinely exciting for that use case.\u003cp\u003ecurious about the latency characteristics though. 1.5x realtime on a 9700 is fine for batch processing but for interactive use you need first-chunk latency under 200ms or the conversation feels broken. does anyone know if it supports streaming output or is it full-utterance only?\u003cp\u003ethe phoneme-based approach should help with pronunciation consistency too. the models i\u0026#x27;ve tried that work on raw text tend to mispronounce technical terms unpredictably — same word pronounced differently across runs.",
         "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides practical insight from experience, highlighting a real challenge in deploying TTS models on low-power devices due to heavy dependencies."
+      },
+      {
+        "id": 47451826,
+        "author": "bobokaytop",
+        "text": "The size\u0026#x2F;quality tradeoff here is interesting. 25MB for a TTS model that\u0026#x27;s usable is a real achievement, but the practical bottleneck for most edge deployments isn\u0026#x27;t model size -- it\u0026#x27;s the inference latency on low-power hardware and the audio streaming architecture around it. Curious how this performs on something like a Raspberry Pi 4 for real-time synthesis. The voice quality tradeoff at that size usually shows up most in prosody and sentence-final intonation rather than phoneme accuracy.",
+        "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 1,
-        "analysis": "Provides a practical enhancement for users by simplifying deployment and reducing dependency bloat, adding value to the original project."
+        "accuracyRank": 2,
+        "analysis": "This comment accurately identifies the main challenge in edge TTS deployment as latency rather than model size, reflecting an understanding of practical constraints."
       },
       {
         "id": 47442196,
@@ -42,90 +55,88 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "Highlights real-world usability and performance metrics, though subjective impressions limit definitive conclusions."
+        "accuracyRank": 3,
+        "analysis": "Provides useful benchmark data and a balanced opinion on voice quality, contributing valuable experiential feedback."
       },
       {
-        "id": 47451826,
-        "author": "bobokaytop",
-        "text": "The size\u0026#x2F;quality tradeoff here is interesting. 25MB for a TTS model that\u0026#x27;s usable is a real achievement, but the practical bottleneck for most edge deployments isn\u0026#x27;t model size -- it\u0026#x27;s the inference latency on low-power hardware and the audio streaming architecture around it. Curious how this performs on something like a Raspberry Pi 4 for real-time synthesis. The voice quality tradeoff at that size usually shows up most in prosody and sentence-final intonation rather than phoneme accuracy.",
+        "id": 47448356,
+        "author": "dawdler-purge",
+        "text": "I created a CLI wrapper for Kitten TTS: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;newptcai\u0026#x2F;purr\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;newptcai\u0026#x2F;purr\u003c/a\u003e\u003cp\u003eBTW, it seems that kitten (the Python package) has the following chain of dependencies: kittentts → misaki[en] → spacy-curated-transformers\u003cp\u003eSo if you install it directly via uv, it will pull torch and NVIDIA CUDA packages (several GB), which are not needed to run kitten.",
         "indicators": [
           "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 3,
-        "analysis": "Raises valid concerns about practical deployment and quality tradeoffs, relevant for edge use cases."
-      },
-      {
-        "id": 47451335,
-        "author": "geokon",
-        "text": "Very cool :)\nLook forward to trying it out\u003cp\u003eMaybe a dumb and slightly tangential question, \n(I don\u0026#x27;t mean this as a criticism!)\nbut why not release a command line executable?\u003cp\u003eEven the API looks like what you\u0026#x27;d see in a manpage.\u003cp\u003eI get it wouldn\u0026#x27;t be too much work for a user to actually make something like that,\nI\u0026#x27;m just curious what the thought process is",
-        "indicators": [
-          "thoughtful"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Asks a reasonable question about usability, though it doesn't impact core technical evaluation."
-      },
-      {
-        "id": 47449764,
-        "author": "jacquesm",
-        "text": "Good on device TTS is an amazing accessibility tool. Thank you for building this. Way too many of devices that use it rely on online services, this is much preferred.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Emphasizes the importance of offline TTS for accessibility, aligning with broader accessibility goals."
-      },
-      {
-        "id": 47445231,
-        "author": "daneel_w",
-        "text": "A very clear improvement from the first set of models you released some time ago. I\u0026#x27;m really impressed. Thanks for sharing it all.",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Expresses appreciation and notes progress, but lacks technical detail."
-      },
-      {
-        "id": 47452401,
-        "author": "erkoo",
-        "text": "How noticeable is the difference in quality between the 4M model and the 80M model?",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Raises a relevant question about model performance tradeoffs, though no data is provided."
-      },
-      {
-        "id": 47448182,
-        "author": "_hzw",
-        "text": "I\u0026#x27;d love to see a monolingual Japanese model sometime in the future. Qwen3-tts works for Japanese in general, but from time to time it will mix with some Mandarin in between, making it unusable.",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Highlights a specific linguistic challenge, relevant for multilingual model development."
+        "analysis": "Highlights an important technical detail about unnecessary heavy dependencies, which is relevant for users concerned about deployment size."
       },
       {
         "id": 47447271,
         "author": "__fst__",
         "text": "Was playing around a bit and for its size it\u0026#x27;s very impressive. Just has issues pronounciating numbers. I tried to let it generate \u0026quot;Startup finished in 135 ms.\u0026quot;\u003cp\u003eI didn\u0026#x27;t expect it to pronounciate \u0026#x27;ms\u0026#x27; correctly, but the number sounded just like noise. Eventually I got an acceptable result for the string \u0026quot;Startup finished in one hundred and thirty five seconds.",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "likely-true"
         ],
-        "accuracyRank": 9,
-        "analysis": "Provides a concrete example of limitations, useful for understanding model weaknesses."
+        "accuracyRank": 5,
+        "analysis": "Provides a specific and practical observation about pronunciation limitations, useful for understanding model weaknesses."
       },
       {
-        "id": 47442295,
-        "author": "ks2048",
-        "text": "You should put examples comparing the 4 models you released - same text spoken by each.",
+        "id": 47442179,
+        "author": "altruios",
+        "text": "One of the core features I look for is expressive control.\u003cp\u003eEither in the form of the api via pitch\u0026#x2F;speed\u0026#x2F;volume controls, for more deterministic controls.\u003cp\u003eOr in expressive tags such as [coughs], [urgently], or [laughs in melodic ascending and descending arpeggiated gibberish babbles].\u003cp\u003ethe 25MB model is amazingly good for being 25MB. How does it handle expressive tags?",
         "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Raises a relevant question about expressive control features, indicating an understanding of advanced TTS capabilities."
+      },
+      {
+        "id": 47449764,
+        "author": "jacquesm",
+        "text": "Good on device TTS is an amazing accessibility tool. Thank you for building this. Way too many of devices that use it rely on online services, this is much preferred.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Emphasizes the importance of offline TTS for accessibility, reflecting a user-centered perspective."
+      },
+      {
+        "id": 47442384,
+        "author": "ks2048",
+        "text": "There\u0026#x27;s a number of recent, good quality, small TTS models.\u003cp\u003eIf the author doesn\u0026#x27;t describe some detail about the data, training, or a novel architecture, etc, I only assume they just took another one, do a little finetuning, and repackage as a new product.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Expresses skepticism about novelty without detailed disclosures, a common concern in ML model releases."
+      },
+      {
+        "id": 47443199,
+        "author": "Remi_Etien",
+        "text": "25MB is impressive. What\u0026#x27;s the tradeoff vs the 80M model — is it mainly voice quality or does it also affect pronunciation accuracy on less common words?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Asks a pertinent question about tradeoffs between model sizes, showing a focus on practical performance differences."
+      },
+      {
+        "id": 47451591,
+        "author": "rsmtjohn",
+        "text": "The \u0026lt;25MB figure is what stands out. Been wanting to add TTS to a few Next.js projects for offline\u0026#x2F;edge scenarios but model sizes have always made it impractical to ship.\u003cp\u003eAt 25MB you can actually bundle it with the app. Going to test whether this works in a Vercel Edge Function context -- if latency is acceptable there it opens up a lot of use cases that currently require a round-trip to a hosted API.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
           "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "Suggests a practical way to assess model performance, beneficial for users."
+        "analysis": "Highlights the practical significance of the small model size for edge computing and offline use cases."
       }
     ]
   }

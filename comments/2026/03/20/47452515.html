@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">14 points</span>
+        <span class="score">53 points</span>
         by <a href="https://news.ycombinator.com/user?id=raskrebs" class="hnuser">raskrebs</a>
-        <span class="age">3 hours ago</span>
+        <span class="age">5 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47452515.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47452515" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around a new CLI tool called Sonar designed to identify and kill processes running on localhost, addressing common developer frustrations with managing ports and orphaned processes. Users appreciate its simplicity and express interest in additional features like customizable URLs for Docker containers.</p>
+      <p>The discussion centers around a new CLI tool called Sonar designed to easily identify and kill processes listening on localhost ports. Users share alternative scripts and tools they use for similar purposes, express appreciation for the convenience Sonar offers, and suggest potential improvements like customizable URLs for Docker containers.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -59,33 +59,140 @@
         <a href="https://news.ycombinator.com/user?id=raskrebs" class="hnuser">raskrebs</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">I always have a bunch of local projects running, particularly during the weekend where I&#x27;m rarely working on one thing at a time. A big pain of mine was constantly running into port: Redis from one project blocking another, orphaned dev servers from old worktrees, Docker containers I forgot about. The usual fix is lsof -iTCP | grep ..., then figuring out what the PID actually is, then killing it. But I always forget the command, and it doesn’t really include all the information that I like.<p>So I built this lightweight CLI. Single binary, no dependencies. It shows everything listening on localhost with process names, Docker container info, clickable URLs etc.<p>Sure there are workarounds, but none that satisfied my need for a short, easily rememberable command. Also nothing really has the same satisfaction as running sonar kill 3000 — it just feels nice.  I’ve already been approached by a few agent orchestration tools that have been struggling with the same thing. It&#x27;s really useful when you have multiple agents running, but it&#x27;s not built for just that use case, I have also find it handy when killing off all containers after a failed cleanup and so on. Also know that MCPs are dead and CLIs are the new thing in agentic coding, this might be a useful tool for Claude, particularly when a compose process exits before all containers are stopped.<p>Open for contributions, ideas and feedback.</div>
-      <div class="comment-analysis"><em>The author provides a detailed explanation of the problem and how the tool addresses it, including practical use cases and motivation, making this a reliable and informative comment.</em></div>
+      <div class="comment-analysis"><em>The author provides a detailed explanation of the tool&#39;s purpose and features, demonstrating a clear understanding and credible firsthand experience.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=chwzr" class="hnuser">chwzr</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">i have this in my .zshrc which provides same functionality:<p><pre><code>  lk() {
+    if [ $# -eq 0 ]; then
+        local output=$(sudo lsof -iTCP -sTCP:LISTEN -n -P)
+    elif [ $# -eq 1 ]; then
+        local output=$(sudo lsof -iTCP -sTCP:LISTEN -n -P | grep -i --color=always $1)
+    else
+        echo &quot;find and kill processes listening on ports. Usage: lk [pattern]&quot;
+        return 1
+    fi
+
+    if [ -z &quot;$output&quot; ]; then
+        echo &quot;No listening processes found.&quot;
+        return 0
+    fi
+
+    # Show header + results
+    echo &quot;$(sudo lsof -iTCP -sTCP:LISTEN -n -P | head -1)&quot;
+    echo &quot;$output&quot;
+    echo &quot;&quot;
+
+    # Extract unique PIDs (skip the header row if no grep was applied)
+    local pids=($(echo &quot;$output&quot; | awk &#x27;{print $2}&#x27; | grep -E &#x27;^[0-9]+$&#x27; | sort -u))
+
+    if [ ${#pids[@]} -eq 0 ]; then
+        echo &quot;No PIDs found.&quot;
+        return 0
+    fi
+
+    echo &quot;PIDs to kill: ${pids[*]}&quot;
+    echo -n &quot;Kill these ${#pids[@]} process(es)? [y&#x2F;N] &quot;
+    read -r confirm
+
+    if [[ &quot;$confirm&quot; =~ ^[Yy]$ ]]; then
+        for pid in &quot;${pids[@]}&quot;; do
+            echo &quot;Killing PID $pid...&quot;
+            sudo kill -9 $pid
+        done
+        echo &quot;Done.&quot;
+    else
+        echo &quot;Aborted.&quot;
+    fi
+  }</code></pre></div>
+      <div class="comment-analysis"><em>The user shares a practical and well-explained alternative script, showing thoughtful contribution and relevant technical knowledge.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=klaushardt" class="hnuser">klaushardt</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Would be nice to have a flag to customize the URL displayed for Docker containers. I connect to my host via Tailscale, but I can’t open links with localhost. It would be helpful to have a parameter that allows us to choose a network device or specify an IP address to display.<p><pre><code>    3000    wud (getwud&#x2F;wud:latest)                            wud          getwud&#x2F;wud:latest                       3000    http:&#x2F;&#x2F;localhost:3000
     3001    dockhand (fnsys&#x2F;dockhand:latest)                   dockhand     fnsys&#x2F;dockhand:latest                   3000    http:&#x2F;&#x2F;localhost:3001</code></pre></div>
-      <div class="comment-analysis"><em>This comment offers a constructive feature request based on a real-world use case, enhancing the tool&#39;s usability for users accessing hosts via networks other than localhost.</em></div>
+      <div class="comment-analysis"><em>This comment offers a reasonable feature suggestion that addresses a common use case involving Docker and remote access, showing practical insight.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Bradd3rs" class="hnuser">Bradd3rs</a>
-        &nbsp;|&nbsp;rank #3
+        <a href="https://news.ycombinator.com/user?id=pdimitar" class="hnuser">pdimitar</a>
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I am absolutely installing this and starting to use it daily!<p>For the even less patient there&#x27;s also this (not mine): <a href="https:&#x2F;&#x2F;github.com&#x2F;jkfran&#x2F;killport" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;jkfran&#x2F;killport</a></div>
+      <div class="comment-analysis"><em>The enthusiasm is genuine and the sharing of an alternative tool adds value, though it is less technical and more opinion-based.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=mfkrause" class="hnuser">mfkrause</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I always find myself going through my zsh history for `lsof`. Will definitely check this out, seems interesting (even though I&#x27;m generally reluctant of installing third-party tools for such jobs).</div>
+      <div class="comment-analysis"><em>A relatable comment expressing interest and mild skepticism about installing new tools, adding a personal perspective.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=clutchski" class="hnuser">clutchski</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Mine is called “porthole”<p><a href="https:&#x2F;&#x2F;github.com&#x2F;clutchski&#x2F;dotfiles&#x2F;blob&#x2F;main&#x2F;home&#x2F;bin&#x2F;porthole" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;clutchski&#x2F;dotfiles&#x2F;blob&#x2F;main&#x2F;home&#x2F;bin&#x2F;por...</a></div>
+      <div class="comment-analysis"><em>Provides an alternative tool reference but lacks detailed explanation, making it less informative.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=moezd" class="hnuser">moezd</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">Sonar as in SonarQube? That&#x27;s an interesting choice for a name :)</div>
+      <div class="comment-analysis"><em>A lighthearted comment about the name choice that does not contribute to the technical discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=frankdenbow" class="hnuser">frankdenbow</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">love this, happens too often</div>
+      <div class="comment-analysis"><em>A brief expression of appreciation without substantive content.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Bradd3rs" class="hnuser">Bradd3rs</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">love this, i get tired of spamming lsof -i tcp:xxxx</div>
-      <div class="comment-analysis"><em>A brief positive endorsement expressing relief at having a simpler alternative to a common but tedious command, though it lacks detailed analysis.</em></div>
+      <div class="comment-analysis"><em>Another short comment expressing agreement but lacking depth or new information.</em></div>
     </div>
     
 
@@ -97,7 +204,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-20 13:07 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 14:57 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

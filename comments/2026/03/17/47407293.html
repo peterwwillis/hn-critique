@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">11 points</span>
+        <span class="score">52 points</span>
         by <a href="https://news.ycombinator.com/user?id=y1n0" class="hnuser">y1n0</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47407293.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion focuses on the challenges of hardware video decoding, particularly its inability to handle corrupted data gracefully, and the potential benefits of using software decoding or conservative compute shaders. The commenter also expresses hope that the new Vulkan compute shaders avoid problematic shader languages.</p>
+      <p>The discussion centers on the use of Vulkan compute shaders for video encoding and decoding, highlighting their advantages for performance and GPU acceleration in editing workflows. Some comments emphasize the technical challenges of hardware decoding, while others debate the necessity and complexity of hardware video encoding versus software solutions.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,13 +56,58 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=sylware" class="hnuser">sylware</a>
+        <a href="https://news.ycombinator.com/user?id=pandaforce" class="hnuser">pandaforce</a>
         &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">The main target for this are NLEs like Blender. Performance is a large part of the issue. Most users still just create TIFF files per frame before importing them into a &quot;real editor&quot; like Resolve.
+Apple may have ASICs for ProRes decoding, and Resolve may be the standard editor that everyone uses.<p>But this goes beyond what even Apple has, by making it possible to work directly with compressed lossless video on consumer GPUs. You can get hundreds of FPS encoding or decoding 4k 16-bit FFv1 on a 4080, while only reading a few gigabits of video per second, rather than tens and even hundreds of gigabits that SSDs can&#x27;t keep up. No need to have image degradation when passing intermediate copies between CG programs and editing either.</div>
+      <div class="comment-analysis"><em>This comment provides a detailed and plausible explanation of the practical benefits of Vulkan compute shaders for video workflows, emphasizing performance gains and real-world application.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=hirako2000" class="hnuser">hirako2000</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Vulkan Compute shaders make GPU acceleration practical for intensive codecs like FFv1, ProRes RAW, and DPX. Previous hybrid GPU + CPU  suffered the  round-trip latency. These are fully GPU hands offs. A big deal for editing workflows.</div>
+      <div class="comment-analysis"><em>The comment accurately highlights the technical improvements Vulkan compute shaders bring to codec acceleration, particularly by reducing latency compared to hybrid GPU-CPU approaches.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=sylware" class="hnuser">sylware</a>
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Well, the problem with hardware decoding is cannot handle all the variations in data corruption which results in hardware crash, sometimes not recoverable with a soft reset of the hardware block.<p>It is usually more reasonable to work with software decoders for really complex formats, or only to accelerate some heavy parts of the decoding where data corruption is really easy to deal with or benign, or aim for the middle ground: _SIMPLE_ and _VERY CONSERVATIVE_ compute shaders.<p>Sometimes, the software cannot even tell the hardware is actually &#x27;crashed&#x27; and spitting non-sense data. It goes even worse, some hardware block hot reset actually do not work and require a power cycle... Then a &#x27;media players&#x27; able to use hardware decoding must always provide a clear and visible &#x27;user button&#x27; in order to let this very user switch to full software decoding.<p>Then, there is the next step of &quot;corruption&quot;: some streams out there are &quot;wrong&quot;, but this &quot;wrong&quot; will be decoded ok on only some specific decoders and not other ones even though the format is following the same specs.<p>What a mess.<p>I hope those compute shaders are not using that abomination of glsl(or the dx one) namely are SPIR-V shaders generated with plain and simple C code.</div>
-      <div class="comment-analysis"><em>The comment accurately highlights known issues with hardware decoders and the practical need for software fallbacks, providing a nuanced view of the trade-offs involved.</em></div>
+      <div class="comment-text">Well, the problem with hardware decoding is it cannot handle all the variations in data corruption which results in hardware crash, sometimes not recoverable with a soft reset of the hardware block.<p>It is usually more reasonable to work with software decoders for really complex formats, or only to accelerate some heavy parts of the decoding where data corruption is really easy to deal with or benign, or aim for the middle ground: _SIMPLE_ and _VERY CONSERVATIVE_ compute shaders.<p>Sometimes, the software cannot even tell the hardware is actually &#x27;crashed&#x27; and spitting non-sense data. It goes even worse, some hardware block hot reset actually do not work and require a power cycle... Then a &#x27;media players&#x27; able to use hardware decoding must always provide a clear and visible &#x27;user button&#x27; in order to let this very user switch to full software decoding.<p>Then, there is the next step of &quot;corruption&quot;: some streams out there are &quot;wrong&quot;, but this &quot;wrong&quot; will be decoded ok on only some specific decoders and not other ones even though the format is following the same specs.<p>What a mess.<p>I hope those compute shaders are not using that abomination of glsl(or the dx one) namely are SPIR-V shaders generated with plain and simple C code.</div>
+      <div class="comment-analysis"><em>This comment insightfully discusses the limitations and risks of hardware decoding, including potential crashes and the need for fallback to software decoding, which is a known issue in video processing.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=positron26" class="hnuser">positron26</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&gt; Most popular codecs were designed decades ago, when video resolutions were far smaller. As resolutions have exploded, those fixed-size minimum units now represent a much smaller fraction of a frame — which means far more of them can be processed in parallel. Modern GPUs have also gained features enabling cross-invocation communication, opening up further optimization opportunities.<p>One only needs to look at GPU driven rendering and ray tracing in shaders to deduce that shader cores and memory subsystems these days have become flexible enough to do work besides lock-step uniform parallelism where the only difference was the thread ID.<p>Nobody strives for random access memory read patterns, but the universal popularity of buffer device address and descriptor arrays can be taken somewhat as proof that these indirections are no longer the friction for GPU architectures that they were ten years ago.<p>At the same time, the languages are no longer as restrictive as they once were.  People are recording commands on the GPU.  This kind of fiddly serial work is an indication that the ergonomics of CPU programming have less of a relative advantage, and that cuts deeply into the tradeoff costs.</div>
+      <div class="comment-analysis"><em>This comment provides a thoughtful analysis of how modern GPU architectures and shader languages enable new optimization opportunities for video codecs, reflecting current trends in GPU computing.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=doctorpangloss" class="hnuser">doctorpangloss</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> <span class="indicator">emotional</span> 
+      </div>
+      <div class="comment-text">What is the use case? Okay, ultra low latency streaming. That is good. But. If you are sending the frames via some protocol over the network, like WebRTC, it will be touching the CPU anyway. Software encoding of 4K h264 is real time on a single thread on 65w, decade old CPUs, with low latency. The CPU encoders are much better quality and more flexible. So it&#x27;s very difficult to justify the level of complexity needed for hardware video encoding. Absolutely no need for it for TV streaming for example. But people keep being obsessed with it who have no need for it.<p>IMO vendors should stop reinventing hardware video encoding and instead assign the programmer time to making libwebrtc and libvpx better suit their particular use case.</div>
+      <div class="comment-analysis"><em>While the comment raises valid points about software encoding efficiency and questions the need for complex hardware encoding, it somewhat downplays the benefits of hardware acceleration in specific use cases.</em></div>
     </div>
     
 
@@ -74,7 +119,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-20 13:07 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 14:57 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

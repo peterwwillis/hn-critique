@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">467 points</span>
+        <span class="score">490 points</span>
         by <a href="https://news.ycombinator.com/user?id=rohan_joshi" class="hnuser">rohan_joshi</a>
-        <span class="age">21 hours ago</span>
+        <span class="age">23 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/19/47441546.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47441546" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the release of small, efficient TTS models, their technical details, potential applications, and limitations. Participants express interest in performance, quality, and customization options.</p>
+      <p>The discussion centers around the new Kitten TTS models, highlighting their small size and usability for edge devices. Users discuss performance, voice quality, dependency issues, and potential applications, with some requesting more details on training data and features.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -58,116 +58,112 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=dawdler-purge" class="hnuser">dawdler-purge</a>
+        <a href="https://news.ycombinator.com/user?id=baibai008989" class="hnuser">baibai008989</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I created a CLI wrapper for Kitten TTS: <a href="https:&#x2F;&#x2F;github.com&#x2F;newptcai&#x2F;purr" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;newptcai&#x2F;purr</a><p>BTW, it seems that kitten (the Python package) has the following chain of dependencies: kittentts → misaki[en] → spacy-curated-transformers<p>So if you install it directly via uv, it will pull torch and NVIDIA CUDA packages (several GB), which are not needed to run kitten.</div>
-      <div class="comment-analysis"><em>Provides a practical enhancement for users by simplifying deployment and reducing dependency bloat, adding value to the original project.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=kevin42" class="hnuser">kevin42</a>
-        &nbsp;|&nbsp;rank #2
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">What I love about OpenClaw is that I was able to send it a message on Discord with just this github URL and it started sending me voice messages using it within a few minutes. It also gave me a bunch of different benchmarks and sample audio.<p>I&#x27;m impressed with the quality given the size. I don&#x27;t love the voices, but it&#x27;s not bad. Running on an intel 9700 CPU, it&#x27;s about 1.5x realtime using the 80M model. It wasn&#x27;t any faster running on a 3080 GPU though.</div>
-      <div class="comment-analysis"><em>Highlights real-world usability and performance metrics, though subjective impressions limit definitive conclusions.</em></div>
+      <div class="comment-text">the dependency chain issue is a real barrier for edge deployment. i&#x27;ve been running tts models on a raspberry pi for a home automation project and anything that pulls torch + cuda makes the whole thing a non-starter. 25MB is genuinely exciting for that use case.<p>curious about the latency characteristics though. 1.5x realtime on a 9700 is fine for batch processing but for interactive use you need first-chunk latency under 200ms or the conversation feels broken. does anyone know if it supports streaming output or is it full-utterance only?<p>the phoneme-based approach should help with pronunciation consistency too. the models i&#x27;ve tried that work on raw text tend to mispronounce technical terms unpredictably — same word pronounced differently across runs.</div>
+      <div class="comment-analysis"><em>This comment provides practical insight from experience, highlighting a real challenge in deploying TTS models on low-power devices due to heavy dependencies.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=bobokaytop" class="hnuser">bobokaytop</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">The size&#x2F;quality tradeoff here is interesting. 25MB for a TTS model that&#x27;s usable is a real achievement, but the practical bottleneck for most edge deployments isn&#x27;t model size -- it&#x27;s the inference latency on low-power hardware and the audio streaming architecture around it. Curious how this performs on something like a Raspberry Pi 4 for real-time synthesis. The voice quality tradeoff at that size usually shows up most in prosody and sentence-final intonation rather than phoneme accuracy.</div>
+      <div class="comment-analysis"><em>This comment accurately identifies the main challenge in edge TTS deployment as latency rather than model size, reflecting an understanding of practical constraints.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=kevin42" class="hnuser">kevin42</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">The size&#x2F;quality tradeoff here is interesting. 25MB for a TTS model that&#x27;s usable is a real achievement, but the practical bottleneck for most edge deployments isn&#x27;t model size -- it&#x27;s the inference latency on low-power hardware and the audio streaming architecture around it. Curious how this performs on something like a Raspberry Pi 4 for real-time synthesis. The voice quality tradeoff at that size usually shows up most in prosody and sentence-final intonation rather than phoneme accuracy.</div>
-      <div class="comment-analysis"><em>Raises valid concerns about practical deployment and quality tradeoffs, relevant for edge use cases.</em></div>
+      <div class="comment-text">What I love about OpenClaw is that I was able to send it a message on Discord with just this github URL and it started sending me voice messages using it within a few minutes. It also gave me a bunch of different benchmarks and sample audio.<p>I&#x27;m impressed with the quality given the size. I don&#x27;t love the voices, but it&#x27;s not bad. Running on an intel 9700 CPU, it&#x27;s about 1.5x realtime using the 80M model. It wasn&#x27;t any faster running on a 3080 GPU though.</div>
+      <div class="comment-analysis"><em>Provides useful benchmark data and a balanced opinion on voice quality, contributing valuable experiential feedback.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=geokon" class="hnuser">geokon</a>
+        <a href="https://news.ycombinator.com/user?id=dawdler-purge" class="hnuser">dawdler-purge</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Very cool :)
-Look forward to trying it out<p>Maybe a dumb and slightly tangential question, 
-(I don&#x27;t mean this as a criticism!)
-but why not release a command line executable?<p>Even the API looks like what you&#x27;d see in a manpage.<p>I get it wouldn&#x27;t be too much work for a user to actually make something like that,
-I&#x27;m just curious what the thought process is</div>
-      <div class="comment-analysis"><em>Asks a reasonable question about usability, though it doesn&#39;t impact core technical evaluation.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jacquesm" class="hnuser">jacquesm</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Good on device TTS is an amazing accessibility tool. Thank you for building this. Way too many of devices that use it rely on online services, this is much preferred.</div>
-      <div class="comment-analysis"><em>Emphasizes the importance of offline TTS for accessibility, aligning with broader accessibility goals.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=daneel_w" class="hnuser">daneel_w</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">A very clear improvement from the first set of models you released some time ago. I&#x27;m really impressed. Thanks for sharing it all.</div>
-      <div class="comment-analysis"><em>Expresses appreciation and notes progress, but lacks technical detail.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=erkoo" class="hnuser">erkoo</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">How noticeable is the difference in quality between the 4M model and the 80M model?</div>
-      <div class="comment-analysis"><em>Raises a relevant question about model performance tradeoffs, though no data is provided.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=_hzw" class="hnuser">_hzw</a>
-        &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">I&#x27;d love to see a monolingual Japanese model sometime in the future. Qwen3-tts works for Japanese in general, but from time to time it will mix with some Mandarin in between, making it unusable.</div>
-      <div class="comment-analysis"><em>Highlights a specific linguistic challenge, relevant for multilingual model development.</em></div>
+      <div class="comment-text">I created a CLI wrapper for Kitten TTS: <a href="https:&#x2F;&#x2F;github.com&#x2F;newptcai&#x2F;purr" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;newptcai&#x2F;purr</a><p>BTW, it seems that kitten (the Python package) has the following chain of dependencies: kittentts → misaki[en] → spacy-curated-transformers<p>So if you install it directly via uv, it will pull torch and NVIDIA CUDA packages (several GB), which are not needed to run kitten.</div>
+      <div class="comment-analysis"><em>Highlights an important technical detail about unnecessary heavy dependencies, which is relevant for users concerned about deployment size.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=__fst__" class="hnuser">__fst__</a>
-        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Was playing around a bit and for its size it&#x27;s very impressive. Just has issues pronounciating numbers. I tried to let it generate &quot;Startup finished in 135 ms.&quot;<p>I didn&#x27;t expect it to pronounciate &#x27;ms&#x27; correctly, but the number sounded just like noise. Eventually I got an acceptable result for the string &quot;Startup finished in one hundred and thirty five seconds.</div>
-      <div class="comment-analysis"><em>Provides a concrete example of limitations, useful for understanding model weaknesses.</em></div>
+      <div class="comment-analysis"><em>Provides a specific and practical observation about pronunciation limitations, useful for understanding model weaknesses.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=altruios" class="hnuser">altruios</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">One of the core features I look for is expressive control.<p>Either in the form of the api via pitch&#x2F;speed&#x2F;volume controls, for more deterministic controls.<p>Or in expressive tags such as [coughs], [urgently], or [laughs in melodic ascending and descending arpeggiated gibberish babbles].<p>the 25MB model is amazingly good for being 25MB. How does it handle expressive tags?</div>
+      <div class="comment-analysis"><em>Raises a relevant question about expressive control features, indicating an understanding of advanced TTS capabilities.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jacquesm" class="hnuser">jacquesm</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Good on device TTS is an amazing accessibility tool. Thank you for building this. Way too many of devices that use it rely on online services, this is much preferred.</div>
+      <div class="comment-analysis"><em>Emphasizes the importance of offline TTS for accessibility, reflecting a user-centered perspective.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=ks2048" class="hnuser">ks2048</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">There&#x27;s a number of recent, good quality, small TTS models.<p>If the author doesn&#x27;t describe some detail about the data, training, or a novel architecture, etc, I only assume they just took another one, do a little finetuning, and repackage as a new product.</div>
+      <div class="comment-analysis"><em>Expresses skepticism about novelty without detailed disclosures, a common concern in ML model releases.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Remi_Etien" class="hnuser">Remi_Etien</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">25MB is impressive. What&#x27;s the tradeoff vs the 80M model — is it mainly voice quality or does it also affect pronunciation accuracy on less common words?</div>
+      <div class="comment-analysis"><em>Asks a pertinent question about tradeoffs between model sizes, showing a focus on practical performance differences.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=rsmtjohn" class="hnuser">rsmtjohn</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">You should put examples comparing the 4 models you released - same text spoken by each.</div>
-      <div class="comment-analysis"><em>Suggests a practical way to assess model performance, beneficial for users.</em></div>
+      <div class="comment-text">The &lt;25MB figure is what stands out. Been wanting to add TTS to a few Next.js projects for offline&#x2F;edge scenarios but model sizes have always made it impractical to ship.<p>At 25MB you can actually bundle it with the app. Going to test whether this works in a Vercel Edge Function context -- if latency is acceptable there it opens up a lot of use cases that currently require a round-trip to a hosted API.</div>
+      <div class="comment-analysis"><em>Highlights the practical significance of the small model size for edge computing and offline use cases.</em></div>
     </div>
     
 
@@ -179,7 +175,7 @@ I&#x27;m just curious what the thought process is</div>
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-20 13:07 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 14:57 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

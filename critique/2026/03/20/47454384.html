@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Critique: Java Is Fast. Your Code Might Not Be | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://jvogel.me/posts/2026/java-is-fast-your-code-might-not-be/" rel="noreferrer noopener">Java Is Fast. Your Code Might Not Be</a>
+        <span class="sitebit"> (jvogel.me)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">17 points</span>
+        by <a href="https://news.ycombinator.com/user?id=siegers" class="hnuser">siegers</a>
+        <span class="age">1 hour ago</span>
+        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/20/47454384.html">7&nbsp;comments critique</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47454384" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+    <div class="critique-content">
+
+      <section class="critique-section">
+        <h3>Summary</h3>
+        <p>The article discusses common Java performance anti-patterns that can significantly degrade application speed and memory usage. By identifying and fixing these issues, such as inefficient string concatenation, excessive stream usage, and improper synchronization, the author demonstrates substantial performance improvements in a Java order-processing app.</p>
+      </section>
+
+      <section class="critique-section">
+        <h3>Main Points &amp; Arguments</h3>
+        <ul>
+          <li>String concatenation in loops causes O(n²) copying due to String immutability; using StringBuilder improves performance.</li><li>Using streams inside loops can cause accidental O(n²) complexity; replacing with single-pass aggregation reduces CPU usage.</li><li>String.format() is slow in hot paths because it parses the format string every call; prefer StringBuilder or partial formatting.</li><li>Autoboxing in tight loops creates many temporary wrapper objects, increasing heap usage and GC pressure; use primitives instead.</li><li>Using exceptions for control flow is costly due to stack trace generation; pre-validate inputs to avoid frequent exceptions.</li><li>Broad synchronization locks cause contention bottlenecks; use ConcurrentHashMap and LongAdder for high concurrency.</li><li>Repeated creation of expensive reusable objects like ObjectMapper or DateTimeFormatter hurts performance; reuse instances.</li><li>Virtual thread pinning in JDK 21–23 occurs when synchronized blocks with blocking I/O prevent unmounting carrier threads; use ReentrantLock or upgrade to JDK 24 to mitigate.</li>
+        </ul>
+      </section>
+
+      <section class="critique-section">
+        <h3>Truthfulness Assessment</h3>
+        <div class="rating-badge rating-reliable">
+          Reliable
+        </div>
+        <p>The article&#39;s claims are accurate and align with widely recognized Java performance best practices and benchmarks. The examples and fixes correspond to known issues documented by reputable sources such as BellSoft, Baeldung, and real-world production experiences from companies like Netflix. The discussion of virtual thread pinning and JDK versions is consistent with official Java Enhancement Proposals and release notes. Overall, the content is factually reliable and supported by empirical evidence.</p>
+      </section>
+
+      
+      <section class="critique-section">
+        <h3>Additional Considerations</h3>
+        <ul>
+          <li>The article focuses on micro-optimizations and may not address higher-level architectural or algorithmic improvements that could yield larger gains.</li><li>Performance impacts can vary depending on workload, JVM version, and hardware; profiling is essential to identify actual bottlenecks.</li><li>Some fixes, like replacing synchronized with ReentrantLock, may have trade-offs in complexity or semantics that need careful consideration.</li><li>The article does not discuss the impact of Just-In-Time (JIT) compiler optimizations or garbage collector tuning, which also affect performance.</li><li>The examples assume familiarity with Java concurrency and profiling tools, which may limit accessibility for beginners.</li>
+        </ul>
+      </section>
+      
+
+    </div>
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-20 14:57 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>

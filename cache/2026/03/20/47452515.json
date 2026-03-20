@@ -20,19 +20,31 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers around a new CLI tool called Sonar designed to identify and kill processes running on localhost, addressing common developer frustrations with managing ports and orphaned processes. Users appreciate its simplicity and express interest in additional features like customizable URLs for Docker containers.",
+    "summary": "The discussion centers around a new CLI tool called Sonar designed to easily identify and kill processes listening on localhost ports. Users share alternative scripts and tools they use for similar purposes, express appreciation for the convenience Sonar offers, and suggest potential improvements like customizable URLs for Docker containers.",
     "comments": [
       {
         "id": 47452516,
         "author": "raskrebs",
         "text": "I always have a bunch of local projects running, particularly during the weekend where I\u0026#x27;m rarely working on one thing at a time. A big pain of mine was constantly running into port: Redis from one project blocking another, orphaned dev servers from old worktrees, Docker containers I forgot about. The usual fix is lsof -iTCP | grep ..., then figuring out what the PID actually is, then killing it. But I always forget the command, and it doesn’t really include all the information that I like.\u003cp\u003eSo I built this lightweight CLI. Single binary, no dependencies. It shows everything listening on localhost with process names, Docker container info, clickable URLs etc.\u003cp\u003eSure there are workarounds, but none that satisfied my need for a short, easily rememberable command. Also nothing really has the same satisfaction as running sonar kill 3000 — it just feels nice.  I’ve already been approached by a few agent orchestration tools that have been struggling with the same thing. It\u0026#x27;s really useful when you have multiple agents running, but it\u0026#x27;s not built for just that use case, I have also find it handy when killing off all containers after a failed cleanup and so on. Also know that MCPs are dead and CLIs are the new thing in agentic coding, this might be a useful tool for Claude, particularly when a compose process exits before all containers are stopped.\u003cp\u003eOpen for contributions, ideas and feedback.",
         "indicators": [
-          "thoughtful",
+          "intelligent",
           "constructive",
           "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "The author provides a detailed explanation of the problem and how the tool addresses it, including practical use cases and motivation, making this a reliable and informative comment."
+        "analysis": "The author provides a detailed explanation of the tool's purpose and features, demonstrating a clear understanding and credible firsthand experience."
+      },
+      {
+        "id": 47454388,
+        "author": "chwzr",
+        "text": "i have this in my .zshrc which provides same functionality:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  lk() {\n    if [ $# -eq 0 ]; then\n        local output=$(sudo lsof -iTCP -sTCP:LISTEN -n -P)\n    elif [ $# -eq 1 ]; then\n        local output=$(sudo lsof -iTCP -sTCP:LISTEN -n -P | grep -i --color=always $1)\n    else\n        echo \u0026quot;find and kill processes listening on ports. Usage: lk [pattern]\u0026quot;\n        return 1\n    fi\n\n    if [ -z \u0026quot;$output\u0026quot; ]; then\n        echo \u0026quot;No listening processes found.\u0026quot;\n        return 0\n    fi\n\n    # Show header + results\n    echo \u0026quot;$(sudo lsof -iTCP -sTCP:LISTEN -n -P | head -1)\u0026quot;\n    echo \u0026quot;$output\u0026quot;\n    echo \u0026quot;\u0026quot;\n\n    # Extract unique PIDs (skip the header row if no grep was applied)\n    local pids=($(echo \u0026quot;$output\u0026quot; | awk \u0026#x27;{print $2}\u0026#x27; | grep -E \u0026#x27;^[0-9]+$\u0026#x27; | sort -u))\n\n    if [ ${#pids[@]} -eq 0 ]; then\n        echo \u0026quot;No PIDs found.\u0026quot;\n        return 0\n    fi\n\n    echo \u0026quot;PIDs to kill: ${pids[*]}\u0026quot;\n    echo -n \u0026quot;Kill these ${#pids[@]} process(es)? [y\u0026#x2F;N] \u0026quot;\n    read -r confirm\n\n    if [[ \u0026quot;$confirm\u0026quot; =~ ^[Yy]$ ]]; then\n        for pid in \u0026quot;${pids[@]}\u0026quot;; do\n            echo \u0026quot;Killing PID $pid...\u0026quot;\n            sudo kill -9 $pid\n        done\n        echo \u0026quot;Done.\u0026quot;\n    else\n        echo \u0026quot;Aborted.\u0026quot;\n    fi\n  }\u003c/code\u003e\u003c/pre\u003e",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The user shares a practical and well-explained alternative script, showing thoughtful contribution and relevant technical knowledge."
       },
       {
         "id": 47453783,
@@ -43,8 +55,65 @@
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment offers a constructive feature request based on a real-world use case, enhancing the tool's usability for users accessing hosts via networks other than localhost."
+        "accuracyRank": 3,
+        "analysis": "This comment offers a reasonable feature suggestion that addresses a common use case involving Docker and remote access, showing practical insight."
+      },
+      {
+        "id": 47454454,
+        "author": "pdimitar",
+        "text": "I am absolutely installing this and starting to use it daily!\u003cp\u003eFor the even less patient there\u0026#x27;s also this (not mine): \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;jkfran\u0026#x2F;killport\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;jkfran\u0026#x2F;killport\u003c/a\u003e",
+        "indicators": [
+          "emotional",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "The enthusiasm is genuine and the sharing of an alternative tool adds value, though it is less technical and more opinion-based."
+      },
+      {
+        "id": 47454738,
+        "author": "mfkrause",
+        "text": "I always find myself going through my zsh history for `lsof`. Will definitely check this out, seems interesting (even though I\u0026#x27;m generally reluctant of installing third-party tools for such jobs).",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "A relatable comment expressing interest and mild skepticism about installing new tools, adding a personal perspective."
+      },
+      {
+        "id": 47454472,
+        "author": "clutchski",
+        "text": "Mine is called “porthole”\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;clutchski\u0026#x2F;dotfiles\u0026#x2F;blob\u0026#x2F;main\u0026#x2F;home\u0026#x2F;bin\u0026#x2F;porthole\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;clutchski\u0026#x2F;dotfiles\u0026#x2F;blob\u0026#x2F;main\u0026#x2F;home\u0026#x2F;bin\u0026#x2F;por...\u003c/a\u003e",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Provides an alternative tool reference but lacks detailed explanation, making it less informative."
+      },
+      {
+        "id": 47454168,
+        "author": "moezd",
+        "text": "Sonar as in SonarQube? That\u0026#x27;s an interesting choice for a name :)",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 7,
+        "analysis": "A lighthearted comment about the name choice that does not contribute to the technical discussion."
+      },
+      {
+        "id": 47454063,
+        "author": "frankdenbow",
+        "text": "love this, happens too often",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 8,
+        "analysis": "A brief expression of appreciation without substantive content."
       },
       {
         "id": 47453096,
@@ -52,10 +121,10 @@
         "text": "love this, i get tired of spamming lsof -i tcp:xxxx",
         "indicators": [
           "emotional",
-          "likely-true"
+          "useless"
         ],
-        "accuracyRank": 3,
-        "analysis": "A brief positive endorsement expressing relief at having a simpler alternative to a common but tedious command, though it lacks detailed analysis."
+        "accuracyRank": 9,
+        "analysis": "Another short comment expressing agreement but lacking depth or new information."
       }
     ]
   }
