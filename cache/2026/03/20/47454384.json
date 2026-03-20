@@ -24,21 +24,8 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around Java's performance characteristics, focusing on common pitfalls like string handling, autoboxing, and exception usage. Commenters highlight both language design issues and typical coding practices that impact speed, with some suggesting alternative languages for better control and performance.",
+    "summary": "The discussion centers around Java's performance characteristics, highlighting that while Java itself can be fast, common coding practices and language design choices often lead to slower code. Contributors emphasize the importance of algorithmic efficiency, memory allocation avoidance, and proper use of language features, while some suggest alternative languages like Rust for better control and performance.",
     "comments": [
-      {
-        "id": 47457037,
-        "author": "spankalee",
-        "text": "Avoiding Java\u0026#x27;s string footguns is an interesting problem in programming languages design.\u003cp\u003eThe String.format() problem is most immediately a bad compiler and bad implementation, IMO. It\u0026#x27;s not difficult to special-case literal strings as the first argument, do parsing at compile time, and pass in a structured representation. The method could also do runtime caching. Even a very small LRU cache would fix a lot of common cases. At the very least they should let you make a formatter from a specific format string and reuse it, like you can with regexes, to explicitly opt into better performance.\u003cp\u003eBut ultimately the string templates proposal should come back and fix this at the language level. Better syntax and guaranteed compile-time construction of the template. The language should help the developer do the fast thing.\u003cp\u003eString concatenation is a little trickier. In a JIT\u0026#x27;ed language you have a lot of options for making a hierarchy of string implementations that optimize different usage patterns, and still be fast - and what you really want for concatenation is a RopeString, like JS VMs have, that simply references the other strings. The issue is that you don\u0026#x27;t want virtual calls for hot-path string method calls.\u003cp\u003eJava chose a single final class so all calls are direct. But they should have been able to have a very small sealed class hierarchy where most methods are final and directly callable, and the virtual methods for accessing storage are devirtualized in optimized methods that only ever see one or two classes through a call site.\u003cp\u003eTo me, that\u0026#x27;s a small complexity cost to make common string patterns fast, instead of requiring StringBuilder.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed and technically sound analysis of Java string performance issues, proposing realistic improvements at both the compiler and language level."
-      },
       {
         "id": 47455452,
         "author": "liampulles",
@@ -49,44 +36,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "The comment correctly emphasizes that algorithmic efficiency and database query optimization often have a greater impact on performance than language-specific micro-optimizations."
-      },
-      {
-        "id": 47456922,
-        "author": "Okx",
-        "text": "The code:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  public int parseOrDefault(String value, int defaultValue) {\n      if (value == null || value.isBlank()) return defaultValue;\n      for (int i = 0; i \u0026lt; value.length(); i++) {\n          char c = value.charAt(i);\n          if (i == 0 \u0026amp;\u0026amp; c == \u0026#x27;-\u0026#x27;) continue;\n          if (!Character.isDigit(c)) return defaultValue;\n      }\n      return Integer.parseInt(value);\n  }\n\u003c/code\u003e\u003c/pre\u003e\nIs probably worse than Integer.parseInt alone, since it can still throw NumberFormatExceptions for values that overflow (which is no longer handled!). Would maybe fix that. Unfortunately this is a major flaw in the Java standard library; parsing numbers shouldn\u0026#x27;t throw expensive exceptions.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment accurately identifies a limitation in the Java standard library's number parsing and highlights the inefficiency of exception handling in this context."
-      },
-      {
-        "id": 47456783,
-        "author": "cogman10",
-        "text": "Nitpick just because.\u003cp\u003eOrders by hour could be made faster.  The issue with it is it\u0026#x27;s using a map when an array works both faster and just fine.\u003cp\u003eOn top of that, the map boxes the \u0026quot;hour\u0026quot; which is undesirable.\u003cp\u003eThis is how I\u0026#x27;d write it\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    long[] ordersByHour = new long[24];\n    var deafultTimezone = ZoneId.systemDefault();\n    for (Order order : orders) {\n        int hour = order.timestamp().atZone(deafultTimezone).getHour();\n        ordersByHour[hour]++;\n    }\n\u003c/code\u003e\u003c/pre\u003e\nIf you know the bound of an array, it\u0026#x27;s not large, and you are directly indexing in it, you really can\u0026#x27;t do any better performance wise.\u003cp\u003eIt\u0026#x27;s also not less readable, just less familiar as Java devs don\u0026#x27;t tend to use arrays that much.",
-        "indicators": [
-          "intelligent",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 4,
-        "analysis": "The suggestion to replace a map with an array for fixed-size indexing is a well-known optimization that reduces overhead and improves speed in this scenario."
-      },
-      {
-        "id": 47456436,
-        "author": "cmovq",
-        "text": "When you\u0026#x27;re using a programming language that naturally steers you to write slow code you can\u0026#x27;t only blame the programmer.\u003cp\u003eI was listening to someone say they write fast code in Java by avoiding allocations with a PoolAllocator that would \u0026quot;cache\u0026quot; small objects with poolAllocator.alloc(), poolAllocator.release(). So just manual memory management with extra steps. At that point why not use a better language for the task?",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "This comment insightfully points out that language design influences code performance and that sometimes choosing a different language is more practical than complex workarounds."
+        "accuracyRank": 1,
+        "analysis": "This comment accurately highlights the importance of algorithmic complexity and database query optimization in real-world Java performance, reflecting practical experience and current trends."
       },
       {
         "id": 47455783,
@@ -98,8 +49,57 @@
           "likely-true",
           "constructive"
         ],
+        "accuracyRank": 2,
+        "analysis": "The comment insightfully points out that memory allocation patterns in Java significantly affect performance, aligning with common understanding among JVM performance experts."
+      },
+      {
+        "id": 47457037,
+        "author": "spankalee",
+        "text": "Avoiding Java\u0026#x27;s string footguns is an interesting problem in programming languages design.\u003cp\u003eThe String.format() problem is most immediately a bad compiler and bad implementation, IMO. It\u0026#x27;s not difficult to special-case literal strings as the first argument, do parsing at compile time, and pass in a structured representation. The method could also do runtime caching. Even a very small LRU cache would fix a lot of common cases. At the very least they should let you make a formatter from a specific format string and reuse it, like you can with regexes, to explicitly opt into better performance.\u003cp\u003eBut ultimately the string templates proposal should come back and fix this at the language level. Better syntax and guaranteed compile-time construction of the template. The language should help the developer do the fast thing.\u003cp\u003eString concatenation is a little trickier. In a JIT\u0026#x27;ed language you have a lot of options for making a hierarchy of string implementations that optimize different usage patterns, and still be fast - and what you really want for concatenation is a RopeString, like JS VMs have, that simply references the other strings. The issue is that you don\u0026#x27;t want virtual calls for hot-path string method calls.\u003cp\u003eJava chose a single final class so all calls are direct. But they should have been able to have a very small sealed class hierarchy where most methods are final and directly callable, and the virtual methods for accessing storage are devirtualized in optimized methods that only ever see one or two classes through a call site.\u003cp\u003eTo me, that\u0026#x27;s a small complexity cost to make common string patterns fast, instead of requiring StringBuilder.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This detailed analysis of Java string performance issues and suggestions for language-level improvements shows deep understanding of JVM internals and language design."
+      },
+      {
+        "id": 47456783,
+        "author": "cogman10",
+        "text": "Nitpick just because.\u003cp\u003eOrders by hour could be made faster.  The issue with it is it\u0026#x27;s using a map when an array works both faster and just fine.\u003cp\u003eOn top of that, the map boxes the \u0026quot;hour\u0026quot; which is undesirable.\u003cp\u003eThis is how I\u0026#x27;d write it\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    long[] ordersByHour = new long[24];\n    var deafultTimezone = ZoneId.systemDefault();\n    for (Order order : orders) {\n        int hour = order.timestamp().atZone(deafultTimezone).getHour();\n        ordersByHour[hour]++;\n    }\n\u003c/code\u003e\u003c/pre\u003e\nIf you know the bound of an array, it\u0026#x27;s not large, and you are directly indexing in it, you really can\u0026#x27;t do any better performance wise.\u003cp\u003eIt\u0026#x27;s also not less readable, just less familiar as Java devs don\u0026#x27;t tend to use arrays that much.",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "The suggestion to replace a map with an array for fixed-size hour indexing is a well-known optimization that improves performance and reduces overhead."
+      },
+      {
+        "id": 47455274,
+        "author": "kyrra",
+        "text": "First request latency also can really suck in Java before hotpathed code gets through the C2 compiler.  You can warm up hotpaths by running that code during startup, but it\u0026#x27;s really annoying having to do that.  Using C++, Go, or Rust gets you around that problem without having to jump through the hoops of code path warmup.\u003cp\u003eI wish Java had a proper compiler.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment correctly identifies JVM warmup latency as a performance concern and contrasts it with other languages that compile ahead-of-time."
+      },
+      {
+        "id": 47456922,
+        "author": "Okx",
+        "text": "The code:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  public int parseOrDefault(String value, int defaultValue) {\n      if (value == null || value.isBlank()) return defaultValue;\n      for (int i = 0; i \u0026lt; value.length(); i++) {\n          char c = value.charAt(i);\n          if (i == 0 \u0026amp;\u0026amp; c == \u0026#x27;-\u0026#x27;) continue;\n          if (!Character.isDigit(c)) return defaultValue;\n      }\n      return Integer.parseInt(value);\n  }\n\u003c/code\u003e\u003c/pre\u003e\nIs probably worse than Integer.parseInt alone, since it can still throw NumberFormatExceptions for values that overflow (which is no longer handled!). Would maybe fix that. Unfortunately this is a major flaw in the Java standard library; parsing numbers shouldn\u0026#x27;t throw expensive exceptions.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 6,
-        "analysis": "The comment provides practical insight into Java performance, emphasizing memory allocation overhead and the benefits of specialized libraries and data structures."
+        "analysis": "This critique accurately points out a flaw in the example code and highlights a known limitation in Java's number parsing methods."
       },
       {
         "id": 47456742,
@@ -111,19 +111,7 @@
           "likely-true"
         ],
         "accuracyRank": 7,
-        "analysis": "This comment correctly identifies autoboxing as a performance pitfall and suggests that compiler improvements and code reviews are necessary to mitigate it."
-      },
-      {
-        "id": 47455274,
-        "author": "kyrra",
-        "text": "First request latency also can really suck in Java before hotpathed code gets through the C2 compiler.  You can warm up hotpaths by running that code during startup, but it\u0026#x27;s really annoying having to do that.  Using C++, Go, or Rust gets you around that problem without having to jump through the hoops of code path warmup.\u003cp\u003eI wish Java had a proper compiler.",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "The comment accurately describes JVM warmup latency and contrasts it with languages that compile ahead of time, which have more consistent startup performance."
+        "analysis": "The comment correctly identifies autoboxing as a performance pitfall in Java and questions compiler optimizations, reflecting a common concern."
       },
       {
         "id": 47456900,
@@ -133,30 +121,97 @@
           "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 9,
-        "analysis": "This is a general but true statement about the impact of compiler optimizations on performance, though it lacks specific context."
+        "accuracyRank": 8,
+        "analysis": "This general observation about the impact of optimization passes is accurate but somewhat broad and less specific to Java."
       },
       {
-        "id": 47455759,
-        "author": "zvqcMMV6Zcr",
-        "text": "\u0026gt; Exceptions for Control Flow\u003cp\u003eThis one is so prevalent that JVM has an optimization where it gives up on filling stack for exception, if it was thrown over and over in exact same place.",
+        "id": 47456436,
+        "author": "cmovq",
+        "text": "When you\u0026#x27;re using a programming language that naturally steers you to write slow code you can\u0026#x27;t only blame the programmer.\u003cp\u003eI was listening to someone say they write fast code in Java by avoiding allocations with a PoolAllocator that would \u0026quot;cache\u0026quot; small objects with poolAllocator.alloc(), poolAllocator.release(). So just manual memory management with extra steps. At that point why not use a better language for the task?",
         "indicators": [
-          "intelligent",
+          "thoughtful",
           "likely-true"
         ],
+        "accuracyRank": 9,
+        "analysis": "The comment raises a valid point about language design influencing performance, though the suggestion to manually manage memory in Java is unconventional."
+      },
+      {
+        "id": 47457695,
+        "author": "latchkey",
+        "text": "When they say that AI will replace programmers, I think of this article and come to terms with my own job security.\u003cp\u003eMost of this stuff is just central knowledge of the language that you pick up over time. Certainly, AI can also pick this stuff up instantly, but will it always pick the most efficient path when generating code for you?\u003cp\u003eProbably not, until we get benchmarks into the hot path of our test suite. That is something someone should work on.",
+        "indicators": [
+          "thoughtful",
+          "emotional"
+        ],
         "accuracyRank": 10,
-        "analysis": "This comment provides a factual JVM optimization detail that mitigates the cost of exceptions used for control flow."
+        "analysis": "This comment reflects on the human expertise required for efficient coding, a thoughtful perspective though less technical."
       },
       {
         "id": 47455150,
         "author": "bearjaws",
         "text": "JavaScript can be fast too, it\u0026#x27;s just the ecosystem and decisions devs make that slow it down.\u003cp\u003eSame for Java, I have yet to in my entire career see enterprise Java be performant and not memory intensive.\u003cp\u003eAt the end of the day, if you care about performance at the app layer, you will use a language better suited to that.",
         "indicators": [
-          "thoughtful",
+          "emotional",
           "likely-true"
         ],
         "accuracyRank": 11,
-        "analysis": "The comment insightfully compares Java and JavaScript performance issues as often stemming from ecosystem and usage patterns rather than inherent language speed."
+        "analysis": "While somewhat opinionated, this comment correctly notes that language choice and ecosystem impact performance outcomes."
+      },
+      {
+        "id": 47456026,
+        "author": "titzer",
+        "text": "For fillInStackTrace, another trick is to define your own Exception subclass and override the method to be empty. I learned this trick 15+ years ago.\u003cp\u003eIt doesn\u0026#x27;t excuse the \u0026quot;use exceptions for control flow\u0026quot; anti-pattern, but it is a quick patch.",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 12,
+        "analysis": "This practical tip addresses a known JVM optimization technique for reducing exception overhead."
+      },
+      {
+        "id": 47457860,
+        "author": "sgbeal",
+        "text": "Slight correction:\u003cp\u003e\u0026gt; StringBuilder works off a single mutable character buffer. One allocation.\u003cp\u003eIt\u0026#x27;s one allocation to instantiate the builder and _any_ number of allocations after that (noting that it\u0026#x27;s optimized to reduce allocations, so it\u0026#x27;s not allocating on every append() unless they\u0026#x27;re huge).",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 13,
+        "analysis": "This correction clarifies the allocation behavior of StringBuilder, providing accurate technical detail."
+      },
+      {
+        "id": 47455644,
+        "author": "comrade1234",
+        "text": "Also finding the right garbage collector and settings that works best for your project can help a lot.",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 14,
+        "analysis": "This comment correctly emphasizes the importance of JVM tuning for performance."
+      },
+      {
+        "id": 47455963,
+        "author": "taspeotis",
+        "text": "Knock Knock\u003cp\u003eWho’s there?\u003cp\u003e\u003ci\u003elong pause\u003c/i\u003e\u003cp\u003eJava",
+        "indicators": [
+          "trolling",
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 15,
+        "analysis": "This comment is a joke that adds no substantive value to the discussion."
+      },
+      {
+        "id": 47457282,
+        "author": "spwa4",
+        "text": "Java IS fast. The time between deciding to use Java and Oracle\u0026#x27;s lawyers breaking down your door is measured in just weeks these days.",
+        "indicators": [
+          "emotional",
+          "trolling"
+        ],
+        "accuracyRank": 16,
+        "analysis": "This comment is more of a humorous jab at Oracle than a technical contribution."
       },
       {
         "id": 47455051,
@@ -167,29 +222,31 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 12,
-        "analysis": "While somewhat opinionated, the comment correctly notes Rust's advantages in control and performance and points out common frustrations with Java tooling."
+        "accuracyRank": 17,
+        "analysis": "While opinionated, this comment reflects a common sentiment about Rust's advantages over Java in control and performance."
       },
       {
-        "id": 47456003,
-        "author": "victor106",
-        "text": "this is great, so practical!!!\u003cp\u003eany other resources like this?",
+        "id": 47455572,
+        "author": "jandrewrogers",
+        "text": "You can write many of the bad examples in the article in any language. It is just far more common to see them in Java code than some other languages.\u003cp\u003eJava is only fast-ish even on its best day. The more typical performance is much worse because the culture around the language usually doesn\u0026#x27;t consider performance or efficiency to be a priority. Historically it was even a bit hostile to it.",
         "indicators": [
-          "emotional",
-          "useless"
+          "thoughtful",
+          "likely-true"
         ],
-        "accuracyRank": 13,
-        "analysis": "This comment expresses enthusiasm but adds no substantive content or analysis."
+        "accuracyRank": 18,
+        "analysis": "This comment insightfully highlights cultural factors affecting Java code performance."
       },
       {
-        "id": 47455277,
-        "author": "tripple6",
-        "text": "Do good, don\u0026#x27;t do bad. Okay.",
+        "id": 47456328,
+        "author": "hiyer",
+        "text": "I ran into 5 and 7 in a Flink app recently - was parsing a timestamp as a number first and then falling back to iso8601 string, which is what it was. The flamegraph showed 10% for the exception handling bit.\nWhile fixing that, also found repeated creation of datetimeformatter.\nBoth were not in loops, but both were being done for every event, for 10s of 1000s of events every second.",
         "indicators": [
-          "useless"
+          "intelligent",
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 14,
-        "analysis": "This comment is a vague platitude without meaningful contribution to the discussion."
+        "accuracyRank": 19,
+        "analysis": "This real-world example illustrates how exception handling and object creation can impact Java application performance."
       }
     ]
   }

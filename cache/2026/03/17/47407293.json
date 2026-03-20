@@ -23,19 +23,32 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the use of Vulkan compute shaders for video encoding and decoding, highlighting performance improvements for complex codecs and workflows, especially in non-linear editing. Some comments debate the practicality and necessity of GPU acceleration versus CPU encoding, while others discuss hardware limitations and the evolving capabilities of GPU architectures.",
+    "summary": "The discussion centers on the use of Vulkan compute shaders for video encoding and decoding in FFmpeg, emphasizing its benefits for high-resolution, lossless, and archival video workflows. Commenters highlight the advantages over traditional CPU processing, the limitations of hardware decoders, and the specific use cases where GPU acceleration is most impactful.",
     "comments": [
       {
-        "id": 47455241,
-        "author": "pandaforce",
-        "text": "The main target for this are NLEs like Blender. Performance is a large part of the issue. Most users still just create TIFF files per frame before importing them into a \u0026quot;real editor\u0026quot; like Resolve.\nApple may have ASICs for ProRes decoding, and Resolve may be the standard editor that everyone uses.\u003cp\u003eBut this goes beyond what even Apple has, by making it possible to work directly with compressed lossless video on consumer GPUs. You can get hundreds of FPS encoding or decoding 4k 16-bit FFv1 on a 4080, while only reading a few gigabits of video per second, rather than tens and even hundreds of gigabits that SSDs can\u0026#x27;t keep up. No need to have image degradation when passing intermediate copies between CG programs and editing either.",
+        "id": 47455455,
+        "author": "null-phnix",
+        "text": "A lot of the confusion in this thread feels like it comes from thinking in terms of web streaming rather than the workloads this post is targeting.\u003cp\u003eThe article is pretty explicit that this is not about \u0026quot;make Twitch more efficient\u0026quot; or squeezing a bit more perf out of H.264. It is about mezzanine and archival formats that are already way beyond what a single CPU, even a decade old workstation CPU, handles comfortably in real time: 4K\u0026#x2F;6K\u0026#x2F;8K+ 16‑bit, FFv1-style lossless, ProRes RAW, huge DPX sequences, etc. People cutting multi‑camera timelines of that kind of material are already on the wrong side of the perf cliff and are often forced into very specific hardware or vendors.\u003cp\u003eWhat Vulkan compute buys you here is not \u0026quot;GPUs good, CPUs bad\u0026quot;, it is the ability to keep the entire codec pipeline resident on the GPU once the bitstream is there, using the same device that is already doing color, compositing and FX, and to do it in a portable way. FFmpeg’s model is also important: all the hairy parts stay in software (parsing, threading, error handling), and only the hot pixel crunching is offloaded. That makes this much more maintainable than the usual fragile vendor API route and keeps a clean fallback path when hardware is not available.\u003cp\u003eFrom a practical angle, this is less about winning a benchmark over a good CPU encoder for 4K H.264, and more about changing what is feasible on commodity hardware: e.g., scrubbing multiple streams of 6K\u0026#x2F;8K ProRes or FFv1 on a consumer GPU instead of needing a fat workstation or dailies transcoded to lighter proxies. For people doing archival work or high end finishing on a budget, that is a real qualitative change, not just an incremental efficiency tweak.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately identifies the target use case and performance benefits of GPU-accelerated video processing, providing relevant context about current workflows."
+        "analysis": "This comment provides a detailed and accurate explanation of the target use cases and benefits of GPU acceleration with Vulkan in FFmpeg, clarifying common misconceptions about streaming versus archival workflows."
+      },
+      {
+        "id": 47455241,
+        "author": "pandaforce",
+        "text": "The main target for this are NLEs like Blender. Performance is a large part of the issue. Most users still just create TIFF files per frame before importing them into a \u0026quot;real editor\u0026quot; like Resolve.\nApple may have ASICs for ProRes decoding, and Resolve may be the standard editor that everyone uses.\u003cp\u003eBut this goes beyond what even Apple has, by making it possible to work directly with compressed lossless video on consumer GPUs. You can get hundreds of FPS encoding or decoding 4k 16-bit FFv1 on a 4080, while only reading a few gigabits of video per second, rather than tens and even hundreds of gigabits that SSDs can\u0026#x27;t keep up. No need to have image degradation when passing intermediate copies between CG programs and editing either.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment accurately highlights the performance gains and practical benefits of GPU-based encoding/decoding for high-quality video workflows, aligning with known hardware capabilities."
       },
       {
         "id": 47454943,
@@ -46,8 +59,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment correctly explains how Vulkan compute shaders improve GPU acceleration by eliminating CPU-GPU latency bottlenecks, which is a key technical advantage."
+        "accuracyRank": 3,
+        "analysis": "This comment correctly points out the technical advantage of fully GPU-based processing in reducing latency and improving editing workflows for demanding codecs."
       },
       {
         "id": 47454182,
@@ -56,35 +69,24 @@
         "indicators": [
           "intelligent",
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment insightfully discusses the evolution of codecs and GPU architectures, highlighting how modern GPUs can better handle parallelism and complex workloads."
+        "accuracyRank": 4,
+        "analysis": "The comment provides a knowledgeable perspective on GPU architectural improvements that support advanced video codec processing, supporting the rationale for using Vulkan compute shaders."
       },
       {
         "id": 47453765,
         "author": "sylware",
         "text": "Well, the problem with hardware decoding is it cannot handle all the variations in data corruption which results in hardware crash, sometimes not recoverable with a soft reset of the hardware block.\u003cp\u003eIt is usually more reasonable to work with software decoders for really complex formats, or only to accelerate some heavy parts of the decoding where data corruption is really easy to deal with or benign, or aim for the middle ground: _SIMPLE_ and _VERY CONSERVATIVE_ compute shaders.\u003cp\u003eSometimes, the software cannot even tell the hardware is actually \u0026#x27;crashed\u0026#x27; and spitting non-sense data. It goes even worse, some hardware block hot reset actually do not work and require a power cycle... Then a \u0026#x27;media players\u0026#x27; able to use hardware decoding must always provide a clear and visible \u0026#x27;user button\u0026#x27; in order to let this very user switch to full software decoding.\u003cp\u003eThen, there is the next step of \u0026quot;corruption\u0026quot;: some streams out there are \u0026quot;wrong\u0026quot;, but this \u0026quot;wrong\u0026quot; will be decoded ok on only some specific decoders and not other ones even though the format is following the same specs.\u003cp\u003eWhat a mess.\u003cp\u003eI hope those compute shaders are not using that abomination of glsl(or the dx one) namely are SPIR-V shaders generated with plain and simple C code.",
         "indicators": [
+          "intelligent",
           "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "This comment provides a nuanced view on hardware decoding limitations and the benefits of software or conservative shader approaches, reflecting real-world hardware issues."
-      },
-      {
-        "id": 47454336,
-        "author": "doctorpangloss",
-        "text": "What is the use case? Okay, ultra low latency streaming. That is good. But. If you are sending the frames via some protocol over the network, like WebRTC, it will be touching the CPU anyway. Software encoding of 4K h264 is real time on a single thread on 65w, decade old CPUs, with low latency. The CPU encoders are much better quality and more flexible. So it\u0026#x27;s very difficult to justify the level of complexity needed for hardware video encoding. Absolutely no need for it for TV streaming for example. But people keep being obsessed with it who have no need for it.\u003cp\u003eIMO vendors should stop reinventing hardware video encoding and instead assign the programmer time to making libwebrtc and libvpx better suit their particular use case.",
-        "indicators": [
-          "thoughtful",
-          "emotional",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 5,
-        "analysis": "This comment raises valid points about the efficiency and quality of CPU encoding for many use cases, though it may understate scenarios where hardware acceleration is beneficial."
+        "analysis": "This comment insightfully discusses the limitations and risks of hardware decoding, advocating for software or cautious GPU shader approaches for robustness."
       },
       {
         "id": 47456302,
@@ -95,7 +97,19 @@
           "likely-true"
         ],
         "accuracyRank": 6,
-        "analysis": "The comment correctly notes that GPU encoding of h264 exists but is often less efficient, and raises a reasonable question about codec parallelizability, though it lacks technical depth."
+        "analysis": "The comment raises a valid question about codec parallelizability and correctly notes that GPU encoding of h264 is often less efficient than CPU, reflecting current practical experience."
+      },
+      {
+        "id": 47454336,
+        "author": "doctorpangloss",
+        "text": "What is the use case? Okay, ultra low latency streaming. That is good. But. If you are sending the frames via some protocol over the network, like WebRTC, it will be touching the CPU anyway. Software encoding of 4K h264 is real time on a single thread on 65w, decade old CPUs, with low latency. The CPU encoders are much better quality and more flexible. So it\u0026#x27;s very difficult to justify the level of complexity needed for hardware video encoding. Absolutely no need for it for TV streaming for example. But people keep being obsessed with it who have no need for it.\u003cp\u003eIMO vendors should stop reinventing hardware video encoding and instead assign the programmer time to making libwebrtc and libvpx better suit their particular use case.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "The comment provides a realistic view on the sufficiency of CPU encoding for common streaming scenarios, questioning the need for complex hardware solutions outside niche cases."
       },
       {
         "id": 47455728,
@@ -103,10 +117,11 @@
         "text": "This article assumes all GPUs are on a PCIe bus but some are part of the CPU so the distance problem is minimal and offloading to GPU might still be net +. Might because I haven\u0026#x27;t tested this",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment provides a valid caveat about integrated GPUs reducing data transfer latency, which can affect the performance tradeoffs of GPU offloading."
+        "accuracyRank": 8,
+        "analysis": "This comment correctly notes architectural variations that can affect offloading performance, though it lacks empirical evidence from testing."
       },
       {
         "id": 47455850,
@@ -114,10 +129,10 @@
         "text": "could this have an AV1 decoder for low power hardware that are without AV1 gpu accelerated decoding? for my N4020 laptop.\u003cp\u003emaybe a raspberry pi 4 too.",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "useless"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment expresses a practical user concern about hardware support for AV1 decoding on low-power devices, relevant to the discussion but speculative about implementation."
+        "accuracyRank": 9,
+        "analysis": "While the question is relevant to hardware acceleration, it is speculative and does not contribute substantive analysis or information about the article's topic."
       }
     ]
   }

@@ -20,7 +20,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers around a new CLI tool called Sonar that helps users see and kill processes running on localhost ports. Users appreciate its convenience compared to traditional commands like lsof, suggest feature improvements, and share alternative solutions or aliases they use. There is also a side commentary on the use of Unix domain sockets versus TCP ports.",
+    "summary": "The discussion centers on a new CLI tool called Sonar designed to identify and kill processes running on localhost ports. Users appreciate its simplicity and usefulness compared to traditional commands like lsof, while suggesting improvements and sharing alternative solutions.",
     "comments": [
       {
         "id": 47452516,
@@ -32,7 +32,7 @@
           "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "The author provides a detailed explanation of the tool's purpose, features, and use cases, demonstrating firsthand knowledge and practical utility."
+        "analysis": "The author, who is also the creator, provides a detailed and accurate description of the tool's purpose and features, making this the most reliable and informative comment."
       },
       {
         "id": 47456701,
@@ -44,7 +44,19 @@
           "likely-true"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment offers a thoughtful critique of common networking practices, highlighting valid technical points about Unix sockets and their limitations, with a balanced view of browser and Java support."
+        "analysis": "This comment offers a thoughtful critique of the common practice of using TCP ports instead of Unix sockets, providing valid technical reasons and limitations, showing good insight."
+      },
+      {
+        "id": 47454388,
+        "author": "chwzr",
+        "text": "i have this in my .zshrc which provides same functionality:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  lk() {\n    if [ $# -eq 0 ]; then\n        local output=$(sudo lsof -iTCP -sTCP:LISTEN -n -P)\n    elif [ $# -eq 1 ]; then\n        local output=$(sudo lsof -iTCP -sTCP:LISTEN -n -P | grep -i --color=always $1)\n    else\n        echo \u0026quot;find and kill processes listening on ports. Usage: lk [pattern]\u0026quot;\n        return 1\n    fi\n\n    if [ -z \u0026quot;$output\u0026quot; ]; then\n        echo \u0026quot;No listening processes found.\u0026quot;\n        return 0\n    fi\n\n    # Show header + results\n    echo \u0026quot;$(sudo lsof -iTCP -sTCP:LISTEN -n -P | head -1)\u0026quot;\n    echo \u0026quot;$output\u0026quot;\n    echo \u0026quot;\u0026quot;\n\n    # Extract unique PIDs (skip the header row if no grep was applied)\n    local pids=($(echo \u0026quot;$output\u0026quot; | awk \u0026#x27;{print $2}\u0026#x27; | grep -E \u0026#x27;^[0-9]+$\u0026#x27; | sort -u))\n\n    if [ ${#pids[@]} -eq 0 ]; then\n        echo \u0026quot;No PIDs found.\u0026quot;\n        return 0\n    fi\n\n    echo \u0026quot;PIDs to kill: ${pids[*]}\u0026quot;\n    echo -n \u0026quot;Kill these ${#pids[@]} process(es)? [y\u0026#x2F;N] \u0026quot;\n    read -r confirm\n\n    if [[ \u0026quot;$confirm\u0026quot; =~ ^[Yy]$ ]]; then\n        for pid in \u0026quot;${pids[@]}\u0026quot;; do\n            echo \u0026quot;Killing PID $pid...\u0026quot;\n            sudo kill -9 $pid\n        done\n        echo \u0026quot;Done.\u0026quot;\n    else\n        echo \u0026quot;Aborted.\u0026quot;\n    fi\n  }\u003c/code\u003e\u003c/pre\u003e",
+        "indicators": [
+          "constructive",
+          "likely-true",
+          "intelligent"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Provides a practical shell function alternative to Sonar, demonstrating equivalent functionality with lsof and kill commands, useful for users reluctant to install new tools."
       },
       {
         "id": 47453783,
@@ -52,11 +64,11 @@
         "text": "Would be nice to have a flag to customize the URL displayed for Docker containers. I connect to my host via Tailscale, but I can’t open links with localhost. It would be helpful to have a parameter that allows us to choose a network device or specify an IP address to display.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    3000    wud (getwud\u0026#x2F;wud:latest)                            wud          getwud\u0026#x2F;wud:latest                       3000    http:\u0026#x2F;\u0026#x2F;localhost:3000\n    3001    dockhand (fnsys\u0026#x2F;dockhand:latest)                   dockhand     fnsys\u0026#x2F;dockhand:latest                   3000    http:\u0026#x2F;\u0026#x2F;localhost:3001\u003c/code\u003e\u003c/pre\u003e",
         "indicators": [
           "constructive",
-          "intelligent",
+          "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "A practical feature suggestion based on a real-world use case involving network access via Tailscale, showing thoughtful engagement with the tool's functionality."
+        "accuracyRank": 4,
+        "analysis": "A constructive suggestion to improve the tool's usability in networked environments like Tailscale, showing practical user perspective."
       },
       {
         "id": 47455404,
@@ -67,20 +79,31 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment provides positive feedback and a useful enhancement idea, reflecting common user pain points and potential improvements."
+        "accuracyRank": 5,
+        "analysis": "Offers positive feedback and a useful feature suggestion, also noting potential confusion with the SonarQube name, indicating awareness of user experience."
       },
       {
-        "id": 47454388,
-        "author": "chwzr",
-        "text": "i have this in my .zshrc which provides same functionality:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  lk() {\n    if [ $# -eq 0 ]; then\n        local output=$(sudo lsof -iTCP -sTCP:LISTEN -n -P)\n    elif [ $# -eq 1 ]; then\n        local output=$(sudo lsof -iTCP -sTCP:LISTEN -n -P | grep -i --color=always $1)\n    else\n        echo \u0026quot;find and kill processes listening on ports. Usage: lk [pattern]\u0026quot;\n        return 1\n    fi\n\n    if [ -z \u0026quot;$output\u0026quot; ]; then\n        echo \u0026quot;No listening processes found.\u0026quot;\n        return 0\n    fi\n\n    # Show header + results\n    echo \u0026quot;$(sudo lsof -iTCP -sTCP:LISTEN -n -P | head -1)\u0026quot;\n    echo \u0026quot;$output\u0026quot;\n    echo \u0026quot;\u0026quot;\n\n    # Extract unique PIDs (skip the header row if no grep was applied)\n    local pids=($(echo \u0026quot;$output\u0026quot; | awk \u0026#x27;{print $2}\u0026#x27; | grep -E \u0026#x27;^[0-9]+$\u0026#x27; | sort -u))\n\n    if [ ${#pids[@]} -eq 0 ]; then\n        echo \u0026quot;No PIDs found.\u0026quot;\n        return 0\n    fi\n\n    echo \u0026quot;PIDs to kill: ${pids[*]}\u0026quot;\n    echo -n \u0026quot;Kill these ${#pids[@]} process(es)? [y\u0026#x2F;N] \u0026quot;\n    read -r confirm\n\n    if [[ \u0026quot;$confirm\u0026quot; =~ ^[Yy]$ ]]; then\n        for pid in \u0026quot;${pids[@]}\u0026quot;; do\n            echo \u0026quot;Killing PID $pid...\u0026quot;\n            sudo kill -9 $pid\n        done\n        echo \u0026quot;Done.\u0026quot;\n    else\n        echo \u0026quot;Aborted.\u0026quot;\n    fi\n  }\u003c/code\u003e\u003c/pre\u003e",
+        "id": 47457846,
+        "author": "kohexo",
+        "text": "Honestly, pretty cool. I was wondering if something like this existed. Right now I have scripts to kill the ports I use consistently to avoid issues when developing. Kudos!",
         "indicators": [
+          "emotional",
           "constructive",
-          "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "Shares a custom shell function that replicates similar functionality, showing practical knowledge and providing an alternative for users who prefer scripting."
+        "accuracyRank": 6,
+        "analysis": "Expresses enthusiasm and appreciation for the tool, validating its usefulness compared to personal scripts."
+      },
+      {
+        "id": 47457270,
+        "author": "fcoury",
+        "text": "We live in crazy times. I wanted to add a PID to the list for my personal use and since I use Rust way more than Go, I decided to one-shot one app, and Codex indeed one shotted it, wow.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;fcoury\u0026#x2F;sonars\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;fcoury\u0026#x2F;sonars\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Shares a personal extension of the tool using Rust, showing engagement and customization, though less detailed about the original tool."
       },
       {
         "id": 47454454,
@@ -88,22 +111,21 @@
         "text": "I am absolutely installing this and starting to use it daily!\u003cp\u003eFor the even less patient there\u0026#x27;s also this (not mine): \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;jkfran\u0026#x2F;killport\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;jkfran\u0026#x2F;killport\u003c/a\u003e",
         "indicators": [
           "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Shows enthusiasm and provides an alternative tool link, useful but less substantive about Sonar itself."
+      },
+      {
+        "id": 47458499,
+        "author": "mustafa0x",
+        "text": "Nice util. It should be possible to kill inline.\u003cp\u003eI like clack\u0026#x2F;prompts. See its multiselect API.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bombshell-dev\u0026#x2F;clack\u0026#x2F;tree\u0026#x2F;main\u0026#x2F;packages\u0026#x2F;prompts\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bombshell-dev\u0026#x2F;clack\u0026#x2F;tree\u0026#x2F;main\u0026#x2F;packages\u0026#x2F;pr...\u003c/a\u003e",
+        "indicators": [
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 6,
-        "analysis": "Expresses enthusiasm for the tool and shares another related project, contributing positively to the discussion."
-      },
-      {
-        "id": 47456358,
-        "author": "RonanSoleste",
-        "text": "I just have an alias in my .bashrc :)",
-        "indicators": [
-          "useless",
-          "emotional"
-        ],
-        "accuracyRank": 7,
-        "analysis": "A brief comment that adds little substantive value or detail to the discussion."
+        "accuracyRank": 9,
+        "analysis": "Suggests a usability improvement and references a related library, indicating constructive engagement."
       },
       {
         "id": 47454472,
@@ -113,19 +135,19 @@
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "Provides a link to a similar personal tool, contributing an alternative but without further explanation."
+        "accuracyRank": 10,
+        "analysis": "Mentions an alternative tool, contributing to the discussion but with minimal detail."
       },
       {
-        "id": 47454738,
-        "author": "mfkrause",
-        "text": "I always find myself going through my zsh history for `lsof`. Will definitely check this out, seems interesting (even though I\u0026#x27;m generally reluctant of installing third-party tools for such jobs).",
+        "id": 47456358,
+        "author": "RonanSoleste",
+        "text": "I just have an alias in my .bashrc :)",
         "indicators": [
-          "emotional",
-          "thoughtful"
+          "useless",
+          "emotional"
         ],
-        "accuracyRank": 9,
-        "analysis": "Shares a relatable user experience and cautious interest, reflecting common user hesitation toward new tools."
+        "accuracyRank": 11,
+        "analysis": "A brief comment that adds little value to the discussion beyond stating a personal workaround."
       },
       {
         "id": 47454168,
@@ -135,8 +157,8 @@
           "emotional",
           "useless"
         ],
-        "accuracyRank": 10,
-        "analysis": "A superficial comment about the project name without adding technical insight or constructive feedback."
+        "accuracyRank": 12,
+        "analysis": "A mild observation about the tool's name, not contributing to the technical discussion."
       },
       {
         "id": 47453096,
@@ -144,10 +166,10 @@
         "text": "love this, i get tired of spamming lsof -i tcp:xxxx",
         "indicators": [
           "emotional",
-          "useless"
+          "likely-true"
         ],
-        "accuracyRank": 11,
-        "analysis": "Expresses appreciation but lacks substantive content or suggestions."
+        "accuracyRank": 13,
+        "analysis": "Expresses positive sentiment and frustration with existing commands, but lacks depth."
       },
       {
         "id": 47454063,
@@ -155,10 +177,21 @@
         "text": "love this, happens too often",
         "indicators": [
           "emotional",
-          "useless"
+          "likely-true"
         ],
-        "accuracyRank": 12,
-        "analysis": "A brief positive reaction without additional information or critique."
+        "accuracyRank": 14,
+        "analysis": "Short positive comment echoing common frustrations, minimal analytical content."
+      },
+      {
+        "id": 47457192,
+        "author": "jkestner",
+        "text": "I read the readme. :) Very nice. Thoughtful features. Get this on Homebrew!",
+        "indicators": [
+          "emotional",
+          "constructive"
+        ],
+        "accuracyRank": 15,
+        "analysis": "Positive feedback with a suggestion for distribution, but brief and not deeply analytical."
       }
     ]
   }

@@ -22,19 +22,65 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the technical aspects and potential modern adaptations of VisiCalc, including memory management on the Apple II, programming language choices for similar projects, and the usability of command-line spreadsheet interfaces.",
+    "summary": "The discussion revolves around the complexity and implementation challenges of spreadsheets, particularly referencing VisiCalc and modern recreations. Contributors share technical insights, personal projects, and resources for command-line spreadsheet tools, while also reflecting on the evolution of programming skills related to such software.",
     "comments": [
+      {
+        "id": 47457685,
+        "author": "fouronnes3",
+        "text": "Very cool article!\u003cp\u003eI also implemented a spreadsheet last year [0] in pure TypeScript, with the fun twist that formulas also update backwards. While the backwards root finding algorithm was challenging, I also found it incredibly humbling to discover how much complexity there is in the UX of the simple spreadsheet interface. Handling selection states, reactive updates, detecting cycles of dependency and gracefully recovering from them is a massive state machine programming challenge! Very fun project with a lot of depth!\u003cp\u003eI myself didn\u0026#x27;t hand roll my own parser but used Ohm-js [1] which I highly recommend if you want to parse a custom language in Javascript or TypeScript.\u003cp\u003e\u0026gt; One way of doing this is to keep track of all dependencies between the cells and trigger updates when necessary. Maintaining a dependency graph would give us the most efficient updates, but it’s often an overkill for a spreadsheet.\u003cp\u003eOn that subject, figuring out the efficient way to do it is also a large engineering challenge, and is definitely not overkill but absolutely required for a modern spreadsheet implementation. There is a good description of how Excel does it in this famous paper \u0026quot;Build systems a la carte\u0026quot; paper, which interestingly takes on a spreadsheet as a build system [2].\u003cp\u003e[0] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;victorpoughon.github.io\u0026#x2F;bidicalc\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;victorpoughon.github.io\u0026#x2F;bidicalc\u0026#x2F;\u003c/a\u003e\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;ohmjs.org\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;ohmjs.org\u0026#x2F;\u003c/a\u003e\u003cp\u003e[2] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.microsoft.com\u0026#x2F;en-us\u0026#x2F;research\u0026#x2F;wp-content\u0026#x2F;uploads\u0026#x2F;2018\u0026#x2F;03\u0026#x2F;build-systems.pdf\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.microsoft.com\u0026#x2F;en-us\u0026#x2F;research\u0026#x2F;wp-content\u0026#x2F;uploads\u0026#x2F;...\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides detailed, accurate insights into spreadsheet implementation challenges and references credible resources, making it highly informative and reliable."
+      },
+      {
+        "id": 47457064,
+        "author": "airstrike",
+        "text": "\u003ci\u003e\u0026gt; Maintaining a dependency graph would give us the most efficient updates, but it’s often an overkill for a spreadsheet.\u003c/i\u003e\u003cp\u003eIt\u0026#x27;s not overkill at all. In fact, it\u0026#x27;s absolutely necessary for all but the simplest toy examples.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment correctly emphasizes the importance of dependency graphs in spreadsheet efficiency, aligning with established engineering practices."
+      },
       {
         "id": 47456387,
         "author": "afandian",
         "text": "Quote:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  #define MAXIN 128  \u0026#x2F;\u0026#x2F; max cell input length\n  enum { EMPTY, NUM, LABEL, FORMULA };  \u0026#x2F;\u0026#x2F; cell types\n  struct cell {\n    int type;\n    float val;\n    char text[MAXIN];  \u0026#x2F;\u0026#x2F; raw user input\n  };\n  #define NCOL 26    \u0026#x2F;\u0026#x2F; max number of columns (A..Z)\n  #define NROW 50    \u0026#x2F;\u0026#x2F; max number of rows\n  struct grid {\n    struct cell cells[NCOL][NROW];\n  };\n\u003c/code\u003e\u003c/pre\u003e\nI doubt that 171 KB of static allocation would fly on an Apple II! I do wonder how they did memory allocation, it must have been tricky with all the fragmentation.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "intelligent"
+          "likely-true"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a realistic technical concern about memory constraints on the Apple II, showing understanding of hardware limitations and memory management challenges."
+        "accuracyRank": 3,
+        "analysis": "Raises a valid technical concern about memory constraints on vintage hardware, reflecting a reasonable skepticism grounded in hardware limitations."
+      },
+      {
+        "id": 47457856,
+        "author": "pstuart",
+        "text": "Other open source command line spreadsheets:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;drclcomputers\u0026#x2F;GoSheet\n  https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;xi\u0026#x2F;spreadsheet\u0026#x2F;\n  https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;andmarti1424\u0026#x2F;sc-im\n  https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;saulpw\u0026#x2F;visidata\n  https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bgreenwell\u0026#x2F;xleak\n  https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;SamuelSchlesinger\u0026#x2F;tshts\n  https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;CodeOne45\u0026#x2F;vex-tui\u003c/code\u003e\u003c/pre\u003e",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Provides useful resources for users interested in command-line spreadsheet tools, contributing constructively to the discussion."
+      },
+      {
+        "id": 47457478,
+        "author": "ivanpribec",
+        "text": "Reminds me of spreadsheet-fortran (\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;lwsinclair\u0026#x2F;spreadsheet-fortran\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;lwsinclair\u0026#x2F;spreadsheet-fortran\u003c/a\u003e), a project creating a VisiCalc lookalike in FORTRAN 66, which even runs on a PDP-11.",
+        "indicators": [
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Shares relevant historical and technical information about a similar project, adding context to the conversation."
       },
       {
         "id": 47456626,
@@ -42,22 +88,53 @@
         "text": "Kinda cool to see... TBH, I\u0026#x27;d be more inclined to reach for Rust and Ratatui myslf over C + ncurses.  I know this would likely be a much larger executable though.\u003cp\u003eWith MS Edit resurrected similarly, I wonder how hard it would be to get a flushed out text based spreadsheet closer in function to MS Excel or Lotus 123 versions for DOS, but cross platform.  Maybe even able to load\u0026#x2F;save a few different formats from CSV\u0026#x2F;TSV to XLSX (without OLE\u0026#x2F;COM embeds).",
         "indicators": [
           "thoughtful",
-          "constructive",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "The comment offers a reasonable perspective on modern programming choices for terminal applications, acknowledging trade-offs between language features and executable size."
+        "accuracyRank": 6,
+        "analysis": "Offers a modern perspective on technology choices for spreadsheet development, though speculative about implementation complexity."
       },
       {
         "id": 47456374,
         "author": "bonsai_spool",
         "text": "Are there good command-line interfaces for spreadsheets? I don\u0026#x27;t do anything super financially-important and I\u0026#x27;d prefer to stay in the terminal for quick editing of things, especially if I can have Vi keybindings.",
         "indicators": [
-          "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment raises a practical question about usability and preferences for terminal-based spreadsheet tools, reflecting user needs rather than technical accuracy."
+        "accuracyRank": 7,
+        "analysis": "Poses a relevant question that guides the discussion toward practical tools, though it is not an informative statement itself."
+      },
+      {
+        "id": 47457555,
+        "author": "airstrike",
+        "text": "Reminds me of \u003ca href=\"https:\u0026#x2F;\u0026#x2F;tomasp.net\u0026#x2F;blog\u0026#x2F;2018\u0026#x2F;write-your-own-excel\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;tomasp.net\u0026#x2F;blog\u0026#x2F;2018\u0026#x2F;write-your-own-excel\u0026#x2F;\u003c/a\u003e",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Provides a resource that may be useful for readers interested in spreadsheet development, though without further commentary."
+      },
+      {
+        "id": 47457160,
+        "author": "breadsniffer",
+        "text": "Anyone know what kind of departments\u0026#x2F;parts of business were the first adopters of visicalc?",
+        "indicators": [
+          "constructive"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Asks a historical question that could enrich the discussion but does not contribute factual information."
+      },
+      {
+        "id": 47457457,
+        "author": "khazhoux",
+        "text": "I’m genuinely worried that we’re the last generation who will study and appreciate this craft.  Because now a kid learning to program will just say “Write me a terminal spreadsheet app in plain C.”",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Reflects a subjective opinion on programming culture and education, valuable for perspective but not a factual claim."
       }
     ]
   }
