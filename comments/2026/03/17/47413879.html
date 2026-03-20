@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">53 points</span>
+        <span class="score">96 points</span>
         by <a href="https://news.ycombinator.com/user?id=nolta" class="hnuser">nolta</a>
         <span class="age">3 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47413879.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around the new drawvg filter in FFmpeg, with users highlighting its usefulness for video editing tasks such as obscuring overlays in tutorial videos. Some users appreciate the flexibility of drawvg compared to older filters, while others comment on the complexity of FFmpeg&#39;s filter syntax compared to alternatives like Avisynth.</p>
+      <p>The discussion centers around the new drawvg filter in FFmpeg, with users sharing use cases, potential future features, and critiques of FFmpeg&#39;s syntax complexity. Some highlight its usefulness for video editing tasks like censoring overlays, while others speculate on ML integration and usability improvements.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -63,8 +63,8 @@
       </div>
       <div class="comment-text">drawvg is very useful.  Before drawvg, I was always fine using the stable FFmpeg releases such as 8.0.1 but when I saw drawvg added to the master branch[1], I didn&#x27;t want to wait for the next stable release and immediately re-built ffmpeg from master to start using it.<p>My main use case is modifying youtube videos of tech tutorials where the speaker overlays a video of themselves in a corner of the video.  drawvg is used to blackout that area of the video.  I&#x27;m sure some viewers like having a visible talking head shown on the same screen as the code but I find the constant motion of someone&#x27;s lips moving and eyes blinking in my peripheral vision extremely distracting.  Our vision is very tuned into paying attention to faces so the brain constantly fighting that urge so it can concentrate on the code.  (A low-tech solution is to just put a yellow sticky know on the monitor to cover up the speaker but that means you can&#x27;t easily resize&#x2F;move the window playing the video  ... so ffmpeg to the rescue.)<p>If the overlay was a rectangle, you can use the older drawbox filter and don&#x27;t need drawvg.  However, some content creaters use circles and that&#x27;s where drawvg works better.   Instead of creating a separate .vgs file, I just use the inline syntax like this:<p><pre><code>  ffmpeg -i input.webm -filter_complex &quot;[0:v]drawvg=&#x27;circle 3388 1670 400 setcolor black fill&#x27;[v2];[0:a]atempo=1.5[a2]&quot; -map &quot;[v2]&quot; -map &quot;[a2]&quot; output.mp4
 </code></pre>
-That puts a black filled circle on the bottom right corner of a 4k vid to cover up the speaker.  Different vids from different creators will require different x,y,radius coordinates.<p>[1] <a href="https:&#x2F;&#x2F;git.ffmpeg.org&#x2F;gitweb&#x2F;ffmpeg.git&#x2F;commit&#x2F;016d767c8e9d6c8b3a445bb573cd07a07912a671" rel="nofollow">https:&#x2F;&#x2F;git.ffmpeg.org&#x2F;gitweb&#x2F;ffmpeg.git&#x2F;commit&#x2F;016d767c8e9d...</a></div>
-      <div class="comment-analysis"><em>This comment provides a detailed, practical use case for drawvg and explains its advantages over older filters, demonstrating a good understanding of the tool&#39;s capabilities.</em></div>
+That puts a black filled circle on the bottom right corner of a 4k vid to cover up the speaker.  Different vids from different creators will require different x,y,radius coordinates.<p>(The author of the drawvg code in the git log appears to be the same as the author of this thread&#x27;s article.)<p>[1] <a href="https:&#x2F;&#x2F;git.ffmpeg.org&#x2F;gitweb&#x2F;ffmpeg.git&#x2F;commit&#x2F;016d767c8e9d6c8b3a445bb573cd07a07912a671" rel="nofollow">https:&#x2F;&#x2F;git.ffmpeg.org&#x2F;gitweb&#x2F;ffmpeg.git&#x2F;commit&#x2F;016d767c8e9d...</a></div>
+      <div class="comment-analysis"><em>This comment provides a detailed, practical use case for drawvg and explains why it is preferred over older filters, showing a good understanding of the tool&#39;s capabilities.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
@@ -72,7 +72,7 @@ That puts a black filled circle on the bottom right corner of a 4k vid to cover 
         <a href="https://news.ycombinator.com/user?id=shevy-java" class="hnuser">shevy-java</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">That&#x27;s quite cool. I guess ffmpeg would kind of technically be a replacement for avisynth at this point.<p>Still, I find the syntax it uses horrible:<p><pre><code>  ffmpeg -an -ss 12 -t 3 -i bigbuckbunny.mov -vf &#x27;crop=iw-1, drawvg=file=progress.vgs, format=yuv420p&#x27; -c:v libvpx-vp9 output.webm
 </code></pre>
@@ -84,40 +84,84 @@ use libvpx-vp9 as the video codec ... but the above example is somewhat
 simple. There are total monsters in actual use when it comes to the filter
 subsystem in ffmpeg. Avisynth was fairly easy on my brain; ffmpeg does not,
 and nobody among the ffmpeg dev team seems to think that complicated uses are an issue. I even wrote a small ruby script that expands shortcut options as above, into the corresponding long names, simply because the long names are a bit easier to remember. Even that fails when it comes to complex filters used.<p>It&#x27;s a shame because ffmpeg is otherwise really great.</div>
-      <div class="comment-analysis"><em>This comment offers a critical perspective on FFmpeg&#39;s syntax complexity compared to Avisynth, reflecting a common user experience and providing constructive feedback.</em></div>
+      <div class="comment-analysis"><em>The comment insightfully critiques FFmpeg&#39;s complex syntax, which is a common user pain point, while acknowledging the power of the tool, reflecting an experienced user&#39;s perspective.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=sorenjan" class="hnuser">sorenjan</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">The cropdetect example made me wonder if they&#x27;re thinking about including support for yolo or similar models. They&#x27;re including Whisper for text to speech already, I think yolo would enable things like automatic face censoring and general frame content aware editing. Or maybe Segment anything, and have more fine grained masks available.<p>On the other hand, when I compared the binaries (ffmpeg, ffprobe, ffplay) I downloaded the other day with the ones I had installed since around September, they where almost 100 MB larger. I don&#x27;t remember the exact size of the old ones but the new ones are 640 MB, the old ones well under 600 MB. The only difference in included libraries was Cairo and the JPEG-XS lib. So while I think a bunch of new ML models would be really cool, maybe they don&#x27;t want to go down that route. But some kind of pluggable system with accelerated ML models would be helpful I think.</div>
+      <div class="comment-analysis"><em>This comment thoughtfully speculates on future ML integrations in FFmpeg and notes the trade-offs in binary size, showing awareness of current developments and practical constraints.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=fercircularbuf" class="hnuser">fercircularbuf</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">This could be a great and easy way to add annotations to technical instruction videos in a way that is self-documenting and programmable.</div>
-      <div class="comment-analysis"><em>The comment insightfully suggests a potential use case for drawvg, emphasizing its programmability and utility in educational content.</em></div>
+      <div class="comment-analysis"><em>A concise comment highlighting a valuable application of drawvg for educational content, emphasizing programmability and clarity.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=arc-in-space" class="hnuser">arc-in-space</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Oh, I was not expecting an entire DSL for this. This looks really useful.</div>
-      <div class="comment-analysis"><em>A brief but relevant observation about the existence of a domain-specific language for drawvg, indicating surprise and appreciation.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=torginus" class="hnuser">torginus</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
+      <div class="comment-text">Oh, I was not expecting an entire DSL for this. This looks really useful.</div>
+      <div class="comment-analysis"><em>This comment recognizes the significance of having a domain-specific language within FFmpeg for vector graphics, indicating a positive impression of the feature.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=mikkupikku" class="hnuser">mikkupikku</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Looks very cool.  I wonder if drawvg filters can be modified in real time using zmq.</div>
+      <div class="comment-analysis"><em>The comment raises a relevant technical question about real-time modification capabilities, showing curiosity about advanced use cases.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dotnot" class="hnuser">dotnot</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Nice readme example, I would also like to see time of execution for these tasks, I mean how much time for handling filters adds comparing to non using it</div>
+      <div class="comment-analysis"><em>This comment constructively requests performance metrics, which would be useful for evaluating the practical impact of using drawvg filters.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dingdingdang" class="hnuser">dingdingdang</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">trolling</span> 
+      </div>
+      <div class="comment-text">How far are we from having ffmpeg make automatic rotoscope versions of our videos?!</div>
+      <div class="comment-analysis"><em>This comment is more speculative and somewhat playful, expressing enthusiasm but lacking concrete basis or technical detail.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=torginus" class="hnuser">torginus</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-untrue</span> 
+      </div>
       <div class="comment-text">One of the strangest discoveries of my life was that vector graphics is a solved problem, and the solution is turtle graphics that I was taught in primary school.</div>
-      <div class="comment-analysis"><em>This comment reflects on the foundational concepts of vector graphics, linking them to simple educational tools, which is an insightful but somewhat tangential remark.</em></div>
+      <div class="comment-analysis"><em>This comment oversimplifies vector graphics by equating it to turtle graphics, which is not an accurate representation of the complexity involved.</em></div>
     </div>
     
 
@@ -129,7 +173,7 @@ and nobody among the ffmpeg dev team seems to think that complicated uses are an
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-20 10:46 UTC &nbsp;|&nbsp;
+    Generated 2026-03-20 13:07 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

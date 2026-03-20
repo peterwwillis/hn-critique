@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Video Encoding and Decoding with Vulkan Compute Shaders in FFmpeg | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://www.khronos.org/blog/video-encoding-and-decoding-with-vulkan-compute-shaders-in-ffmpeg" rel="noreferrer noopener">Video Encoding and Decoding with Vulkan Compute Shaders in FFmpeg</a>
+        <span class="sitebit"> (khronos.org)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">11 points</span>
+        by <a href="https://news.ycombinator.com/user?id=y1n0" class="hnuser">y1n0</a>
+        <span class="age">4 days ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47407293.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47407293" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion focuses on the challenges of hardware video decoding, particularly its inability to handle corrupted data gracefully, and the potential benefits of using software decoding or conservative compute shaders. The commenter also expresses hope that the new Vulkan compute shaders avoid problematic shader languages.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=sylware" class="hnuser">sylware</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Well, the problem with hardware decoding is cannot handle all the variations in data corruption which results in hardware crash, sometimes not recoverable with a soft reset of the hardware block.<p>It is usually more reasonable to work with software decoders for really complex formats, or only to accelerate some heavy parts of the decoding where data corruption is really easy to deal with or benign, or aim for the middle ground: _SIMPLE_ and _VERY CONSERVATIVE_ compute shaders.<p>Sometimes, the software cannot even tell the hardware is actually &#x27;crashed&#x27; and spitting non-sense data. It goes even worse, some hardware block hot reset actually do not work and require a power cycle... Then a &#x27;media players&#x27; able to use hardware decoding must always provide a clear and visible &#x27;user button&#x27; in order to let this very user switch to full software decoding.<p>Then, there is the next step of &quot;corruption&quot;: some streams out there are &quot;wrong&quot;, but this &quot;wrong&quot; will be decoded ok on only some specific decoders and not other ones even though the format is following the same specs.<p>What a mess.<p>I hope those compute shaders are not using that abomination of glsl(or the dx one) namely are SPIR-V shaders generated with plain and simple C code.</div>
+      <div class="comment-analysis"><em>The comment accurately highlights known issues with hardware decoders and the practical need for software fallbacks, providing a nuanced view of the trade-offs involved.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-20 13:07 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+
