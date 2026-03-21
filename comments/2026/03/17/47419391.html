@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">92 points</span>
+        <span class="score">118 points</span>
         by <a href="https://news.ycombinator.com/user?id=matt_d" class="hnuser">matt_d</a>
         <span class="age">3 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47419391.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the new Mamba-3 model, highlighting its focus on inference efficiency compared to Mamba-2&#39;s training speed optimization. One user anticipates comparing it to another model, Inception 2, while another comments on the clarity of the model&#39;s description.</p>
+      <p>The discussion centers on the efficiency and practical implications of the Mamba-3 model&#39;s inference compute requirements. One user questions the claim that more compute during inference is beneficial, emphasizing real-world batching practices, while others express interest in comparing Mamba-3 to other models or clarify the model&#39;s focus on inference efficiency.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,13 +56,13 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=nl" class="hnuser">nl</a>
+        <a href="https://news.ycombinator.com/user?id=jychang" class="hnuser">jychang</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I&#x27;m looking forward to comparing this to Inception 2 (the text diffusion model) which in my experience is very fast and reasonably high quality.</div>
-      <div class="comment-analysis"><em>The comment provides a relevant perspective by referencing a comparable model, indicating a thoughtful approach to evaluating Mamba-3&#39;s performance.</em></div>
+      <div class="comment-text">I&#x27;m not sure that I buy their conclusion that more compute during inference is good.<p>Yes, batch=1 inference is mostly memory bandwidth bound, not GPU compute bound. But no provider does batch=1 inference. Everyone groups all the requests into a batch, and the GPU computes them together.<p>With a fused kernel, that means the GPU streams the tensors from VRAM, and does a bunch of compute on different conversations in the batch, at the same time.<p>If they increase the amount of compute required per token, that just reduces the maximum batch size a GPU can handle. In practice, yes this does mean each GPU can serve less users. Providers aren&#x27;t leaving GPU cores idle normally during inference.</div>
+      <div class="comment-analysis"><em>This comment provides a knowledgeable critique of the inference compute claim, explaining batching in practical deployments and its impact on GPU utilization, making it a well-informed and accurate perspective.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -73,7 +73,18 @@
         <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">&gt; Mamba-3 is a new state space model (SSM) designed with inference efficiency as the primary goal — a departure from Mamba-2, which optimized for training speed. The key upgrades are a more expressive recurrence formula, complex-valued state tracking, and a MIMO (multi-input, multi-output) variant that boosts accuracy without slowing down decoding.<p>Why can’t they simply say -<p>Mamba-3 focuses on being faster and more efficient when making predictions, rather than just being fast to train like Mamba-2.</div>
-      <div class="comment-analysis"><em>This comment clarifies the technical focus of Mamba-3 in simpler terms, which helps in understanding the model&#39;s improvements.</em></div>
+      <div class="comment-analysis"><em>This comment accurately summarizes the key difference between Mamba-3 and Mamba-2, clarifying the model&#39;s focus in simple terms without adding speculation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=nl" class="hnuser">nl</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">I&#x27;m looking forward to comparing this to Inception 2 (the text diffusion model) which in my experience is very fast and reasonably high quality.</div>
+      <div class="comment-analysis"><em>This comment expresses anticipation for comparative analysis but does not provide substantive critique or factual information about Mamba-3 itself.</em></div>
     </div>
     
 
@@ -85,7 +96,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-21 08:38 UTC &nbsp;|&nbsp;
+    Generated 2026-03-21 10:33 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

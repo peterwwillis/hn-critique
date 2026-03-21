@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">170 points</span>
+        <span class="score">177 points</span>
         by <a href="https://news.ycombinator.com/user?id=GaggiX" class="hnuser">GaggiX</a>
-        <span class="age">14 hours ago</span>
+        <span class="age">16 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47458595.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47458595" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the novel Attention Residuals (AttnRes) technique, highlighting its potential to reduce computational and memory costs in training large language models. Commenters note the innovation of replacing fixed residual connections with learned attention mechanisms, and the practical benefits such as faster iteration and improved inference efficiency.</p>
+      <p>The discussion centers around the new Attention Residuals technique, highlighting its efficiency improvements in training and inference, the novel approach of selective aggregation of layer outputs, and its potential impact on model scalability and hardware requirements. Some comments provide technical explanations and comparisons to existing concepts like LSTM input gates.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,13 +56,13 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jryio" class="hnuser">jryio</a>
+        <a href="https://news.ycombinator.com/user?id=westurner" class="hnuser">westurner</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">This is the key piece<p>&gt; Full AttnRes is straightforward but requires O(Ld) memory at scale. Block AttnRes partitions layers into N blocks, accumulates within each block via standard residuals, and applies attention only over block-level representations. With ~8 blocks, it recovers most of Full AttnRes&#x27;s gains while serving as a practical drop-in replacement with marginal overhead.</div>
-      <div class="comment-analysis"><em>This comment accurately summarizes the key technical innovation and trade-offs described in the paper, reflecting a clear understanding of the method.</em></div>
+      <div class="comment-text">ScholarlyArticle: &quot;Attention Residuals&quot; (2026)  <a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.15031" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.15031</a> :<p>&gt; Abstract: <i>Residual connections with PreNorm are standard in modern LLMs, yet they accumulate all layer outputs with fixed unit weights. This uniform aggregation causes uncontrolled hidden-state growth with depth, progressively diluting each layer&#x27;s contribution. We propose Attention Residuals (</i>AttnRes<i>),</i> which replaces this fixed accumulation with softmax attention over preceding layer outputs, <i>allowing each layer to selectively aggregate earlier representations with learned, input-dependent weights. To address the memory and communication overhead of attending over all preceding layer outputs for large-scale model training, we introduce</i> Block AttnRes, <i>which partitions layers into blocks and attends over block-level representations, reducing the memory footprint while preserving most of the gains of full AttnRes. </i> [...]</div>
+      <div class="comment-analysis"><em>This comment provides a detailed and accurate summary of the paper&#39;s abstract, correctly explaining the problem with fixed residual weights and the proposed solution using attention.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -70,38 +70,49 @@
         <a href="https://news.ycombinator.com/user?id=jjcm" class="hnuser">jjcm</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Two things stand out to me with this:<p>1. Drops compute required for training by ~20%. This approach wont just help the ever escalating model sizes larger companies are pushing for, it means things like autoresearch can iterate on new model architectures faster.<p>2. WAY lower bandwidth requirements for inference. Means with approaches like this it should run on consumer hardware far better. It apparently requires 1&#x2F;6th the memory bandwidth of a traditional approach for better results.<p>This is a big improvement if it can be generalized. They&#x27;re claiming it&#x27;s a drop in replacement, so it seems like it can as well.</div>
-      <div class="comment-analysis"><em>This comment provides a practical perspective on the benefits of the approach, citing specific efficiency improvements that align with the paper&#39;s claims.</em></div>
+      <div class="comment-analysis"><em>This comment accurately highlights the practical benefits of the approach, including reduced compute and bandwidth requirements, which align with claims made in the paper.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=westurner" class="hnuser">westurner</a>
+        <a href="https://news.ycombinator.com/user?id=jryio" class="hnuser">jryio</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">ScholarlyArticle: &quot;Attention Residuals&quot; (2026)  <a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.15031" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.15031</a> :<p>&gt; Abstract: <i>Residual connections with PreNorm are standard in modern LLMs, yet they accumulate all layer outputs with fixed unit weights. This uniform aggregation causes uncontrolled hidden-state growth with depth, progressively diluting each layer&#x27;s contribution. We propose Attention Residuals (</i>AttnRes<i>),</i> which replaces this fixed accumulation with softmax attention over preceding layer outputs, <i>allowing each layer to selectively aggregate earlier representations with learned, input-dependent weights. To address the memory and communication overhead of attending over all preceding layer outputs for large-scale model training, we introduce</i> Block AttnRes, <i>which partitions layers into blocks and attends over block-level representations, reducing the memory footprint while preserving most of the gains of full AttnRes. </i> [...]</div>
-      <div class="comment-analysis"><em>This comment quotes the abstract directly, accurately describing the core concept and motivation behind Attention Residuals.</em></div>
+      <div class="comment-text">This is the key piece<p>&gt; Full AttnRes is straightforward but requires O(Ld) memory at scale. Block AttnRes partitions layers into N blocks, accumulates within each block via standard residuals, and applies attention only over block-level representations. With ~8 blocks, it recovers most of Full AttnRes&#x27;s gains while serving as a practical drop-in replacement with marginal overhead.</div>
+      <div class="comment-analysis"><em>This comment correctly explains the memory trade-offs between full Attention Residuals and the block variant, reflecting the technical content of the paper.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=imtringued" class="hnuser">imtringued</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I don&#x27;t know why all the posts fail to summarize the results properly.<p>I had a similar idea at the back of my head but here is a layman explanation:<p>Standard attention threads the previous layers output to the next layers input. By adding residual connections to each layer, the layers learn an update rule.<p>There is an obvious limitation here. Only the first layer gets to see the original input and all subsequent layers only get to see the previous layer output.<p>With attention residuals, the idea is that you have a tiny attention operator that decides between using the original input and any of the previous layer outputs.</div>
+      <div class="comment-analysis"><em>This comment offers a layman explanation of the concept, correctly identifying the limitation of standard residual connections and the improvement introduced by attention residuals.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jszymborski" class="hnuser">jszymborski</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">This is reminds me of the input gates of an LSTM.</div>
-      <div class="comment-analysis"><em>The analogy to LSTM input gates is insightful, drawing a parallel to known mechanisms of selective information flow in neural networks.</em></div>
+      <div class="comment-analysis"><em>The analogy to LSTM input gates is a reasonable comparison, highlighting the gating mechanism aspect of the attention residuals.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=Murfalo" class="hnuser">Murfalo</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
@@ -112,12 +123,23 @@
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=caderosche" class="hnuser">caderosche</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Very cool!</div>
-      <div class="comment-analysis"><em>This brief comment expresses enthusiasm but adds no substantive content or critique.</em></div>
+      <div class="comment-analysis"><em>This brief comment expresses enthusiasm but adds no substantive content or analysis.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ilreb" class="hnuser">ilreb</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">[dupe]<a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47401111">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47401111</a></div>
+      <div class="comment-analysis"><em>This comment only points to a duplicate thread and does not provide any original insight.</em></div>
     </div>
     
 
@@ -129,7 +151,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-21 08:38 UTC &nbsp;|&nbsp;
+    Generated 2026-03-21 10:33 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

@@ -22,7 +22,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the performance improvements observed when rewriting a Rust WASM parser in TypeScript, with many commenters attributing gains to algorithmic and architectural changes rather than language choice. There is also debate about the cost of serialization across the WASM-JS boundary and skepticism about the article's claims and benchmarks.",
+    "summary": "The discussion centers on the performance improvements observed when rewriting a Rust WASM parser in TypeScript, with many commenters attributing gains more to algorithmic and architectural changes rather than the language switch itself. There is also debate about the overhead of JS-WASM boundary crossing, serialization costs, and the role of rewriting in improving code quality and speed.",
     "comments": [
       {
         "id": 47461242,
@@ -30,24 +30,24 @@
         "text": "The real win here isn\u0026#x27;t TS over Rust, it\u0026#x27;s the O(N²) -\u0026gt; O(N) streaming fix via statement-level caching. That\u0026#x27;s a 3.3x improvement on its own, independent of language choice. The WASM boundary elimination is 2-4x, but the algorithmic fix is what actually matters for user-perceived latency during streaming. Title undersells the more interesting engineering imo.",
         "indicators": [
           "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment correctly identifies that the major performance gain comes from an algorithmic improvement rather than the language switch, highlighting the importance of engineering over language choice."
+        "analysis": "This comment correctly identifies that the major performance gain comes from algorithmic improvements rather than the language change, which aligns with common performance engineering principles."
       },
       {
-        "id": 47463605,
-        "author": "simonbw",
-        "text": "Yeah if you\u0026#x27;re serializing and deserializing data across the JS-WASM boundary (or actually between web workers in general whether they\u0026#x27;re WASM or not) the data marshaling costs can add up. There is a way of sharing memory across the boundary though without any marshaling: TypedArrays and SharedArrayBuffers. TypedArrays let you transfer ownership of the underlying memory from one worker (or the main thread) to another without any copying. SharedArrayBuffers allow multiple workers to read and write to the same contiguous chunk of memory. The downside is that you lose all the niceties of any JavaScript types and you\u0026#x27;re basically stuck working with raw bytes.\u003cp\u003eYou still do get some latency from the event loop, because postMessage gets queued as a MacroTask, which is probably on the order of 10μs. But this is the price you have to pay if you want to run some code in a non-blocking way.",
+        "id": 47462536,
+        "author": "rented_mule",
+        "text": "Something not unlike this happened to me when moving some batch processing code from C++ to Python 1.4 (this was 1997). The batch started finishing about 10x faster. We refused to believe it at first and started looking to make sure the work was actually being done. It was.\u003cp\u003eThe port had been done in a weekend just to see if we could use Python in production. The C++ code had taken a few months to write. The port was pretty direct, function for function. It was even line for line where language and library differences didn\u0026#x27;t offer an easier way.\u003cp\u003eA couple of us worked together for a day to find the reason for the speedup. Just looking at the code didn\u0026#x27;t give us any clues, so we started profiling both versions. We found out that the port had accidentally fixed a previously unknown bug in some code that built and compared cache keys. After identifying the small misbehaving function, we had to study the C++ code pretty hard to even understand what the problem was. I don\u0026#x27;t remember the exact nature of the bug, but I do remember thinking that particular type of bug would be hard to express in Python, and that\u0026#x27;s exactly why it was accidentally fixed.\u003cp\u003eWe immediately started moving the rest of our back end to Python. Most things were slower, but not by much because most of our back end was i\u0026#x2F;o bound. We soon found out that we could make algorithmic improvements so much more quickly, so a lot of the slowest things got a lot faster than they had ever been. And, most importantly, we (the software developers) got quite a bit faster.",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Provides an accurate technical explanation of WASM-JS interop costs and memory sharing techniques, adding valuable context to the discussion."
+        "analysis": "The anecdote supports the idea that rewriting code can improve performance by fixing bugs and enabling faster iteration, which is a reasonable and common experience."
       },
       {
         "id": 47461566,
@@ -59,67 +59,19 @@
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "Insightfully points out that performance improvements often come from rethinking and rewriting code rather than the language itself."
+        "analysis": "This comment insightfully highlights that performance gains often come from redesign and refactoring rather than the language switch itself."
       },
       {
-        "id": 47462536,
-        "author": "rented_mule",
-        "text": "Something not unlike this happened to me when moving some batch processing code from C++ to Python 1.4 (this was 1997). The batch started finishing about 10x faster. We refused to believe it at first and started looking to make sure the work was actually being done. It was.\u003cp\u003eThe port had been done in a weekend just to see if we could use Python in production. The C++ code had taken a few months to write. The port was pretty direct, function for function. It was even line for line where language and library differences didn\u0026#x27;t offer an easier way.\u003cp\u003eA couple of us worked together for a day to find the reason for the speedup. Just looking at the code didn\u0026#x27;t give us any clues, so we started profiling both versions. We found out that the port had accidentally fixed a previously unknown bug in some code that built and compared cache keys. After identifying the small misbehaving function, we had to study the C++ code pretty hard to even understand what the problem was. I don\u0026#x27;t remember the exact nature of the bug, but I do remember thinking that particular type of bug would be hard to express in Python, and that\u0026#x27;s exactly why it was accidentally fixed.\u003cp\u003eWe immediately started moving the rest of our back end to Python. Most things were slower, but not by much because most of our back end was i\u0026#x2F;o bound. We soon found out that we could make algorithmic improvements so much more quickly, so a lot of the slowest things got a lot faster than they had ever been. And, most importantly, we (the software developers) got quite a bit faster.",
+        "id": 47463605,
+        "author": "simonbw",
+        "text": "Yeah if you\u0026#x27;re serializing and deserializing data across the JS-WASM boundary (or actually between web workers in general whether they\u0026#x27;re WASM or not) the data marshaling costs can add up. There is a way of sharing memory across the boundary though without any marshaling: TypedArrays and SharedArrayBuffers. TypedArrays let you transfer ownership of the underlying memory from one worker (or the main thread) to another without any copying. SharedArrayBuffers allow multiple workers to read and write to the same contiguous chunk of memory. The downside is that you lose all the niceties of any JavaScript types and you\u0026#x27;re basically stuck working with raw bytes.\u003cp\u003eYou still do get some latency from the event loop, because postMessage gets queued as a MacroTask, which is probably on the order of 10μs. But this is the price you have to pay if you want to run some code in a non-blocking way.",
         "indicators": [
-          "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Shares a relevant anecdote illustrating how rewriting code can uncover hidden bugs and enable faster iteration, supporting the general theme of the discussion."
-      },
-      {
-        "id": 47461919,
-        "author": "evmar",
-        "text": "By the way, I did a deeper dive on the problem of serializing objects across the Rust\u0026#x2F;JS boundary, noticed the approach used by serde wasn’t great for performance, and explored improving it here: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;neugierig.org\u0026#x2F;software\u0026#x2F;blog\u0026#x2F;2024\u0026#x2F;04\u0026#x2F;rust-wasm-to-js.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;neugierig.org\u0026#x2F;software\u0026#x2F;blog\u0026#x2F;2024\u0026#x2F;04\u0026#x2F;rust-wasm-to-js....\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Adds useful information about serialization performance issues and improvements, reinforcing the technical challenges discussed."
-      },
-      {
-        "id": 47462440,
-        "author": "joaohaas",
-        "text": "God I hate AI writing.\u003cp\u003eThat final summary benchmark means nothing. It mentions \u0026#x27;baseline\u0026#x27; value for the \u0026#x27;Full-stream total\u0026#x27; for the rust implementation, and then says the `serde-wasm-bindgen` is \u0026#x27;+9-29% slower\u0026#x27;, but it never gives us the baseline value, because clearly the only benchmark it did against the Rust codebase was the per-call one.\u003cp\u003eThen it mentions:\n\u0026quot;End result: 2.2-4.6x faster per call and 2.6-3.3x lower total streaming cost.\u0026quot;\u003cp\u003eBut the \u0026quot;2.6-3.3x\u0026quot; is by their own definition a comparison against the naive TS implementation.\u003cp\u003eI really think the guy just prompted claude to \u0026quot;get this shit fast and then publish a blog post\u0026quot;.",
-        "indicators": [
-          "emotional",
-          "likely-true",
-          "belligerent"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Raises valid concerns about the transparency and reliability of the benchmarks, though the tone is somewhat dismissive."
-      },
-      {
-        "id": 47462245,
-        "author": "szmarczak",
-        "text": "\u0026gt; Attempted Fix: Skip the JSON Round-Trip\n\u0026gt; We integrated serde-wasm-bindgen\u003cp\u003eSo you\u0026#x27;re reinventing JSON but binary? V8 JSON nowadays is highly optimized [1] and can process gigabytes per second [2], I doubt it is a bottleneck here.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;v8.dev\u0026#x2F;blog\u0026#x2F;json-stringify\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;v8.dev\u0026#x2F;blog\u0026#x2F;json-stringify\u003c/a\u003e\n[2] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;simdjson\u0026#x2F;simdjson\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;simdjson\u0026#x2F;simdjson\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Provides a knowledgeable perspective on JSON performance, suggesting that serialization might not be the main bottleneck."
-      },
-      {
-        "id": 47462638,
-        "author": "slopinthebag",
-        "text": "This article is obviously AI generated and besides being jarring to read, it makes me really doubt its validity. You can get substantially faster parsing versus `JSON.parse()` by parsing structured binary data, and it\u0026#x27;s also faster to pass a byte array compared to a JSON string from wasm to the browser. My guess is not only this article was AI generated, but also their benchmarks, and perhaps the implementation as well.",
-        "indicators": [
-          "emotional",
-          "likely-true",
-          "belligerent"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Expresses skepticism about the article's authenticity and benchmarks, though the claim about binary parsing speed is generally valid."
+        "analysis": "The explanation of JS-WASM interop overhead and memory sharing techniques is accurate and relevant to the discussion of performance bottlenecks."
       },
       {
         "id": 47464358,
@@ -130,8 +82,46 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 9,
-        "analysis": "Accurately explains how JIT optimizations can reduce the performance gap between Rust and JavaScript for certain workloads."
+        "accuracyRank": 5,
+        "analysis": "This comment correctly notes that V8's JIT compiler can optimize simple data processing code in JS to speeds close to native, explaining why Rust might not have a large advantage here."
+      },
+      {
+        "id": 47462245,
+        "author": "szmarczak",
+        "text": "\u0026gt; Attempted Fix: Skip the JSON Round-Trip\n\u0026gt; We integrated serde-wasm-bindgen\u003cp\u003eSo you\u0026#x27;re reinventing JSON but binary? V8 JSON nowadays is highly optimized [1] and can process gigabytes per second [2], I doubt it is a bottleneck here.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;v8.dev\u0026#x2F;blog\u0026#x2F;json-stringify\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;v8.dev\u0026#x2F;blog\u0026#x2F;json-stringify\u003c/a\u003e\n[2] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;simdjson\u0026#x2F;simdjson\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;simdjson\u0026#x2F;simdjson\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment provides useful context about the efficiency of V8's JSON handling, questioning the necessity of custom binary serialization for performance."
+      },
+      {
+        "id": 47462440,
+        "author": "joaohaas",
+        "text": "God I hate AI writing.\u003cp\u003eThat final summary benchmark means nothing. It mentions \u0026#x27;baseline\u0026#x27; value for the \u0026#x27;Full-stream total\u0026#x27; for the rust implementation, and then says the `serde-wasm-bindgen` is \u0026#x27;+9-29% slower\u0026#x27;, but it never gives us the baseline value, because clearly the only benchmark it did against the Rust codebase was the per-call one.\u003cp\u003eThen it mentions:\n\u0026quot;End result: 2.2-4.6x faster per call and 2.6-3.3x lower total streaming cost.\u0026quot;\u003cp\u003eBut the \u0026quot;2.6-3.3x\u0026quot; is by their own definition a comparison against the naive TS implementation.\u003cp\u003eI really think the guy just prompted claude to \u0026quot;get this shit fast and then publish a blog post\u0026quot;.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "The critique of the benchmarking methodology is valid and highlights the importance of clear and fair performance comparisons."
+      },
+      {
+        "id": 47462638,
+        "author": "slopinthebag",
+        "text": "This article is obviously AI generated and besides being jarring to read, it makes me really doubt its validity. You can get substantially faster parsing versus `JSON.parse()` by parsing structured binary data, and it\u0026#x27;s also faster to pass a byte array compared to a JSON string from wasm to the browser. My guess is not only this article was AI generated, but also their benchmarks, and perhaps the implementation as well.",
+        "indicators": [
+          "emotional",
+          "trolling",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "While the suspicion about AI generation is speculative, the comment correctly notes that binary parsing can outperform JSON parsing, though it lacks direct evidence about the article's validity."
       },
       {
         "id": 47462654,
@@ -139,11 +129,25 @@
         "text": "\u0026gt; The openui-lang parser converts a custom DSL emitted by an LLM into a React component tree.\u003cp\u003e\u0026gt; converts internal AST into the public OutputNode format consumed by the React renderer\u003cp\u003eWhy not just have the LLM emit the JSON for OutputNode ? Why is a custom \u0026quot;language\u0026quot; and parser needed at all? And yes, there is a cost for marshaling data, so you should avoid doing it where possible, and do it in large chunks when its not possible to avoid. This is not an unknown phenomenon.",
         "indicators": [
           "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 9,
+        "analysis": "This comment raises a relevant design question about simplifying data interchange to reduce overhead, which is a practical consideration."
+      },
+      {
+        "id": 47465346,
+        "author": "Dwedit",
+        "text": "JS and WASM share the main arraybuffer.  It\u0026#x27;s just very not-javascript-like to try to use an arraybuffer heap, because then you don\u0026#x27;t have strings or objects, just index,size pairs into that arraybuffer.\u003cp\u003eAnyway, Javascript is no stranger to breaking changes.  Compare Chromium 47 to today.  Just add actual integers as another breaking change, then WASM becomes almost unnecessary.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "Offers a practical suggestion to reduce serialization overhead by simplifying data formats, which aligns with known performance considerations."
+        "analysis": "The comment accurately describes the shared memory model and speculates on JS language evolution that might impact WASM usage."
       }
     ]
   }

@@ -23,18 +23,19 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the new Mamba-3 model, highlighting its focus on inference efficiency compared to Mamba-2's training speed optimization. One user anticipates comparing it to another model, Inception 2, while another comments on the clarity of the model's description.",
+    "summary": "The discussion centers on the efficiency and practical implications of the Mamba-3 model's inference compute requirements. One user questions the claim that more compute during inference is beneficial, emphasizing real-world batching practices, while others express interest in comparing Mamba-3 to other models or clarify the model's focus on inference efficiency.",
     "comments": [
       {
-        "id": 47464472,
-        "author": "nl",
-        "text": "I\u0026#x27;m looking forward to comparing this to Inception 2 (the text diffusion model) which in my experience is very fast and reasonably high quality.",
+        "id": 47465594,
+        "author": "jychang",
+        "text": "I\u0026#x27;m not sure that I buy their conclusion that more compute during inference is good.\u003cp\u003eYes, batch=1 inference is mostly memory bandwidth bound, not GPU compute bound. But no provider does batch=1 inference. Everyone groups all the requests into a batch, and the GPU computes them together.\u003cp\u003eWith a fused kernel, that means the GPU streams the tensors from VRAM, and does a bunch of compute on different conversations in the batch, at the same time.\u003cp\u003eIf they increase the amount of compute required per token, that just reduces the maximum batch size a GPU can handle. In practice, yes this does mean each GPU can serve less users. Providers aren\u0026#x27;t leaving GPU cores idle normally during inference.",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "The comment provides a relevant perspective by referencing a comparable model, indicating a thoughtful approach to evaluating Mamba-3's performance."
+        "analysis": "This comment provides a knowledgeable critique of the inference compute claim, explaining batching in practical deployments and its impact on GPU utilization, making it a well-informed and accurate perspective."
       },
       {
         "id": 47464418,
@@ -45,7 +46,17 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment clarifies the technical focus of Mamba-3 in simpler terms, which helps in understanding the model's improvements."
+        "analysis": "This comment accurately summarizes the key difference between Mamba-3 and Mamba-2, clarifying the model's focus in simple terms without adding speculation."
+      },
+      {
+        "id": 47464472,
+        "author": "nl",
+        "text": "I\u0026#x27;m looking forward to comparing this to Inception 2 (the text diffusion model) which in my experience is very fast and reasonably high quality.",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment expresses anticipation for comparative analysis but does not provide substantive critique or factual information about Mamba-3 itself."
       }
     ]
   }
