@@ -23,72 +23,106 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the new Mamba-3 state space model, focusing on its inference efficiency compared to previous versions and other models. Commenters debate its practical benefits, technical details, and potential comparisons with other models like Inception 2.",
+    "summary": "The discussion centers on the technical design choices and potential scalability of the Mamba-3 state space model, with some users questioning the inference compute trade-offs and others expressing anticipation for future iterations or comparisons. There is also some confusion about the name 'Mamba' and requests for further explanation and references.",
     "comments": [
       {
         "id": 47465594,
         "author": "jychang",
         "text": "I\u0026#x27;m not sure that I buy their conclusion that more compute during inference is good.\u003cp\u003eYes, batch=1 inference is mostly memory bandwidth bound, not GPU compute bound. But no provider does batch=1 inference. Everyone groups all the requests into a batch, and the GPU computes them together.\u003cp\u003eWith a fused kernel, that means the GPU streams the tensors from VRAM, and does a bunch of compute on different conversations in the batch, at the same time.\u003cp\u003eIf they increase the amount of compute required per token, that just reduces the maximum batch size a GPU can handle. In practice, yes this does mean each GPU can serve less users. Providers aren\u0026#x27;t leaving GPU cores idle normally during inference.",
         "indicators": [
-          "intelligent",
           "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a nuanced technical critique about inference compute trade-offs, highlighting batching practices and GPU utilization, which aligns with known industry practices."
+        "analysis": "This comment provides a nuanced and accurate critique of the inference compute trade-offs, highlighting practical batching behavior in inference that affects GPU utilization."
       },
       {
-        "id": 47468177,
-        "author": "jeffhwang",
-        "text": "I\u0026#x27;m glad I clicked through bc I thought the article was about Mamba, the package manager I associate with Python (similar to conda).\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;mamba-org\u0026#x2F;mamba\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;mamba-org\u0026#x2F;mamba\u003c/a\u003e",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment clarifies a common confusion about the term 'Mamba,' providing useful context but not directly analyzing the model."
-      },
-      {
-        "id": 47466839,
-        "author": "Havoc",
-        "text": "Is there a reason we don’t switch halfway through? ie start with a classic LLM and switch to something linear like mamba as context grows",
+        "id": 47469476,
+        "author": "roger_",
+        "text": "Can anyone explain why Mamba models start with a continuous time SSM (and discretize) vs discrete time?\u003cp\u003eI know the step isn’t fixed, also not sure why that’s important. Is that the only reason? There also seems to be a parameterization advantage too with the continuous formulation.",
         "indicators": [
           "thoughtful",
-          "constructive"
+          "intelligent"
         ],
-        "accuracyRank": 3,
-        "analysis": "Raises a valid question about hybrid model strategies, indicating an understanding of model architectures and potential efficiency gains."
+        "accuracyRank": 2,
+        "analysis": "The comment raises a valid technical question about the model's design choice, showing engagement with the underlying methodology."
       },
       {
-        "id": 47464472,
-        "author": "nl",
-        "text": "I\u0026#x27;m looking forward to comparing this to Inception 2 (the text diffusion model) which in my experience is very fast and reasonably high quality.",
+        "id": 47469514,
+        "author": "fudged71",
+        "text": "This is really promising. Are they now going to scale this up to hundreds of billions of parameters? Why stop at 1.5B if they found a potentially SOTA architecture?",
         "indicators": [
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "Expresses anticipation for comparative evaluation, showing awareness of related models but without deep technical insight."
+        "accuracyRank": 3,
+        "analysis": "This comment reflects a reasonable expectation about scaling trends in model development, though it is speculative about future plans."
       },
       {
         "id": 47464418,
         "author": "robofanatic",
         "text": "\u0026gt; Mamba-3 is a new state space model (SSM) designed with inference efficiency as the primary goal — a departure from Mamba-2, which optimized for training speed. The key upgrades are a more expressive recurrence formula, complex-valued state tracking, and a MIMO (multi-input, multi-output) variant that boosts accuracy without slowing down decoding.\u003cp\u003eWhy can’t they simply say -\u003cp\u003eMamba-3 focuses on being faster and more efficient when making predictions, rather than just being fast to train like Mamba-2.",
         "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment accurately summarizes the main point of the Mamba-3 model improvements in a clearer way."
+      },
+      {
+        "id": 47466839,
+        "author": "Havoc",
+        "text": "Is there a reason we don’t switch halfway through? ie start with a classic LLM and switch to something linear like mamba as context grows",
+        "indicators": [
           "thoughtful"
         ],
         "accuracyRank": 5,
-        "analysis": "Offers a simplified restatement of the article's technical description, useful for clarity but not adding new analysis."
+        "analysis": "The comment suggests an interesting hybrid approach, though it lacks detail or evidence."
+      },
+      {
+        "id": 47464472,
+        "author": "nl",
+        "text": "I\u0026#x27;m looking forward to comparing this to Inception 2 (the text diffusion model) which in my experience is very fast and reasonably high quality.",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment expresses anticipation for comparative evaluation but does not provide technical insight."
+      },
+      {
+        "id": 47469453,
+        "author": "manlymuppet",
+        "text": "I\u0026#x27;m looking forward to the fifth iteration of this model.",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment is purely speculative and adds little substantive content to the discussion."
+      },
+      {
+        "id": 47468177,
+        "author": "jeffhwang",
+        "text": "I\u0026#x27;m glad I clicked through bc I thought the article was about Mamba, the package manager I associate with Python (similar to conda).\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;mamba-org\u0026#x2F;mamba\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;mamba-org\u0026#x2F;mamba\u003c/a\u003e",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment is off-topic and does not contribute to the technical discussion."
       },
       {
         "id": 47467890,
         "author": "anentropic",
         "text": "More here \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47423208\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47423208\u003c/a\u003e\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2603.15569\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2603.15569\u003c/a\u003e",
         "indicators": [
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
-        "accuracyRank": 6,
-        "analysis": "Provides additional resources for further reading, which is helpful but does not contain original analysis."
+        "accuracyRank": 9,
+        "analysis": "This comment provides useful references for further reading but lacks original analysis."
       }
     ]
   }

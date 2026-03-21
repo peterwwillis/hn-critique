@@ -21,7 +21,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on Ubuntu 26.04's change to show feedback when typing sudo passwords, ending decades of silent input. Commenters debate the usability and security implications, with some proposing alternative methods for feedback and others reflecting on the evolution of Linux security practices.",
+    "summary": "The discussion centers on Ubuntu 26.04's change to show password feedback when typing sudo passwords, ending decades of silent input. Opinions vary from support for improved usability and reduced confusion, to concerns about security implications and tradition.",
     "comments": [
       {
         "id": 47464890,
@@ -33,7 +33,31 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "The comment accurately summarizes the usability tradeoff and downplays security risks, reflecting a balanced and informed perspective."
+        "analysis": "The comment accurately highlights the usability improvement and downplays security risks, reflecting a balanced and informed perspective."
+      },
+      {
+        "id": 47467141,
+        "author": "burnt-resistor",
+        "text": "Secure keyboard tty entry interaction by the terminal should manage this rather than implement it in one app. Another advantage of this method is that such affordances can be generated or silenced locally, and it\u0026#x27;s code that can be shared when used with passwd, pinentry, etc. and sudo rather than implemented N times.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment provides a well-reasoned suggestion that password feedback should be handled at the terminal level for consistency and security."
+      },
+      {
+        "id": 47469381,
+        "author": "pvillano",
+        "text": "How much information is there in knowing the length of someone\u0026#x27;s password?\u003cp\u003eIf we know the password\u0026#x27;s length, it saves us from guessing any shorter passwords. For example, for a numeric password, knowing the length is 4 saves us from having to guess [blank], 0-9, 00-99 and 000-999. This lowers the number of possibilities from 1111 to 1000. The password has 90% of it\u0026#x27;s original strength. A [0-9a-zA-Z] password retains 98% of it\u0026#x27;s original strength",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The comment correctly quantifies the limited security impact of revealing password length, providing a nuanced view on the vulnerability."
       },
       {
         "id": 47464872,
@@ -41,24 +65,11 @@
         "text": "I did this!\u003cp\u003eI didn\u0026#x27;t actually know that Mint had enabled this by default. That would have been a useful counterpoint to the naysayers.\u003cp\u003eIf you want the original behaviour you don\u0026#x27;t actually need to change the configuration - they added a patch afterwards so you can press tab and it will hide the password just for that time.\u003cp\u003e\u0026gt; The catalyst for Ubuntu’s change is sudo-rs\u003cp\u003eActually it was me getting sufficiently pissed off at the 2 second delay for invalid passwords in sudo (actually PAM\u0026#x27;s fault). There\u0026#x27;s no reason for it (if you think there is look up unix_chkpwd). I tried to fix it but the PAM people have this strange idea that people \u003ci\u003elike\u003c/i\u003e the delay. So I gave up on that and thought I may as well try fixing this other UX facepalm too. I doubt it would have happened with the original sudo (and they said as much) so it did require sudo-rs to exist.\u003cp\u003eI think this is one of the benefits of rewriting coreutils and so on in Rust - people are way more open to fixing long-standing issues. You don\u0026#x27;t get the whole \u0026quot;why are you overturning 46 years of tradition??\u0026quot; nonsense.\u003cp\u003eIf anyone wants to rewrite PAM in Rust... :-D\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;linux-pam\u0026#x2F;linux-pam\u0026#x2F;issues\u0026#x2F;778\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;linux-pam\u0026#x2F;linux-pam\u0026#x2F;issues\u0026#x2F;778\u003c/a\u003e",
         "indicators": [
           "intelligent",
-          "thoughtful",
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "Provides insider context on the development and motivation behind the change, including technical details and links to related issues, enhancing credibility."
-      },
-      {
-        "id": 47464592,
-        "author": "gzread",
-        "text": "Good. It\u0026#x27;s terrible UX.\u003cp\u003eThe security argument is a red herring. It was originally built with no echo because it was easier to turn echo on and off than to echo asterisks. Not for security.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "Correctly identifies the historical reason for silent password input and critiques the security rationale, contributing a useful historical perspective."
+        "accuracyRank": 4,
+        "analysis": "This comment offers useful context about similar implementations and the motivation behind the change, adding credibility to the discussion."
       },
       {
         "id": 47464656,
@@ -69,76 +80,66 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "Shares practical user experience highlighting usability challenges with sudo password prompts over slow connections, supporting the need for change."
-      },
-      {
-        "id": 47464755,
-        "author": "Tepix",
-        "text": "Why not just display a single character out of a changing set of characters such as\n    \u0026#x2F; - \\ | \n(starting with a random one from the set) after every character entered?\nThat way you can be certain whether or not you entered a character but and observer can‘t tell how many characters your password has.",
-        "indicators": [
-          "intelligent",
-          "constructive"
-        ],
         "accuracyRank": 5,
-        "analysis": "Offers a thoughtful alternative UI design idea to improve feedback while preserving password length secrecy, showing constructive engagement."
+        "analysis": "This personal experience highlights practical usability issues that the change aims to address, supporting the rationale for the update."
       },
       {
-        "id": 47465037,
-        "author": "exac",
-        "text": "Could we not have used braille patterns? Start on a random one and you can just replace the character with the next one so it is possible for the user to see something was entered, but password length isn\u0026#x27;t given to someone looking over the user\u0026#x27;s shoulder?\u003cp\u003e⣾, ⣽, ⣻, ⢿, ⡿, ⣟, ⣯, ⣷",
+        "id": 47468924,
+        "author": "0xbadcafebee",
+        "text": "They could have just made it an option to enable the new behavior. There was no need to change the default.\u003cp\u003eAs for security: \u0026#x27;shoulder surfing\u0026#x27; may not be \u003ci\u003eas much\u003c/i\u003e of a concern, but watching a livestream or presentation of someone who uses sudo will now expose the password length over the internet (and it\u0026#x27;s recorded for posterity, so all the hackers can find it later!). They\u0026#x27;ve just introduced a new vulnerability to the remote world.",
         "indicators": [
-          "intelligent",
-          "constructive"
+          "thoughtful",
+          "emotional",
+          "likely-true"
         ],
         "accuracyRank": 6,
-        "analysis": "Proposes a creative method for visual feedback that protects password length, demonstrating innovative thinking though practical adoption may vary."
+        "analysis": "Raises a valid concern about security risks related to password length exposure, though the severity is debatable."
       },
       {
-        "id": 47465107,
-        "author": "b112",
-        "text": "\u003ci\u003eFor more than four decades, typing a password after a sudo prompt in a Linux terminal\u003c/i\u003e\u003cp\u003eWhat?!\u003cp\u003e2026 minus 46 is 1980.  There was no Linux, at all, in 1980.\u003cp\u003eSomeone is quite confused.",
+        "id": 47465221,
+        "author": "nathell",
+        "text": "The title kind of implies that silent sudo passwords have been a part of Ubuntu for the last 46 years.",
         "indicators": [
           "intelligent",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
         "accuracyRank": 7,
-        "analysis": "Correctly points out a factual inaccuracy in the article's timeline, improving the factual accuracy of the discussion."
+        "analysis": "Correctly points out an anachronism in the article's framing, clarifying historical context about Linux and sudo."
       },
       {
-        "id": 47464679,
-        "author": "pojntfx",
-        "text": "It\u0026#x27;s fun, leading edge Linux distros (e.g. GNOME OS) are actually currently removing `sudo` completely in favour of `run0` from systemd, which fixes this \u0026quot;properly\u0026quot; by using Polkit \u0026amp; transient systemd units instead of setuid binaries like sudo. You get a UAC-style prompt, can even auth with your fingerprint just like on other modern OSes.\u003cp\u003eInstead of doing this, Ubuntu is just using a Rust rewrite of sudo. Some things really never change.",
+        "id": 47467999,
+        "author": "the_real_cher",
+        "text": "I\u0026#x27;ve never once thought I wish I could see password characters when typing sudo.\u003cp\u003eIt feels like dumbing down the cli.\u003cp\u003eBut I don\u0026#x27;t know if this is an elder millenial walk up hill in the snow both ways kind of thing though.\u003cp\u003eAm I alone in this?",
         "indicators": [
-          "intelligent",
-          "likely-true",
+          "emotional",
           "thoughtful"
         ],
         "accuracyRank": 8,
-        "analysis": "Provides relevant context about alternative approaches to privilege escalation in Linux, enriching the discussion with current trends."
+        "analysis": "Expresses a subjective view valuing tradition and minimalism in CLI design, reflecting a common sentiment among experienced users."
       },
       {
-        "id": 47464972,
-        "author": "childintime",
-        "text": "46 years of silent sudo passwords.. it just demonstrates how crazy this world is, if this is considered news. It means the code is a living fossil and people live with that fact, instead of demanding (infinite and instant) control over their systems.\u003cp\u003eThis reminds me. Linux was already a fossil, except for some niches, but now in the age of AI, the fact that code can\u0026#x27;t be updated at will (and instead has to go through some medieval social process) is fatal. Soon the age will be here where we generate the necessary OS features on the fly. No more compatibility layers, no more endless abstractions, no more binaries to distribute, no more copyright, no need to worry about how \u0026quot;the others\u0026quot; use their systems, no more bike shedding. Instead, let the system manage itself, it knows best. We\u0026#x27;ll get endless customization without the ballast.\u003cp\u003eIt\u0026#x27;s time to set software free from the social enclosures we built around it.",
+        "id": 47465613,
+        "author": "sandreas",
+        "text": "I\u0026#x27;d think this is OK but I\u0026#x27;m not sure if another Option to just give feedback of keyboard activity would combine the best of both worlds.\u003cp\u003eA space with a cursor instead of an asterisk would make it harder to count the Chars\u003cp\u003eAdding a random 1 to 3 output chars instead of one would obfuscate this even more.\u003cp\u003eA delayed output could make you submit the password prompt before showing anything.\u003cp\u003eA single asterisk that switches back to space after 250ms inactivity may even be better.\u003cp\u003eI don\u0026#x27;t know, but somehow this feels underthought even if it probably is not. Simple is probably the best approach",
         "indicators": [
-          "emotional",
           "thoughtful",
-          "likely-true"
+          "constructive"
         ],
         "accuracyRank": 9,
-        "analysis": "Expresses a philosophical view on software evolution and modernization, though somewhat speculative about future AI-driven OS features."
+        "analysis": "Offers nuanced suggestions to balance usability and security, indicating thoughtful consideration of alternative designs."
       },
       {
-        "id": 47464589,
-        "author": "leni536",
-        "text": "sudo is not the only thing that prompts for password in the terminal. There is at least passwd and ssh.\u003cp\u003eI value ctrl+U a lot more for password prompts than the visual feedback, it\u0026#x27;s even used by GUI on Linux.",
+        "id": 47464592,
+        "author": "gzread",
+        "text": "Good. It\u0026#x27;s terrible UX.\u003cp\u003eThe security argument is a red herring. It was originally built with no echo because it was easier to turn echo on and off than to echo asterisks. Not for security.",
         "indicators": [
-          "thoughtful",
-          "likely-true"
+          "intelligent",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "Adds useful context about other password prompts and alternative usability features, contributing practical insight."
+        "analysis": "Provides historical context debunking common security justifications, emphasizing the UX rationale behind the change."
       }
     ]
   }

@@ -18,5 +18,93 @@
       "Potential limitations or edge cases of TRQL's security model are not discussed."
     ],
     "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers around different approaches to providing SQL access to multi-tenant or shared databases, with some users advocating for row-level security in traditional RDBMS like PostgreSQL, while others mention alternative architectures using data isolation or query execution in separate environments. There is also debate about the trade-offs of custom DSLs versus leveraging existing database policies and ecosystems.",
+    "comments": [
+      {
+        "id": 47466149,
+        "author": "senorrib",
+        "text": "Reasons 1-3 could very well be done with ClickHouse policies (RLS) and good data warehouse design. In fact, that’s more secure than a compiler adding a where to a query ran by an all mighty user.\u003cp\u003eReason 4 is probably an improvement, but could probably be done with CH functions.\u003cp\u003eThe problem with custom DSLs like this is that tradeoff a massive ecosystem for very little benefit.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a knowledgeable critique of the original approach, suggesting that built-in ClickHouse policies and good design can address security concerns more effectively than custom DSLs, which is a valid and well-reasoned point."
+      },
+      {
+        "id": 47466157,
+        "author": "zie",
+        "text": "We do the same thing, every employee can access our main financial\u0026#x2F;back office SQL database, but we just use PostgreSQL with row level security[0]. We never bothered to complicate it like the post does.\u003cp\u003e0: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.postgresql.org\u0026#x2F;docs\u0026#x2F;18\u0026#x2F;ddl-rowsecurity.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.postgresql.org\u0026#x2F;docs\u0026#x2F;18\u0026#x2F;ddl-rowsecurity.html\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment shares a practical real-world example of using PostgreSQL's row-level security to achieve similar goals, reinforcing the idea that existing RDBMS features can be sufficient."
+      },
+      {
+        "id": 47466689,
+        "author": "cjonas",
+        "text": "We just create mini data \u0026quot;ponds\u0026quot; on the fly by copying tenant isolated gold tier data to parquet in s3. The users\u0026#x2F;agent queries are executed with duckdb. We run this process when the user start a session and generate an STS token scoped to their tenant bucket path. Its extremely simple and works well (at least with our data volumes).",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment describes an alternative architecture using data isolation and ephemeral query environments, which is a valid approach especially for certain data volumes and use cases."
+      },
+      {
+        "id": 47466505,
+        "author": "jelder",
+        "text": "We did this with MotherDuck, and without introducing a new language. Every tenant has their own isolated storage and compute, so it’s trivial to grant internal users access to specific tenants as needed. DuckDB’s SQL dialect is mostly just Postgres’ with some nice ergonomic additions and a host of extra functionality.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment provides another practical example of tenant isolation without custom languages, supporting the theme of leveraging existing tools and infrastructure."
+      },
+      {
+        "id": 47467322,
+        "author": "bob1029",
+        "text": "\u0026gt; How do you let users write arbitrary SQL against a shared multi-tenant analytical database without exposing other tenants\u0026#x27; data or letting a rogue query take down the cluster?\u003cp\u003eFor query operations I would try to find a way to solve this with tools like S3 and SQLite. There are a few VFS implementations for S3 and other CDNs.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment suggests a hybrid approach using S3 and SQLite, which is plausible but less detailed than others, making it a reasonable but less substantiated contribution."
+      },
+      {
+        "id": 47466632,
+        "author": "elnatro",
+        "text": "New to ClickHouse here. Would you thing this kind of database has a niche when compared to usual RDBMS like MySQL and PostgreSQL?",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This is a genuine question rather than a statement, showing curiosity but not providing direct analysis or critique."
+      },
+      {
+        "id": 47466686,
+        "author": "baalimago",
+        "text": "The evolution of this is to use agents, and have users \u0026quot;chat with the data\u0026quot;",
+        "indicators": [
+          "emotional",
+          "likely-untrue",
+          "useless"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment is vague and speculative without technical backing, making it less useful or accurate in the context of the discussion."
+      }
+    ]
   }
 }

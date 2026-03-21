@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">220 points</span>
+        <span class="score">243 points</span>
         by <a href="https://news.ycombinator.com/user?id=matt_d" class="hnuser">matt_d</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47419391.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the new Mamba-3 state space model, focusing on its inference efficiency compared to previous versions and other models. Commenters debate its practical benefits, technical details, and potential comparisons with other models like Inception 2.</p>
+      <p>The discussion centers on the technical design choices and potential scalability of the Mamba-3 state space model, with some users questioning the inference compute trade-offs and others expressing anticipation for future iterations or comparisons. There is also some confusion about the name &#39;Mamba&#39; and requests for further explanation and references.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -59,65 +59,98 @@
         <a href="https://news.ycombinator.com/user?id=jychang" class="hnuser">jychang</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I&#x27;m not sure that I buy their conclusion that more compute during inference is good.<p>Yes, batch=1 inference is mostly memory bandwidth bound, not GPU compute bound. But no provider does batch=1 inference. Everyone groups all the requests into a batch, and the GPU computes them together.<p>With a fused kernel, that means the GPU streams the tensors from VRAM, and does a bunch of compute on different conversations in the batch, at the same time.<p>If they increase the amount of compute required per token, that just reduces the maximum batch size a GPU can handle. In practice, yes this does mean each GPU can serve less users. Providers aren&#x27;t leaving GPU cores idle normally during inference.</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced technical critique about inference compute trade-offs, highlighting batching practices and GPU utilization, which aligns with known industry practices.</em></div>
+      <div class="comment-analysis"><em>This comment provides a nuanced and accurate critique of the inference compute trade-offs, highlighting practical batching behavior in inference that affects GPU utilization.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jeffhwang" class="hnuser">jeffhwang</a>
+        <a href="https://news.ycombinator.com/user?id=roger_" class="hnuser">roger_</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
       </div>
-      <div class="comment-text">I&#x27;m glad I clicked through bc I thought the article was about Mamba, the package manager I associate with Python (similar to conda).<p><a href="https:&#x2F;&#x2F;github.com&#x2F;mamba-org&#x2F;mamba" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;mamba-org&#x2F;mamba</a></div>
-      <div class="comment-analysis"><em>This comment clarifies a common confusion about the term &#39;Mamba,&#39; providing useful context but not directly analyzing the model.</em></div>
+      <div class="comment-text">Can anyone explain why Mamba models start with a continuous time SSM (and discretize) vs discrete time?<p>I know the step isn’t fixed, also not sure why that’s important. Is that the only reason? There also seems to be a parameterization advantage too with the continuous formulation.</div>
+      <div class="comment-analysis"><em>The comment raises a valid technical question about the model&#39;s design choice, showing engagement with the underlying methodology.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Havoc" class="hnuser">Havoc</a>
+        <a href="https://news.ycombinator.com/user?id=fudged71" class="hnuser">fudged71</a>
         &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Is there a reason we don’t switch halfway through? ie start with a classic LLM and switch to something linear like mamba as context grows</div>
-      <div class="comment-analysis"><em>Raises a valid question about hybrid model strategies, indicating an understanding of model architectures and potential efficiency gains.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=nl" class="hnuser">nl</a>
-        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">I&#x27;m looking forward to comparing this to Inception 2 (the text diffusion model) which in my experience is very fast and reasonably high quality.</div>
-      <div class="comment-analysis"><em>Expresses anticipation for comparative evaluation, showing awareness of related models but without deep technical insight.</em></div>
+      <div class="comment-text">This is really promising. Are they now going to scale this up to hundreds of billions of parameters? Why stop at 1.5B if they found a potentially SOTA architecture?</div>
+      <div class="comment-analysis"><em>This comment reflects a reasonable expectation about scaling trends in model development, though it is speculative about future plans.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=robofanatic" class="hnuser">robofanatic</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">&gt; Mamba-3 is a new state space model (SSM) designed with inference efficiency as the primary goal — a departure from Mamba-2, which optimized for training speed. The key upgrades are a more expressive recurrence formula, complex-valued state tracking, and a MIMO (multi-input, multi-output) variant that boosts accuracy without slowing down decoding.<p>Why can’t they simply say -<p>Mamba-3 focuses on being faster and more efficient when making predictions, rather than just being fast to train like Mamba-2.</div>
+      <div class="comment-analysis"><em>This comment accurately summarizes the main point of the Mamba-3 model improvements in a clearer way.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Havoc" class="hnuser">Havoc</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> 
       </div>
-      <div class="comment-text">&gt; Mamba-3 is a new state space model (SSM) designed with inference efficiency as the primary goal — a departure from Mamba-2, which optimized for training speed. The key upgrades are a more expressive recurrence formula, complex-valued state tracking, and a MIMO (multi-input, multi-output) variant that boosts accuracy without slowing down decoding.<p>Why can’t they simply say -<p>Mamba-3 focuses on being faster and more efficient when making predictions, rather than just being fast to train like Mamba-2.</div>
-      <div class="comment-analysis"><em>Offers a simplified restatement of the article&#39;s technical description, useful for clarity but not adding new analysis.</em></div>
+      <div class="comment-text">Is there a reason we don’t switch halfway through? ie start with a classic LLM and switch to something linear like mamba as context grows</div>
+      <div class="comment-analysis"><em>The comment suggests an interesting hybrid approach, though it lacks detail or evidence.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=nl" class="hnuser">nl</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">I&#x27;m looking forward to comparing this to Inception 2 (the text diffusion model) which in my experience is very fast and reasonably high quality.</div>
+      <div class="comment-analysis"><em>This comment expresses anticipation for comparative evaluation but does not provide technical insight.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=manlymuppet" class="hnuser">manlymuppet</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">I&#x27;m looking forward to the fifth iteration of this model.</div>
+      <div class="comment-analysis"><em>This comment is purely speculative and adds little substantive content to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jeffhwang" class="hnuser">jeffhwang</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">I&#x27;m glad I clicked through bc I thought the article was about Mamba, the package manager I associate with Python (similar to conda).<p><a href="https:&#x2F;&#x2F;github.com&#x2F;mamba-org&#x2F;mamba" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;mamba-org&#x2F;mamba</a></div>
+      <div class="comment-analysis"><em>This comment is off-topic and does not contribute to the technical discussion.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=anentropic" class="hnuser">anentropic</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> 
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">More here <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47423208">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47423208</a><p><a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.15569" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.15569</a></div>
-      <div class="comment-analysis"><em>Provides additional resources for further reading, which is helpful but does not contain original analysis.</em></div>
+      <div class="comment-analysis"><em>This comment provides useful references for further reading but lacks original analysis.</em></div>
     </div>
     
 
@@ -129,7 +162,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-21 16:34 UTC &nbsp;|&nbsp;
+    Generated 2026-03-21 18:42 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

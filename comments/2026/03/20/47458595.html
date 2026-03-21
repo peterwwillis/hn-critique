@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">213 points</span>
+        <span class="score">221 points</span>
         by <a href="https://news.ycombinator.com/user?id=GaggiX" class="hnuser">GaggiX</a>
-        <span class="age">22 hours ago</span>
+        <span class="age">1 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47458595.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47458595" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the novel Attention Residuals technique, highlighting its efficiency improvements, conceptual novelty, and practical implications for large-scale model training. Commenters analyze its memory and compute benefits, theoretical aspects, and potential limitations.</p>
+      <p>The discussion centers on the novel concept of Attention Residuals (AttnRes) in neural networks, highlighting its potential for reducing compute and memory requirements while improving model training and inference. Commenters analyze its technical merits, practical implications, and theoretical concerns such as gradient behavior and memory efficiency.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -62,7 +62,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">This is the key piece<p>&gt; Full AttnRes is straightforward but requires O(Ld) memory at scale. Block AttnRes partitions layers into N blocks, accumulates within each block via standard residuals, and applies attention only over block-level representations. With ~8 blocks, it recovers most of Full AttnRes&#x27;s gains while serving as a practical drop-in replacement with marginal overhead.</div>
-      <div class="comment-analysis"><em>This comment accurately summarizes the technical approach of the paper and its practical optimization, reflecting a clear understanding of the method&#39;s trade-offs.</em></div>
+      <div class="comment-analysis"><em>This comment accurately summarizes the core technical innovation of the paper, explaining the trade-off between full and block attention residuals with clarity and precision.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -73,7 +73,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Two things stand out to me with this:<p>1. Drops compute required for training by ~20%. This approach wont just help the ever escalating model sizes larger companies are pushing for, it means things like autoresearch can iterate on new model architectures faster.<p>2. WAY lower bandwidth requirements for inference. Means with approaches like this it should run on consumer hardware far better. It apparently requires 1&#x2F;6th the memory bandwidth of a traditional approach for better results.<p>This is a big improvement if it can be generalized. They&#x27;re claiming it&#x27;s a drop in replacement, so it seems like it can as well.</div>
-      <div class="comment-analysis"><em>The comment provides a practical perspective on the efficiency gains and broader impact, consistent with claims made in the paper and other comments.</em></div>
+      <div class="comment-analysis"><em>Provides a practical perspective on the benefits of Attention Residuals, emphasizing compute and bandwidth improvements that align with claims in the source material.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -84,7 +84,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I don&#x27;t know why all the posts fail to summarize the results properly.<p>I had a similar idea at the back of my head but here is a layman explanation:<p>Standard attention threads the previous layers output to the next layers input. By adding residual connections to each layer, the layers learn an update rule.<p>There is an obvious limitation here. Only the first layer gets to see the original input and all subsequent layers only get to see the previous layer output.<p>With attention residuals, the idea is that you have a tiny attention operator that decides between using the original input and any of the previous layer outputs.</div>
-      <div class="comment-analysis"><em>This explanation clarifies the conceptual innovation of Attention Residuals, accurately describing how it differs from standard residual connections.</em></div>
+      <div class="comment-analysis"><em>Offers a layman explanation of the mechanism behind Attention Residuals, correctly identifying how it differs from standard residual connections and attention flow.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -92,10 +92,10 @@
         <a href="https://news.ycombinator.com/user?id=roger_" class="hnuser">roger_</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Great idea and seems quite obvious in hindsight.<p>Is it guaranteed to have the same effect on vanishing gradients though? What if it put weight 1 on a layer that had a tiny gradient?</div>
-      <div class="comment-analysis"><em>Raises a valid theoretical concern about gradient behavior, showing critical engagement though lacking a definitive answer.</em></div>
+      <div class="comment-analysis"><em>Raises a valid theoretical concern about gradient behavior which is important but not fully addressed in the discussion, showing critical engagement.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -106,7 +106,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">This is reminds me of the input gates of an LSTM.</div>
-      <div class="comment-analysis"><em>Provides an insightful analogy linking Attention Residuals to known mechanisms in LSTMs, aiding conceptual understanding.</em></div>
+      <div class="comment-analysis"><em>Makes a relevant analogy to LSTM input gates, which helps conceptualize the function of attention residuals, though it is a brief comment.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
@@ -117,7 +117,7 @@
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Amazingly, the first author is a high school student! <a href="https:&#x2F;&#x2F;nathanchen.me&#x2F;public&#x2F;About%20me.html" rel="nofollow">https:&#x2F;&#x2F;nathanchen.me&#x2F;public&#x2F;About%20me.html</a></div>
-      <div class="comment-analysis"><em>While interesting, this comment does not contribute to the technical discussion or analysis of the paper.</em></div>
+      <div class="comment-analysis"><em>While an interesting fact, this comment does not contribute to the technical discussion or analysis of the paper&#39;s content.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
@@ -128,7 +128,7 @@
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Very cool!</div>
-      <div class="comment-analysis"><em>Expresses enthusiasm but adds no substantive content or analysis.</em></div>
+      <div class="comment-analysis"><em>A brief expression of enthusiasm without substantive content or analysis.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
@@ -139,7 +139,7 @@
         <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">[dupe]<a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47401111">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47401111</a></div>
-      <div class="comment-analysis"><em>This comment only indicates a duplicate and does not provide any new information or insight.</em></div>
+      <div class="comment-analysis"><em>Simply points to a duplicate discussion thread, adding no original insight.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -150,7 +150,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">ScholarlyArticle: &quot;Attention Residuals&quot; (2026)  <a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.15031" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;2603.15031</a> :<p>&gt; Abstract: <i>Residual connections with PreNorm are standard in modern LLMs, yet they accumulate all layer outputs with fixed unit weights. This uniform aggregation causes uncontrolled hidden-state growth with depth, progressively diluting each layer&#x27;s contribution. We propose Attention Residuals (</i>AttnRes<i>),</i> which replaces this fixed accumulation with softmax attention over preceding layer outputs, <i>allowing each layer to selectively aggregate earlier representations with learned, input-dependent weights. To address the memory and communication overhead of attending over all preceding layer outputs for large-scale model training, we introduce</i> Block AttnRes, <i>which partitions layers into blocks and attends over block-level representations, reducing the memory footprint while preserving most of the gains of full AttnRes. </i> [...]</div>
-      <div class="comment-analysis"><em>Provides a formal abstract excerpt which is informative but largely restates the paper&#39;s claims without additional analysis.</em></div>
+      <div class="comment-analysis"><em>Provides a detailed excerpt from the paper&#39;s abstract, which is informative but mostly restates the source rather than adding new analysis.</em></div>
     </div>
     
 
@@ -162,7 +162,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-21 16:34 UTC &nbsp;|&nbsp;
+    Generated 2026-03-21 18:42 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
