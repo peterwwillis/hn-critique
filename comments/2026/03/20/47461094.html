@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">236 points</span>
+        <span class="score">245 points</span>
         by <a href="https://news.ycombinator.com/user?id=zahlekhan" class="hnuser">zahlekhan</a>
-        <span class="age">15 hours ago</span>
+        <span class="age">17 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47461094.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47461094" rel="noopener">original on HN</a>
       </p>
@@ -47,124 +47,124 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around performance improvements in web assembly and language rewriting, with insights into algorithmic optimizations, language choices, and technical trade-offs. Several comments critique the validity of benchmarks and the practicality of WASM for web development.</p>
+      <p>The discussion centers on the surprising performance improvements when rewriting a Rust WASM parser in TypeScript, with many commenters attributing the gains to factors beyond language choice, such as WASM overhead, algorithmic improvements, and serialization costs. There is also skepticism about the article&#39;s claims and the role of rewriting in general performance gains.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 38 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47461094" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 39 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47461094" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=blundergoat" class="hnuser">blundergoat</a>
+        <a href="https://news.ycombinator.com/user?id=diablevv" class="hnuser">diablevv</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">The real win here isn&#x27;t TS over Rust, it&#x27;s the O(N²) -&gt; O(N) streaming fix via statement-level caching. That&#x27;s a 3.3x improvement on its own, independent of language choice. The WASM boundary elimination is 2-4x, but the algorithmic fix is what actually matters for user-perceived latency during streaming. Title undersells the more interesting engineering imo.</div>
-      <div class="comment-analysis"><em>This comment correctly emphasizes the importance of algorithmic improvements over language choice, providing a nuanced understanding of performance gains.</em></div>
+      <div class="comment-text">The real lesson here isn&#x27;t &quot;TypeScript beats Rust&quot; - it&#x27;s that WASM has non-trivial overhead that&#x27;s easy to underestimate. The JS engine has spent decades being optimized specifically for the patterns JS&#x2F;TS code tends to produce. When you cross the WASM boundary, you pay for it: serialization, memory copies, the impedance mismatch between WASM&#x27;s linear memory model and JS&#x27;s garbage-collected heap.<p>For a parser specifically, you&#x27;re probably spending a lot of time creating and discarding small AST nodes. That&#x27;s exactly the kind of workload where V8&#x27;s generational GC shines and where WASM&#x27;s manual memory management becomes a liability rather than an asset.<p>The interesting question is whether this scales. A parser that runs on small inputs in a browser is a very different beast from one processing multi-megabyte files in a tight loop. At some point the WASM version probably wins - the question is whether that workload actually exists in your product.</div>
+      <div class="comment-analysis"><em>This comment accurately highlights the fundamental technical reasons behind the performance differences, emphasizing WASM boundary costs and memory model mismatches, which are well-known issues.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=nine_k" class="hnuser">nine_k</a>
+        <a href="https://news.ycombinator.com/user?id=blundergoat" class="hnuser">blundergoat</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">&quot;We rewrote this code from language <i>L</i> to language <i>M</i>, and the result is better!&quot; No wonder: it was a chance to rectify everything that was tangled or crooked, avoid every known bad decision, and apply newly-invented better approaches.<p>So this holds even for <i>L = M</i>. The speedup is not in the language, but in the rewriting and rethinking.</div>
-      <div class="comment-analysis"><em>Highlights that performance improvements often stem from rethinking and reengineering rather than just changing languages, which is a well-understood principle.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=ivanjermakov" class="hnuser">ivanjermakov</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">Good software is usually written on 2nd+ try.</div>
-      <div class="comment-analysis"><em>A general statement that aligns with common software development experience, emphasizing iterative refinement.</em></div>
+      <div class="comment-text">The real win here isn&#x27;t TS over Rust, it&#x27;s the O(N²) -&gt; O(N) streaming fix via statement-level caching. That&#x27;s a 3.3x improvement on its own, independent of language choice. The WASM boundary elimination is 2-4x, but the algorithmic fix is what actually matters for user-perceived latency during streaming. Title undersells the more interesting engineering imo.</div>
+      <div class="comment-analysis"><em>This comment correctly points out that algorithmic improvements often outweigh language or platform differences, which is a key insight in performance optimization.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=simonbw" class="hnuser">simonbw</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Yeah if you&#x27;re serializing and deserializing data across the JS-WASM boundary (or actually between web workers in general whether they&#x27;re WASM or not) the data marshaling costs can add up. There is a way of sharing memory across the boundary though without any marshaling: TypedArrays and SharedArrayBuffers. TypedArrays let you transfer ownership of the underlying memory from one worker (or the main thread) to another without any copying. SharedArrayBuffers allow multiple workers to read and write to the same contiguous chunk of memory. The downside is that you lose all the niceties of any JavaScript types and you&#x27;re basically stuck working with raw bytes.<p>You still do get some latency from the event loop, because postMessage gets queued as a MacroTask, which is probably on the order of 10μs. But this is the price you have to pay if you want to run some code in a non-blocking way.</div>
-      <div class="comment-analysis"><em>Provides a technically accurate overview of data sharing techniques and their trade-offs in WASM-JS interop.</em></div>
+      <div class="comment-analysis"><em>This comment provides a nuanced explanation of interop costs and techniques to mitigate them, reflecting a good understanding of JS and WASM memory handling.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-red">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=joaohaas" class="hnuser">joaohaas</a>
+        <a href="https://news.ycombinator.com/user?id=nine_k" class="hnuser">nine_k</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&quot;We rewrote this code from language <i>L</i> to language <i>M</i>, and the result is better!&quot; No wonder: it was a chance to rectify everything that was tangled or crooked, avoid every known bad decision, and apply newly-invented better approaches.<p>So this holds even for <i>L = M</i>. The speedup is not in the language, but in the rewriting and rethinking.</div>
+      <div class="comment-analysis"><em>This comment insightfully notes that rewrites often improve code quality and performance due to fresh design and bug fixes, rather than inherent language speed differences.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=moomin" class="hnuser">moomin</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">belligerent</span> <span class="indicator">likely-untrue</span> 
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">“We saw huge speed-ups when changing technology.”<p>Looks inside<p>“The old implementation had some really inappropriate choices.”<p>Every time.</div>
+      <div class="comment-analysis"><em>This comment expresses a common skepticism that performance gains often stem from fixing poor initial implementations rather than the new technology itself.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=evmar" class="hnuser">evmar</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">By the way, I did a deeper dive on the problem of serializing objects across the Rust&#x2F;JS boundary, noticed the approach used by serde wasn’t great for performance, and explored improving it here: <a href="https:&#x2F;&#x2F;neugierig.org&#x2F;software&#x2F;blog&#x2F;2024&#x2F;04&#x2F;rust-wasm-to-js.html" rel="nofollow">https:&#x2F;&#x2F;neugierig.org&#x2F;software&#x2F;blog&#x2F;2024&#x2F;04&#x2F;rust-wasm-to-js....</a></div>
+      <div class="comment-analysis"><em>This comment adds valuable context about serialization inefficiencies in Rust-WASM interop and references concrete efforts to improve them.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=joaohaas" class="hnuser">joaohaas</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">God I hate AI writing.<p>That final summary benchmark means nothing. It mentions &#x27;baseline&#x27; value for the &#x27;Full-stream total&#x27; for the rust implementation, and then says the `serde-wasm-bindgen` is &#x27;+9-29% slower&#x27;, but it never gives us the baseline value, because clearly the only benchmark it did against the Rust codebase was the per-call one.<p>Then it mentions:
 &quot;End result: 2.2-4.6x faster per call and 2.6-3.3x lower total streaming cost.&quot;<p>But the &quot;2.6-3.3x&quot; is by their own definition a comparison against the naive TS implementation.<p>I really think the guy just prompted claude to &quot;get this shit fast and then publish a blog post&quot;.</div>
-      <div class="comment-analysis"><em>Expresses skepticism about the validity of the benchmarks, but without technical critique, relying on subjective judgment.</em></div>
+      <div class="comment-analysis"><em>This comment critically questions the validity of the benchmarks and suspects AI-generated content, highlighting the need for careful evaluation of performance claims.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=nallana" class="hnuser">nallana</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">&gt; The openui-lang parser converts a custom DSL emitted by an LLM into a React component tree.<p>&gt; converts internal AST into the public OutputNode format consumed by the React renderer<p>Why not just have the LLM emit the JSON for OutputNode ? Why is a custom &quot;language&quot; and parser needed at all? And yes, there is a cost for marshaling data, so you should avoid doing it where possible, and do it in large chunks when its not possible to avoid. This is not an unknown phenomenon.</div>
-      <div class="comment-analysis"><em>Raises a valid point about avoiding JSON serialization for performance-critical paths, aligning with best practices.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=measurablefunc" class="hnuser">measurablefunc</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">I tried a similar experiment recently w&#x2F; FFT transform for wav files in the browser and javascript was faster than wasm. It was mostly vibe coded Rust to wasm but FFT is a well-known algorithm so I don&#x27;t think there were any low hanging performance improvements left to pick.</div>
-      <div class="comment-analysis"><em>Provides a real-world example supporting the idea that wasm isn&#39;t always faster, especially for well-optimized algorithms.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=LunaSea" class="hnuser">LunaSea</a>
+        <a href="https://news.ycombinator.com/user?id=bulbar" class="hnuser">bulbar</a>
         &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">likely-true</span> 
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> 
       </div>
-      <div class="comment-text">This has been known by Node.js developers for a while with many C++ core and NPM modules being rewritten in JavaScript to improve performance.</div>
-      <div class="comment-analysis"><em>Correctly notes that performance tuning and rewrites are common across different environments, though sometimes in the opposite direction.</em></div>
+      <div class="comment-text">Is this an outlier or has Rust started to be part of the establishment and being &#x27;old&#x27; so that people want to share their &quot;moving away from Rust&quot; stories?<p>I didn&#x27;t mind reading articles that are not about how Rust is great in theory (and maybe practice).</div>
+      <div class="comment-analysis"><em>This comment reflects on a possible trend of Rust fatigue or backlash, though it is more speculative and less technical.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=vmsp" class="hnuser">vmsp</a>
+        <a href="https://news.ycombinator.com/user?id=slopinthebag" class="hnuser">slopinthebag</a>
         &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">useless</span> 
+        <span class="indicator">emotional</span> <span class="indicator">trolling</span> <span class="indicator">likely-untrue</span> 
       </div>
-      <div class="comment-text">Not directly related to the post but what does OpenUI do? I&#x27;m finding it interesting but hard to understand. Is it an intermediate layer that makes LLMs generate better UI?</div>
-      <div class="comment-analysis"><em>Asks a vague question unrelated to the main discussion, adding no substantive insight.</em></div>
+      <div class="comment-text">This article is obviously AI generated and besides being jarring to read, it makes me really doubt its validity. You can get substantially faster parsing versus `JSON.parse()` by parsing structured binary data, and it&#x27;s also faster to pass a byte array compared to a JSON string from wasm to the browser. My guess is not only this article was AI generated, but also their benchmarks, and perhaps the implementation as well.</div>
+      <div class="comment-analysis"><em>This comment is largely speculative and dismissive without strong evidence, reducing its credibility.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-red">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=slowhadoken" class="hnuser">slowhadoken</a>
+        <a href="https://news.ycombinator.com/user?id=marcosdumay" class="hnuser">marcosdumay</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">belligerent</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Am I mistaken or isn’t TypeScript just Golang under the hood these days?</div>
-      <div class="comment-analysis"><em>Misconstrues language characteristics without technical basis, reflecting a misunderstanding rather than a critique.</em></div>
+      <div class="comment-text">It would be great if people stopped dismissing the problem that WASM not being a first-class runtime for the web causes.</div>
+      <div class="comment-analysis"><em>This comment highlights a broader architectural limitation of WASM on the web platform, a relevant concern for performance and integration.</em></div>
     </div>
     
 
@@ -176,7 +176,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-21 12:48 UTC &nbsp;|&nbsp;
+    Generated 2026-03-21 14:34 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

@@ -20,45 +20,54 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around the novel Attention Residuals (AttnRes) technique, which improves model training efficiency and inference bandwidth by selectively attending to previous layer outputs. Commenters highlight its potential for faster iteration, lower memory use, and practical deployment, with some explaining the concept and others noting its significance.",
+    "summary": "The discussion centers around the concept of Attention Residuals, a novel approach to residual connections in neural networks that uses attention mechanisms to selectively aggregate layer outputs. Commenters highlight its potential benefits in reducing compute and memory requirements, practical implementation details, and its innovative nature, with some expressing curiosity about its effects on gradient behavior.",
     "comments": [
-      {
-        "id": 47459736,
-        "author": "westurner",
-        "text": "ScholarlyArticle: \u0026quot;Attention Residuals\u0026quot; (2026)  \u003ca href=\"https:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2603.15031\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2603.15031\u003c/a\u003e :\u003cp\u003e\u0026gt; Abstract: \u003ci\u003eResidual connections with PreNorm are standard in modern LLMs, yet they accumulate all layer outputs with fixed unit weights. This uniform aggregation causes uncontrolled hidden-state growth with depth, progressively diluting each layer\u0026#x27;s contribution. We propose Attention Residuals (\u003c/i\u003eAttnRes\u003ci\u003e),\u003c/i\u003e which replaces this fixed accumulation with softmax attention over preceding layer outputs, \u003ci\u003eallowing each layer to selectively aggregate earlier representations with learned, input-dependent weights. To address the memory and communication overhead of attending over all preceding layer outputs for large-scale model training, we introduce\u003c/i\u003e Block AttnRes, \u003ci\u003ewhich partitions layers into blocks and attends over block-level representations, reducing the memory footprint while preserving most of the gains of full AttnRes. \u003c/i\u003e [...]",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed and accurate summary of the paper's abstract, explaining the motivation and proposed solution clearly and with relevant technical detail."
-      },
-      {
-        "id": 47459484,
-        "author": "jjcm",
-        "text": "Two things stand out to me with this:\u003cp\u003e1. Drops compute required for training by ~20%. This approach wont just help the ever escalating model sizes larger companies are pushing for, it means things like autoresearch can iterate on new model architectures faster.\u003cp\u003e2. WAY lower bandwidth requirements for inference. Means with approaches like this it should run on consumer hardware far better. It apparently requires 1\u0026#x2F;6th the memory bandwidth of a traditional approach for better results.\u003cp\u003eThis is a big improvement if it can be generalized. They\u0026#x27;re claiming it\u0026#x27;s a drop in replacement, so it seems like it can as well.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment insightfully highlights the practical benefits of the approach, including compute reduction and improved inference efficiency, aligning well with the paper's claims."
-      },
       {
         "id": 47460036,
         "author": "jryio",
         "text": "This is the key piece\u003cp\u003e\u0026gt; Full AttnRes is straightforward but requires O(Ld) memory at scale. Block AttnRes partitions layers into N blocks, accumulates within each block via standard residuals, and applies attention only over block-level representations. With ~8 blocks, it recovers most of Full AttnRes\u0026#x27;s gains while serving as a practical drop-in replacement with marginal overhead.",
         "indicators": [
           "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment accurately summarizes a key technical detail from the paper, explaining the trade-off between full and block attention residuals and their practical implications."
+      },
+      {
+        "id": 47459484,
+        "author": "jjcm",
+        "text": "Two things stand out to me with this:\u003cp\u003e1. Drops compute required for training by ~20%. This approach wont just help the ever escalating model sizes larger companies are pushing for, it means things like autoresearch can iterate on new model architectures faster.\u003cp\u003e2. WAY lower bandwidth requirements for inference. Means with approaches like this it should run on consumer hardware far better. It apparently requires 1\u0026#x2F;6th the memory bandwidth of a traditional approach for better results.\u003cp\u003eThis is a big improvement if it can be generalized. They\u0026#x27;re claiming it\u0026#x27;s a drop in replacement, so it seems like it can as well.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment highlights important practical benefits claimed by the paper, reflecting a good understanding of the impact on training and inference efficiency."
+      },
+      {
+        "id": 47459736,
+        "author": "westurner",
+        "text": "ScholarlyArticle: \u0026quot;Attention Residuals\u0026quot; (2026)  \u003ca href=\"https:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2603.15031\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arxiv.org\u0026#x2F;abs\u0026#x2F;2603.15031\u003c/a\u003e :\u003cp\u003e\u0026gt; Abstract: \u003ci\u003eResidual connections with PreNorm are standard in modern LLMs, yet they accumulate all layer outputs with fixed unit weights. This uniform aggregation causes uncontrolled hidden-state growth with depth, progressively diluting each layer\u0026#x27;s contribution. We propose Attention Residuals (\u003c/i\u003eAttnRes\u003ci\u003e),\u003c/i\u003e which replaces this fixed accumulation with softmax attention over preceding layer outputs, \u003ci\u003eallowing each layer to selectively aggregate earlier representations with learned, input-dependent weights. To address the memory and communication overhead of attending over all preceding layer outputs for large-scale model training, we introduce\u003c/i\u003e Block AttnRes, \u003ci\u003ewhich partitions layers into blocks and attends over block-level representations, reducing the memory footprint while preserving most of the gains of full AttnRes. \u003c/i\u003e [...]",
+        "indicators": [
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment accurately explains the memory trade-offs and the block partitioning strategy, reflecting a good understanding of the technical approach."
+        "analysis": "This comment provides a direct quote from the abstract, accurately capturing the motivation and technical approach of Attention Residuals."
+      },
+      {
+        "id": 47467134,
+        "author": "roger_",
+        "text": "Great idea and seems quite obvious in hindsight.\u003cp\u003eIs it guaranteed to have the same effect on vanishing gradients though? What if it put weight 1 on a layer that had a tiny gradient?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Raises a valid and insightful question about the potential impact of attention residuals on gradient flow, showing critical engagement with the concept."
       },
       {
         "id": 47465573,
@@ -66,23 +75,20 @@
         "text": "I don\u0026#x27;t know why all the posts fail to summarize the results properly.\u003cp\u003eI had a similar idea at the back of my head but here is a layman explanation:\u003cp\u003eStandard attention threads the previous layers output to the next layers input. By adding residual connections to each layer, the layers learn an update rule.\u003cp\u003eThere is an obvious limitation here. Only the first layer gets to see the original input and all subsequent layers only get to see the previous layer output.\u003cp\u003eWith attention residuals, the idea is that you have a tiny attention operator that decides between using the original input and any of the previous layer outputs.",
         "indicators": [
           "thoughtful",
-          "intelligent",
-          "likely-true",
-          "constructive"
+          "intelligent"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment offers a layman-friendly explanation of the limitations of standard residual connections and how attention residuals address them, providing useful conceptual clarity."
+        "accuracyRank": 5,
+        "analysis": "Provides a layman explanation that clarifies the conceptual difference between standard residuals and attention residuals, aiding comprehension."
       },
       {
         "id": 47459229,
         "author": "jszymborski",
         "text": "This is reminds me of the input gates of an LSTM.",
         "indicators": [
-          "thoughtful",
-          "likely-true"
+          "thoughtful"
         ],
-        "accuracyRank": 5,
-        "analysis": "This brief analogy to LSTM input gates is insightful but lacks elaboration, making it less informative than other comments."
+        "accuracyRank": 6,
+        "analysis": "Makes an analogy to LSTM input gates, which is a reasonable comparison but lacks elaboration or direct evidence."
       },
       {
         "id": 47460324,
@@ -91,8 +97,8 @@
         "indicators": [
           "emotional"
         ],
-        "accuracyRank": 6,
-        "analysis": "This comment is a factual note about the author's background but does not contribute to the technical discussion."
+        "accuracyRank": 7,
+        "analysis": "Provides an interesting personal fact about the author but does not contribute to the technical discussion."
       },
       {
         "id": 47461658,
@@ -102,8 +108,8 @@
           "emotional",
           "useless"
         ],
-        "accuracyRank": 7,
-        "analysis": "This short comment expresses enthusiasm but adds no substantive content or analysis."
+        "accuracyRank": 8,
+        "analysis": "Expresses enthusiasm but adds no substantive content or analysis."
       },
       {
         "id": 47465749,
@@ -112,8 +118,8 @@
         "indicators": [
           "useless"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment only points out a duplicate post without adding new information."
+        "accuracyRank": 9,
+        "analysis": "Simply points out a duplicate link without adding new information."
       }
     ]
   }
