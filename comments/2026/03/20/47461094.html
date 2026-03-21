@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">160 points</span>
+        <span class="score">192 points</span>
         by <a href="https://news.ycombinator.com/user?id=zahlekhan" class="hnuser">zahlekhan</a>
-        <span class="age">9 hours ago</span>
+        <span class="age">11 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47461094.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47461094" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the surprising performance improvements observed when rewriting a Rust WASM parser in TypeScript, with many commenters emphasizing that the gains stem more from algorithmic improvements and architectural changes rather than the language switch itself. There is also debate about the overhead of JS-WASM boundary communication, serialization costs, and the potential for further performance gains by avoiding unnecessary data marshaling.</p>
+      <p>The discussion revolves around the performance improvements observed when rewriting a Rust WASM parser in TypeScript, with many commenters attributing gains to algorithmic and architectural changes rather than language choice. There is also debate about the cost of serialization across the WASM-JS boundary and skepticism about the article&#39;s claims and benchmarks.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -61,10 +61,10 @@
         <a href="https://news.ycombinator.com/user?id=blundergoat" class="hnuser">blundergoat</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The real win here isn&#x27;t TS over Rust, it&#x27;s the O(N²) -&gt; O(N) streaming fix via statement-level caching. That&#x27;s a 3.3x improvement on its own, independent of language choice. The WASM boundary elimination is 2-4x, but the algorithmic fix is what actually matters for user-perceived latency during streaming. Title undersells the more interesting engineering imo.</div>
-      <div class="comment-analysis"><em>This comment correctly identifies that the main performance improvement is due to an algorithmic optimization rather than the language change, which aligns with common performance engineering principles.</em></div>
+      <div class="comment-analysis"><em>This comment correctly identifies that the major performance gain comes from an algorithmic improvement rather than the language switch, highlighting the importance of engineering over language choice.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -75,7 +75,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Yeah if you&#x27;re serializing and deserializing data across the JS-WASM boundary (or actually between web workers in general whether they&#x27;re WASM or not) the data marshaling costs can add up. There is a way of sharing memory across the boundary though without any marshaling: TypedArrays and SharedArrayBuffers. TypedArrays let you transfer ownership of the underlying memory from one worker (or the main thread) to another without any copying. SharedArrayBuffers allow multiple workers to read and write to the same contiguous chunk of memory. The downside is that you lose all the niceties of any JavaScript types and you&#x27;re basically stuck working with raw bytes.<p>You still do get some latency from the event loop, because postMessage gets queued as a MacroTask, which is probably on the order of 10μs. But this is the price you have to pay if you want to run some code in a non-blocking way.</div>
-      <div class="comment-analysis"><em>Provides a technically accurate explanation of the costs and trade-offs involved in JS-WASM communication, highlighting practical approaches to mitigate overhead.</em></div>
+      <div class="comment-analysis"><em>Provides an accurate technical explanation of WASM-JS interop costs and memory sharing techniques, adding valuable context to the discussion.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -86,7 +86,7 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">&quot;We rewrote this code from language <i>L</i> to language <i>M</i>, and the result is better!&quot; No wonder: it was a chance to rectify everything that was tangled or crooked, avoid every known bad decision, and apply newly-invented better approaches.<p>So this holds even for <i>L = M</i>. The speedup is not in the language, but in the rewriting and rethinking.</div>
-      <div class="comment-analysis"><em>Insightfully points out that rewriting code often leads to improvements due to rethinking and cleaning up design rather than inherent language advantages.</em></div>
+      <div class="comment-analysis"><em>Insightfully points out that performance improvements often come from rethinking and rewriting code rather than the language itself.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -97,76 +97,76 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Something not unlike this happened to me when moving some batch processing code from C++ to Python 1.4 (this was 1997). The batch started finishing about 10x faster. We refused to believe it at first and started looking to make sure the work was actually being done. It was.<p>The port had been done in a weekend just to see if we could use Python in production. The C++ code had taken a few months to write. The port was pretty direct, function for function. It was even line for line where language and library differences didn&#x27;t offer an easier way.<p>A couple of us worked together for a day to find the reason for the speedup. Just looking at the code didn&#x27;t give us any clues, so we started profiling both versions. We found out that the port had accidentally fixed a previously unknown bug in some code that built and compared cache keys. After identifying the small misbehaving function, we had to study the C++ code pretty hard to even understand what the problem was. I don&#x27;t remember the exact nature of the bug, but I do remember thinking that particular type of bug would be hard to express in Python, and that&#x27;s exactly why it was accidentally fixed.<p>We immediately started moving the rest of our back end to Python. Most things were slower, but not by much because most of our back end was i&#x2F;o bound. We soon found out that we could make algorithmic improvements so much more quickly, so a lot of the slowest things got a lot faster than they had ever been. And, most importantly, we (the software developers) got quite a bit faster.</div>
-      <div class="comment-analysis"><em>An anecdotal but plausible example illustrating how rewriting code can fix hidden bugs and improve performance, supporting the idea that language choice is not the sole factor.</em></div>
+      <div class="comment-analysis"><em>Shares a relevant anecdote illustrating how rewriting code can uncover hidden bugs and enable faster iteration, supporting the general theme of the discussion.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=joaohaas" class="hnuser">joaohaas</a>
+        <a href="https://news.ycombinator.com/user?id=evmar" class="hnuser">evmar</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">By the way, I did a deeper dive on the problem of serializing objects across the Rust&#x2F;JS boundary, noticed the approach used by serde wasn’t great for performance, and explored improving it here: <a href="https:&#x2F;&#x2F;neugierig.org&#x2F;software&#x2F;blog&#x2F;2024&#x2F;04&#x2F;rust-wasm-to-js.html" rel="nofollow">https:&#x2F;&#x2F;neugierig.org&#x2F;software&#x2F;blog&#x2F;2024&#x2F;04&#x2F;rust-wasm-to-js....</a></div>
+      <div class="comment-analysis"><em>Adds useful information about serialization performance issues and improvements, reinforcing the technical challenges discussed.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=joaohaas" class="hnuser">joaohaas</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">belligerent</span> 
       </div>
       <div class="comment-text">God I hate AI writing.<p>That final summary benchmark means nothing. It mentions &#x27;baseline&#x27; value for the &#x27;Full-stream total&#x27; for the rust implementation, and then says the `serde-wasm-bindgen` is &#x27;+9-29% slower&#x27;, but it never gives us the baseline value, because clearly the only benchmark it did against the Rust codebase was the per-call one.<p>Then it mentions:
 &quot;End result: 2.2-4.6x faster per call and 2.6-3.3x lower total streaming cost.&quot;<p>But the &quot;2.6-3.3x&quot; is by their own definition a comparison against the naive TS implementation.<p>I really think the guy just prompted claude to &quot;get this shit fast and then publish a blog post&quot;.</div>
-      <div class="comment-analysis"><em>Raises valid skepticism about the benchmarking methodology and transparency, which is important for evaluating performance claims.</em></div>
+      <div class="comment-analysis"><em>Raises valid concerns about the transparency and reliability of the benchmarks, though the tone is somewhat dismissive.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=szmarczak" class="hnuser">szmarczak</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">&gt; Attempted Fix: Skip the JSON Round-Trip
 &gt; We integrated serde-wasm-bindgen<p>So you&#x27;re reinventing JSON but binary? V8 JSON nowadays is highly optimized [1] and can process gigabytes per second [2], I doubt it is a bottleneck here.<p>[1] <a href="https:&#x2F;&#x2F;v8.dev&#x2F;blog&#x2F;json-stringify" rel="nofollow">https:&#x2F;&#x2F;v8.dev&#x2F;blog&#x2F;json-stringify</a>
 [2] <a href="https:&#x2F;&#x2F;github.com&#x2F;simdjson&#x2F;simdjson" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;simdjson&#x2F;simdjson</a></div>
-      <div class="comment-analysis"><em>Provides relevant context about the efficiency of existing JSON processing in V8, questioning the necessity of custom serialization approaches.</em></div>
+      <div class="comment-analysis"><em>Provides a knowledgeable perspective on JSON performance, suggesting that serialization might not be the main bottleneck.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=envguard" class="hnuser">envguard</a>
-        &nbsp;|&nbsp;rank #7
+        <a href="https://news.ycombinator.com/user?id=slopinthebag" class="hnuser">slopinthebag</a>
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">belligerent</span> 
       </div>
-      <div class="comment-text">The WASM story is interesting from a security angle too. WASM modules inheriting the host&#x27;s memory model means any parsing bugs that trigger buffer overreads in the Rust code could surface in ways that are harder to audit at the JS boundary. Moving to native TS at least keeps the attack surface in one runtime, even if the theoretical memory safety guarantees go down.</div>
-      <div class="comment-analysis"><em>Offers a security perspective on the trade-offs between WASM and native JS/TS implementations, adding depth to the discussion.</em></div>
+      <div class="comment-text">This article is obviously AI generated and besides being jarring to read, it makes me really doubt its validity. You can get substantially faster parsing versus `JSON.parse()` by parsing structured binary data, and it&#x27;s also faster to pass a byte array compared to a JSON string from wasm to the browser. My guess is not only this article was AI generated, but also their benchmarks, and perhaps the implementation as well.</div>
+      <div class="comment-analysis"><em>Expresses skepticism about the article&#39;s authenticity and benchmarks, though the claim about binary parsing speed is generally valid.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=athrowaway3z" class="hnuser">athrowaway3z</a>
-        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Its also worth underlining that it&#x27;s not just &quot;The parsing computation is fast enough that V8&#x27;s JIT eliminates any Rust advantage&quot;, but specifically that this kind of straight-forward well-defined data structures and mutation, without any strange eval paths or global access is going to be JITed to near native speed relatively easily.</div>
-      <div class="comment-analysis"><em>Accurately explains why certain JS code can approach native speeds due to JIT optimizations, supporting the observed performance results.</em></div>
+      <div class="comment-analysis"><em>Accurately explains how JIT optimizations can reduce the performance gap between Rust and JavaScript for certain workloads.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=sakesun" class="hnuser">sakesun</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">I heard a lot of similar stories in the past when I started using Python 20+ years ago. A number of people claimed their solutions got faster when develop in Python, mainly because Python make it easier to quickly pivot to experiment with various alternative methods, hence finally yield at more efficient outcome at the end.</div>
-      <div class="comment-analysis"><em>Reinforces the idea that development speed and flexibility can lead to better performance through iterative improvements.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=slopinthebag" class="hnuser">slopinthebag</a>
+        <a href="https://news.ycombinator.com/user?id=jeremyjh" class="hnuser">jeremyjh</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">This article is obviously AI generated and besides being jarring to read, it makes me really doubt its validity. You can get substantially faster parsing versus `JSON.parse()` by parsing structured binary data, and it&#x27;s also faster to pass a byte array compared to a JSON string from wasm to the browser. My guess is not only this article was AI generated, but also their benchmarks, and perhaps the implementation as well.</div>
-      <div class="comment-analysis"><em>Expresses skepticism about the article&#39;s authenticity and highlights known performance facts about binary parsing versus JSON.</em></div>
+      <div class="comment-text">&gt; The openui-lang parser converts a custom DSL emitted by an LLM into a React component tree.<p>&gt; converts internal AST into the public OutputNode format consumed by the React renderer<p>Why not just have the LLM emit the JSON for OutputNode ? Why is a custom &quot;language&quot; and parser needed at all? And yes, there is a cost for marshaling data, so you should avoid doing it where possible, and do it in large chunks when its not possible to avoid. This is not an unknown phenomenon.</div>
+      <div class="comment-analysis"><em>Offers a practical suggestion to reduce serialization overhead by simplifying data formats, which aligns with known performance considerations.</em></div>
     </div>
     
 
@@ -178,7 +178,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-21 06:48 UTC &nbsp;|&nbsp;
+    Generated 2026-03-21 08:38 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
