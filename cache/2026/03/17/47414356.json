@@ -20,7 +20,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around different approaches to providing SQL access to multi-tenant or shared databases, with some users advocating for row-level security in traditional RDBMS like PostgreSQL, while others mention alternative architectures using data isolation or query execution in separate environments. There is also debate about the trade-offs of custom DSLs versus leveraging existing database policies and ecosystems.",
+    "summary": "The discussion centers around methods for providing SQL access to multi-tenant analytical databases like ClickHouse, with several commenters advocating for native database features such as row-level security and resource quotas instead of custom DSLs. Alternative approaches involving data isolation using separate storage or query engines like DuckDB and S3 are also mentioned, highlighting trade-offs between complexity, security, and ecosystem support.",
     "comments": [
       {
         "id": 47466149,
@@ -33,7 +33,20 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a knowledgeable critique of the original approach, suggesting that built-in ClickHouse policies and good design can address security concerns more effectively than custom DSLs, which is a valid and well-reasoned point."
+        "analysis": "This comment provides a knowledgeable critique emphasizing native ClickHouse features for security and design, which is a well-supported approach compared to custom DSLs."
+      },
+      {
+        "id": 47470533,
+        "author": "datatrashfire",
+        "text": "as a clickhouse architect, i can’t help but feel they would have been better served by understanding their db’s native capabilities better before jumping into implementing this.\u003cp\u003erow level access control, resource quotas, scheduling policies, session settings, etc. all could have been used in concert to achieve a very similar outcome with a dozen or so ddl\u0026#x2F;dcl statements.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The author, claiming expertise, suggests leveraging existing ClickHouse features like row-level access control and resource quotas, which aligns with best practices."
       },
       {
         "id": 47466157,
@@ -41,23 +54,12 @@
         "text": "We do the same thing, every employee can access our main financial\u0026#x2F;back office SQL database, but we just use PostgreSQL with row level security[0]. We never bothered to complicate it like the post does.\u003cp\u003e0: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.postgresql.org\u0026#x2F;docs\u0026#x2F;18\u0026#x2F;ddl-rowsecurity.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.postgresql.org\u0026#x2F;docs\u0026#x2F;18\u0026#x2F;ddl-rowsecurity.html\u003c/a\u003e",
         "indicators": [
           "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment shares a practical real-world example of using PostgreSQL's row-level security to achieve similar goals, reinforcing the idea that existing RDBMS features can be sufficient."
-      },
-      {
-        "id": 47466689,
-        "author": "cjonas",
-        "text": "We just create mini data \u0026quot;ponds\u0026quot; on the fly by copying tenant isolated gold tier data to parquet in s3. The users\u0026#x2F;agent queries are executed with duckdb. We run this process when the user start a session and generate an STS token scoped to their tenant bucket path. Its extremely simple and works well (at least with our data volumes).",
-        "indicators": [
-          "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment describes an alternative architecture using data isolation and ephemeral query environments, which is a valid approach especially for certain data volumes and use cases."
+        "analysis": "This comment shares a practical example of using PostgreSQL's row-level security to achieve similar goals, reinforcing the idea of using native database features."
       },
       {
         "id": 47466505,
@@ -65,11 +67,25 @@
         "text": "We did this with MotherDuck, and without introducing a new language. Every tenant has their own isolated storage and compute, so it’s trivial to grant internal users access to specific tenants as needed. DuckDB’s SQL dialect is mostly just Postgres’ with some nice ergonomic additions and a host of extra functionality.",
         "indicators": [
           "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "This comment provides another practical example of tenant isolation without custom languages, supporting the theme of leveraging existing tools and infrastructure."
+        "analysis": "The comment describes a multi-tenant approach using isolated storage and compute, which is a valid and scalable method for tenant isolation."
+      },
+      {
+        "id": 47466689,
+        "author": "cjonas",
+        "text": "We just create mini data \u0026quot;ponds\u0026quot; on the fly by copying tenant isolated gold tier data to parquet in s3. The users\u0026#x2F;agent queries are executed with duckdb. We run this process when the user start a session and generate an STS token scoped to their tenant bucket path. Its extremely simple and works well (at least with our data volumes).",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This approach uses data isolation with S3 and DuckDB, a practical solution for tenant separation though it may add complexity depending on data volumes."
       },
       {
         "id": 47467322,
@@ -80,18 +96,19 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 5,
-        "analysis": "This comment suggests a hybrid approach using S3 and SQLite, which is plausible but less detailed than others, making it a reasonable but less substantiated contribution."
+        "accuracyRank": 6,
+        "analysis": "This comment suggests alternative storage and query tools for tenant isolation, which could work but might not be as integrated or performant as native DB solutions."
       },
       {
         "id": 47466632,
         "author": "elnatro",
         "text": "New to ClickHouse here. Would you thing this kind of database has a niche when compared to usual RDBMS like MySQL and PostgreSQL?",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "emotional"
         ],
-        "accuracyRank": 6,
-        "analysis": "This is a genuine question rather than a statement, showing curiosity but not providing direct analysis or critique."
+        "accuracyRank": 7,
+        "analysis": "A genuine question reflecting curiosity about ClickHouse’s positioning, but it does not contribute substantive analysis to the discussion."
       },
       {
         "id": 47466686,
@@ -99,11 +116,11 @@
         "text": "The evolution of this is to use agents, and have users \u0026quot;chat with the data\u0026quot;",
         "indicators": [
           "emotional",
-          "likely-untrue",
-          "useless"
+          "trolling",
+          "likely-untrue"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment is vague and speculative without technical backing, making it less useful or accurate in the context of the discussion."
+        "accuracyRank": 8,
+        "analysis": "This comment is vague and speculative about future trends without providing concrete or accurate insights relevant to the current technical discussion."
       }
     ]
   }
