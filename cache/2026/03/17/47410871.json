@@ -22,7 +22,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers around the technical challenges and historical significance of spreadsheet software like VisiCalc, with users sharing personal projects, technical insights, and resources related to spreadsheet implementations. There is also some reflection on the complexity of spreadsheet engines and their impact on software history.",
+    "summary": "The discussion revolves around the reconstruction of VisiCalc, with commenters sharing insights on the code accuracy, spreadsheet implementation challenges, and related projects. There is also interest in command-line spreadsheet tools and reflections on the historical impact of VisiCalc.",
     "comments": [
       {
         "id": 47457685,
@@ -35,7 +35,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides detailed, accurate insights into spreadsheet implementation challenges and references credible sources, making it highly informative and reliable."
+        "analysis": "This comment provides a detailed and accurate perspective on spreadsheet implementation challenges and references credible sources, making it highly reliable and informative."
       },
       {
         "id": 47457064,
@@ -48,41 +48,56 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment correctly emphasizes the importance of dependency graphs in spreadsheet efficiency, aligning with established engineering practices."
+        "analysis": "This comment correctly emphasizes the necessity of dependency graphs in spreadsheet implementations, aligning with established engineering practices."
+      },
+      {
+        "id": 47463824,
+        "author": "staplung",
+        "text": "Cool article but I think the write-up no longer matches the actual code. Snippets in the article use `*p-\u0026gt;p` a lot. The *p is a parser struct defined above as\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  struct parser {\n    const char* s;\n    int pos;\n    struct grid* g;\n  };\n\n\u003c/code\u003e\u003c/pre\u003e\nNotice there is no `p` member within. Assume the author meant `*p-\u0026gt;pos`? And indeed if you look at the code in github the parser struct is defined as\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  struct parser {\n    const char *s, *p;\n    struct grid* g;\n  };\n\u003c/code\u003e\u003c/pre\u003e\nSo there\u0026#x27;s the missing `p`, even though it\u0026#x27;s no longer an int. So I presume the member variable was once known as `pos` but got renamed at some point. Some of the snippets did not get updated to match.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The comment provides a precise technical observation about inconsistencies between the article and the code, highlighting a plausible explanation for the discrepancy."
       },
       {
         "id": 47456387,
         "author": "afandian",
         "text": "Quote:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  #define MAXIN 128  \u0026#x2F;\u0026#x2F; max cell input length\n  enum { EMPTY, NUM, LABEL, FORMULA };  \u0026#x2F;\u0026#x2F; cell types\n  struct cell {\n    int type;\n    float val;\n    char text[MAXIN];  \u0026#x2F;\u0026#x2F; raw user input\n  };\n  #define NCOL 26    \u0026#x2F;\u0026#x2F; max number of columns (A..Z)\n  #define NROW 50    \u0026#x2F;\u0026#x2F; max number of rows\n  struct grid {\n    struct cell cells[NCOL][NROW];\n  };\n\u003c/code\u003e\u003c/pre\u003e\nI doubt that 171 KB of static allocation would fly on an Apple II! I do wonder how they did memory allocation, it must have been tricky with all the fragmentation.",
         "indicators": [
-          "intelligent",
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "Raises valid concerns about memory constraints on early hardware, reflecting a realistic understanding of historical computing limitations."
+        "accuracyRank": 4,
+        "analysis": "Raises a valid concern about hardware limitations and memory management on vintage systems, which is relevant to understanding historical software constraints."
+      },
+      {
+        "id": 47457478,
+        "author": "ivanpribec",
+        "text": "Reminds me of spreadsheet-fortran (\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;lwsinclair\u0026#x2F;spreadsheet-fortran\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;lwsinclair\u0026#x2F;spreadsheet-fortran\u003c/a\u003e), a project creating a VisiCalc lookalike in FORTRAN 66, which even runs on a PDP-11.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Provides a relevant example of a similar project, adding context to the discussion about spreadsheet implementations in different languages and platforms."
       },
       {
         "id": 47461448,
         "author": "manoDev",
         "text": "VisiCalc has, undoubtedly, the highest impact-to-complexity ratio in the history of software so far.",
         "indicators": [
+          "emotional",
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "A subjective but widely accepted assessment highlighting VisiCalc's significant influence relative to its simplicity."
-      },
-      {
-        "id": 47460494,
-        "author": "ksr",
-        "text": "Dan Bricklin wrote a JavaScript spreadsheet engine around 2008 \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;DanBricklin\u0026#x2F;socialcalc\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;DanBricklin\u0026#x2F;socialcalc\u003c/a\u003e. I extended it and adapted it to Drupal CMS around that time \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.drupal.org\u0026#x2F;project\u0026#x2F;sheetnode\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.drupal.org\u0026#x2F;project\u0026#x2F;sheetnode\u003c/a\u003e.",
-        "indicators": [
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Provides factual historical information about spreadsheet software development, adding useful context."
+        "accuracyRank": 6,
+        "analysis": "While subjective, this statement is widely accepted and highlights VisiCalc's significant influence relative to its simplicity."
       },
       {
         "id": 47457856,
@@ -92,40 +107,20 @@
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 6,
-        "analysis": "Offers practical resources for users interested in command line spreadsheet tools, contributing constructively to the discussion."
+        "accuracyRank": 7,
+        "analysis": "Offers useful resources for users interested in command-line spreadsheet tools, contributing practical value to the discussion."
       },
       {
-        "id": 47457478,
-        "author": "ivanpribec",
-        "text": "Reminds me of spreadsheet-fortran (\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;lwsinclair\u0026#x2F;spreadsheet-fortran\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;lwsinclair\u0026#x2F;spreadsheet-fortran\u003c/a\u003e), a project creating a VisiCalc lookalike in FORTRAN 66, which even runs on a PDP-11.",
+        "id": 47460255,
+        "author": "mlhpdx",
+        "text": "This was one of the projects students did when I helped teach APCS to high schoolers as a TEALS volunteer (FracCalc).\u003cp\u003eSome of the implementations went way overboard and it was so much fun to watch and to play a part.\u003cp\u003eEven as a “seasoned” developer I learned some tidbits talking through the ways to do (and not do) certain parts. When to store input raw vs processed, etc.",
         "indicators": [
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "Shares a relevant project example that connects historical computing platforms with spreadsheet software."
-      },
-      {
-        "id": 47456374,
-        "author": "bonsai_spool",
-        "text": "Are there good command-line interfaces for spreadsheets? I don\u0026#x27;t do anything super financially-important and I\u0026#x27;d prefer to stay in the terminal for quick editing of things, especially if I can have Vi keybindings.",
-        "indicators": [
-          "thoughtful"
-        ],
         "accuracyRank": 8,
-        "analysis": "A genuine inquiry reflecting user needs, though it does not provide factual content or analysis."
-      },
-      {
-        "id": 47459157,
-        "author": "rnxrx",
-        "text": "This a great article - both interesting and potentially really useful to folks teaching- or learning- programming.",
-        "indicators": [
-          "emotional",
-          "thoughtful"
-        ],
-        "accuracyRank": 9,
-        "analysis": "Expresses positive sentiment about the article's educational value but adds little technical insight."
+        "analysis": "Shares educational experience and insights into spreadsheet implementation details, enriching the conversation with practical teaching perspectives."
       },
       {
         "id": 47456626,
@@ -133,21 +128,11 @@
         "text": "Kinda cool to see... TBH, I\u0026#x27;d be more inclined to reach for Rust and Ratatui myslf over C + ncurses.  I know this would likely be a much larger executable though.\u003cp\u003eWith MS Edit resurrected similarly, I wonder how hard it would be to get a flushed out text based spreadsheet closer in function to MS Excel or Lotus 123 versions for DOS, but cross platform.  Maybe even able to load\u0026#x2F;save a few different formats from CSV\u0026#x2F;TSV to XLSX (without OLE\u0026#x2F;COM embeds).",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 10,
-        "analysis": "Offers a modern perspective on technology choices for spreadsheet development, though speculative about implementation complexity."
-      },
-      {
-        "id": 47457457,
-        "author": "khazhoux",
-        "text": "I’m genuinely worried that we’re the last generation who will study and appreciate this craft.  Because now a kid learning to program will just say “Write me a terminal spreadsheet app in plain C.”",
-        "indicators": [
-          "emotional",
-          "thoughtful"
-        ],
-        "accuracyRank": 11,
-        "analysis": "Reflects a nostalgic concern about changing programming cultures, adding emotional depth but no technical content."
+        "accuracyRank": 9,
+        "analysis": "Provides a modern viewpoint on technology choices for spreadsheet development, highlighting potential improvements and feature aspirations."
       },
       {
         "id": 47458919,
@@ -155,30 +140,11 @@
         "text": "Very nice read!\u003cp\u003eThough I think the definition of the parser struct should be\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  struct parser {\n    const char* s;\n    const char* p;\n    struct grid* g;\n  };\n\u003c/code\u003e\u003c/pre\u003e\nbased on the rest of the code.",
         "indicators": [
           "intelligent",
+          "likely-true",
           "constructive"
         ],
-        "accuracyRank": 12,
-        "analysis": "Provides a minor technical correction, useful but limited in scope."
-      },
-      {
-        "id": 47457555,
-        "author": "airstrike",
-        "text": "Reminds me of \u003ca href=\"https:\u0026#x2F;\u0026#x2F;tomasp.net\u0026#x2F;blog\u0026#x2F;2018\u0026#x2F;write-your-own-excel\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;tomasp.net\u0026#x2F;blog\u0026#x2F;2018\u0026#x2F;write-your-own-excel\u0026#x2F;\u003c/a\u003e",
-        "indicators": [
-          "constructive"
-        ],
-        "accuracyRank": 13,
-        "analysis": "Offers an additional resource but without detailed commentary."
-      },
-      {
-        "id": 47457160,
-        "author": "breadsniffer",
-        "text": "Anyone know what kind of departments\u0026#x2F;parts of business were the first adopters of visicalc?",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 14,
-        "analysis": "Poses a historical question but does not contribute factual information."
+        "accuracyRank": 10,
+        "analysis": "Offers a precise correction to the code snippet, supporting clarity and accuracy in the article's technical content."
       }
     ]
   }

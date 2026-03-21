@@ -18,5 +18,36 @@
       "The article focuses on technical implementation rather than broader historical or religious context of the holidays."
     ],
     "rating": "reliable"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around improvements and corrections to Lisp code related to calendar calculations, with users addressing licensing, code style, and namespace issues. The commenters provide technical insights and references to Lisp documentation and repositories.",
+    "comments": [
+      {
+        "id": 47463794,
+        "author": "aidenn0",
+        "text": "The cambridge site linked from TFA appears to be hugged-to-death, but I found something that appears to be the same code, under an apache license[1]\u003cp\u003eI modified that to work under SBCL (but with style-warnings), and fixed up the first example from TFA to actually be free of style-warnings even under sbcl[2]\u003cp\u003eNB: The code from the book is \u003ci\u003eexceedingly\u003c/i\u003e non-idiomatic lisp.  In addition, many of the constants violate the (rather strict) ANSI rules around defining constants, so I worked around that by making them special variables (i.e. s\u0026#x2F;defconstant\u0026#x2F;defparameter\u0026#x2F;).  A lot could be done to clean things up and allow faster calculations, but finding all ramadan\u0026#x2F;ash-wednesday correlations in a 5000 (not a typo 10x what TFA does) takes under 1ms on my machine, so \u003ci\u003eshrug\u003c/i\u003e\u003cp\u003eThe code from TFA is much, much worse than the code in calendar.l, but there was less of it so I could fix it up a bit more.\u003cp\u003e1: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;EdReingold\u0026#x2F;calendar-code2\u0026#x2F;blob\u0026#x2F;main\u0026#x2F;calendar.l\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;EdReingold\u0026#x2F;calendar-code2\u0026#x2F;blob\u0026#x2F;main\u0026#x2F;calen...\u003c/a\u003e\u003cp\u003e2: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;jasom\u0026#x2F;1338543679a596449c324eddf716ccb8\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;jasom\u0026#x2F;1338543679a596449c324eddf716cc...\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed and accurate critique of the original code, including practical improvements and performance observations, supported by references to source code."
+      },
+      {
+        "id": 47463403,
+        "author": "aidenn0",
+        "text": "They probably want to replace the header of calendar.l with something roughly like:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  (defpackage \u0026quot;CC4\u0026quot;\n    (:use \u0026quot;COMMON-LISP\u0026quot;)\n    (:export \n     :acre\n     :advent\n     :akan-day-name\n     :akan-day-name-on-or-before\n\n     [and so on for a few hundred lines]\n  \n     :yom-ha-zikkaron\n     :yom-kippur\n     :zone\n    ))\n  \n  (in-package \u0026quot;CC4\u0026quot;)\n\n\u003c/code\u003e\u003c/pre\u003e\nNote that :acre could also be \u0026#x27;acre or #:acre or \u0026quot;ACRE\u0026quot;; any string-designator[1] will do.  If there are really a few hundred of them then #:acre or \u0026quot;ACRE\u0026quot; has advantages (the other two ways intern symbols).\u003cp\u003e\u0026gt;  believe the problem with the unedited code has something to do with packages and namespaces\u003cp\u003eSince \u0026quot;package\u0026quot; is what Common Lisp calls namespaces, the \u0026quot;and namespaces\u0026#x27; is redundant, but the general thrust is correct.\u003cp\u003e1: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.lispworks.com\u0026#x2F;documentation\u0026#x2F;HyperSpec\u0026#x2F;Body\u0026#x2F;26_glo_s.htm#string_designator\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.lispworks.com\u0026#x2F;documentation\u0026#x2F;HyperSpec\u0026#x2F;Body\u0026#x2F;26_gl...\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment correctly explains Lisp packaging and namespace concepts and suggests a practical approach to fixing the code's package issues, referencing official documentation."
+      }
+    ]
   }
 }
