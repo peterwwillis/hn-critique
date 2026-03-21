@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">126 points</span>
+        <span class="score">156 points</span>
         by <a href="https://news.ycombinator.com/user?id=0x1997" class="hnuser">0x1997</a>
-        <span class="age">6 hours ago</span>
+        <span class="age">8 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/21/47467567.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47467567" rel="noopener">original on HN</a>
       </p>
@@ -47,121 +47,165 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around the new Rust-based graph database Grafeo, with commenters expressing skepticism about its AI-generated codebase, comparing it to other graph databases, and questioning its practical utility and trustworthiness in production environments. Some users share resources and personal experiences with similar technologies, while others express dismissive or humorous reactions.</p>
+      <p>The discussion centers around the new Rust-based graph database Grafeo, with users sharing experiences, comparisons to other graph databases, and skepticism about AI-generated code quality. Some highlight technical features and use cases, while others question the project&#39;s maturity and practical adoption.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
 
     
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Aurornis" class="hnuser">Aurornis</a>
-        &nbsp;|&nbsp;rank #1
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">emotional</span> 
-      </div>
-      <div class="comment-text">Does anyone have any experience with this DB? Or context about where it came from?<p>From the commit history it&#x27;s obvious that this is an AI coded project. It was started a few months ago, 99% of commits are from 1 contributor, and that 1 contributor has some times committed 100,000 lines of code per week. (EDIT: 200,000 lines of code in the first week)<p>I&#x27;m not anti-LLM, but I&#x27;ve done enough AI coding to know that one person submitting 100,000 lines of code a week is not doing deep thought and review on the AI output. I also know from experience that letting AI code the majority of a complex project leads to something very fragile, overly complicated, and not well thought out. I&#x27;ve been burned enough times by investigating projects that turned out to be AI slop with polished landing pages. In some cases the claimed benchmarks were improperly run or just hallucinated by the AI.<p>So is anyone actually using this? Or is this someone&#x27;s personal experiment in building a resume portfolio project by letting AI run against a problem for a few months?</div>
-      <div class="comment-analysis"><em>This comment provides a detailed and plausible critique based on commit history and AI coding experience, highlighting common pitfalls of AI-generated code in complex projects.</em></div>
-    </div>
-    
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=natdempk" class="hnuser">natdempk</a>
-        &nbsp;|&nbsp;rank #2
+        <a href="https://news.ycombinator.com/user?id=lmeyerov" class="hnuser">lmeyerov</a>
+        &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Serious question: are there any actually good and useful graph databases that people would trust in production at reasonable scale and are available as a vendor or as open source? eg. not Meta&#x27;s TAO</div>
-      <div class="comment-analysis"><em>The comment raises a valid and important question about the maturity and reliability of graph databases in production, reflecting common concerns in the community.</em></div>
+      <div class="comment-text">Speaking of embeddable, we just announced cypher syntax for gfql, so the first OSS GPU cypher query engine. Typically used with scaleout DBs like databricks &amp; splunk for analytical apps: security&#x2F;fraud&#x2F;event&#x2F;social data analysis pipelines, ML+AI embedding &amp; enrichment pipelines, etc. We originally built it for the compute-tier gap here to help Graphistry users making embeddable interactive GPU graph viz apps and dashboards and not wanting to add an external graph DB phase into their interactive analytics flows.<p>Single GPU can do 1B+ edges&#x2F;s, no need for a DB install, and can work straight on your dataframes &#x2F; apache arrow &#x2F; parquet: <a href="https:&#x2F;&#x2F;pygraphistry.readthedocs.io&#x2F;en&#x2F;latest&#x2F;gfql&#x2F;benchmark_filter_pagerank.html" rel="nofollow">https:&#x2F;&#x2F;pygraphistry.readthedocs.io&#x2F;en&#x2F;latest&#x2F;gfql&#x2F;benchmark...</a><p>We took a multilayer approach to the GPU &amp; vectorization acceleration, including a more parallelism-friendly core algorithm. This makes fancy features pay-as-you-go vs dragging everything down as in most columnar engines that are appearing. Our vectorized core conforms to over half of TCK already, and we are working to add trickier bits on different layers now that flow is established.<p>The core GFQL engine has been in production for a year or two now with a lot of analyst teams around the world (NATO, banks, US gov, ...) because it is part of Graphistry. The open-source cypher support is us starting to make it easy for others to directly use as well, including LLMs :)</div>
+      <div class="comment-analysis"><em>This comment provides detailed, credible information about a related technology with real-world usage, making it highly accurate and informative.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=adsharma" class="hnuser">adsharma</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">There are 25 graph databases all going me too in the AI&#x2F;LLM driven cycle.<p>Writing it in Rust gets visibility because of the popularity of the language on HN.<p>Here&#x27;s why we are not doing it for LadybugDB.<p>Would love to explore a more gradual&#x2F;incremental path.<p>Also focusing on just one query language: strongly typed cypher.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;LadybugDB&#x2F;ladybug&#x2F;discussions&#x2F;141" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;LadybugDB&#x2F;ladybug&#x2F;discussions&#x2F;141</a></div>
-      <div class="comment-analysis"><em>This comment offers a knowledgeable perspective on the crowded market and strategic choices like Rust usage, providing insight into development and marketing dynamics.</em></div>
+      <div class="comment-analysis"><em>The comment offers a realistic perspective on the crowded graph database space and the marketing effect of Rust, supported by a link to a related project.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Aurornis" class="hnuser">Aurornis</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Does anyone have any experience with this DB? Or context about where it came from?<p>From the commit history it&#x27;s obvious that this is an AI coded project. It was started a few months ago, 99% of commits are from 1 contributor, and that 1 contributor has some times committed 100,000 lines of code per week. (EDIT: 200,000 lines of code in the first week)<p>I&#x27;m not anti-LLM, but I&#x27;ve done enough AI coding to know that one person submitting 100,000 lines of code a week is not doing deep thought and review on the AI output. I also know from experience that letting AI code the majority of a complex project leads to something very fragile, overly complicated, and not well thought out. I&#x27;ve been burned enough times by investigating projects that turned out to be AI slop with polished landing pages. In some cases the claimed benchmarks were improperly run or just hallucinated by the AI.<p>So is anyone actually using this? Or is this someone&#x27;s personal experiment in building a resume portfolio project by letting AI run against a problem for a few months?</div>
+      <div class="comment-analysis"><em>The comment raises valid concerns about AI-generated code quality and project sustainability, though it is somewhat speculative without direct evidence of issues.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=foota" class="hnuser">foota</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I added a super cheap and bad embedding database in a project that allows the agent to call a tool for searching all the content it&#x27;s built, it seems to work pretty well! This way the agent doesn&#x27;t need to call a bunch of list tools (which I was worried would introduce lost of data to the context), and can find things based on fuzzy search.</div>
+      <div class="comment-analysis"><em>This user shares practical experience integrating a simple embedding database, providing useful insight into potential use cases despite modest expectations.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=cjlm" class="hnuser">cjlm</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">intelligent</span> 
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Overwhelmed by the sheer number of graph databases? I released a new site this week that lists and categorises them. <a href="https:&#x2F;&#x2F;gdb-engines.com" rel="nofollow">https:&#x2F;&#x2F;gdb-engines.com</a></div>
-      <div class="comment-analysis"><em>Sharing a resource to navigate the many graph databases is helpful and relevant, though it does not directly critique Grafeo itself.</em></div>
+      <div class="comment-analysis"><em>The comment offers a helpful resource for navigating the many graph databases, which adds value to the community discussion.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=satvikpendem" class="hnuser">satvikpendem</a>
-        &nbsp;|&nbsp;rank #5
+        <a href="https://news.ycombinator.com/user?id=natdempk" class="hnuser">natdempk</a>
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+        <span class="indicator">thoughtful</span> 
       </div>
-      <div class="comment-text">There seem to be a lot of these, how does it compare to Helix DB for example? Also, why would you ever want to query a <i>database</i> with GraphQL, for which it was explicitly not made for that purpose?</div>
-      <div class="comment-analysis"><em>The comment raises pertinent questions about comparison and appropriate use cases, showing critical thinking about technology choices.</em></div>
+      <div class="comment-text">Serious question: are there any actually good and useful graph databases that people would trust in production at reasonable scale and are available as a vendor or as open source? eg. not Meta&#x27;s TAO</div>
+      <div class="comment-analysis"><em>This is a valid inquiry reflecting common concerns about graph database reliability and adoption, though it does not provide information itself.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=mark_l_watson" class="hnuser">mark_l_watson</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
         <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">I just spent an hour with Grafeo, trying to also get the associated library grafeo_langchain working with a local Ollama model. Mixed results. I really like the Python Kuzu graph database, still use it even though the developers no longer support it.</div>
-      <div class="comment-analysis"><em>Provides a brief firsthand experience report, which adds practical insight but lacks depth or detailed evaluation.</em></div>
+      <div class="comment-analysis"><em>Provides a brief user experience report with Grafeo and mentions an alternative, adding practical perspective but limited detail.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=OtomotO" class="hnuser">OtomotO</a>
-        &nbsp;|&nbsp;rank #7
+        <a href="https://news.ycombinator.com/user?id=satvikpendem" class="hnuser">satvikpendem</a>
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> 
       </div>
-      <div class="comment-text">Interesting... Need to check how this differs from agdb, with which I had some success for a sideproject in the past.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;agnesoft&#x2F;agdb" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;agnesoft&#x2F;agdb</a><p>Ah, yeah, a different query language.</div>
-      <div class="comment-analysis"><em>Shows interest in comparative analysis and personal experience, though the comment is short and exploratory.</em></div>
+      <div class="comment-text">There seem to be a lot of these, how does it compare to Helix DB for example? Also, why would you ever want to query a <i>database</i> with GraphQL, for which it was explicitly not made for that purpose?</div>
+      <div class="comment-analysis"><em>Raises relevant questions about comparison and appropriate use of GraphQL, indicating some technical understanding but no definitive answers.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=measurablefunc" class="hnuser">measurablefunc</a>
-        &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-untrue</span> 
-      </div>
-      <div class="comment-text">This looks like another avant-garde &quot;art&quot; project.</div>
-      <div class="comment-analysis"><em>Dismissive and vague, this comment lacks evidence and constructive critique, reducing its usefulness.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=cluckindan" class="hnuser">cluckindan</a>
+        <a href="https://news.ycombinator.com/user?id=brunoborges" class="hnuser">brunoborges</a>
         &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+        <span class="indicator">emotional</span> 
       </div>
-      <div class="comment-text">The d:Document syntax looks so happy!</div>
-      <div class="comment-analysis"><em>A lighthearted and superficial comment that does not contribute meaningful analysis.</em></div>
+      <div class="comment-text">Why is everything &quot;... built in Rust&quot; trending so easily on HN?</div>
+      <div class="comment-analysis"><em>Expresses skepticism about Rust&#39;s popularity driving trends, but lacks substantive argument or evidence.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=xlii" class="hnuser">xlii</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">I wonder if people are using (or intend to use) vibe-coded projects like the one linked.<p>I mean - I understand, some people have fun looking at new tech no matter the source, but my question is is there a person who would be designated to pick a GraphQL in language and would ignore all the LLM flags and put it in production.</div>
+      <div class="comment-analysis"><em>Questions the prudence of adopting AI-generated projects in production, reflecting caution but somewhat speculative.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=nexxuz" class="hnuser">nexxuz</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #11
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">useless</span> <span class="indicator">belligerent</span> 
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">I was ready to learn more about this but I saw &quot;written in Rust&quot; and I literally rolled my eyes and said never mind.</div>
-      <div class="comment-analysis"><em>This comment is dismissive and biased against Rust without substantive reasoning, offering no constructive input.</em></div>
+      <div class="comment-analysis"><em>Dismissive comment based solely on language choice without technical reasoning, adding little value.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=measurablefunc" class="hnuser">measurablefunc</a>
+        &nbsp;|&nbsp;rank #12
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">This looks like another avant-garde &quot;art&quot; project.</div>
+      <div class="comment-analysis"><em>Dismissive and vague, offering no constructive feedback or insight.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=cluckindan" class="hnuser">cluckindan</a>
+        &nbsp;|&nbsp;rank #13
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">The d:Document syntax looks so happy!</div>
+      <div class="comment-analysis"><em>A lighthearted comment that does not contribute to the technical discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=OtomotO" class="hnuser">OtomotO</a>
+        &nbsp;|&nbsp;rank #14
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Interesting... Need to check how this differs from agdb, with which I had some success for a sideproject in the past.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;agnesoft&#x2F;agdb" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;agnesoft&#x2F;agdb</a><p>Ah, yeah, a different query language.</div>
+      <div class="comment-analysis"><em>Shows interest and some relevant experience but lacks detailed comparison or conclusions.</em></div>
     </div>
     
 
@@ -173,7 +217,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-21 20:31 UTC &nbsp;|&nbsp;
+    Generated 2026-03-21 22:30 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
