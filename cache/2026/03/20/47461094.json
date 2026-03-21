@@ -22,21 +22,8 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the surprising performance improvements when rewriting a Rust WASM parser in TypeScript, with many commenters attributing the gains to factors beyond language choice, such as WASM overhead, algorithmic improvements, and serialization costs. There is also skepticism about the article's claims and the role of rewriting in general performance gains.",
+    "summary": "The discussion centers around the surprising performance improvements observed when rewriting a Rust WASM parser in TypeScript, with many commenters attributing the gains to algorithmic improvements and reduced WASM-JS boundary overhead rather than the language switch itself. There is also skepticism about the validity of the benchmarks and the role of serialization costs, as well as broader reflections on the challenges and trade-offs of using WASM versus native JavaScript or TypeScript.",
     "comments": [
-      {
-        "id": 47467294,
-        "author": "diablevv",
-        "text": "The real lesson here isn\u0026#x27;t \u0026quot;TypeScript beats Rust\u0026quot; - it\u0026#x27;s that WASM has non-trivial overhead that\u0026#x27;s easy to underestimate. The JS engine has spent decades being optimized specifically for the patterns JS\u0026#x2F;TS code tends to produce. When you cross the WASM boundary, you pay for it: serialization, memory copies, the impedance mismatch between WASM\u0026#x27;s linear memory model and JS\u0026#x27;s garbage-collected heap.\u003cp\u003eFor a parser specifically, you\u0026#x27;re probably spending a lot of time creating and discarding small AST nodes. That\u0026#x27;s exactly the kind of workload where V8\u0026#x27;s generational GC shines and where WASM\u0026#x27;s manual memory management becomes a liability rather than an asset.\u003cp\u003eThe interesting question is whether this scales. A parser that runs on small inputs in a browser is a very different beast from one processing multi-megabyte files in a tight loop. At some point the WASM version probably wins - the question is whether that workload actually exists in your product.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment accurately highlights the fundamental technical reasons behind the performance differences, emphasizing WASM boundary costs and memory model mismatches, which are well-known issues."
-      },
       {
         "id": 47461242,
         "author": "blundergoat",
@@ -47,8 +34,21 @@
           "likely-true",
           "constructive"
         ],
+        "accuracyRank": 1,
+        "analysis": "This comment correctly identifies the key factor in the speedup as an algorithmic improvement rather than the language change, which aligns with common performance analysis principles."
+      },
+      {
+        "id": 47467294,
+        "author": "diablevv",
+        "text": "The real lesson here isn\u0026#x27;t \u0026quot;TypeScript beats Rust\u0026quot; - it\u0026#x27;s that WASM has non-trivial overhead that\u0026#x27;s easy to underestimate. The JS engine has spent decades being optimized specifically for the patterns JS\u0026#x2F;TS code tends to produce. When you cross the WASM boundary, you pay for it: serialization, memory copies, the impedance mismatch between WASM\u0026#x27;s linear memory model and JS\u0026#x27;s garbage-collected heap.\u003cp\u003eFor a parser specifically, you\u0026#x27;re probably spending a lot of time creating and discarding small AST nodes. That\u0026#x27;s exactly the kind of workload where V8\u0026#x27;s generational GC shines and where WASM\u0026#x27;s manual memory management becomes a liability rather than an asset.\u003cp\u003eThe interesting question is whether this scales. A parser that runs on small inputs in a browser is a very different beast from one processing multi-megabyte files in a tight loop. At some point the WASM version probably wins - the question is whether that workload actually exists in your product.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 2,
-        "analysis": "This comment correctly points out that algorithmic improvements often outweigh language or platform differences, which is a key insight in performance optimization."
+        "analysis": "Provides a nuanced explanation of WASM's overhead and how JS engines are optimized for JS/TS patterns, offering a credible perspective on why the TS version might outperform WASM in some cases."
       },
       {
         "id": 47463605,
@@ -61,7 +61,19 @@
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment provides a nuanced explanation of interop costs and techniques to mitigate them, reflecting a good understanding of JS and WASM memory handling."
+        "analysis": "Accurately describes the technical challenges and solutions related to memory sharing and serialization costs between WASM and JS."
+      },
+      {
+        "id": 47462536,
+        "author": "rented_mule",
+        "text": "Something not unlike this happened to me when moving some batch processing code from C++ to Python 1.4 (this was 1997). The batch started finishing about 10x faster. We refused to believe it at first and started looking to make sure the work was actually being done. It was.\u003cp\u003eThe port had been done in a weekend just to see if we could use Python in production. The C++ code had taken a few months to write. The port was pretty direct, function for function. It was even line for line where language and library differences didn\u0026#x27;t offer an easier way.\u003cp\u003eA couple of us worked together for a day to find the reason for the speedup. Just looking at the code didn\u0026#x27;t give us any clues, so we started profiling both versions. We found out that the port had accidentally fixed a previously unknown bug in some code that built and compared cache keys. After identifying the small misbehaving function, we had to study the C++ code pretty hard to even understand what the problem was. I don\u0026#x27;t remember the exact nature of the bug, but I do remember thinking that particular type of bug would be hard to express in Python, and that\u0026#x27;s exactly why it was accidentally fixed.\u003cp\u003eWe immediately started moving the rest of our back end to Python. Most things were slower, but not by much because most of our back end was i\u0026#x2F;o bound. We soon found out that we could make algorithmic improvements so much more quickly, so a lot of the slowest things got a lot faster than they had ever been. And, most importantly, we (the software developers) got quite a bit faster.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Provides a relevant anecdote illustrating that performance gains can come from fixing latent bugs during rewrites rather than language choice alone."
       },
       {
         "id": 47461566,
@@ -72,32 +84,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment insightfully notes that rewrites often improve code quality and performance due to fresh design and bug fixes, rather than inherent language speed differences."
-      },
-      {
-        "id": 47466169,
-        "author": "moomin",
-        "text": "“We saw huge speed-ups when changing technology.”\u003cp\u003eLooks inside\u003cp\u003e“The old implementation had some really inappropriate choices.”\u003cp\u003eEvery time.",
-        "indicators": [
-          "emotional",
-          "thoughtful",
-          "likely-true"
-        ],
         "accuracyRank": 5,
-        "analysis": "This comment expresses a common skepticism that performance gains often stem from fixing poor initial implementations rather than the new technology itself."
-      },
-      {
-        "id": 47461919,
-        "author": "evmar",
-        "text": "By the way, I did a deeper dive on the problem of serializing objects across the Rust\u0026#x2F;JS boundary, noticed the approach used by serde wasn’t great for performance, and explored improving it here: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;neugierig.org\u0026#x2F;software\u0026#x2F;blog\u0026#x2F;2024\u0026#x2F;04\u0026#x2F;rust-wasm-to-js.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;neugierig.org\u0026#x2F;software\u0026#x2F;blog\u0026#x2F;2024\u0026#x2F;04\u0026#x2F;rust-wasm-to-js....\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment adds valuable context about serialization inefficiencies in Rust-WASM interop and references concrete efforts to improve them."
+        "analysis": "Highlights the common phenomenon that rewrites often improve code quality and performance due to rethinking and cleaning up, not just language differences."
       },
       {
         "id": 47462440,
@@ -105,22 +93,35 @@
         "text": "God I hate AI writing.\u003cp\u003eThat final summary benchmark means nothing. It mentions \u0026#x27;baseline\u0026#x27; value for the \u0026#x27;Full-stream total\u0026#x27; for the rust implementation, and then says the `serde-wasm-bindgen` is \u0026#x27;+9-29% slower\u0026#x27;, but it never gives us the baseline value, because clearly the only benchmark it did against the Rust codebase was the per-call one.\u003cp\u003eThen it mentions:\n\u0026quot;End result: 2.2-4.6x faster per call and 2.6-3.3x lower total streaming cost.\u0026quot;\u003cp\u003eBut the \u0026quot;2.6-3.3x\u0026quot; is by their own definition a comparison against the naive TS implementation.\u003cp\u003eI really think the guy just prompted claude to \u0026quot;get this shit fast and then publish a blog post\u0026quot;.",
         "indicators": [
           "emotional",
-          "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment critically questions the validity of the benchmarks and suspects AI-generated content, highlighting the need for careful evaluation of performance claims."
+        "accuracyRank": 6,
+        "analysis": "Raises valid concerns about the transparency and reliability of the benchmarks presented in the article, questioning the validity of the claimed speedups."
       },
       {
-        "id": 47465263,
-        "author": "bulbar",
-        "text": "Is this an outlier or has Rust started to be part of the establishment and being \u0026#x27;old\u0026#x27; so that people want to share their \u0026quot;moving away from Rust\u0026quot; stories?\u003cp\u003eI didn\u0026#x27;t mind reading articles that are not about how Rust is great in theory (and maybe practice).",
+        "id": 47462245,
+        "author": "szmarczak",
+        "text": "\u0026gt; Attempted Fix: Skip the JSON Round-Trip\n\u0026gt; We integrated serde-wasm-bindgen\u003cp\u003eSo you\u0026#x27;re reinventing JSON but binary? V8 JSON nowadays is highly optimized [1] and can process gigabytes per second [2], I doubt it is a bottleneck here.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;v8.dev\u0026#x2F;blog\u0026#x2F;json-stringify\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;v8.dev\u0026#x2F;blog\u0026#x2F;json-stringify\u003c/a\u003e\n[2] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;simdjson\u0026#x2F;simdjson\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;simdjson\u0026#x2F;simdjson\u003c/a\u003e",
         "indicators": [
-          "emotional",
-          "thoughtful"
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Provides a knowledgeable perspective on JSON serialization performance, suggesting that serialization might not be the main bottleneck."
+      },
+      {
+        "id": 47463693,
+        "author": "sakesun",
+        "text": "I heard a lot of similar stories in the past when I started using Python 20+ years ago. A number of people claimed their solutions got faster when develop in Python, mainly because Python make it easier to quickly pivot to experiment with various alternative methods, hence finally yield at more efficient outcome at the end.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 8,
-        "analysis": "This comment reflects on a possible trend of Rust fatigue or backlash, though it is more speculative and less technical."
+        "analysis": "Supports the idea that language features enabling rapid experimentation can lead to better performance through improved algorithms or designs."
       },
       {
         "id": 47462638,
@@ -128,23 +129,22 @@
         "text": "This article is obviously AI generated and besides being jarring to read, it makes me really doubt its validity. You can get substantially faster parsing versus `JSON.parse()` by parsing structured binary data, and it\u0026#x27;s also faster to pass a byte array compared to a JSON string from wasm to the browser. My guess is not only this article was AI generated, but also their benchmarks, and perhaps the implementation as well.",
         "indicators": [
           "emotional",
-          "trolling",
-          "likely-untrue"
+          "likely-true"
         ],
         "accuracyRank": 9,
-        "analysis": "This comment is largely speculative and dismissive without strong evidence, reducing its credibility."
+        "analysis": "Expresses skepticism about the article's authenticity and reliability, which is plausible given the concerns raised by others about benchmarks and writing style."
       },
       {
-        "id": 47462816,
-        "author": "marcosdumay",
-        "text": "It would be great if people stopped dismissing the problem that WASM not being a first-class runtime for the web causes.",
+        "id": 47466086,
+        "author": "pjmlp",
+        "text": "This is why, when a programming language already has tooling for compilers, being it ahead of time, or dynamic, it pays off to first go around validating algorithms and data structures before a full rewrite.\u003cp\u003eAdditionally even after those options are exhausted, only a key parts might need a rewrite, not the whole thing.\u003cp\u003eHowever, I wonder how many care about actually learning about algorithms, data structures and mechanical sympathy in the age of Electron apps.\u003cp\u003eIt feels quite often that a rewrite is chosen, because knowing how to actually apply those skills is the CS stuff many think isn\u0026#x27;t worthwhile learning about.",
         "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment highlights a broader architectural limitation of WASM on the web platform, a relevant concern for performance and integration."
+        "analysis": "Offers a constructive viewpoint on software engineering practices, emphasizing the importance of algorithmic understanding over premature rewrites."
       }
     ]
   }

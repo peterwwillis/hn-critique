@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">3 points</span>
+        <span class="score">23 points</span>
         by <a href="https://news.ycombinator.com/user?id=acc_10000" class="hnuser">acc_10000</a>
         <span class="age">3 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/18/47428544.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the performance benefits of ironkernel, a tool that compiles Python expressions to Rust for parallel execution. The main comment highlights its efficiency in expression fusion compared to NumPy, while noting some limitations and comparisons to other tools like Numba.</p>
+      <p>The discussion centers on the ironkernel project, which compiles Python expressions to Rust for parallel execution, offering performance benefits through expression fusion. Commenters inquire about benchmarks, technical details like vectorization, and express opinions on presentation and the evolving role of engineers with AI tools.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -59,10 +59,54 @@
         <a href="https://news.ycombinator.com/user?id=acc_10000" class="hnuser">acc_10000</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I built this after watching 7&#x2F;8 CPU cores idle during a Monte Carlo sim. multiprocessing added 189ms serialization overhead to a 9ms computation.<p>ironkernel lets you write element-wise expressions with a Python decorator, compiles them to a Rust expression tree at definition time, and executes via rayon on all cores. ~2k lines of Rust, ~500 lines of Python.<p>The win is expression fusion: NumPy evaluates `where(x &gt; 0, sqrt(abs(x)) + sin(x), 0)` as 5 passes with 4 temporaries. ironkernel fuses into 1 pass, zero temporaries, and skips dead branches (no NaN from sqrt of negatives). 2.25x NumPy on compound expressions at 10M elements. For BLAS ops like SAXPY, NumPy is faster — ironkernel doesn&#x27;t call BLAS.<p>Early stage: f64 only, 1-D only, expression subset only (intentional — parallel safety guarantee). Numba warm is 3.2x faster (LLVM JIT vs interpreter).</div>
-      <div class="comment-analysis"><em>This comment provides a detailed, technical explanation of ironkernel&#39;s design and performance benefits, including specific comparisons to NumPy and Numba, indicating a high level of accuracy and insight.</em></div>
+      <div class="comment-analysis"><em>This comment provides detailed technical insights and benchmarks from the author, making it highly credible and informative.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ata-sesli" class="hnuser">ata-sesli</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">The expression fusion win is huge for cache locality. Since you&#x27;re using Rayon for the multicore side, I&#x27;m curious if the generated Rust expression tree is &#x27;flat&#x27; enough for LLVM to trigger auto-vectorization (SIMD) on the individual cores or if the tree traversal adds enough branching to break that?</div>
+      <div class="comment-analysis"><em>This comment raises a technically relevant question about potential SIMD vectorization, showing understanding of performance optimization.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=stephantul" class="hnuser">stephantul</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Do you have benchmarks? Naively I would compare this to Numba? But maybe I am way off the mark here</div>
+      <div class="comment-analysis"><em>A reasonable request for benchmarks and comparison to a known tool, reflecting typical due diligence but lacking detail.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=alephnerd" class="hnuser">alephnerd</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">emotional</span> 
+      </div>
+      <div class="comment-text">I think other HNers need to keep an eye on these kinds of projects - a decade ago these would have required a team of 3-4 engineers around 1 quarter to build a prototype for, but now we can see one SWE do the same while leveraging Claude Code.<p>Plenty of people on HN wish to bury their head under the sand, but this highlights how critical it is becoming to be <i>both</i> a good engineer <i>and</i> adept at using agentic tooling within your development lifecycle.</div>
+      <div class="comment-analysis"><em>This comment provides a broader perspective on software development trends and AI tooling, which is insightful though somewhat subjective.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=KeplerBoy" class="hnuser">KeplerBoy</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">belligerent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">For the love of god, don&#x27;t use these ai generated infographics&#x2F;diagrams.<p>If that&#x27;s your bar for quality, I&#x27;ll think less of your code. I can&#x27;t help it.<p>Also your saxpy example seems to be daxpy. s and d are short for single or double precision.</div>
+      <div class="comment-analysis"><em>The comment is critical and somewhat emotional, but it points out a valid correction about the SAXPY example and expresses skepticism about AI-generated visuals.</em></div>
     </div>
     
 
@@ -74,7 +118,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-21 14:34 UTC &nbsp;|&nbsp;
+    Generated 2026-03-21 16:34 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
