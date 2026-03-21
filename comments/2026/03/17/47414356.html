@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: We give every user SQL access to a shared ClickHouse cluster | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://trigger.dev/blog/how-trql-works" rel="noreferrer noopener">We give every user SQL access to a shared ClickHouse cluster</a>
+        <span class="sitebit"> (trigger.dev)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">15 points</span>
+        by <a href="https://news.ycombinator.com/user?id=eallam" class="hnuser">eallam</a>
+        <span class="age">4 days ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/17/47414356.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47414356" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <p class="no-critique">Analysis could not be generated. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=zie" class="hnuser">zie</a>
+  </div>
+  <div class="comment-text">We do the same thing, every employee can access our main financial&#x2F;back office SQL database, but we just use PostgreSQL with row level security[0]. We never bothered to complicate it like the post does.<p>0: <a href="https:&#x2F;&#x2F;www.postgresql.org&#x2F;docs&#x2F;18&#x2F;ddl-rowsecurity.html" rel="nofollow">https:&#x2F;&#x2F;www.postgresql.org&#x2F;docs&#x2F;18&#x2F;ddl-rowsecurity.html</a></div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=orf" class="hnuser">orf</a>
+  </div>
+  <div class="comment-text">Back office, employee access is a completely different problem to what is described in the post.<p>How do you enforce tenant isolation with that method,  or prevent unbounded table reads?</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tossandthrow" class="hnuser">tossandthrow</a>
+  </div>
+  <div class="comment-text">They likely don&#x27;t need tenant isolation and unbound table reads can be mitigated using timeouts.<p>We do something similar for our backoffice - just with the difference that it is Claude that has full freedom to write queries.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=senorrib" class="hnuser">senorrib</a>
+  </div>
+  <div class="comment-text">Reasons 1-3 could very well be done with ClickHouse policies (RLS) and good data warehouse design. In fact, that’s more secure than a compiler adding a where to a query ran by an all mighty user.<p>Reason 4 is probably an improvement, but could probably be done with CH functions.<p>The problem with custom DSLs like this is that tradeoff a massive ecosystem for very little benefit.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=efromvt" class="hnuser">efromvt</a>
+  </div>
+  <div class="comment-text">As long as you don&#x27;t deviate too much from ANSI, I think the &#x27;light sql DSL&#x27; approach has a lot of pros when you control the UX. (so UIs, in particular, are fantastic for this approach - what they seem to be targeting with queryies and dashboards). It&#x27;s more of a product experience; tables are a terrible product surface to manage.<p>Agreed with the ecosystem cons getting much heavier as you move outside the product surface area.</div>
+  
+</div>
+
+</div>
+
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-21 12:48 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+
