@@ -23,7 +23,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the pros and cons of currying in programming languages, with several commenters agreeing with the article's criticism of currying's implicitness and advocating for explicit partial application or named parameters. Some express personal preferences for currying, while others highlight its drawbacks in clarity and ergonomics.",
+    "summary": "The discussion revolves around the pros and cons of currying in programming languages, with many participants agreeing that implicit currying can cause confusion and errors, while some highlight its theoretical and practical benefits. Alternatives like explicit partial application syntax and named parameters are proposed to improve clarity and maintainability.",
     "comments": [
       {
         "id": 47477745,
@@ -36,7 +36,83 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a clear and well-reasoned explanation of the downsides of implicit currying, emphasizing clarity and compiler error detection benefits of explicit partial application syntax."
+        "analysis": "This comment provides a clear and accurate critique of implicit currying, emphasizing the benefits of explicit syntax for partial application in terms of readability and compiler error detection."
+      },
+      {
+        "id": 47478561,
+        "author": "twic",
+        "text": "I couldn\u0026#x27;t agree more. Having spent a lot of time with a language with currying like this recently, it seems very obviously a misfeature.\u003cp\u003e1. Looking at a function call, you can\u0026#x27;t tell if it\u0026#x27;s returning data, or a function from some unknown number of arguments to data, without carefully examining both its declaration and its call site\u003cp\u003e2. Writing a function call, you can accidentally get a function rather than data if you leave off an argument; coupled with pervasive type inference, this can lead to some really tiresome compiler errors\u003cp\u003e3. Functions which return functions look just like functions which take more arguments and return data (card-carrying functional programmers might argue these are really the same thing, but semantically, they aren\u0026#x27;t at all - in what sense is make_string_comparator_for_locale \u0026quot;really\u0026quot; a function which takes a locale and a string and returns a function from string to ordering?)\u003cp\u003e3a. Because of point 3, our codebase has a trivial wrapper to put round functions when your function actually returns a function (so make_string_comparator_for_locale has type like Locale -\u0026gt; Function\u0026lt;string -\u0026gt; string -\u0026gt; order\u0026gt;), so now if you actually want to return a function, there\u0026#x27;s boilerplate at the return and call sites that wouldn\u0026#x27;t be there in a less \u0026#x27;concise\u0026#x27; language!\u003cp\u003eI think programming languages have a tendency to pick up cute features that give you a little dopamine kick when you use them, but that aren\u0026#x27;t actually good for the health of a substantial codebase. I think academic and hobby languages, and so functional languages, are particularly prone to this. I think implicit currying is one of these features.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment thoughtfully discusses practical issues with implicit currying, such as ambiguity and error-proneness, supported by real-world experience, making it a strong contribution."
+      },
+      {
+        "id": 47478630,
+        "author": "jhhh",
+        "text": "A benefit to using the currying style is that you can do work in the intermediate steps and use that later. It is not simply a \u0026#x27;cool\u0026#x27; way to define functions. Imagine a logging framework:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  (log configuration identifier level format-string arg0 arg1 ... argN)\n  \u003c/code\u003e\u003c/pre\u003e\nAfter each partial application step you can do more and more work narrowing the scope of what you return from subsequent functions.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  ;; Preprocessing the configuration is possible\n  ;; Imagine all logging is turned off, now you can return a noop\n  (partial log conf)\n  ;; You can look up the identifier in the configuration to determine what the logger function should look like\n  (partial log conf id)\n  ;; You could return a noop function if the level is not enabled for the particular id\n  (partial log config id level)\n  ;; Pre-parsing the format string is now possible\n  (partial log conf id level \u0026quot;%time - %id\u0026quot;)\n  \u003c/code\u003e\u003c/pre\u003e\nIn many codebases I\u0026#x27;ve seen a large amount of code is literally just to emulate this process with multiple classes, where you\u0026#x27;re performing work and then caching it somewhere. In simpler cases you can consolidate all of that in a function call and use partial application. Without some heroic work by the compiler you simply cannot do that in an imperative style.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment highlights a valid advantage of currying related to staged computation and caching, providing a practical example that enriches the discussion."
+      },
+      {
+        "id": 47477969,
+        "author": "titzer",
+        "text": "I agree with this article. Tuples nicely unified multiple return values and multiple parameters. FWIW Scala and Virgil both support the _  syntax for the placeholder in a partial application.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    def add(x: int, y: int) -\u0026gt; int { return x + y; }\n    def add3 = add(_, 3);\n\u003c/code\u003e\u003c/pre\u003e\nOr more simply, reusing some built-in functions:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    def add3 = int.+(_, 3);\u003c/code\u003e\u003c/pre\u003e",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "The comment accurately points out language features that provide explicit partial application syntax, supporting the article's argument for alternatives to currying."
+      },
+      {
+        "id": 47477569,
+        "author": "Pay08",
+        "text": "I\u0026#x27;m biased here since the easy currying is by far my favourite feature in Haskell (it always bothers me that I have to explicitly create a lamba in Lisps) but the arguments in the article don\u0026#x27;t convince me, what with the synctactic overhead for the \u0026quot;tuple style\u0026quot;.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment offers a personal but reasoned counterpoint emphasizing syntactic ergonomics, adding balance to the discussion."
+      },
+      {
+        "id": 47478316,
+        "author": "skybrian",
+        "text": "There are good ideas in functional languages that other languages have borrowed, but there are bad ideas too: currying, function call syntax without parentheses, Hindley-Milner type inference, and laziness by default (Haskell) are experiments that new languages shouldn’t copy.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "The comment provides a broader perspective on language design, correctly identifying currying as a potentially problematic feature in some contexts."
+      },
+      {
+        "id": 47478235,
+        "author": "vq",
+        "text": "One \u0026quot;feature of currying\u0026quot; in Haskell that isn\u0026#x27;t mentioned in the fine article is that parts of the function may not be dependent on the last argument(s) and only needs to be evaluated once over many application of the last argument(s) which can be very useful when partially applied functions are passed to higher-order functions.\u003cp\u003eFunctions can be done explicitly written to do this or it can be achieved through compiler optimisation.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment adds nuance by discussing performance and evaluation benefits of currying, complementing the critical viewpoints."
       },
       {
         "id": 47477618,
@@ -47,74 +123,32 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "The comment insightfully points out the cognitive overhead of positional arguments in curried or tuple styles and advocates for named parameters, which aligns with common best practices in software engineering."
+        "accuracyRank": 8,
+        "analysis": "The comment offers a practical alternative to currying focused on usability in business contexts, highlighting the importance of argument naming."
       },
       {
-        "id": 47477721,
-        "author": "layer8",
-        "text": "I completely agree. Giving the first parameter of a function special treatment only makes sense in a limited subset of cases, while forcing an artificial asymmetry in the general case that I find unergonomic.",
+        "id": 47478274,
+        "author": "kubb",
+        "text": "The article lists two arguments against Currying:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  1) \u0026quot;performance is a bit of a concern\u0026quot;\n  2) \u0026quot;curried function types have a weird shape\u0026quot;\n\u003c/code\u003e\u003c/pre\u003e\n2 is followed by single example of how it doesn\u0026#x27;t work the way the author would expect it to in Haskell.\u003cp\u003eIt\u0026#x27;s not a strong case in my opinion. Dismissed.",
         "indicators": [
           "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment highlights a valid ergonomic concern about currying's asymmetry, which can complicate function usage outside of specific scenarios."
-      },
-      {
-        "id": 47477649,
-        "author": "leoc",
-        "text": "Right. Currying as the default means of passing arguments in functional languages is a gimmick, a hack in the derogatory sense. It\u0026#x27;s low-level and anti-declarative.",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 4,
-        "analysis": "While somewhat emotional, the comment reflects a common critique that currying can obscure declarative intent, though it lacks detailed justification."
-      },
-      {
-        "id": 47477569,
-        "author": "Pay08",
-        "text": "I\u0026#x27;m biased here since the easy currying is by far my favourite feature in Haskell (it always bothers me that I have to explicitly create a lamba in Lisps) but the arguments in the article don\u0026#x27;t convince me, what with the synctactic overhead for the \u0026quot;tuple style\u0026quot;.",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "This comment offers a personal preference for currying and challenges the article's points, though it does not provide detailed counterarguments."
-      },
-      {
-        "id": 47477509,
-        "author": "recursivecaveat",
-        "text": "Currying was recently removed from Coalton: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;coalton-lang.github.io\u0026#x2F;20260312-coalton0p2\u0026#x2F;#fixed-arity-functions\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;coalton-lang.github.io\u0026#x2F;20260312-coalton0p2\u0026#x2F;#fixed-ar...\u003c/a\u003e",
-        "indicators": [
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "This comment provides a factual update about a language removing currying, supporting the article's critical stance, but lacks elaboration."
+        "accuracyRank": 9,
+        "analysis": "This comment critically evaluates the article's arguments and finds them insufficient, contributing a skeptical but reasoned viewpoint."
       },
       {
-        "id": 47477792,
-        "author": "jwarden",
-        "text": "Here’s an article I wrote a while ago about a hypothetical language feature I call “folded application”, that makes parameter-list style and folded style equivalent.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;jonathanwarden.com\u0026#x2F;implicit-currying-and-folded-application\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;jonathanwarden.com\u0026#x2F;implicit-currying-and-folded-appl...\u003c/a\u003e",
-        "indicators": [
-          "constructive",
-          "intelligent"
-        ],
-        "accuracyRank": 7,
-        "analysis": "The comment shares a related resource proposing an alternative approach, adding constructive context though not directly critiquing currying."
-      },
-      {
-        "id": 47477481,
-        "author": "messe",
-        "text": "What benefit does drawing a distinction between parameter list and single-parameter tuple style bring?\u003cp\u003eI\u0026#x27;m failing to see how they\u0026#x27;re not isomorphic.",
+        "id": 47477902,
+        "author": "mkprc",
+        "text": "Prior to this article, I didn\u0026#x27;t think of currying as being something a person could be \u0026quot;for\u0026quot; or \u0026quot;against.\u0026quot; It just is. The fact that a function of multiple inputs can be equivalently thought of as a function of a tuple can be equivalently thought of as a composite of single-input functions that return functions is about cognition, and understanding structure, not code syntax.",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment questions the practical difference between parameter list and tuple styles, encouraging deeper examination but not addressing currying explicitly."
+        "accuracyRank": 10,
+        "analysis": "This comment provides a philosophical perspective on currying, emphasizing its role in conceptual understanding rather than just syntax."
       }
     ]
   }

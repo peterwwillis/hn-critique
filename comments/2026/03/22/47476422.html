@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Comments Critique: Flash-Moe: Running a 397B Parameter Model on a Mac with 48GB RAM | HN Critique</title>
+  <title>Comments Critique: Flash-MoE: Running a 397B Parameter Model on a Laptop | HN Critique</title>
   <link rel="stylesheet" href="../../../../style.css"/>
 </head>
 <body>
@@ -30,14 +30,14 @@
     <div class="story-header">
       <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
       
-      <h2><a href="https://github.com/danveloper/flash-moe" rel="noreferrer noopener">Flash-Moe: Running a 397B Parameter Model on a Mac with 48GB RAM</a>
+      <h2><a href="https://github.com/danveloper/flash-moe" rel="noreferrer noopener">Flash-MoE: Running a 397B Parameter Model on a Laptop</a>
         <span class="sitebit"> (github.com)</span>
       </h2>
       
       <p class="meta">
-        <span class="score">178 points</span>
+        <span class="score">220 points</span>
         by <a href="https://news.ycombinator.com/user?id=mft_" class="hnuser">mft_</a>
-        <span class="age">5 hours ago</span>
+        <span class="age">7 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/22/47476422.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47476422" rel="noopener">original on HN</a>
       </p>
@@ -47,19 +47,30 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the feasibility and practicality of running large language models like Qwen 3.5 397B on consumer hardware using techniques such as 2-bit quantization and expert reduction. While some praise the technical achievement and potential for offline inference, others criticize the significant quality degradation and slow performance, questioning the real-world usability of such approaches.</p>
+      <p>The discussion centers on the feasibility and practicality of running very large language models (LLMs) like Qwen 3.5 397B on consumer hardware using techniques such as 2-bit quantization and expert reduction. While some praise the technical achievement and potential for offline inference, others criticize the severe quality degradation and slow performance, emphasizing that current methods are more proof-of-concept than production-ready solutions.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 18 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47476422" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 22 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47476422" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=tarruda" class="hnuser">tarruda</a>
+        <a href="https://news.ycombinator.com/user?id=Aurornis" class="hnuser">Aurornis</a>
         &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Reading the details, he is using 2-bit quantization and reduced the number of experts per token from 10 down to 4 to get 5 tokens&#x2F;sec. Cool proof of concept but it’s far from the quality and performance of the 397B model as normally used. Dropping the number of experts is particularly misleading.<p>This is some interesting work, but applying such extreme measures to LLMs to get them to run severely degrades quality. I know he claims negligible quality loss, but in my experience 2-bit quantizations are completely useless for real work. You can get them to respond to prompts, but they lose their intelligence and will go around in circles.<p>He also shows 5-6 tokens per second. Again that’s impressive for a large model on limited hardware but it’s very slow. Between the severely degraded model abilities and the extremely slow output the 397B result should be considered an attempt at proving something can technically run, not evidence that it can run well and produce output you’d expect from a 397B model.<p>He even mentions the obvious problems with his changes:<p>&gt; *2-bit quantization produces \name\ instead of &quot;name&quot; in JSON output, making tool calling unreliable.<p>So right out of the gate this isn’t useful if you want to do anything with it. He could have tried smaller models or less quantizations to get actual useful output from the model, but it wouldn’t look as impressive. It’s honestly getting kind of exhausting to read all of these AI-coded (admitted in the link) and AI-written papers made more for resume building. It would have been interesting to see this work applied to running a useful model that hadn’t been lobotomized instead of applying tricks to get an impressive headline but useless output.</div>
+      <div class="comment-analysis"><em>This comment provides a balanced and detailed critique of the technical compromises involved, highlighting real limitations in quality and speed that align with known issues in extreme quantization.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=tarruda" class="hnuser">tarruda</a>
+        &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
@@ -72,18 +83,7 @@
     ifeval: 75.90%
 </code></pre>
 More details of my experience:<p>- <a href="https:&#x2F;&#x2F;huggingface.co&#x2F;ubergarm&#x2F;Qwen3.5-397B-A17B-GGUF&#x2F;discussions&#x2F;8" rel="nofollow">https:&#x2F;&#x2F;huggingface.co&#x2F;ubergarm&#x2F;Qwen3.5-397B-A17B-GGUF&#x2F;discu...</a><p>- <a href="https:&#x2F;&#x2F;huggingface.co&#x2F;ubergarm&#x2F;Qwen3.5-397B-A17B-GGUF&#x2F;discussions&#x2F;2" rel="nofollow">https:&#x2F;&#x2F;huggingface.co&#x2F;ubergarm&#x2F;Qwen3.5-397B-A17B-GGUF&#x2F;discu...</a><p>- <a href="https:&#x2F;&#x2F;gist.github.com&#x2F;simonw&#x2F;67c754bbc0bc609a6caedee16fef89e8?permalink_comment_id=5991165#gistcomment-5991165" rel="nofollow">https:&#x2F;&#x2F;gist.github.com&#x2F;simonw&#x2F;67c754bbc0bc609a6caedee16fef8...</a><p>Overall an excellent model to have for offline inference.</div>
-      <div class="comment-analysis"><em>Provides concrete performance metrics and references to additional resources, offering a balanced and informed perspective on running large models on consumer hardware.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Aurornis" class="hnuser">Aurornis</a>
-        &nbsp;|&nbsp;rank #2
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Reading the details, he is using 2-bit quantization and reduced the number of experts per token from 10 down to 4 to get 5 tokens&#x2F;sec. Cool proof of concept but it’s far from the quality and performance of the 397B model as normally used. Dropping the number of experts is particularly misleading.<p>This is some interesting work, but applying such extreme measures to LLMs to get them to run severely degrades quality. I know he claims negligible quality loss, but in my experience 2-bit quantizations are completely useless for real work. You can get them to respond to prompts, but they lose their intelligence and will go around in circles.<p>He also shows 5-6 tokens per second. Again that’s impressive for a large model on limited hardware but it’s very slow. Between the severely degraded model abilities and the extremely slow output the 397B result should be considered an attempt at proving something can technically run, not evidence that it can run well and produce output you’d expect from a 397B model.<p>He even mentions the obvious problems with his changes:<p>&gt; *2-bit quantization produces \name\ instead of &quot;name&quot; in JSON output, making tool calling unreliable.<p>So right out of the gate this isn’t useful if you want to do anything with it. He could have tried smaller models or less quantizations to get actual useful output from the model, but it wouldn’t look as impressive. It’s honestly getting kind of exhausting to read all of these AI-coded (admitted in the link) and AI-written papers made more for resume building. It would have been interesting to see this work applied to running a useful model that hadn’t been lobotomized instead of applying tricks to get an impressive headline but useless output.</div>
-      <div class="comment-analysis"><em>Critically evaluates the trade-offs of extreme quantization and expert reduction, highlighting the impact on model quality and speed, and cautioning against overhyping such results.</em></div>
+      <div class="comment-analysis"><em>This comment adds valuable context by sharing practical experience and benchmark results, supporting the feasibility of running large models on consumer hardware with alternative quantization methods.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -94,7 +94,7 @@ More details of my experience:<p>- <a href="https:&#x2F;&#x2F;huggingface.co&#x2
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The quality degradation at 2-bit is a real issue. For actual work tasks, a well-tuned 30B at 4-bit usually outperforms a 70B+ at 2-bit in my experience. The expert reduction on top of that compounds things - you&#x27;re essentially running a fairly different model. Still interesting to see the upper bound of what consumer hardware can attempt, even if the result isn&#x27;t production-ready.</div>
-      <div class="comment-analysis"><em>Supports the critique on quality degradation with practical experience, emphasizing that smaller, better-quantized models often outperform larger, heavily quantized ones.</em></div>
+      <div class="comment-analysis"><em>This comment corroborates concerns about 2-bit quantization quality loss and provides a useful comparison to more practical model sizes and quantization levels.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -105,7 +105,7 @@ More details of my experience:<p>- <a href="https:&#x2F;&#x2F;huggingface.co&#x2
         <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">TLDR I took a stab at leveraging Dan&#x27;s work and making it more practical:<p><a href="https:&#x2F;&#x2F;github.com&#x2F;matt-k-wong&#x2F;mlx-flash" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;matt-k-wong&#x2F;mlx-flash</a><p>2 bit quantization lobotomizes the model but is impressive nonetheless!   Maybe one day we&#x27;ll be able to have intelligent 2 bit quants... I wonder.<p>my version supports - 4bit quantization, hybrid streaming (Disk + ram), arbitrary model compatibility, tested on Mamba2, and lets up the framework for LM Studio integration<p>I leveraged this work (Credit to Danveloper) and am in the middle of making this work on more practical models and quants.  It still uses flash streaming, but done so with a control knob so you can choose how much ram and how little ram to use.  In the craziest case, it uses as little ram as possible but is very slow, however, in the balanced case you use some ram and it&#x27;s much faster.<p>I designed it around the intelligence dense Nemotron 3 Nano 30B and Nemotron Cascade 2 30B models (which are smaller, more intelligence density) and can run on low end 16GB machines, though you can run arbitrarily large models on larger machines (designed for very low end, but capable of high end).</div>
-      <div class="comment-analysis"><em>Shares a practical extension of the original work, acknowledging limitations of 2-bit quantization while proposing improvements and supporting more usable models on lower-end hardware.</em></div>
+      <div class="comment-analysis"><em>This comment contributes constructively by describing efforts to improve usability and practicality, indicating awareness of the limitations of extreme quantization and proposing solutions.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -116,7 +116,7 @@ More details of my experience:<p>- <a href="https:&#x2F;&#x2F;huggingface.co&#x2
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The technical write up is great, but Mac users should not get too excited just yet on running 300B+ parameter models locally as the TPS isn&#x27;t that good.<p>&gt;...at 4.4+ tokens&#x2F;second<p>That is even when it is using 4-bit quantization and it is still at that speed.<p>&gt; The entire 209GB model streams from SSD through a custom Metal compute pipeline.<p>This is my main problem.<p>If I were to run this on a Mac SSD, 24&#x2F;7 for heavy usage such as Openclaw, that is going to significantly reduce the lifetime of the SSD.<p>Can&#x27;t imagine using this in the long term right now, but improvements will follow. Still a great write up anyways.</div>
-      <div class="comment-analysis"><em>Offers a realistic perspective on performance limitations and hardware wear concerns, tempering enthusiasm with practical considerations about long-term usability.</em></div>
+      <div class="comment-analysis"><em>This comment raises valid practical concerns about hardware limitations and longevity, which are important considerations for real-world deployment.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -124,54 +124,54 @@ More details of my experience:<p>- <a href="https:&#x2F;&#x2F;huggingface.co&#x2
         <a href="https://news.ycombinator.com/user?id=zozbot234" class="hnuser">zozbot234</a>
         &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">The github page mentions that a naïve mmap approach is bottlenecked by per-page overhead. Can this be mitigated by setting up explicit &quot;huge&quot; pages? (2M using the CONT PTE feature if the &quot;native&quot; page size is 16k; 32M using a PMD level block mapping; or 1G using the CONT PMD feature.) Does macOS support this out of the box?  Alternatively, one might use a simple mmap and then something like posix_fadvise to set up prefetching of the data.</div>
-      <div class="comment-analysis"><em>Poses a technical question about memory management optimizations that could improve performance, showing engagement with system-level details.</em></div>
+      <div class="comment-analysis"><em>This comment shows technical understanding and suggests potential optimizations for memory mapping performance, relevant to improving model loading speeds.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=JSR_FDED" class="hnuser">JSR_FDED</a>
+        <a href="https://news.ycombinator.com/user?id=mannyv" class="hnuser">mannyv</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
-      <div class="comment-text">This is a very impressive result. If I understand correctly the bottleneck is the SSD in this architecture - the author seems to get almost 15GB&#x2F;s - but I seem to remember the max b&#x2F;w was about 8GB&#x2F;s. What am I missing?</div>
-      <div class="comment-analysis"><em>Raises a valid question about hardware bandwidth limits, indicating critical engagement with the reported performance figures.</em></div>
+      <div class="comment-text">Everyone is focused on the bad 2 bit result but who cares? He says don’t use it because it’s bad.</div>
+      <div class="comment-analysis"><em>This comment dismisses valid criticism without adding meaningful insight, reducing the quality of the discussion.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=bertili" class="hnuser">bertili</a>
+        <a href="https://news.ycombinator.com/user?id=qiine" class="hnuser">qiine</a>
         &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">It seem strange to me that the only way to use an llm is to fit it entirely in volatile memory from the get go.<p>To render movies we happily wait for the computer to calculate how lights bounce around, for hours even days.<p>So why not do the same with AIs? Ask big question to big models and get the answer to the universe tomorrow?</div>
+      <div class="comment-analysis"><em>This comment raises an interesting analogy about computation time trade-offs, encouraging reconsideration of current assumptions about memory requirements.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=bertili" class="hnuser">bertili</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">Very impressive! I wonder if there is a similar path for Linux using system memory instead of SSD? Hell, maybe even a case for the return of some kind of ROMs of weights?</div>
-      <div class="comment-analysis"><em>Speculates on alternative hardware configurations and future directions, contributing constructively to the discussion.</em></div>
+      <div class="comment-analysis"><em>This comment expresses enthusiasm and curiosity about alternative hardware approaches, though it is speculative and less detailed.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=haomingkoo" class="hnuser">haomingkoo</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
-      </div>
-      <div class="comment-text">Really interesting approach. Curious how the 2-bit quantization affects the model&#x27;s reasoning ability on longer chains of thought vs shorter prompts. The benchmarkslook solid but real-world usage seems like a different story based on the comments here.</div>
-      <div class="comment-analysis"><em>Expresses curiosity about the practical implications of quantization on reasoning, reflecting a nuanced understanding of model evaluation.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=383toast" class="hnuser">383toast</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">yeah 4tok&#x2F;s is kinda unusable though</div>
-      <div class="comment-analysis"><em>Briefly expresses frustration with the slow token generation speed, a common concern in the discussion.</em></div>
+      <div class="comment-text">Really interesting approach. Curious how the 2-bit quantization affects the model&#x27;s reasoning ability on longer chains of thought vs shorter prompts. The benchmarkslook solid but real-world usage seems like a different story based on the comments here.</div>
+      <div class="comment-analysis"><em>This comment thoughtfully questions the impact of quantization on complex reasoning, highlighting a gap between benchmarks and practical usage.</em></div>
     </div>
     
 
@@ -183,7 +183,7 @@ More details of my experience:<p>- <a href="https:&#x2F;&#x2F;huggingface.co&#x2
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-22 16:34 UTC &nbsp;|&nbsp;
+    Generated 2026-03-22 18:41 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
