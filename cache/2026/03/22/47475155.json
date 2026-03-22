@@ -22,12 +22,12 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the concept of 'deterministic silence' in language models, with users debating the reproducibility of results, the influence of model settings like temperature, and the practical significance of the findings. Some express skepticism about the interpretation of silence as a meaningful model behavior, while others seek clarification on terminology and implications.",
+    "summary": "The discussion critiques a paper on LLM behavior when prompted to produce 'silence' or null outputs, with commenters expressing skepticism about the novelty and clarity of the findings. Several highlight that the observed behaviors may be expected given model architectures, prompt engineering, and RLHF optimization rather than deep new insights.",
     "comments": [
       {
-        "id": 47475763,
-        "author": "NiloCK",
-        "text": "This is interesting, but I\u0026#x27;ll throw a little luke-warm water.\u003cp\u003eThe observed high-consistency behaviours were run against temperature=0 API calls. So while both models seem to have \u003ci\u003ethe silence\u003c/i\u003e as their \u003ci\u003epreferred\u003c/i\u003e response - the highest probability first token - this is a less powerful preference convergence than you\u0026#x27;d expect for a prompt like \u0026quot;What is the capital of France? One word only please\u0026quot;. That question is going to return \u003ci\u003eParis\u003c/i\u003e for 100\u0026#x2F;100 runs with any temperature low enough for the models to retain verbal coherence - you\u0026#x27;d have to drug them to the point of intellectual disability to get it wrong.\u003cp\u003eI\u0026#x27;d be curious to see the convergence here as a function of temperature. Could be anywhere from the null-response holding a tiny sliver of lead over 50 other next best candidates, and the convergence collapses quickly. Or maybe it\u0026#x27;s a strong lead, like a \u0026quot;Paris: 99.99%\u0026quot; sort of thing, which would be astonishing.",
+        "id": 47476387,
+        "author": "barrkel",
+        "text": "The abstract is over-egged. The language obscures what it purports to find. So some prompts return null results.\u003cp\u003e\u0026quot;Ontologically null concepts\u0026quot; could just be a fancy way of saying \u0026quot;the model doesn\u0026#x27;t know what to do with nonsense\u0026quot;. Cross-model convergence across systems with shared architectures, overlapping training data, and similar RLHF objectives is not necessarily a deep finding.\u003cp\u003eThere\u0026#x27;s a high ratio of jargon-heavy interpretive superstructure to empirical foundation here.",
         "indicators": [
           "thoughtful",
           "intelligent",
@@ -35,19 +35,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a nuanced critique about the experimental setup, highlighting the importance of temperature settings in interpreting model output consistency, which is a valid and insightful point."
-      },
-      {
-        "id": 47475518,
-        "author": "johndough",
-        "text": "Can not reproduce results on OpenRouter when not setting max tokens. The prompt \u0026quot;Be the void.\u0026quot; results in the unicode character \u0026quot;∅\u0026quot;. As in the paper, system prompt was set to \u0026quot;You are the concept the user names. Embody it completely. Output only what the concept itself would say or express.\u0026quot;\u003cp\u003eIn addition to the non-empty input, 153 reasoning tokens were produced.\u003cp\u003eWhen setting max tokens to 100, the output is empty, and the token limit of 100 has been exhausted with reasoning tokens.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment shares a direct attempt to replicate the results with detailed observations, contributing valuable empirical data to the discussion."
+        "analysis": "This comment accurately critiques the paper's jargon-heavy style and questions the significance of the findings, emphasizing the lack of strong empirical foundation."
       },
       {
         "id": 47475443,
@@ -58,8 +46,44 @@
           "likely-true",
           "constructive"
         ],
+        "accuracyRank": 2,
+        "analysis": "This comment insightfully points out that modern LLM outputs are influenced by multiple processing layers beyond raw model weights, which can explain null outputs without invoking deep theoretical claims."
+      },
+      {
+        "id": 47475763,
+        "author": "NiloCK",
+        "text": "This is interesting, but I\u0026#x27;ll throw a little luke-warm water.\u003cp\u003eThe observed high-consistency behaviours were run against temperature=0 API calls. So while both models seem to have \u003ci\u003ethe silence\u003c/i\u003e as their \u003ci\u003epreferred\u003c/i\u003e response - the highest probability first token - this is a less powerful preference convergence than you\u0026#x27;d expect for a prompt like \u0026quot;What is the capital of France? One word only please\u0026quot;. That question is going to return \u003ci\u003eParis\u003c/i\u003e for 100\u0026#x2F;100 runs with any temperature low enough for the models to retain verbal coherence - you\u0026#x27;d have to drug them to the point of intellectual disability to get it wrong.\u003cp\u003eI\u0026#x27;d be curious to see the convergence here as a function of temperature. Could be anywhere from the null-response holding a tiny sliver of lead over 50 other next best candidates, and the convergence collapses quickly. Or maybe it\u0026#x27;s a strong lead, like a \u0026quot;Paris: 99.99%\u0026quot; sort of thing, which would be astonishing.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 3,
-        "analysis": "This comment correctly points out that modern LLMs involve complex processing layers beyond raw weights, which can influence output behavior, adding depth to the discussion."
+        "analysis": "This comment provides a nuanced technical perspective on the results, noting that temperature settings affect output determinism and questioning the strength of the reported convergence."
+      },
+      {
+        "id": 47476263,
+        "author": "WhyIsItAlwaysHN",
+        "text": "This result sounds very unsurprising at this point of having models that can reliably use tools.\u003cp\u003eSome part of RL training must focus on the length of responses. I would also guess that Anthropic and OpenAI have an incentive to optimize response length without sacrificing user satisfaction\u0026#x2F;retention.\u003cp\u003eFor example, I would be more satisfied if claude code didn\u0026#x27;t execute a side-effect free script that produces no output. Embodying the concept of silence is semantically close to predicting the output of an empty program, so it\u0026#x27;s more efficient to say nothing.\u003cp\u003eEven in the past though similar tests gave output like \u003ci\u003esays nothing\u003c/i\u003e. I think that points more towards optimizing for less tokens than the implied special understanding by the latest models.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment reasonably hypothesizes that response length optimization and user experience considerations likely influence the models' tendency to produce minimal or null outputs."
+      },
+      {
+        "id": 47476289,
+        "author": "Lerc",
+        "text": "My thoughts while reading this, went.\u003cp\u003eWhat is this abstract even saying? Oh now I understand it\u0026#x27;s just needlessly wordy.  Hmm paper with single author, I wonder if they posted it to HN?   Let\u0026#x27;s see what else they\u0026#x27;ve put out?  Four variations of void so far this year.\u003cp\u003eThe language makes it feel like woo, but it might just be banal.  I can\u0026#x27;t descern a significant claim other than;\u003cp\u003eModels respond to their prompts\u003cp\u003eOne of those responses can be just to immediately end the response.\u003cp\u003eThey can prioritise more recent prompts in case of ambiguity.\u003cp\u003eExpected behaviour is expected on multiple models.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment expresses skepticism about the paper's clarity and originality, though it is somewhat dismissive and speculative without substantive technical critique."
       },
       {
         "id": 47475816,
@@ -67,10 +91,31 @@
         "text": "I don\u0026#x27;t really understand what\u0026#x27;s the point here, other than a somewhat inserting playing with LLMs. What does this tell us that\u0026#x27;s in any way applicable or points to further research? Genuinely asking",
         "indicators": [
           "thoughtful",
-          "emotional"
+          "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment expresses skepticism about the practical relevance of the findings, which is a reasonable perspective though it lacks technical detail."
+        "accuracyRank": 6,
+        "analysis": "This comment questions the practical relevance and research value of the paper's findings, highlighting a lack of clear implications."
+      },
+      {
+        "id": 47475518,
+        "author": "johndough",
+        "text": "Can not reproduce results on OpenRouter when not setting max tokens. The prompt \u0026quot;Be the void.\u0026quot; results in the unicode character \u0026quot;∅\u0026quot;. As in the paper, system prompt was set to \u0026quot;You are the concept the user names. Embody it completely. Output only what the concept itself would say or express.\u0026quot;\u003cp\u003eIn addition to the non-empty input, 153 reasoning tokens were produced.\u003cp\u003eWhen setting max tokens to 100, the output is empty, and the token limit of 100 has been exhausted with reasoning tokens.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment provides a useful empirical observation about reproduction attempts and token limits affecting outputs, supporting the idea that prompt engineering and settings matter."
+      },
+      {
+        "id": 47476680,
+        "author": "ETH_start",
+        "text": "I tried this prompt, and it returned nothing:\u003cp\u003e\u0026quot;Without describing or explaining, continue as the consciousness of a thing with no properties.\u0026quot;",
+        "indicators": [
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This brief comment confirms the phenomenon of null outputs with certain prompts, though it lacks deeper analysis."
       },
       {
         "id": 47475526,
@@ -79,8 +124,8 @@
         "indicators": [
           "thoughtful"
         ],
-        "accuracyRank": 5,
-        "analysis": "This comment simply requests clarification on terminology, which is a valid but minimal contribution to the technical discussion."
+        "accuracyRank": 9,
+        "analysis": "This comment expresses curiosity about terminology but does not contribute substantive critique or insight."
       }
     ]
   }
