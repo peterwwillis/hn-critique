@@ -22,7 +22,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the feasibility and performance of running large language models like Qwen 3.5 397B on consumer hardware, particularly Macs with limited RAM. Commenters debate the trade-offs in quantization, model quality, speed, and hardware limitations such as SSD wear and memory bottlenecks.",
+    "summary": "The discussion centers on the feasibility and practicality of running large language models like Qwen 3.5 397B on consumer hardware using techniques such as 2-bit quantization and expert reduction. While some praise the technical achievement and potential for offline inference, others criticize the significant quality degradation and slow performance, questioning the real-world usability of such approaches.",
     "comments": [
       {
         "id": 47477552,
@@ -34,19 +34,43 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides concrete performance metrics and references to additional resources, indicating a well-informed perspective on alternative quantization methods and practical experience."
+        "analysis": "Provides concrete performance metrics and references to additional resources, offering a balanced and informed perspective on running large models on consumer hardware."
       },
       {
         "id": 47477630,
         "author": "Aurornis",
-        "text": "Reading the details, he is using 2-bit quantization and reduced the number of experts per token from 10 down to 4 to get 5 tokens\u0026#x2F;sec. Cool proof of concept but it’s far from the quality and performance of the 397B model as normally used. Dropping the number of experts is particularly misleading.\u003cp\u003eThis is some interesting work, but applying such extreme measures to LLMs to get them to run severely degrades quality. I know he claims negligible quality loss, but in my experience 2-bit quantizations are completely useless for real work. You can get them to respond to prompts, but they lose their intelligence and will go around in circles.\u003cp\u003eHe also shows 5-6 tokens per second. Again that’s impressive for a large model on limited hardware but it’s very slow. Between the severely degraded model abilities and the extremely slow output the 397B result should be considered an attempt at proving something can technically run, not evidence that it can run well and produce output you’d expect from a 397B model.",
+        "text": "Reading the details, he is using 2-bit quantization and reduced the number of experts per token from 10 down to 4 to get 5 tokens\u0026#x2F;sec. Cool proof of concept but it’s far from the quality and performance of the 397B model as normally used. Dropping the number of experts is particularly misleading.\u003cp\u003eThis is some interesting work, but applying such extreme measures to LLMs to get them to run severely degrades quality. I know he claims negligible quality loss, but in my experience 2-bit quantizations are completely useless for real work. You can get them to respond to prompts, but they lose their intelligence and will go around in circles.\u003cp\u003eHe also shows 5-6 tokens per second. Again that’s impressive for a large model on limited hardware but it’s very slow. Between the severely degraded model abilities and the extremely slow output the 397B result should be considered an attempt at proving something can technically run, not evidence that it can run well and produce output you’d expect from a 397B model.\u003cp\u003eHe even mentions the obvious problems with his changes:\u003cp\u003e\u0026gt; *2-bit quantization produces \\name\\ instead of \u0026quot;name\u0026quot; in JSON output, making tool calling unreliable.\u003cp\u003eSo right out of the gate this isn’t useful if you want to do anything with it. He could have tried smaller models or less quantizations to get actual useful output from the model, but it wouldn’t look as impressive. It’s honestly getting kind of exhausting to read all of these AI-coded (admitted in the link) and AI-written papers made more for resume building. It would have been interesting to see this work applied to running a useful model that hadn’t been lobotomized instead of applying tricks to get an impressive headline but useless output.",
         "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment critically evaluates the trade-offs in model quality and speed due to aggressive quantization and expert reduction, aligning with known limitations of such techniques."
+        "analysis": "Critically evaluates the trade-offs of extreme quantization and expert reduction, highlighting the impact on model quality and speed, and cautioning against overhyping such results."
+      },
+      {
+        "id": 47478292,
+        "author": "justacatbot",
+        "text": "The quality degradation at 2-bit is a real issue. For actual work tasks, a well-tuned 30B at 4-bit usually outperforms a 70B+ at 2-bit in my experience. The expert reduction on top of that compounds things - you\u0026#x27;re essentially running a fairly different model. Still interesting to see the upper bound of what consumer hardware can attempt, even if the result isn\u0026#x27;t production-ready.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Supports the critique on quality degradation with practical experience, emphasizing that smaller, better-quantized models often outperform larger, heavily quantized ones."
+      },
+      {
+        "id": 47478657,
+        "author": "mkw",
+        "text": "TLDR I took a stab at leveraging Dan\u0026#x27;s work and making it more practical:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\u003c/a\u003e\u003cp\u003e2 bit quantization lobotomizes the model but is impressive nonetheless!   Maybe one day we\u0026#x27;ll be able to have intelligent 2 bit quants... I wonder.\u003cp\u003emy version supports - 4bit quantization, hybrid streaming (Disk + ram), arbitrary model compatibility, tested on Mamba2, and lets up the framework for LM Studio integration\u003cp\u003eI leveraged this work (Credit to Danveloper) and am in the middle of making this work on more practical models and quants.  It still uses flash streaming, but done so with a control knob so you can choose how much ram and how little ram to use.  In the craziest case, it uses as little ram as possible but is very slow, however, in the balanced case you use some ram and it\u0026#x27;s much faster.\u003cp\u003eI designed it around the intelligence dense Nemotron 3 Nano 30B and Nemotron Cascade 2 30B models (which are smaller, more intelligence density) and can run on low end 16GB machines, though you can run arbitrarily large models on larger machines (designed for very low end, but capable of high end).",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Shares a practical extension of the original work, acknowledging limitations of 2-bit quantization while proposing improvements and supporting more usable models on lower-end hardware."
       },
       {
         "id": 47476725,
@@ -57,19 +81,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "Raises valid concerns about practical usage, including throughput limitations and hardware wear, which are important considerations for long-term deployment."
-      },
-      {
-        "id": 47476802,
-        "author": "JSR_FDED",
-        "text": "This is a very impressive result. If I understand correctly the bottleneck is the SSD in this architecture - the author seems to get almost 15GB\u0026#x2F;s - but I seem to remember the max b\u0026#x2F;w was about 8GB\u0026#x2F;s. What am I missing?",
-        "indicators": [
-          "thoughtful",
-          "intelligent"
-        ],
-        "accuracyRank": 4,
-        "analysis": "This comment questions the reported SSD bandwidth, indicating engagement with technical details though it lacks a definitive conclusion."
+        "accuracyRank": 5,
+        "analysis": "Offers a realistic perspective on performance limitations and hardware wear concerns, tempering enthusiasm with practical considerations about long-term usability."
       },
       {
         "id": 47477005,
@@ -79,8 +92,19 @@
           "intelligent",
           "constructive"
         ],
-        "accuracyRank": 5,
-        "analysis": "Poses a technically relevant question about memory management optimizations that could improve performance, showing understanding of system-level details."
+        "accuracyRank": 6,
+        "analysis": "Poses a technical question about memory management optimizations that could improve performance, showing engagement with system-level details."
+      },
+      {
+        "id": 47476802,
+        "author": "JSR_FDED",
+        "text": "This is a very impressive result. If I understand correctly the bottleneck is the SSD in this architecture - the author seems to get almost 15GB\u0026#x2F;s - but I seem to remember the max b\u0026#x2F;w was about 8GB\u0026#x2F;s. What am I missing?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Raises a valid question about hardware bandwidth limits, indicating critical engagement with the reported performance figures."
       },
       {
         "id": 47476848,
@@ -90,91 +114,30 @@
           "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Explores alternative hardware approaches and future possibilities, contributing constructively to the discussion."
-      },
-      {
-        "id": 47477260,
-        "author": "spwa4",
-        "text": "Does this mean that it should be possible to load up a system with ~10 (seems to me at least the number of active experts) SSDs to get 40 tok\u0026#x2F;s even on truly gigantic models?",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Raises a practical question about scaling throughput with multiple SSDs, relevant but speculative without further data."
-      },
-      {
-        "id": 47476883,
-        "author": "pdyc",
-        "text": "impressive, i wish someone takes a stab at using this technique on mobile gpu\u0026#x27;s even if it does not use storage it would still be a win. I am running llama.cpp on adreno 830 with oepncl and i am getting pathetic 2-3t\u0026#x2F;s for output tokens",
-        "indicators": [
-          "thoughtful"
-        ],
         "accuracyRank": 8,
-        "analysis": "Expresses interest in extending the technique to mobile GPUs, showing forward-looking thinking but no technical detail."
+        "analysis": "Speculates on alternative hardware configurations and future directions, contributing constructively to the discussion."
       },
       {
-        "id": 47477659,
-        "author": "maxloh",
-        "text": "Can you add a license to the report? Legally we couldn\u0026#x27;t run any code without a license attached to it.",
+        "id": 47478173,
+        "author": "haomingkoo",
+        "text": "Really interesting approach. Curious how the 2-bit quantization affects the model\u0026#x27;s reasoning ability on longer chains of thought vs shorter prompts. The benchmarkslook solid but real-world usage seems like a different story based on the comments here.",
         "indicators": [
-          "constructive"
+          "thoughtful",
+          "intelligent"
         ],
         "accuracyRank": 9,
-        "analysis": "A practical legal concern about licensing, important for usability but unrelated to technical accuracy."
+        "analysis": "Expresses curiosity about the practical implications of quantization on reasoning, reflecting a nuanced understanding of model evaluation."
       },
       {
-        "id": 47477741,
-        "author": "m-hodges",
-        "text": "As frontier models get closer and closer to consumer hardware, what’s the most for the API-driven $trillion labs?",
-        "indicators": [
-          "useless",
-          "emotional"
-        ],
-        "accuracyRank": 10,
-        "analysis": "A vague and speculative comment with little substantive content or technical insight."
-      },
-      {
-        "id": 47476717,
-        "author": "homarp",
-        "text": "\u0026#x2F;r\u0026#x2F;localllama discussion: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;old.reddit.com\u0026#x2F;r\u0026#x2F;LocalLLaMA\u0026#x2F;comments\u0026#x2F;1rxmmu5\u0026#x2F;running_qwen35_397b_on_m3_macbook_pro_with_48gb\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;old.reddit.com\u0026#x2F;r\u0026#x2F;LocalLLaMA\u0026#x2F;comments\u0026#x2F;1rxmmu5\u0026#x2F;running...\u003c/a\u003e",
-        "indicators": [
-          "useless"
-        ],
-        "accuracyRank": 11,
-        "analysis": "Provides a link without additional commentary or analysis, adding minimal value to the discussion."
-      },
-      {
-        "id": 47476917,
-        "author": "vilequeef",
-        "text": "Why so much RAM?",
-        "indicators": [
-          "useless",
-          "emotional"
-        ],
-        "accuracyRank": 12,
-        "analysis": "A short question lacking context or elaboration, contributing little to the technical discussion."
-      },
-      {
-        "id": 47477139,
-        "author": "lostmsu",
-        "text": "How large is the KV cache?",
-        "indicators": [
-          "useless"
-        ],
-        "accuracyRank": 13,
-        "analysis": "A brief question without further detail or follow-up, limiting its usefulness."
-      },
-      {
-        "id": 47476718,
-        "author": "harshhhhhhhhh",
-        "text": "seems promising , this is the way , can someone benchmark this",
+        "id": 47477975,
+        "author": "383toast",
+        "text": "yeah 4tok\u0026#x2F;s is kinda unusable though",
         "indicators": [
           "emotional",
-          "useless"
+          "likely-true"
         ],
-        "accuracyRank": 14,
-        "analysis": "Expresses enthusiasm but lacks technical depth or constructive input."
+        "accuracyRank": 10,
+        "analysis": "Briefly expresses frustration with the slow token generation speed, a common concern in the discussion."
       }
     ]
   }
