@@ -23,7 +23,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion highlights the complexity and fragmentation of Windows native app development, with many commenters agreeing that older APIs like Win32 remain the most stable and reliable. Several suggest avoiding newer Microsoft UI toolkits due to instability and advocate for cross-platform or alternative frameworks, while others note challenges like code signing and deployment.",
+    "summary": "The discussion centers on the complexity and fragmentation of Windows native app development, with many commenters advocating for sticking to Win32 APIs due to their stability and backward compatibility. Others highlight the challenges of modern frameworks, code signing, and deployment, while some suggest alternative cross-platform toolkits like Qt, Avalonia, and Uno as viable options.",
     "comments": [
       {
         "id": 47480056,
@@ -35,78 +35,103 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "Provides detailed and nuanced advice based on experience, emphasizing the stability of legacy APIs and the current issues with newer Microsoft UI frameworks."
-      },
-      {
-        "id": 47477098,
-        "author": "cv5005",
-        "text": "I\u0026#x27;m an embedded programmer who occassionally needs to write various windows programs to interface with embedded devices (usually via serial port or usb), and I find it a breeze to write native gui programs in pure win32 and c++.\u003cp\u003eRecently had to add a new feature to and old program that was last updated in the XP era and two things to note:\u003cp\u003e1. The program did not need to be updated to run on Vista, 7, 10 and 11, shit just kept working throughout the years.\u003cp\u003e2. I loaded the project into Visual Studio 2022, it converted from VC6 and compiled without problems, added the feature, shipped a new .exe to the customer, and it just worked.\u003cp\u003eWhat other platform has that backwards and forwards compatibility success story?",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "Gives a practical example of the longevity and compatibility of Win32 applications, supporting claims about the stability of older Windows APIs."
+        "analysis": "This comment provides a nuanced and accurate overview of the current state of Windows UI frameworks, emphasizing the stability of legacy APIs and the immaturity of newer frameworks like WinUI 3.0."
       },
       {
         "id": 47479636,
         "author": "iamcalledrob",
         "text": "The author is right, it\u0026#x27;s really such a mess.\u003cp\u003eThe lessons I\u0026#x27;ve learnt building and shipping a few a Windows apps at scale are basically:\u003cp\u003e(1) Learn Win32 and use those ancient APIs if possible, they\u0026#x27;re extraordinarily stable and you\u0026#x27;ll probably need to reach for them anyway. They\u0026#x27;re not that scary.\u003cp\u003e(2) Don\u0026#x27;t use any Microsoft-owned UI toolkit, you\u0026#x27;ll get burnt. Literally anything is better. Ideally choose a toolkit that doesn\u0026#x27;t prevent layering in Win32 tweaks on top, otherwise you\u0026#x27;ll end up hitting cases the toolkit developers didn\u0026#x27;t think of and you can\u0026#x27;t fix. You\u0026#x27;re going to need a custom WindowProc eventually. You need to have access to the underlying Win32 window lifecycle and handles.",
         "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment aligns with expert consensus on the reliability of Win32 and warns against newer Microsoft UI toolkits, reflecting practical experience in Windows app development."
+      },
+      {
+        "id": 47481306,
+        "author": "userbinator",
+        "text": "I agree with all the comments here saying \u0026quot;stick with Win32\u0026quot; --- this is \u0026quot;a mess\u0026quot; that you can easily avoid.\u003cp\u003eSpeaking as a long-time Win32 programmer, the requirements for your app are doable in a few KB (yes, kilobytes --- my vague estimate is less than 8KB) standalone executable. This is how I arrived at that:\u003cp\u003e\u003ci\u003eEnumerating the machine’s displays and their bounds\u003c/i\u003e\u003cp\u003eA few API calls. Probably a few hundred bytes.\u003cp\u003e\u003ci\u003ePlacing borderless, titlebar-less, non-activating black windows\u003c/i\u003e\u003cp\u003eCreating non-functional windows is trivial. Another few hundred bytes at most.\u003cp\u003e\u003ci\u003eIntercepting a global keyboard shortcut\u003c/i\u003e\u003cp\u003eA few dozen bytes to call SetWindowsHookEx.\u003cp\u003e\u003ci\u003eOptionally running at startup\u003c/i\u003e\u003cp\u003eWrite to the appropriate registry key. A few hundred bytes.\u003cp\u003e\u003ci\u003eStoring some persistent settings\u003c/i\u003e\u003cp\u003eDitto. Another few hundred bytes. You can use a .ini file too, for around the same size.\u003cp\u003e\u003ci\u003eDisplaying a tray icon with a few menu items\u003c/i\u003e\u003cp\u003eMost of this size of this will be the icon itself - a few kilobytes; the next biggest contributor will be text strings; and the rest is accomplished with a few hundred bytes of API calls.\u003cp\u003eAdd another few hundred bytes of (not much) logic, round up to a kilobyte and add maybe another for general overhead.\u003cp\u003e\u003ci\u003eBut, in 2026, writing a greenfield application in a memory-unsafe language like C++ is a crime.\u003c/i\u003e\u003cp\u003eDon\u0026#x27;t be swayed by the propaganda. Especially if your application has essentially no untrusted input.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "emotional"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The technical details about Win32 app size are credible, though the statement about C++ being a 'crime' is subjective and reflects personal bias rather than objective fact."
+      },
+      {
+        "id": 47477098,
+        "author": "cv5005",
+        "text": "I\u0026#x27;m an embedded programmer who occassionally needs to write various windows programs to interface with embedded devices (usually via serial port or usb), and I find it a breeze to write native gui programs in pure win32 and c++.\u003cp\u003eRecently had to add a new feature to and old program that was last updated in the XP era and two things to note:\u003cp\u003e1. The program did not need to be updated to run on Vista, 7, 10 and 11, shit just kept working throughout the years.\u003cp\u003e2. I loaded the project into Visual Studio 2022, it converted from VC6 and compiled without problems, added the feature, shipped a new .exe to the customer, and it just worked.\u003cp\u003eWhat other platform has that backwards and forwards compatibility success story?",
+        "indicators": [
           "intelligent",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "Concise and pragmatic advice that aligns with other comments about the pitfalls of newer Microsoft UI frameworks and the reliability of Win32."
+        "accuracyRank": 4,
+        "analysis": "This comment highlights the strong backward compatibility of Win32 applications, a well-known advantage of the Windows platform."
       },
       {
         "id": 47479476,
         "author": "apankrat",
         "text": "Let me chime in and say that plain Win32 API is a perfectly viable option \u003ci\u003eif\u003c/i\u003e you are using C++ (or another \u0026quot;OO\u0026quot; language) and \u003ci\u003eif\u003c/i\u003e you are willing to sink a couple of weeks into writing your own MFC-like wrapper.\u003cp\u003eClearly this is not an option for those who are just starting up with Windows GUI work, but with little experience it is really a matter of 2-3 weeks of ground work and then you have full control over all nuances of the UI, yours to extend and mend as you wish.\u003cp\u003eIf there\u0026#x27;s one thing that Microsoft is really good at, it\u0026#x27;s ensuring deep backward compatibility. So anything that\u0026#x27;s based on Win32 API is going to be stable. If it works now, it will work later.\u003cp\u003eI have some examples from 10+ years of development updates accumulated here - \u003ca href=\"https:\u0026#x2F;\u0026#x2F;bvckup2.com\u0026#x2F;wip\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;bvckup2.com\u0026#x2F;wip\u003c/a\u003e",
         "indicators": [
-          "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "Offers a realistic approach to Windows GUI development emphasizing stability and control, consistent with the consensus on Win32's reliability."
+        "accuracyRank": 5,
+        "analysis": "Provides a practical approach to using Win32 effectively by building custom wrappers, reinforcing the theme of backward compatibility and stability."
       },
       {
         "id": 47479964,
         "author": "drnick1",
         "text": "\u0026gt; But, in 2026, writing a greenfield application in a memory-unsafe language like C++ is a crime.\u003cp\u003eI disagree, the GUI layer is far from behind a safety critical component, and C++ is a battle-tested choice for everything from GUI, videos games, to industrial applications. If C++ is safe enough to control airplanes and nuclear reactors when used well, it is certainly safe enough for something as trivial a GUI.\u003cp\u003eThe article also fails to mention frameworks like Qt, arguably the best way to write GUI apps in 2026. Qt is native (C++), has built-in memory safety features (but no GC), and is cross-platform.",
         "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Provides a valid counterpoint on language safety and highlights Qt as a strong alternative, adding useful context to the discussion."
-      },
-      {
-        "id": 47477880,
-        "author": "mellosouls",
-        "text": "Really nice article, thanks - yes I found the same myself recently when trying to write a trivial (I thought) Windows app.\u003cp\u003eI first investigated the Windows native options and was pretty bamboozled; I wanted to use the \u0026quot;mainstream\u0026quot; \u0026quot;up to date\u0026quot; option (presumably c# and some framework) but as TFA describes, it wasn\u0026#x27;t at all clear which that was.\u003cp\u003eI ended up doing it in python with pyqt then finding out a clean deployment was a pain, so revisited the .Net options and remembered why I\u0026#x27;d discarded them in the first place...\u003cp\u003eIt is indeed a complete mess (at least coming in anew) and a very strange situation for the world\u0026#x27;s main desktop environment to be in.",
-        "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 6,
-        "analysis": "Shares personal experience that reinforces the article's thesis about the complexity and poor clarity of Windows native development options."
+        "analysis": "Correctly points out that C++ remains suitable for GUI apps and highlights Qt as a mature alternative, providing a balanced perspective on language safety concerns."
       },
       {
-        "id": 47477536,
-        "author": "rwmj",
-        "text": "This is quite timely as we need to write a simple UI for Windows (a few buttons, status, maybe a file menu).  The main constraint is it must compile to a single binary (.exe) with no dependencies such as runtimes, DLLs, languages etc.  It also needs to run on some older unsupported Windows systems, probably Windows \u0026gt;= 7, 32 bit.\u003cp\u003eMy first thought was MFC.  Basic, fast, well understood.\u003cp\u003eBut then maybe WxWindows so we can cross-compile it (from Linux) and use the same UI on other platforms?  It could probably be compiled statically although I\u0026#x27;ve not tested it.\u003cp\u003eOr Mono, but that needs a runtime?\u003cp\u003eEdit: Some comments mention Qt which could also work although how large is the runtime?  Can it be compiled statically?",
+        "id": 47481555,
+        "author": "rahimnathwani",
+        "text": "It had been many years since I last developed a desktop app. A couple of weeks ago I used Tauri to create a simple app for Windows and Mac. Developing the app was easy with Claude. Building the app for different platforms and architectures was easy with GitHub Actions.\u003cp\u003eBut after I had the msi and dmg files, my non-techy colleagues couldn\u0026#x27;t install the apps because they weren\u0026#x27;t signed. The workaround for Mac was fine (remove the quarantine attribute on the installer) but for Windows my colleague had to disable Smart App Control (SAC), which cannot be re-enabled without re-installing Windows.\u003cp\u003eI get the point of these protections, but the difficulty of getting past them surprised me. I thought that on Mac you should just go to settings -\u0026gt; security and click \u0026#x27;Allow Anyway\u0026#x27;. And that on Windows you\u0026#x27;d get a GUI warning that would need admin privileges to get past. But MacOS needed a terminal command, and Windows needed a control panel setting change.",
         "indicators": [
           "thoughtful",
-          "constructive"
+          "likely-true",
+          "emotional"
         ],
         "accuracyRank": 7,
-        "analysis": "Poses practical concerns about deployment and dependencies, reflecting common challenges faced by developers targeting Windows."
+        "analysis": "Accurately describes real-world deployment challenges with code signing and security on Windows and Mac, emphasizing user experience difficulties."
+      },
+      {
+        "id": 47476965,
+        "author": "ashwinnair99",
+        "text": "It has been a mess for 15 years and Microsoft keeps making it worse by adding new frameworks without retiring the old ones. Win32, WPF, WinUI, MAUI. Nobody knows which one to pick.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "emotional"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Succinctly captures the core problem of fragmentation and lack of clear direction in Windows native app development."
+      },
+      {
+        "id": 47477446,
+        "author": "PaulKeeble",
+        "text": "Most of the desktop applications I have wrote over the years have been in other languages like Java and Go as I have wanted them to mostly be cross platform. In these cases I have always used the Software UI, which in Java is Swing and in Go is Fyne. These are usually reasonably fast, don\u0026#x27;t necessarily look native depending on how its themed but ultimately fit the language better than trying to bridge to Win32 or GTK\u0026#x2F;QT.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Offers a valid alternative approach focusing on language ecosystem compatibility and cross-platform concerns rather than native Windows APIs."
       },
       {
         "id": 47479776,
@@ -114,34 +139,11 @@
         "text": "Because I didnt see it already mentioned. Avalonia[1] and Uno[2] for C# are also really great if you want to write windows apps. I wrote some in Avalonia that worked incredible nice on Linux and Windows.\u003cp\u003eYou dont have to use MVVM or AXML for example Uno allows for C# Markup[3] to be used instead or MVUX instead of MVVM.\u003cp\u003eI personally hate MVVM and AXML but you are not forced to use them.\u003cp\u003eFor Avalonia I dabbled in creating my own replacement[4] for MVVM and AXML using Flecs.Net.\u003cp\u003eIn Avalonia I created a tray icon for the trash bin. So I can see how big it is and clear\u0026#x2F;open it with a small menu[5].\u003cp\u003eBoth Avalonia and Uno should at least be looked at when judging which framework to use. They are both quite mature and have many great controls and features built in.\u003cp\u003e[1] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;avaloniaui.net\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;avaloniaui.net\u0026#x2F;\u003c/a\u003e\n[2] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;platform.uno\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;platform.uno\u0026#x2F;\u003c/a\u003e\n[3] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;platform.uno\u0026#x2F;docs\u0026#x2F;articles\u0026#x2F;external\u0026#x2F;uno.extensions\u0026#x2F;doc\u0026#x2F;Learn\u0026#x2F;Markup\u0026#x2F;Overview.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;platform.uno\u0026#x2F;docs\u0026#x2F;articles\u0026#x2F;external\u0026#x2F;uno.extensions\u0026#x2F;d...\u003c/a\u003e\n[4] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;AyanamiKaine\u0026#x2F;Ayanami-sTower\u0026#x2F;blob\u0026#x2F;main\u0026#x2F;Avalonia\u0026#x2F;Avalonia.Flecs\u0026#x2F;Avalonia.Flecs.ToDoApp\u0026#x2F;App.axaml.cs\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;AyanamiKaine\u0026#x2F;Ayanami-sTower\u0026#x2F;blob\u0026#x2F;main\u0026#x2F;Ava...\u003c/a\u003e\n[5] \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;AyanamiKaine\u0026#x2F;Ayanami-sTower\u0026#x2F;blob\u0026#x2F;main\u0026#x2F;Applications\u0026#x2F;SmartTrashTrayIcon\u0026#x2F;App.axaml.cs\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;AyanamiKaine\u0026#x2F;Ayanami-sTower\u0026#x2F;blob\u0026#x2F;main\u0026#x2F;App...\u003c/a\u003e",
         "indicators": [
           "intelligent",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Introduces less mainstream but promising frameworks, expanding the discussion beyond traditional Microsoft options."
-      },
-      {
-        "id": 47480027,
-        "author": "fermentation",
-        "text": "The Windows code signing experience has prevented me from shipping apps that otherwise run perfectly fine on the platform. It is a nightmare and I cannot believe it wasn\u0026#x27;t called out in the \u0026quot;We want to fix Windows\u0026quot; blog post.\u003cp\u003eJust do exactly what Apple does. Charge me $100 directly from you and let me build an .exe that I can distribute on my website.",
-        "indicators": [
-          "emotional",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 9,
-        "analysis": "Highlights an important practical barrier in Windows app distribution, contributing a user frustration perspective."
-      },
-      {
-        "id": 47476965,
-        "author": "ashwinnair99",
-        "text": "It has been a mess for 15 years and Microsoft keeps making it worse by adding new frameworks without retiring the old ones. Win32, WPF, WinUI, MAUI. Nobody knows which one to pick.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
         "accuracyRank": 10,
-        "analysis": "Summarizes the core problem of fragmentation and lack of clear direction in Windows app development frameworks."
+        "analysis": "Provides useful recommendations for modern cross-platform C# UI frameworks that address some of the fragmentation issues."
       }
     ]
   }

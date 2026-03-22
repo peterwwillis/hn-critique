@@ -17,7 +17,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around Cloudflare's blocking of archive.today and related domains due to their classification as command and control (C\u0026C) and botnet infrastructure, with some users providing context on the ongoing DDoS attacks and legal pressures. Opinions vary on the legitimacy of Cloudflare's actions, the impact on users, and the technical details behind the DNS blocking.",
+    "summary": "The discussion centers on Cloudflare flagging archive.today as a command and control (C\u0026C) botnet and blocking it via their DNS service 1.1.1.2. Commenters provide context about ongoing DDoS attacks linked to archive.today, possible FBI investigations, and the technical and privacy challenges involved in DNS resolution and blocking.",
     "comments": [
       {
         "id": 47474256,
@@ -29,42 +29,45 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides detailed evidence from Cloudflare's DNS response and links to relevant discussions, making it a well-supported and accurate contribution."
-      },
-      {
-        "id": 47476382,
-        "author": "jeremie_strand",
-        "text": "The DNS tuneling flag alongside C\u0026amp;C\u0026#x2F;botnet is the odd one — that category implies data exfiltration or firewall bypass, not just aggressive crawling or DDoS behavior. Would be interesting to know what traffic pattern triggered it.",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment insightfully questions the classification categories, highlighting technical nuances that suggest a deeper investigation is needed."
+        "analysis": "This comment provides detailed evidence from Cloudflare's DNS blocking and references multiple relevant Hacker News discussions and Wikipedia guidance, making it highly informative and accurate."
       },
       {
         "id": 47475319,
         "author": "rollulus",
         "text": "I think there are two angles to look at this. Yes, there’s the attack on the weblog. But there’s also pressure on archive.today, e.g. an FBI investigation [1] and some entity using fictitious CSAM allegations [2].\u003cp\u003e[1]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;arstechnica.com\u0026#x2F;tech-policy\u0026#x2F;2025\u0026#x2F;11\u0026#x2F;fbi-subpoena-tries-to-unmask-mysterious-founder-of-archive-today\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;arstechnica.com\u0026#x2F;tech-policy\u0026#x2F;2025\u0026#x2F;11\u0026#x2F;fbi-subpoena-tri...\u003c/a\u003e\u003cp\u003e[2]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;adguard-dns.io\u0026#x2F;en\u0026#x2F;blog\u0026#x2F;archive-today-adguard-dns-block-demand.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;adguard-dns.io\u0026#x2F;en\u0026#x2F;blog\u0026#x2F;archive-today-adguard-dns-blo...\u003c/a\u003e",
         "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment adds important context about legal and investigative pressures on archive.today, supported by external links, enhancing the understanding of the situation."
+      },
+      {
+        "id": 47477896,
+        "author": "kmfrk",
+        "text": "What a crazy timeline this has been.\u003cp\u003e(1) May 04 2019: \u0026quot;Tell HN: Archive.is inaccessible via Cloudflare DNS (1.1.1.1)\u0026quot; [\u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=19828317\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=19828317\u003c/a\u003e]\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    eastdakota on May 4, 2019 on: Tell HN: Archive.is inaccessible via Cloudflare DNS...\n\n    [Via https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=19828702]\n    \n    We don’t block archive.is or any other domain via 1.1.1.1. Doing so, we believe, would violate the integrity of DNS and the privacy and security promises we made to our users when we launched the service.\n   \n    Archive.is’s authoritative DNS servers return bad results to 1.1.1.1 when we query them. I’ve proposed we just fix it on our end but our team, quite rightly, said that too would violate the integrity of DNS and the privacy and security promises we made to our users when we launched the service.\n   \n    The archive.is owner has explained that he returns bad results to us because we don’t pass along the EDNS subnet information. This information leaks information about a requester’s IP and, in turn, sacrifices the privacy of users. This is especially problematic as we work to encrypt more DNS traffic since the request from Resolver to Authoritative DNS is typically unencrypted. We’re aware of real world examples where nationstate actors have monitored EDNS subnet information to track individuals, which was part of the motivation for the privacy and security policies of 1.1.1.1.\n    \n    EDNS IP subsets can be used to better geolocate responses for services that use DNS-based load balancing. However, 1.1.1.1 is delivered across Cloudflare’s entire network that today spans 180 cities. We publish the geolocation information of the IPs that we query from. That allows any network with less density than we have to properly return DNS-targeted results. For a relatively small operator like archive.is, there would be no loss in geo load balancing fidelity relying on the location of the Cloudflare PoP in lieu of EDNS IP subnets.\n    \n    We are working with the small number of networks with a higher network\u0026#x2F;ISP density than Cloudflare (e.g., Netflix, Facebook, Google\u0026#x2F;YouTube) to come up with an EDNS IP Subnet alternative that gets them the information they need for geolocation targeting without risking user privacy and security. Those conversations have been productive and are ongoing. If archive.is has suggestions along these lines, we’d be happy to consider them.\n\n\u003c/code\u003e\u003c/pre\u003e\n(2) Sep 11 2021: \u0026quot;Does Cloudflare\u0026#x27;s 1.1.1.1 DNS Block Archive.is? (2019) (jarv.is)\u0026quot; [\u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=28495204\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=28495204\u003c/a\u003e]",
+        "indicators": [
           "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment adds important context about legal and investigative pressures on archive.today, supported by external links, enhancing the overall understanding."
+        "analysis": "The timeline and explanation of DNS privacy concerns provide valuable background on the technical and policy challenges influencing Cloudflare's decisions."
       },
       {
-        "id": 47474745,
-        "author": "_moof",
-        "text": "Good. You don\u0026#x27;t get to use my computer for a DDoS. I don\u0026#x27;t care why the DDoS was happening. I wasn\u0026#x27;t asked, and that\u0026#x27;s a serious breach of trust.",
+        "id": 47476382,
+        "author": "jeremie_strand",
+        "text": "The DNS tuneling flag alongside C\u0026amp;C\u0026#x2F;botnet is the odd one — that category implies data exfiltration or firewall bypass, not just aggressive crawling or DDoS behavior. Would be interesting to know what traffic pattern triggered it.",
         "indicators": [
-          "emotional",
+          "intelligent",
+          "thoughtful",
+          "likely-true",
           "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Expresses a strong personal stance against unauthorized use of resources for attacks, reflecting a common user perspective but lacking technical detail."
+        "analysis": "This comment critically examines the classification categories, highlighting potential inconsistencies and suggesting deeper investigation is needed."
       },
       {
         "id": 47475374,
@@ -72,11 +75,11 @@
         "text": "A bit context if you are confused why Public DNS server blocking websites. 1.1.1.2 is Malware blocking DNS server similar to AdBlock DNS server. It is not 1.1.1.1 and 1.0.0.1\u003cp\u003eHere is the DDoS context \n\u003ca href=\"https:\u0026#x2F;\u0026#x2F;gyrovague.com\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gyrovague.com\u003c/a\u003e",
         "indicators": [
           "intelligent",
-          "likely-true",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
         "accuracyRank": 5,
-        "analysis": "Clarifies the distinction between Cloudflare's DNS services, helping readers understand the specific service involved in blocking archive.today."
+        "analysis": "This comment clarifies the role of the DNS server involved, helping readers understand the technical environment of the blocking."
       },
       {
         "id": 47474777,
@@ -84,54 +87,55 @@
         "text": "Archive.today\u0026#x27;s attack on \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gyrovague.com\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gyrovague.com\u003c/a\u003e is still on-going btw. It started just over two months ago. Some IPs get through normally but for example finnish residential IPs get stuck on endless captchas. The JS snippet that starts spamming gyrovague appears after solving the first captcha.",
         "indicators": [
           "likely-true",
-          "constructive"
+          "thoughtful"
         ],
         "accuracyRank": 6,
-        "analysis": "Provides direct observation of the alleged attack behavior, adding practical evidence to the discussion though without external verification."
+        "analysis": "This provides a firsthand report of the alleged attack behavior, adding practical evidence to the discussion."
       },
       {
-        "id": 47479421,
-        "author": "1vuio0pswjnm7",
-        "text": "Some time ago, probably at least a year, likely more, I read a blog post by someone working for Google in Europe who loved using Archive.today and out of curiosity tried to determine who was running it.  In the end he gave up, offered to buy the operator a beer or something like that, but if I recall correctly he went to even greater lengths in his research than the blogger discussed in this thread\u003cp\u003eI wish I could find it",
+        "id": 47475303,
+        "author": "PeterStuer",
+        "text": "Otoh, without archive.today a substantial % of HN posts would be unreadable for nearly all of the audience.",
         "indicators": [
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 7,
-        "analysis": "Offers anecdotal context about the obscurity of archive.today's operator, which aligns with the general theme of mystery but is unverifiable here."
+        "analysis": "Highlights the importance of archive.today for content preservation on Hacker News, emphasizing the impact of blocking it."
       },
       {
-        "id": 47479526,
-        "author": "acejam",
-        "text": "It amazes me that people still use and recommend Cloudflare\u0026#x27;s DNS servers for resolution. Cloudflare DNS does not support EDNS Client Subnet. As a result, DNS queries resolved by their service are likely to return IP addresses for many CDNs that are physically farther away from you, leading to a slower internet browsing and viewing experience.\u003cp\u003eSacrificing performance for a faster lookup time makes no sense in 2026. This is the one area where I continue to use Google DNS as it just works. Use anything \u003ci\u003ebut\u003c/i\u003e Cloudflare in this case, please.\u003cp\u003eParent pro-tip: Next time the iPad is having Bluey episode playback issues, check to see if you\u0026#x27;re actually using Cloudflare DNS.",
+        "id": 47474461,
+        "author": "razingeden",
+        "text": "Cloudflare dns has gone back and forth on whether it wants to resolve them since 2019. It’s taken that away and restored it again (intentionally? mistake?) at least four times.\u003cp\u003eThe c\u0026amp;c\u0026#x2F;botnet designation would seem to be new though.",
         "indicators": [
-          "intelligent",
           "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Technically accurate critique of Cloudflare DNS's limitations affecting performance, relevant to users choosing DNS providers."
-      },
-      {
-        "id": 47475310,
-        "author": "breppp",
-        "text": "While I fully support this instance, I wonder what else Cloudflare has set to \u0026quot;Censored\u0026quot;, apart for the obvious CSAM",
-        "indicators": [
           "thoughtful"
         ],
-        "accuracyRank": 9,
-        "analysis": "Raises a valid question about the scope of Cloudflare's censorship, though speculative without evidence."
+        "accuracyRank": 8,
+        "analysis": "This comment provides historical context on Cloudflare's inconsistent handling of archive.today domains."
       },
       {
-        "id": 47480237,
-        "author": "anonym29",
-        "text": "I, for one, completely trust Cloudflare on this one. The guys running a MiTM attack on a substantial chunk of all global internet traffic, and working tirelessly to ensure billions of people behind CGNAT in the global south can\u0026#x27;t access the free and open web are the premiere experts on malicious, predatory, harmful internet-scale network behavior, after all.",
+        "id": 47479708,
+        "author": "GTP",
+        "text": "I reported the miscalssification, you can do it as well from the linked page.\u003cp\u003eEdit: reading some comments here seems that I was too fast, and that the story is much more complicated. Having just the Cloudflare page as a context, I assumed the news were a miscalssification. Could someone share more context on what is going on here?",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Shows a cautious approach to the issue, admitting uncertainty and seeking additional information, which is constructive."
+      },
+      {
+        "id": 47476167,
+        "author": "bunbun69",
+        "text": "Good. What archive.today is doing is illegal",
         "indicators": [
           "emotional",
-          "trolling"
+          "belligerent",
+          "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "This sarcastic comment expresses distrust of Cloudflare, adding emotional tone but lacking constructive or factual content."
+        "analysis": "This comment expresses a strong opinion without providing evidence or nuance, making it less informative."
       }
     ]
   }

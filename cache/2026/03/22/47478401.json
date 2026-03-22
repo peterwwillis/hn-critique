@@ -20,66 +20,44 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the potential of CRDTs (Conflict-free Replicated Data Types) as a foundation for version control systems, with mixed opinions on their practicality and effectiveness compared to existing tools like Git. Several commenters highlight the challenges of merge conflicts, scalability, and the need for better conflict visualization, while others question the fundamental suitability of CRDTs for version control.",
+    "summary": "The discussion centers on the potential and limitations of using CRDTs for version control systems, with participants debating the semantic challenges of merges, the practicality of current tools like git and Jujutsu, and the need for improvements in scalability and conflict resolution. Some commenters highlight innovative ideas such as graph databases for code and AI-assisted merges, while others remain skeptical about CRDTs fully addressing version control problems.",
     "comments": [
       {
-        "id": 47479687,
-        "author": "ulrikrasmussen",
-        "text": "The thing about how merges are presented seems orthogonal to how to represent history. I also hate the default in git, but that is why I just use p4merge as a merge tool and get a proper 4-pane merge tool (left, right, common base, merged result) which shows everything needed to figure out why there is a conflict and how to resolve it. I don\u0026#x27;t understand why you need to switch out the VCS to fix that issue.",
+        "id": 47481239,
+        "author": "aggregator-ios",
+        "text": "What CRDT\u0026#x27;s solve is conflicts at the system level. Not at the semantic level. 2 or more engineers setting a var to a different value cannot be handled by a CRDT.\u003cp\u003eEngineer A intended value = 1\u003cp\u003eEngineer B intended value = 2\u003cp\u003eCRDT picks 2\u003cp\u003eThe outcome could be semantically wrong. It doesn\u0026#x27;t reflect the intent.\u003cp\u003eI think the primary issue with git and every other version control is the terrible names for everything. pull, push, merge, fast forward, stash, squash, rebase, theirs, ours, origin, upstream and that\u0026#x27;s just a subset. And the GUI\u0026#x27;s. They\u0026#x27;re all very confusing even to engineers who have been doing this for a decade. On top of this, conflict resolution is confusing because you don\u0026#x27;t have any prior warnings.\u003cp\u003eIt would be incredibly useful if \u003ci\u003ebefore\u003c/i\u003e you were about to edit a file, the version control system would warn you that someone else has made changes to it already or are actively working on it. In large teams, this sort of automation would reduce conflicts, as long as humans agree to not touch the same file. This would also reduce the amount of quality regressions that result from bad conflict resolutions.\u003cp\u003eShameless self plug: I am trying to solve both issues with a simpler UI around git that automates some of this and it\u0026#x27;s free. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.satishmaha.com\u0026#x2F;BetterGit\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.satishmaha.com\u0026#x2F;BetterGit\u003c/a\u003e",
         "indicators": [
+          "intelligent",
           "thoughtful",
-          "constructive",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a practical perspective on merge tools and clarifies that the issue with merge presentation can be addressed without switching VCS, showing an informed and constructive approach."
+        "analysis": "This comment accurately distinguishes between system-level conflict resolution by CRDTs and semantic conflicts that require human intervention, providing a nuanced understanding of CRDT limitations."
       },
       {
-        "id": 47479978,
-        "author": "WCSTombs",
-        "text": "For the conflicts, note that in Git you can do\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    git config --global merge.conflictstyle diff3\n\u003c/code\u003e\u003c/pre\u003e\nto get something like what is shown in the article.",
+        "id": 47480815,
+        "author": "barrkel",
+        "text": "I don\u0026#x27;t really get the upside of focus on CRDTs.\u003cp\u003eThe semantic problem with conflicts exists either way. You get a consistent outcome and a slightly better description of the conflict, but in a way that possibly interleaves changes, which I don\u0026#x27;t think is an improvement at all.\u003cp\u003eI am completely rebase-pilled. I believe merge commits should be avoided at all costs, every commit should be a fast forward commit, and a unit of work that can be rolled back in isolation. And also all commits should be small. Gitflow is an anti-pattern and should be avoided. Long-running branches are for patch releases, not for feature development.\u003cp\u003eI don\u0026#x27;t think this is the future of VCS.\u003cp\u003eJujutsu (and Gerrit) solves a real git problem - multiple revisions of a change. That\u0026#x27;s one that creates pain in git when you have a chain of commits you need to rebase based on feedback.",
         "indicators": [
-          "constructive",
-          "likely-true"
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment offers a concrete Git configuration tip to improve conflict visualization, directly addressing a common complaint and showing practical knowledge."
+        "analysis": "The comment insightfully critiques the use of CRDTs for version control, emphasizing that semantic conflicts remain and that CRDT merges may not improve clarity or correctness."
       },
       {
-        "id": 47480204,
-        "author": "lasgawe",
-        "text": "This is a really interesting and well thought out idea, especially the way it turns conflicts into something informative instead of blocking. The improved conflict display alone makes it much easier to understand what actually happened. I think using CRDTs to guarantee merges always succeed while still keeping useful history feels like a strong direction for version control. Looks like a solid concept!",
+        "id": 47479492,
+        "author": "mikey-k",
+        "text": "Interesting idea.   While conflicts can be improved, I personally don\u0026#x27;t see it as a critical challenge with VCS.\u003cp\u003eWhat I do think is the critical challenge (particularly with Git) is scalability.\u003cp\u003eSize of repository \u0026amp; rate of change of repositories are starting to push limits of git, and I think this needs revisited across the server, client \u0026amp; wire protocols.\u003cp\u003eWhat exactly, I don\u0026#x27;t know. :). But I do know that in my current role (mid-size well-known tech company) is hitting these limits today.",
         "indicators": [
           "thoughtful",
-          "intelligent",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "The comment positively evaluates the proposed system's approach to conflict handling and merge guarantees, highlighting its potential benefits in version control."
-      },
-      {
-        "id": 47479374,
-        "author": "radarsat1",
-        "text": "Is it a good thing to have merges that never fail? Often a merge failure indicates a semantic conflict, not just \u0026quot;two changes in the same place\u0026quot;. You want to be aware of and forced to manually deal with such cases.\u003cp\u003eI assume the proposed system addresses it somehow but I don\u0026#x27;t see it in my quick read of this.",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true"
-        ],
-        "accuracyRank": 4,
-        "analysis": "Raises a valid concern about the semantic meaning of merge conflicts and the importance of manual resolution, questioning whether always-successful merges might hide important issues."
-      },
-      {
-        "id": 47480539,
-        "author": "BlueHotDog2",
-        "text": "This is cool and i keep thinking about CRDTs as a baseline for version control, but CRDTs has some major issues, mainly the fact that most of them are strict and \u0026quot;magic\u0026quot; in the way they actually converge(like the joke: CRDTs always converge, but to what).\ni didn\u0026#x27;t read if he\u0026#x27;s using some special CRDT that might solve for that, but i think that for agentic work especially this is very interesting",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Provides a nuanced view on CRDTs, acknowledging their potential but also highlighting known convergence challenges, which is important for evaluating their suitability."
+        "analysis": "This comment correctly identifies scalability as a pressing issue in version control systems, especially Git, and suggests that conflict resolution may not be the most urgent problem."
       },
       {
         "id": 47479162,
@@ -90,91 +68,75 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 6,
-        "analysis": "Offers historical context and relates the current proposal to previous version control research, enriching the discussion with background knowledge."
+        "accuracyRank": 4,
+        "analysis": "Provides useful historical context linking the current ideas to earlier version control research, showing continuity and evolution in the field."
       },
       {
-        "id": 47479574,
-        "author": "gnarlouse",
-        "text": "I think something like this needs to be born out of analysis of gradations of scales of teams using version control systems.\u003cp\u003e- What kind of problems do 1 person, 10 person, 100 person, 1k (etc) teams really run into with managing merge conflicts?\u003cp\u003e- What do teams of 1, 10, 100, 1k, etc care the most about?\u003cp\u003e- How does the modern \u0026quot;agent explosion\u0026quot; potentially affect this?\u003cp\u003eFor example, my experience working in the 1-100 regime tells me that, for the most part, \u003ci\u003ethe kind of merge conflict\u003c/i\u003e being presented here is resolved by assigning subtrees of code to specific teams. For the large part, merge conflicts don\u0026#x27;t happen, because teams coordinate (in sprints) to make orthogonal changes, and long-running stale branches are discouraged.\u003cp\u003eHowever, if we start to mix in agents, a 100 person team could quickly jump into a 1000 person team, esp if each person is using subagents making micro commits.\u003cp\u003eIt\u0026#x27;s an interesting idea definitely, but without real-world data, it kind of feels like this is just delivering a solution without a clear problem to assign it to. Like, yes merge-conflicts are a bummer, but they happen infrequently enough that it doesn\u0026#x27;t break your heart.",
+        "id": 47480204,
+        "author": "lasgawe",
+        "text": "This is a really interesting and well thought out idea, especially the way it turns conflicts into something informative instead of blocking. The improved conflict display alone makes it much easier to understand what actually happened. I think using CRDTs to guarantee merges always succeed while still keeping useful history feels like a strong direction for version control. Looks like a solid concept!",
         "indicators": [
           "thoughtful",
-          "intelligent",
           "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "Emphasizes the importance of real-world data and team size considerations in designing version control solutions, advocating for problem-driven development."
+        "accuracyRank": 5,
+        "analysis": "Offers a positive assessment of the approach, highlighting the benefit of informative conflict presentation, though it lacks deeper critique."
       },
       {
-        "id": 47479621,
-        "author": "jFriedensreich",
-        "text": "starts with “based on the fundamentally sound approach of using CRDTs for version control”. How on earth is crdt a sound base for a version control system? This makes no sense fundamentally, you need to reach a consistent state that is what you intended not what some crdt decided and jj shows you can do that also without blocking on merges but with first level conflicts that need to be resolved. ai and language aware merge drivers are helping so much here i really wonder if the world these “replace version control” projects were made for still exists at all.",
+        "id": 47481674,
+        "author": "EGreg",
+        "text": "I remember I met Bram Cohen (of Bittorent fame!) around 15 years ago. Around that time is when I had started building web-based distributed collaborative systems, starting with Qbix.com and then spun off a company to build blockchain-based smart contracts through Intercoin.org etc.\u003cp\u003eAnyway, I wanted to suggest a radical idea based on my experience:\u003cp\u003eMerges are the wrong primitive.\u003cp\u003eWhat organizations (whethr centralized or distributed projects) might actually need is:\u003cp\u003e1) Graph Database - of Streams and Relations\u003cp\u003e2) Governance per Stream - eg ACLs\u003cp\u003eA code base should be automatically turned into a graph database (functions calling other functions, accessing configs etc) so we know exactly what affects what.\u003cp\u003eThe concept of what is “too near” each other mentioned in the article is not necessarily what leads to conflicts. Conflicts actually happen due to conflicting graph topology and propagating changes.\u003cp\u003ePeople should be able to clone some stream (with permission) and each stream (node in the graph) can be versioned.\u003cp\u003eForking should happen into workspaces. Workspaces can be GOVERNED. Publishing some version of a stream just means relating it to your stream. Some people might publish one version, others another.\u003cp\u003eRebasing is a first-class primitive, rather than a form of merging. A merge is an extremely privileged operation from a governance point of view, where some actor can just “push” (or “merge”) thousands of commits. The more commits, the more chance of conflicts.\u003cp\u003eThe same problem occurs with CRDTs. I like CRDTs, but reconciling a big netsplit will result in merging strategies that create lots of unintended semantic side effects.\u003cp\u003eInstead, what if each individual stream was guarded by policies, there was a rate limit of changes, and people \u0026#x2F; AIs rejected most proposals. But occasionally they allow it with M of N sign offs.\u003cp\u003eThink of chatgpt chats that are used to modify evolving artifacts. People and bots working together. The artifacts are streams. And yes, this can even be done for codebases. It isnt about how “near” things are in a file. Rather it is about whether there is a conflict on a graph. When I modify a specific function or variable, the system knows all of its callers downstream. This is true for many other things besides coding too. We can also have AI workflows running 24\u0026#x2F;7 to try out experiments as a swarm in sandboxes, generate tests and commit the results that pass. But ultimately, each organization determines whether they want to rebase their stream relations to the next version of something or not.\u003cp\u003eThat is what I’m building now with \u003ca href=\"https:\u0026#x2F;\u0026#x2F;safebots.ai\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;safebots.ai\u003c/a\u003e\u003cp\u003ePS: if anyone is interested in this kind of stuff, feel free to schedule a calendly meeting w me on that site. I just got started recently, but I’m dogfooding my own setup and using AI swarms which accelerates the work tremendously.",
         "indicators": [
-          "emotional",
+          "intelligent",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Presents a forward-thinking alternative to traditional merges, emphasizing governance and graph-based versioning, which is a valid and innovative perspective."
+      },
+      {
+        "id": 47479687,
+        "author": "ulrikrasmussen",
+        "text": "The thing about how merges are presented seems orthogonal to how to represent history. I also hate the default in git, but that is why I just use p4merge as a merge tool and get a proper 4-pane merge tool (left, right, common base, merged result) which shows everything needed to figure out why there is a conflict and how to resolve it. I don\u0026#x27;t understand why you need to switch out the VCS to fix that issue.",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Practical comment suggesting that better merge tools can improve conflict resolution without needing to replace the VCS itself."
+      },
+      {
+        "id": 47479374,
+        "author": "radarsat1",
+        "text": "Is it a good thing to have merges that never fail? Often a merge failure indicates a semantic conflict, not just \u0026quot;two changes in the same place\u0026quot;. You want to be aware of and forced to manually deal with such cases.\u003cp\u003eI assume the proposed system addresses it somehow but I don\u0026#x27;t see it in my quick read of this.",
+        "indicators": [
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 8,
-        "analysis": "Critically questions the fundamental premise of using CRDTs for version control, highlighting the need for consistent intended states rather than automatic convergence."
+        "analysis": "Raises a valid concern that automatic merges without failure might mask semantic conflicts that require manual resolution."
       },
       {
-        "id": 47480424,
-        "author": "socalgal2",
-        "text": "\u0026gt; [CRDT] This means merges don’t need to find a common ancestor or traverse the DAG. Two states go in, one state comes out, and it’s always correct.\u003cp\u003eFunny, there was just a post a couple of days ago how this is false.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47359712\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47359712\u003c/a\u003e",
+        "id": 47479997,
+        "author": "mentalgear",
+        "text": "\u0026gt; [CRDT] This means merges don’t need to find a common ancestor or traverse the DAG. Two states go in, one state comes out, and it’s always correct.\u003cp\u003eWell, isn\u0026#x27;t that what the CRDT does in its own data structure ?\u003cp\u003eAlso keep in mind that syntactic correctness doesn\u0026#x27;t mean functional correctness.",
         "indicators": [
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 9,
-        "analysis": "Points out a recent counterargument to the claim that CRDT merges are always correct, adding healthy skepticism to the discussion."
+        "analysis": "Clarifies that CRDTs operate on their own data structures and cautions that syntactic correctness does not guarantee functional correctness."
       },
       {
-        "id": 47479221,
-        "author": "logicprog",
-        "text": "This seems like an excellent idea. I\u0026#x27;m sure a lot of us have been idly wondering why CRDTs aren\u0026#x27;t used for VCS for some time, so it\u0026#x27;s really cool to see someone take a stab at it! We really do need an improvement over git; the question is how to overcome network effects.",
+        "id": 47480539,
+        "author": "BlueHotDog2",
+        "text": "This is cool and i keep thinking about CRDTs as a baseline for version control, but CRDTs has some major issues, mainly the fact that most of them are strict and \u0026quot;magic\u0026quot; in the way they actually converge(like the joke: CRDTs always converge, but to what).\ni didn\u0026#x27;t read if he\u0026#x27;s using some special CRDT that might solve for that, but i think that for agentic work especially this is very interesting",
         "indicators": [
-          "emotional",
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "Expresses enthusiasm for the idea and acknowledges the novelty of applying CRDTs to version control, though somewhat speculative."
-      },
-      {
-        "id": 47479954,
-        "author": "skybrian",
-        "text": "It sounds interesting but the main selling point doesn’t really reasonate:\u003cp\u003eIf you haven’t resolved conflicts then it probably doesn’t compile and of course tests won’t pass, so I don’t see any point in publishing that change? Maybe the commit is useful as a temporary state locally, but that seems of limited use?\u003cp\u003eNowadays I’d ask a coding agent to figure out how to rebase a local branch to the latest published version before sending a pull request.",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true"
-        ],
-        "accuracyRank": 11,
-        "analysis": "Questions the practical usefulness of publishing unresolved conflicts, emphasizing the importance of code correctness before sharing."
-      },
-      {
-        "id": 47480529,
-        "author": "codemog",
-        "text": "Nobody should have these types of problems in the age of AI agents. This kind of clean up and grunt work is perfect for AI agents. We don’t need new abstractions.",
-        "indicators": [
-          "emotional",
-          "likely-untrue",
-          "trolling"
-        ],
-        "accuracyRank": 12,
-        "analysis": "Dismisses the need for new version control abstractions by over-relying on AI agents, which is an optimistic but currently unrealistic stance."
-      },
-      {
-        "id": 47480007,
-        "author": "alunchbox",
-        "text": "Jujutsu honestly is the future IMO, it already does what you have outlined but solved in a different way with merges, it\u0026#x27;ll let you merge but outline you have conflicts that need to be resolved for instance.\u003cp\u003eIt\u0026#x27;s been amazing watching it grow over the last few years.",
-        "indicators": [
-          "thoughtful",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 13,
-        "analysis": "Recommends an existing alternative (Jujutsu) that addresses similar problems, providing a practical viewpoint on current tools."
+        "analysis": "Acknowledges the appeal of CRDTs but points out their convergence behavior can be problematic, especially for complex agentic workflows."
       }
     ]
   }

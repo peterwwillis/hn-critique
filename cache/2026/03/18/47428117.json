@@ -26,118 +26,144 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the challenges and benefits of using worker threads in Node.js, including performance considerations, alternatives like process spawning, and the evolving standards for inline workers. Participants share personal experiences, technical insights, and opinions on best practices for handling CPU-bound tasks in Node.js.",
+    "summary": "The discussion revolves around the challenges and trade-offs of using Node.js worker threads for CPU-bound tasks. Commenters highlight alternatives such as child processes, Rust addons, and scaling across multiple nodes, while also noting tooling and API limitations.",
     "comments": [
       {
-        "id": 47478165,
-        "author": "kketch",
-        "text": "The article calls worker threads \u0026quot;problematic\u0026quot;, but it doesn’t really make a strong case for why they’re supposedly problematic.\u003cp\u003eHaving a separate isolate in each threads spawned with the worker threads with a minimal footprint of 10MB does not seem like a high price to pay. It\u0026#x27;s not like you\u0026#x27;re going to spawn hundreds of them anyway is it?\nYou will very likely spawn less or as much threads as your CPU cores can handle concurrently.\nYou typically don\u0026#x27;t run a hundred of threads (OS threads) you use a thread pool and you cap the concurrency by setting a limit of maximum threads to spawn.\u003cp\u003eThis is also how goroutines work under the hood, they are \u0026quot;green threads\u0026quot;, an abstraction that operate on top of a much small OS thread pool.\u003cp\u003eWorker threads have constraints but most of them are intentional, and in many cases desirable.\u003cp\u003eI’d also add that SharedArrayBuffer doesn’t limit you to “shared counters or coordination primitives”. It’s just raw memory, you could store structured data in it using your own memory layout. There are libraries out there that implement higher-level data structures this way already",
+        "id": 47477104,
+        "author": "derodero24",
+        "text": "I went through a similar journey trying worker threads for CPU-bound work in Node. The serialization cost of passing data between threads ate most of my gains, especially with larger inputs. Ended up going the napi-rs route instead — Rust addon running in the main thread with near-zero FFI overhead. Different tradeoff since you lose the parallelism, but for my workload the raw speed was already enough.",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "Provides a balanced critique by questioning the article's reasoning, highlighting practical considerations of worker thread usage."
+        "analysis": "Provides a nuanced trade-off based on direct experience, highlighting serialization overhead and an effective alternative, which aligns with known Node.js worker thread limitations."
       },
       {
         "id": 47477396,
         "author": "socketcluster",
         "text": "I like Node.js\u0026#x27; simple and fully isolated concurrency model. You shouldn\u0026#x27;t be blocking the main event loop for 30 seconds! The main event loop is not intended to be used for heavy processing.\u003cp\u003eYou can just set up a separate child process for that. The main event loop which handles connections should just co-ordinate and delegate work to other programs and processes. It can await for them to complete asynchronously; that way the event loop is not blocked.\u003cp\u003eI recall people have been able to get up to around a million (idle) WebSocket connections handled by a single process.\u003cp\u003eI was able to comfortably get 20k concurrent sockets per process each churning out 1 outbound message every 3 to 5 seconds (randomized to spread out the load).\u003cp\u003eIt is a good thing that Node.js forces developers to think about this because most other engines which try to hide this complexity tend to impose a significant hidden cost on the server in the form of context switching... With Node.js, there is no such cost, your process can basically have a whole CPU core for itself and it can orchestrate other processes in a maximally efficient way if you write your code correctly... Which Node.js makes very easy to do. Spawning child processes and communicating with them in Node.js is a breeze.",
         "indicators": [
-          "thoughtful",
-          "likely-true"
+          "intelligent",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Accurately emphasizes Node.js's design philosophy and the importance of offloading heavy tasks to maintain responsiveness."
+        "analysis": "Accurately describes Node.js concurrency model and benefits of offloading heavy work to child processes, reflecting common best practices."
+      },
+      {
+        "id": 47478165,
+        "author": "kketch",
+        "text": "The article calls worker threads \u0026quot;problematic\u0026quot;, but it doesn’t really make a strong case for why they’re supposedly problematic.\u003cp\u003eHaving a separate isolate in each threads spawned with the worker threads with a minimal footprint of 10MB does not seem like a high price to pay. It\u0026#x27;s not like you\u0026#x27;re going to spawn hundreds of them anyway is it?\nYou will very likely spawn less or as much threads as your CPU cores can handle concurrently.\nYou typically don\u0026#x27;t run a hundred of threads (OS threads) you use a thread pool and you cap the concurrency by setting a limit of maximum threads to spawn.\u003cp\u003eThis is also how goroutines work under the hood, they are \u0026quot;green threads\u0026quot;, an abstraction that operate on top of a much small OS thread pool.\u003cp\u003eWorker threads have constraints but most of them are intentional, and in many cases desirable.\u003cp\u003eI’d also add that SharedArrayBuffer doesn’t limit you to “shared counters or coordination primitives”. It’s just raw memory, you could store structured data in it using your own memory layout. There are libraries out there that implement higher-level data structures this way already",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Clarifies misconceptions about worker threads and shared memory, providing a balanced view consistent with Node.js documentation and concurrency models."
       },
       {
         "id": 47477502,
         "author": "baublet",
         "text": "Reading the article, I didn’t see this answered: why not scale to more nodes if your workload is CPU bound? Spin off 1 cpu and a few gb of ram container and scale that as wide as you need?\u003cp\u003ee.g., this certainly helps when the event loop is blocked, but so could FFI calls to another language for the CPU bound work. I’d only reach for a new Node thread if these didn’t pan out, because there’s usually a LOT that goes into spinning up a new node process in a container (isolating the data, making sure any bundlers and transpilers are working, making sure the worker doesn’t pull in all the app code, etc.).\u003cp\u003eSide car processes aren’t free, either. Now your processes are contending for the same pool of resources and can’t share anything, which IME means more likelihood of memory issues, esp if there isn’t anything limiting the workers your app can spawn.\u003cp\u003eStill, good article! Love seeing the ways people tackle CPU bound work loads in an otherwise I\u0026#x2F;O bound Node app.",
         "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 3,
-        "analysis": "Suggests a practical alternative to worker threads, considering containerization and resource management, with a nuanced view."
-      },
-      {
-        "id": 47478481,
-        "author": "esprehn",
-        "text": "The worker situation would be much better with inline workers (or modules).\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;tc39\u0026#x2F;proposal-module-declarations\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;tc39\u0026#x2F;proposal-module-declarations\u003c/a\u003e\u003cp\u003eUnfortunately the JS standards folks have refused so far to make this situation better.\u003cp\u003eEx. it should just be `new Worker(module { ... })`.",
-        "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Highlights ongoing standards issues affecting worker implementation, reflecting current limitations in JavaScript."
+        "analysis": "Raises valid concerns about container overhead and resource contention, emphasizing trade-offs in scaling strategies for CPU-bound workloads."
       },
       {
         "id": 47477474,
         "author": "Jcampuzano2",
         "text": "I get its a constraint of the language but the ubiquitousness of bundlers and differing toolchains in the JS world has always made me regret trying to use worker primitives, whether they be web workers, worker threads and more. Not to mention trying to ship them to users via a library being a nightmare as mentioned in the article.\u003cp\u003eAlmost none of them treat these consistently (if they consider these at all) and all require you to work around them in strange ways.\u003cp\u003eIt feels like there is a lot they could help with in the web world, especially in complex UI and moving computation off the main thread but they are just so clunky to use that almost nobody tries to work around it.\u003cp\u003eThe ironic part is if bundlers, transpilers, compilers etc. weren\u0026#x27;t used at all they would probably have much more widespread use.",
         "indicators": [
-          "useless"
+          "thoughtful",
+          "likely-true"
         ],
         "accuracyRank": 5,
-        "analysis": "Expresses a common frustration but lacks technical depth or specific insights into worker primitives."
+        "analysis": "Accurately points out ecosystem tooling issues that complicate worker usage in JavaScript, a common developer pain point."
+      },
+      {
+        "id": 47478481,
+        "author": "esprehn",
+        "text": "The worker situation would be much better with inline workers (or modules).\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;tc39\u0026#x2F;proposal-module-declarations\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;tc39\u0026#x2F;proposal-module-declarations\u003c/a\u003e\u003cp\u003eUnfortunately the JS standards folks have refused so far to make this situation better.\u003cp\u003eEx. it should just be `new Worker(module { ... })`.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Highlights a known limitation in JavaScript standards affecting worker thread usability, reflecting ongoing community discussions."
       },
       {
         "id": 47477444,
         "author": "ptrwis",
         "text": "I\u0026#x27;m currently writing simulations of trading algorithms for my own use.\nI\u0026#x27;m using worker_threads + SharedArrayBuffer and running them in Bun. I also tried porting the code to C# and Go, but the execution time ended up being very similar to the Bun version. NodeJS was slower.\nOnly C gave a clear, noticeable performance advantage — but since I haven\u0026#x27;t written C in a long time, the code became significantly harder to maintain.",
         "indicators": [
+          "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 6,
-        "analysis": "Provides comparative performance insights, acknowledging trade-offs between speed and maintainability."
+        "accuracyRank": 7,
+        "analysis": "Provides empirical performance comparison across runtimes, consistent with expectations about Node.js performance and trade-offs in maintainability."
       },
       {
         "id": 47478425,
         "author": "goldenarm",
         "text": "The lack of backpressure handling nor promise api for postMessage is also quite annoying, I had many OOMs because of it.",
         "indicators": [
-          "useless"
-        ],
-        "accuracyRank": 7,
-        "analysis": "States valid issues but without detailed context or technical depth."
-      },
-      {
-        "id": 47479003,
-        "author": "cpursley",
-        "text": "Or you could use Elixir with Postgrest and not have to bold on all this wonky 3rd paid tools for basic stuff like background jobs:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;elixirisallyouneed.dev\u0026#x2F;tools?q=Pgflow\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;elixirisallyouneed.dev\u0026#x2F;tools?q=Pgflow\u003c/a\u003e",
-        "indicators": [
-          "useless"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Suggests an alternative technology stack but does not directly critique worker threads."
-      },
-      {
-        "id": 47477017,
-        "author": "vilequeef",
-        "text": "It’s not weird that you can’t share state between totally different processes except by passing in args.\u003cp\u003eAnd you can make it thread-like if you prefer by creating a “load balancer” setup to begin with to keep them CPU bound.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    require(\u0026#x27;os\u0026#x27;).cpus().length\n\u003c/code\u003e\u003c/pre\u003e\nSpawn a process for each CPU, bind data you need, and it can feel like multithreading from your perspective.\u003cp\u003eMore here \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bennyschmidt\u0026#x2F;simple-node-multiprocess\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bennyschmidt\u0026#x2F;simple-node-multiprocess\u003c/a\u003e",
-        "indicators": [
-          "thoughtful"
-        ],
-        "accuracyRank": 9,
-        "analysis": "Offers a practical approach to process management, aligning with common Node.js multi-process patterns."
-      },
-      {
-        "id": 47477104,
-        "author": "derodero24",
-        "text": "I went through a similar journey trying worker threads for CPU-bound work in Node. The serialization cost of passing data between threads ate most of my gains, especially with larger inputs. Ended up going the napi-rs route instead — Rust addon running in the main thread with near-zero FFI overhead. Different tradeoff since you lose the parallelism, but for my workload the raw speed was already enough.",
-        "indicators": [
+          "emotional",
           "likely-true"
         ],
-        "accuracyRank": 10,
-        "analysis": "Shares a real-world experience with alternative solutions, emphasizing trade-offs between parallelism and speed."
+        "accuracyRank": 8,
+        "analysis": "Raises a valid technical complaint about API limitations that can cause resource exhaustion, reflecting real-world developer frustrations."
       },
       {
         "id": 47477622,
         "author": "groundzeros2015",
         "text": "- you should be using multiple node processes \n- you should be spawning tools to do heavy computation",
         "indicators": [
-          "useless"
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Recommends a common and practical approach to handling CPU-bound work in Node.js, though somewhat simplistic."
+      },
+      {
+        "id": 47477017,
+        "author": "vilequeef",
+        "text": "It’s not weird that you can’t share state between totally different processes except by passing in args.\u003cp\u003eAnd you can make it thread-like if you prefer by creating a “load balancer” setup to begin with to keep them CPU bound.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    require(\u0026#x27;os\u0026#x27;).cpus().length\n\u003c/code\u003e\u003c/pre\u003e\nSpawn a process for each CPU, bind data you need, and it can feel like multithreading from your perspective.\u003cp\u003eMore here \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bennyschmidt\u0026#x2F;simple-node-multiprocess\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bennyschmidt\u0026#x2F;simple-node-multiprocess\u003c/a\u003e",
+        "indicators": [
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Explains a standard pattern for parallelism in Node.js using processes, accurately describing inter-process communication constraints."
+      },
+      {
+        "id": 47477650,
+        "author": "chrisweekly",
+        "text": "Related tangent: Platformatic\u0026#x27;s  \u0026quot;Watt\u0026quot; server^1 takes a pretty interesting approach to Node, leveraging worker threads on all available cores for maximum efficiency.\u003cp\u003e1. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;docs.platformatic.dev\u0026#x2F;docs\u0026#x2F;overview\u0026#x2F;architecture-overview\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;docs.platformatic.dev\u0026#x2F;docs\u0026#x2F;overview\u0026#x2F;architecture-ove...\u003c/a\u003e",
+        "indicators": [
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 11,
-        "analysis": "General advice that aligns with common practices but lacks depth or specific context."
+        "analysis": "Mentions a relevant real-world example of using worker threads effectively, though without detailed analysis."
+      },
+      {
+        "id": 47479003,
+        "author": "cpursley",
+        "text": "Or you could use Elixir with Postgrest and not have to bold on all this wonky 3rd paid tools for basic stuff like background jobs:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;elixirisallyouneed.dev\u0026#x2F;tools?q=Pgflow\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;elixirisallyouneed.dev\u0026#x2F;tools?q=Pgflow\u003c/a\u003e",
+        "indicators": [
+          "emotional",
+          "trolling",
+          "likely-true"
+        ],
+        "accuracyRank": 12,
+        "analysis": "Suggests an alternative technology stack, somewhat off-topic and dismissive, but valid as a different approach."
       }
     ]
   }

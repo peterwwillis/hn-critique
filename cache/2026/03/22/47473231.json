@@ -21,19 +21,135 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around the new JavaScript project Gea, with some skepticism about its novelty and ease of use compared to existing frameworks like Solid. There is also brief commentary on the rapid development timeline and general interest in the project.",
+    "summary": "The discussion centers on the new JavaScript framework Gea, with commenters debating its design philosophy, reactivity model, and performance claims compared to established frameworks like React and Solid. Some appreciate its embrace of language paradigms and compile-time optimizations, while others criticize two-way binding and question its practical scalability and benchmarking accuracy.",
     "comments": [
+      {
+        "id": 47481463,
+        "author": "ludwigvan",
+        "text": "React hooks always struck me as object-oriented programming reinvented through the back door of functions. We started with pure components, decided we needed state after all, and ended up with magic functions that stash and retrieve state from some hidden context — essentially re-deriving this with worse ergonomics and an implicit ordering contract. Some part of it was the functional language paradigms like immutability that were popular elsewhere at the time bolted on to JavaScript.\u003cp\u003eWhat I find refreshing about Gea is that it doesn\u0026#x27;t fight the language. Stores are classes. Computed values are getters. State mutation is just assignment.\nI\u0026#x27;ve been waiting for a framework that embraces the actual paradigms of the language it\u0026#x27;s written in, rather than inventing a parallel universe of conventions. Excited to try this one.\u003cp\u003eThat said, I\u0026#x27;m genuinely curious where the edges are. Was React\u0026#x27;s complexity accidental due to its architecture or was it the price of solving genuinely hard problems (concurrent rendering, suspense boundaries, fine-grained error recovery) (which by the way most consumers of the library did not care that much about)?\u003cp\u003eDoes Gea\u0026#x27;s simplicity hold up as apps get complex, or will we eventually hit patterns where the escape hatch is the complexity React already internalized?",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a nuanced and accurate critique of React's design and highlights Gea's approach, raising valid questions about complexity and scalability."
+      },
+      {
+        "id": 47473773,
+        "author": "nine_k",
+        "text": "Disclaimer: I only read description, did not try to code.\u003cp\u003eWhat I like: the smart compiler that determines the actual dependencies, no need to declare them. Apparently the compiler is so smart as to compute the DOM diffs at compile time, which eliminates the need for virtual DOM.\u003cp\u003eWhat kills it for me: the two-way binding. The binding should be one-way to preserve your sanity as the project grows. Two-way bindings allow to build highly reactive Ruby Goldberg machines where anything can trigger anything else, and you won\u0026#x27;t know, because it\u0026#x27;s just a mutation of a property somewhere, indistinguishable from a non-reactive mutation. Two-way bindings are callback hell squared.\u003cp\u003eI want one-way data binding, immutability, and basically FRP. The biggest demonstration of FRP\u0026#x27;s immense real-life success is not React. It\u0026#x27;s the spreadsheet.\u003cp\u003eThis may be good for small pieces of interactivity. But I likely would go for HTMX for that.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment accurately identifies potential pitfalls of two-way binding and advocates for more maintainable patterns, reflecting common best practices in reactive programming."
+      },
+      {
+        "id": 47481467,
+        "author": "mpalmer",
+        "text": "The contrast of most of the text against the background is not accessible.\u003cp\u003eI\u0026#x27;m not overly impressed with the claim \u0026quot;Faster than Solid\u0026quot; when only figure presented on the hero chart is the geometric average of the Duration scores for each framework.\u003cp\u003eDigging into the individual metrics, Solid is \u003ci\u003ewell\u003c/i\u003e within the margin of error on essentially every metric to tie or even beat Gea.\u003cp\u003eOn top of that, Solid beats Gea handily on bundle size, 1:4 uncompressed and 1:2 compressed.\u003cp\u003eSo at best, Gea is a tie on speed with Solid, the bundle is bigger, and even time to first paint is a little worse.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment provides a fact-based critique of Gea's performance claims and accessibility, supported by benchmark analysis, making it a credible and constructive observation."
+      },
+      {
+        "id": 47481191,
+        "author": "ch_sm",
+        "text": "hey! Great job on this, dashersw. I‘ve believed for a while now that the compile time dependency analyzer approach is the only good way for frameworks like this. Really neat choices on the API surface as well – so simple! Launching with a headless UI lib is smart. will try both in a side project soon! thanks and cheers!",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This positive feedback highlights key technical strengths and shows genuine interest, though it lacks critical evaluation of limitations."
+      },
       {
         "id": 47473630,
         "author": "tkzed49",
         "text": "\u0026gt; Solid has signals and createEffect... Gea takes a different path. It introduces no new concepts at all.\u003cp\u003eproceeds to introduce Stores and Components\u003cp\u003ewhat makes this magically easier than Solid, or any other Proxy-based reactive store frameworks?",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "intelligent",
+          "likely-true"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a critical and thoughtful comparison between Gea and Solid, questioning the claimed simplicity and novelty of Gea, which is a valid point given the similarities in reactive programming concepts."
+        "accuracyRank": 5,
+        "analysis": "Raises a valid point about the novelty and ease of use of Gea's abstractions compared to existing solutions, encouraging deeper scrutiny."
+      },
+      {
+        "id": 47481584,
+        "author": "slopinthebag",
+        "text": "At first I thought this was using a compiler to figure out data dependencies on regular javascript objects, including built in\u0026#x27;s on the window and coming from third party dependencies, so you could do this:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e   \u0026lt;div\u0026gt;window width: {window.innerWidth}\u0026lt;\u0026#x2F;div\u0026gt;\n\u003c/code\u003e\u003c/pre\u003e\nBut it\u0026#x27;s not, it\u0026#x27;s just on objects that subclass a Store.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Clarifies a technical detail about Gea's reactivity scope, correcting a common misconception, which is helpful for understanding framework limitations."
+      },
+      {
+        "id": 47481622,
+        "author": "dangoodmanUT",
+        "text": "This clearly AI generated website is such a turn-off.\u003cp\u003eI get that AI can be good at making websites, and someone might not care to spend a lot of time on it, but a website that looks like a slightly modified version of a generic \u0026quot;make an X landing page\u0026quot; from gpt-5.3-codex doesn\u0026#x27;t scream \u0026quot;I care about what I just made\u0026quot;.\u003cp\u003eJust go super reductionist like planetscale did and have partially rendered markdown, don\u0026#x27;t put twinkling stars in the background",
+        "indicators": [
+          "emotional",
+          "likely-true",
+          "useless"
+        ],
+        "accuracyRank": 7,
+        "analysis": "While the critique about design is subjective and somewhat emotional, it reflects a common user experience concern, though it adds little technical insight."
+      },
+      {
+        "id": 47473700,
+        "author": "cattown",
+        "text": "Two-way props! Yikes! That was a mess in the first version of Angular. I thought the consensus was that two-way props binding just opened the door to difficult to understand side-effect laden code.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Provides historical context supporting the criticism of two-way binding, reinforcing concerns about maintainability."
+      },
+      {
+        "id": 47481206,
+        "author": "skyturkish",
+        "text": "There are many ways to write JavaScript, for example by destructuring variables, etc. How do Gea proxies work to retain reactivity then?",
+        "indicators": [
+          "constructive",
+          "intelligent"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Poses a relevant technical question about implementation details, indicating engagement but without providing an answer."
+      },
+      {
+        "id": 47481224,
+        "author": "puskuruk",
+        "text": "How does this thing run so close to VanillaJS without carrying any extra baggage along for the ride?",
+        "indicators": [
+          "constructive",
+          "intelligent"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Seeks clarification on framework overhead, a pertinent concern for performance-conscious developers."
+      },
+      {
+        "id": 47481303,
+        "author": "darepublic",
+        "text": "React is just JavaScript.  Also vanilla JavaScript is just JavaScript",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 11,
+        "analysis": "This tautological statement adds no meaningful insight to the discussion."
       },
       {
         "id": 47473623,
@@ -43,19 +159,31 @@
           "emotional",
           "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment expresses surprise at the rapid development time, which is plausible and adds context but does not provide technical insight."
+        "accuracyRank": 12,
+        "analysis": "Highlights the impressive speed of development but implicitly questions the depth and maturity of the project."
       },
       {
-        "id": 47473420,
-        "author": "Brysonbw",
-        "text": "Interesting project",
+        "id": 47473680,
+        "author": "afavour",
+        "text": "\u0026gt; The Vite plugin analyzes your JSX at build time, figures out which DOM nodes depend on which state, and wires up surgical patches — invisibly.\u003cp\u003eThis part interests me… if it’s able to be brought to React somehow. Too many sites are shipping entirely reactive DOMs where only a tiny minority of content actually changes.\u003cp\u003eThe fact that the entire project appears to have been written in three days, however, gives me some deep doubts.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 13,
+        "analysis": "Expresses cautious optimism about technical innovation while noting concerns about project maturity."
+      },
+      {
+        "id": 47478981,
+        "author": "linhns",
+        "text": "Not a JS dev but the site need to move away from tinted retro look if you want to stress the modernness.",
         "indicators": [
           "emotional",
           "useless"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment is a brief expression of interest without substantive content or critique."
+        "accuracyRank": 14,
+        "analysis": "Aesthetic feedback from a non-technical perspective, not contributing to technical evaluation."
       }
     ]
   }
