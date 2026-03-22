@@ -22,19 +22,53 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around a user's first Linux kernel patch, with commenters sharing their experiences and congratulating the author. Some highlight the challenges of understanding unwritten rules and the difficulty of certain bugs, while others express appreciation for the writeup.",
+    "summary": "The discussion centers around a blog post about a Linux kernel patch and the challenges of debugging C code, particularly regarding integer promotion and undefined behavior in bitwise operations. Commenters share insights on the complexity of C standards, the difficulty of debugging low-level code, and personal experiences with similar bugs.",
     "comments": [
       {
-        "id": 47475884,
-        "author": "ngburke",
-        "text": "Sign extension bugs are the worst. Silent for ages then suddenly everything is on fire. Spent a lot of time in C doing low-level firmware work and ran into the same class of issue more than once. Nice writeup, congrats on the patch.",
+        "id": 47476512,
+        "author": "fonheponho",
+        "text": "Everybody seems to be missing the forest for the trees on this.\u003cp\u003eThere is absolutely no \u0026quot;sign extension\u0026quot; in the C standard (go ahead, search it). \u0026quot;Sign extension\u0026quot; is a feature of some assembly instructions on some architectures, but C has nothing to do with it.\u003cp\u003eCiting integer promotion from the standard is justified, but it\u0026#x27;s just one part (perhaps even the smaller part) of the picture. The crucial bit is not quoted in the article: the specification of \u0026quot;Bitwise shift operators\u0026quot;. Namely\u003cp\u003e\u0026gt; The integer promotions are performed on each of the operands. The type of the result is that of the promoted left operand. [...]\u003cp\u003e\u0026gt; The result of E1 \u0026lt;\u0026lt; E2 is E1 left-shifted E2 bit positions; vacated bits are filled with zeros. If E1 has an unsigned type, the value of the result is E1×2^E2, reduced modulo one more than the maximum value representable in the result type. If E1 has a signed type and nonnegative value, and E1×2^E2 is representable in the result type, then that is the resulting value; otherwise, the behavior is undefined.\u003cp\u003eWhat happens here is that \u0026quot;base2\u0026quot; (of type uint8_t, which is \u0026quot;unsigned char\u0026quot; in this environment) gets promoted to \u0026quot;int\u0026quot;, and then left-shifted by 24 bits. You get \u003ci\u003eundefined behavior\u003c/i\u003e because, while \u0026quot;base2\u0026quot; (after promotion) has a signed type (\u0026quot;int\u0026quot;) and nonnegative value, E1×2^E2 (i.e., base2 × 2^24) is \u003ci\u003eNOT\u003c/i\u003e representable in the result type (\u0026quot;int\u0026quot;).\u003cp\u003eWhat happens during the conversion to \u0026quot;uint64_t\u0026quot; \u003ci\u003eafterwards\u003c/i\u003e is irrelevant; even the particulars of the sign bit of \u0026quot;int\u0026quot;, and how you end up with a negative \u0026quot;int\u0026quot; from the shift, are irrelevant; you got your UB \u003ci\u003eright inside\u003c/i\u003e the invalid left-shift. How said UB happens to materialize on this particular C implementation may perhaps be explained in terms of sign extension of the underlying ISA -- but do that \u003ci\u003eseparately\u003c/i\u003e; be absolutely clear about what is what.\u003cp\u003eThe article fails to mention the root cause (violating the rules for the bitwise left-shift operator) and fails to name the key consequence (undefined behavior); instead, it leads with not-a-thing (\u0026quot;sign-extension bug in C\u0026quot;). I\u0026#x27;m displeased.\u003cp\u003eBTW this bug (invalid left shift of a signed integer) is common, sadly.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a knowledgeable perspective on the difficulty of sign extension bugs, supported by personal experience in low-level programming, making it highly accurate and insightful."
+        "analysis": "This comment accurately explains the root cause of the bug as undefined behavior due to invalid left-shift operations on signed integers, clarifying misconceptions about 'sign extension' in C."
+      },
+      {
+        "id": 47476579,
+        "author": "monus",
+        "text": "\u0026gt; You may wonder whether I tried asking an LLM for help or not. Well, I did. In fact it was very helpful in some tasks like summarizing kernel logs [^13] and extracting the gist of them. But when it came to debugging based on all the clues that were available, it concluded that my code didn\u0026#x27;t have any bugs, and that the CPU hardware was faulty.\u003cp\u003eThis matches my experience whenever I do an unconventional or deep work like the article mentions. The engineers comfortable with this type of work will multiply their worth.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "Provides a realistic perspective on the limitations of AI tools in complex debugging tasks, supporting the article's point about the difficulty of deep technical work."
+      },
+      {
+        "id": 47475884,
+        "author": "ngburke",
+        "text": "Sign extension bugs are the worst. Silent for ages then suddenly everything is on fire. Spent a lot of time in C doing low-level firmware work and ran into the same class of issue more than once. Nice writeup, congrats on the patch.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Shares personal experience with similar bugs, reinforcing the article's theme about the subtlety and severity of such issues in low-level programming."
+      },
+      {
+        "id": 47476253,
+        "author": "knorker",
+        "text": "Integer promotion rules in C are so deceptive.\u003cp\u003eI don\u0026#x27;t believe there\u0026#x27;s anybody who can reason about them at code skimming speeds. It\u0026#x27;s probably the best place to hide underhanded code.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Expresses a common sentiment about the complexity of C's integer promotion rules, which aligns with the difficulties highlighted in the article."
       },
       {
         "id": 47475520,
@@ -42,22 +76,65 @@
         "text": "The first one always takes way longer than the code itself deserves. Most of the work is figuring out the unwritten rules, not writing the patch.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment accurately describes the common experience of initial contributions to complex projects, emphasizing the learning curve beyond just coding."
+        "accuracyRank": 5,
+        "analysis": "Offers a practical observation about the patching process, emphasizing the challenge of understanding implicit knowledge rather than coding itself."
+      },
+      {
+        "id": 47476526,
+        "author": "ozgrakkurt",
+        "text": "Great blog post. Using _BitInt typedefs for integers is a good option for anyone starting a fresh c project. It has worked well for me so far. _BitInt integers don’t promote to signed automatically like regular integers in c",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Suggests a modern C feature to avoid common integer promotion issues, providing a constructive alternative to traditional integer types."
+      },
+      {
+        "id": 47476393,
+        "author": "dingensundso",
+        "text": "Nice blogpost. Was an really interesting read. Would be interesting to read about the experience of getting the patch accepted and merged.\u003cp\u003eOne thing I noticed: The last footnote is missing.",
+        "indicators": [
+          "constructive",
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Provides positive feedback and a minor editorial note, showing engagement but limited technical depth."
       },
       {
         "id": 47475683,
         "author": "foltik",
         "text": "Well done and great writeup! Any idea why the bug hadn’t shown up sooner, like when running self tests?",
         "indicators": [
-          "thoughtful",
-          "constructive"
+          "constructive",
+          "thoughtful"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment is constructive and raises a relevant question about testing coverage, though it does not provide factual information itself."
+        "accuracyRank": 8,
+        "analysis": "Poses a relevant question about testing coverage, encouraging further discussion on the bug's detection."
+      },
+      {
+        "id": 47476385,
+        "author": "NotCamelCase",
+        "text": "Lovely article with a happy ending!\u003cp\u003eOne thing that I am glad to have been taught early on in my career when it comes to debugging, especially anything involving HW, is to `make no assumptions\u0026#x27;. Bugs can be anywhere and everywhere.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Highlights a valuable debugging philosophy that complements the article's narrative."
+      },
+      {
+        "id": 47476464,
+        "author": "siddyboi",
+        "text": "Huge congrats on tracking that down and getting your first Linux kernel patch merged!",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Expresses congratulations but adds no technical insight."
       },
       {
         "id": 47475527,
@@ -67,8 +144,8 @@
           "emotional",
           "useless"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment is positive and encouraging but lacks substantive content or analysis."
+        "accuracyRank": 11,
+        "analysis": "Offers positive sentiment without substantive content."
       },
       {
         "id": 47475563,
@@ -78,8 +155,8 @@
           "emotional",
           "useless"
         ],
-        "accuracyRank": 5,
-        "analysis": "This is a brief expression of appreciation without additional insight or information."
+        "accuracyRank": 12,
+        "analysis": "A brief positive comment with no analytical value."
       }
     ]
   }

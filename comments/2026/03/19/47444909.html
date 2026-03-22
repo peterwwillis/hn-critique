@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">137 points</span>
+        <span class="score">151 points</span>
         by <a href="https://news.ycombinator.com/user?id=pooladkhay" class="hnuser">pooladkhay</a>
         <span class="age">3 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/19/47444909.html">critique article</a>
@@ -47,68 +47,143 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around a user&#39;s first Linux kernel patch, with commenters sharing their experiences and congratulating the author. Some highlight the challenges of understanding unwritten rules and the difficulty of certain bugs, while others express appreciation for the writeup.</p>
+      <p>The discussion centers around a blog post about a Linux kernel patch and the challenges of debugging C code, particularly regarding integer promotion and undefined behavior in bitwise operations. Commenters share insights on the complexity of C standards, the difficulty of debugging low-level code, and personal experiences with similar bugs.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
-    
-    <p class="no-critique">Only 5 of 12 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47444909" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=ngburke" class="hnuser">ngburke</a>
+        <a href="https://news.ycombinator.com/user?id=fonheponho" class="hnuser">fonheponho</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Everybody seems to be missing the forest for the trees on this.<p>There is absolutely no &quot;sign extension&quot; in the C standard (go ahead, search it). &quot;Sign extension&quot; is a feature of some assembly instructions on some architectures, but C has nothing to do with it.<p>Citing integer promotion from the standard is justified, but it&#x27;s just one part (perhaps even the smaller part) of the picture. The crucial bit is not quoted in the article: the specification of &quot;Bitwise shift operators&quot;. Namely<p>&gt; The integer promotions are performed on each of the operands. The type of the result is that of the promoted left operand. [...]<p>&gt; The result of E1 &lt;&lt; E2 is E1 left-shifted E2 bit positions; vacated bits are filled with zeros. If E1 has an unsigned type, the value of the result is E1×2^E2, reduced modulo one more than the maximum value representable in the result type. If E1 has a signed type and nonnegative value, and E1×2^E2 is representable in the result type, then that is the resulting value; otherwise, the behavior is undefined.<p>What happens here is that &quot;base2&quot; (of type uint8_t, which is &quot;unsigned char&quot; in this environment) gets promoted to &quot;int&quot;, and then left-shifted by 24 bits. You get <i>undefined behavior</i> because, while &quot;base2&quot; (after promotion) has a signed type (&quot;int&quot;) and nonnegative value, E1×2^E2 (i.e., base2 × 2^24) is <i>NOT</i> representable in the result type (&quot;int&quot;).<p>What happens during the conversion to &quot;uint64_t&quot; <i>afterwards</i> is irrelevant; even the particulars of the sign bit of &quot;int&quot;, and how you end up with a negative &quot;int&quot; from the shift, are irrelevant; you got your UB <i>right inside</i> the invalid left-shift. How said UB happens to materialize on this particular C implementation may perhaps be explained in terms of sign extension of the underlying ISA -- but do that <i>separately</i>; be absolutely clear about what is what.<p>The article fails to mention the root cause (violating the rules for the bitwise left-shift operator) and fails to name the key consequence (undefined behavior); instead, it leads with not-a-thing (&quot;sign-extension bug in C&quot;). I&#x27;m displeased.<p>BTW this bug (invalid left shift of a signed integer) is common, sadly.</div>
+      <div class="comment-analysis"><em>This comment accurately explains the root cause of the bug as undefined behavior due to invalid left-shift operations on signed integers, clarifying misconceptions about &#39;sign extension&#39; in C.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=monus" class="hnuser">monus</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">&gt; You may wonder whether I tried asking an LLM for help or not. Well, I did. In fact it was very helpful in some tasks like summarizing kernel logs [^13] and extracting the gist of them. But when it came to debugging based on all the clues that were available, it concluded that my code didn&#x27;t have any bugs, and that the CPU hardware was faulty.<p>This matches my experience whenever I do an unconventional or deep work like the article mentions. The engineers comfortable with this type of work will multiply their worth.</div>
+      <div class="comment-analysis"><em>Provides a realistic perspective on the limitations of AI tools in complex debugging tasks, supporting the article&#39;s point about the difficulty of deep technical work.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ngburke" class="hnuser">ngburke</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Sign extension bugs are the worst. Silent for ages then suddenly everything is on fire. Spent a lot of time in C doing low-level firmware work and ran into the same class of issue more than once. Nice writeup, congrats on the patch.</div>
-      <div class="comment-analysis"><em>This comment provides a knowledgeable perspective on the difficulty of sign extension bugs, supported by personal experience in low-level programming, making it highly accurate and insightful.</em></div>
+      <div class="comment-analysis"><em>Shares personal experience with similar bugs, reinforcing the article&#39;s theme about the subtlety and severity of such issues in low-level programming.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=knorker" class="hnuser">knorker</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Integer promotion rules in C are so deceptive.<p>I don&#x27;t believe there&#x27;s anybody who can reason about them at code skimming speeds. It&#x27;s probably the best place to hide underhanded code.</div>
+      <div class="comment-analysis"><em>Expresses a common sentiment about the complexity of C&#39;s integer promotion rules, which aligns with the difficulties highlighted in the article.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=ashwinnair99" class="hnuser">ashwinnair99</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">The first one always takes way longer than the code itself deserves. Most of the work is figuring out the unwritten rules, not writing the patch.</div>
-      <div class="comment-analysis"><em>This comment accurately describes the common experience of initial contributions to complex projects, emphasizing the learning curve beyond just coding.</em></div>
+      <div class="comment-analysis"><em>Offers a practical observation about the patching process, emphasizing the challenge of understanding implicit knowledge rather than coding itself.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ozgrakkurt" class="hnuser">ozgrakkurt</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Great blog post. Using _BitInt typedefs for integers is a good option for anyone starting a fresh c project. It has worked well for me so far. _BitInt integers don’t promote to signed automatically like regular integers in c</div>
+      <div class="comment-analysis"><em>Suggests a modern C feature to avoid common integer promotion issues, providing a constructive alternative to traditional integer types.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dingensundso" class="hnuser">dingensundso</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Nice blogpost. Was an really interesting read. Would be interesting to read about the experience of getting the patch accepted and merged.<p>One thing I noticed: The last footnote is missing.</div>
+      <div class="comment-analysis"><em>Provides positive feedback and a minor editorial note, showing engagement but limited technical depth.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=foltik" class="hnuser">foltik</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">Well done and great writeup! Any idea why the bug hadn’t shown up sooner, like when running self tests?</div>
-      <div class="comment-analysis"><em>This comment is constructive and raises a relevant question about testing coverage, though it does not provide factual information itself.</em></div>
+      <div class="comment-analysis"><em>Poses a relevant question about testing coverage, encouraging further discussion on the bug&#39;s detection.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=NotCamelCase" class="hnuser">NotCamelCase</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Lovely article with a happy ending!<p>One thing that I am glad to have been taught early on in my career when it comes to debugging, especially anything involving HW, is to `make no assumptions&#x27;. Bugs can be anywhere and everywhere.</div>
+      <div class="comment-analysis"><em>Highlights a valuable debugging philosophy that complements the article&#39;s narrative.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=siddyboi" class="hnuser">siddyboi</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">Huge congrats on tracking that down and getting your first Linux kernel patch merged!</div>
+      <div class="comment-analysis"><em>Expresses congratulations but adds no technical insight.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=yu3zhou4" class="hnuser">yu3zhou4</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #11
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Congrats and happy for you, you had a lot of fun and did something genuinely interesting</div>
-      <div class="comment-analysis"><em>This comment is positive and encouraging but lacks substantive content or analysis.</em></div>
+      <div class="comment-analysis"><em>Offers positive sentiment without substantive content.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=mbana" class="hnuser">mbana</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #12
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">I love these kind of posts.</div>
-      <div class="comment-analysis"><em>This is a brief expression of appreciation without additional insight or information.</em></div>
+      <div class="comment-analysis"><em>A brief positive comment with no analytical value.</em></div>
     </div>
     
 
@@ -120,7 +195,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-22 12:51 UTC &nbsp;|&nbsp;
+    Generated 2026-03-22 14:33 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

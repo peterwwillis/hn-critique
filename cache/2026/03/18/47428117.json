@@ -24,5 +24,105 @@
       "The article focuses on Inngest's use case and may not generalize to all Node.js applications."
     ],
     "rating": "reliable"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around the challenges and strategies for handling CPU-bound workloads in Node.js, particularly the use of worker threads versus multiple processes or native addons. Commenters share experiences with performance trade-offs, tooling difficulties, and architectural considerations for concurrency in Node.js applications.",
+    "comments": [
+      {
+        "id": 47477104,
+        "author": "derodero24",
+        "text": "I went through a similar journey trying worker threads for CPU-bound work in Node. The serialization cost of passing data between threads ate most of my gains, especially with larger inputs. Ended up going the napi-rs route instead — Rust addon running in the main thread with near-zero FFI overhead. Different tradeoff since you lose the parallelism, but for my workload the raw speed was already enough.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a nuanced view on the overhead of worker threads and suggests a practical alternative using Rust addons, reflecting a well-informed trade-off analysis."
+      },
+      {
+        "id": 47477502,
+        "author": "baublet",
+        "text": "Reading the article, I didn’t see this answered: why not scale to more nodes if your workload is CPU bound? Spin off 1 cpu and a few gb of ram container and scale that as wide as you need?\u003cp\u003ee.g., this certainly helps when the event loop is blocked, but so could FFI calls to another language for the CPU bound work. I’d only reach for a new Node thread if these didn’t pan out, because there’s usually a LOT that goes into spinning up a new node process in a container (isolating the data, making sure any bundlers and transpilers are working, making sure the worker doesn’t pull in all the app code, etc.).\u003cp\u003eSide car processes aren’t free, either. Now your processes are contending for the same pool of resources and can’t share anything, which IME means more likelihood of memory issues, esp if there isn’t anything limiting the workers your app can spawn.\u003cp\u003eStill, good article! Love seeing the ways people tackle CPU bound work loads in an otherwise I\u0026#x2F;O bound Node app.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment raises valid points about scaling with multiple processes or containers and the complexity involved, highlighting real-world operational concerns."
+      },
+      {
+        "id": 47477396,
+        "author": "socketcluster",
+        "text": "I like Node.js\u0026#x27; simple and fully isolated concurrency model. You shouldn\u0026#x27;t be blocking the main event loop for 30 seconds! The main event loop is not intended to be used for heavy processing.\u003cp\u003eYou can just set up a separate child process for that. The main event loop which handles connections should just co-ordinate and delegate work to other programs and processes. It can await for them to complete asynchronously; that way the event loop is not blocked.\u003cp\u003eI recall people have been able to get up to around a million (idle) WebSocket connections handled by a single process.\u003cp\u003eI was able to comfortably get 20k concurrent sockets per process each churning out 1 outbound message every 3 to 5 seconds (randomized to spread out the load).\u003cp\u003eIt is a good thing that Node.js forces developers to think about this because most other engines which try to hide this complexity tend to impose a significant hidden cost on the server in the form of context switching... With Node.js, there is no such cost, your process can basically have a whole CPU core for itself and it can orchestrate other processes in a maximally efficient way if you write your code correctly... Which Node.js makes very easy to do. Spawning child processes and communicating with them in Node.js is a breeze.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment accurately emphasizes the importance of keeping the event loop unblocked and advocates for child processes, aligning with best practices in Node.js concurrency."
+      },
+      {
+        "id": 47477444,
+        "author": "ptrwis",
+        "text": "I\u0026#x27;m currently writing simulations of trading algorithms for my own use.\nI\u0026#x27;m using worker_threads + SharedArrayBuffer and running them in Bun. I also tried porting the code to C# and Go, but the execution time ended up being very similar to the Bun version. NodeJS was slower.\nOnly C gave a clear, noticeable performance advantage — but since I haven\u0026#x27;t written C in a long time, the code became significantly harder to maintain.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Provides a practical performance comparison across runtimes and languages, supporting the discussion with personal benchmarking experience."
+      },
+      {
+        "id": 47477474,
+        "author": "Jcampuzano2",
+        "text": "I get its a constraint of the language but the ubiquitousness of bundlers and differing toolchains in the JS world has always made me regret trying to use worker primitives, whether they be web workers, worker threads and more. Not to mention trying to ship them to users via a library being a nightmare as mentioned in the article.\u003cp\u003eAlmost none of them treat these consistently (if they consider these at all) and all require you to work around them in strange ways.\u003cp\u003eIt feels like there is a lot they could help with in the web world, especially in complex UI and moving computation off the main thread but they are just so clunky to use that almost nobody tries to work around it.\u003cp\u003eThe ironic part is if bundlers, transpilers, compilers etc. weren\u0026#x27;t used at all they would probably have much more widespread use.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Highlights the tooling and ecosystem challenges around worker threads in JavaScript, which is a common pain point for developers."
+      },
+      {
+        "id": 47477622,
+        "author": "groundzeros2015",
+        "text": "- you should be using multiple node processes \n- you should be spawning tools to do heavy computation",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "A brief but accurate recommendation aligning with common Node.js concurrency patterns, though lacking detailed explanation."
+      },
+      {
+        "id": 47477017,
+        "author": "vilequeef",
+        "text": "It’s not weird that you can’t share state between totally different processes except by passing in args.\u003cp\u003eAnd you can make it thread-like if you prefer by creating a “load balancer” setup to begin with to keep them CPU bound.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    require(\u0026#x27;os\u0026#x27;).cpus().length\n\u003c/code\u003e\u003c/pre\u003e\nSpawn a process for each CPU, bind data you need, and it can feel like multithreading from your perspective.\u003cp\u003eMore here \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bennyschmidt\u0026#x2F;simple-node-multiprocess\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bennyschmidt\u0026#x2F;simple-node-multiprocess\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Explains process isolation and suggests a practical approach to mimic threading, contributing useful architectural insight."
+      },
+      {
+        "id": 47477650,
+        "author": "chrisweekly",
+        "text": "Related tangent: Platformatic\u0026#x27;s  \u0026quot;Watt\u0026quot; server^1 takes a pretty interesting approach to Node, leveraging worker threads on all available cores for maximum efficiency.\u003cp\u003e1. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;docs.platformatic.dev\u0026#x2F;docs\u0026#x2F;overview\u0026#x2F;architecture-overview\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;docs.platformatic.dev\u0026#x2F;docs\u0026#x2F;overview\u0026#x2F;architecture-ove...\u003c/a\u003e",
+        "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Mentions a relevant project that uses worker threads effectively, adding a useful reference but without deeper analysis."
+      }
+    ]
   }
 }

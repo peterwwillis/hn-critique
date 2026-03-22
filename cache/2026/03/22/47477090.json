@@ -1,0 +1,121 @@
+{
+  "story_id": 47477090,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article discusses the use of curried functions in functional programming, comparing them to parameter list and tuple styles. It argues that while currying offers elegant partial application and a pleasing theoretical structure, it has drawbacks such as performance overhead, awkward type shapes, and difficulties in composition, suggesting that tuple style functions can be a practical alternative.",
+    "mainPoints": [
+      "Curried functions are common in purely functional languages and allow partial application naturally.",
+      "Partial application can also be achieved with parameter list or tuple style functions using syntactic sugar.",
+      "Curried functions create intermediate closures which may impact performance, though optimizers can mitigate this.",
+      "Curried function types have an asymmetrical shape that complicates composition and type unification in some contexts.",
+      "Tuple style functions align better with the conceptual input-output function model and can simplify certain programming tasks.",
+      "Dependent function types in languages like Coq or Agda benefit from currying due to dependent typing on input values.",
+      "Despite its elegance, currying is not always the best choice, and tuple style functions deserve consideration, especially in language or library design."
+    ],
+    "truthfulness": "The article accurately describes the nature of curried functions, their theoretical equivalence to tuple and parameter list styles, and the practical implications of each style. The explanation of partial application and its implementation in different styles is correct. The performance considerations and type shape asymmetry are well-known issues in functional programming. The discussion of dependent types and their relationship to currying aligns with established knowledge in dependently typed languages like Coq and Agda. The article provides a balanced view without making unsupported claims, though it is primarily opinionated and reflective rather than a formal research piece.",
+    "considerations": [
+      "The article does not deeply explore the impact of modern compiler optimizations on the performance overhead of currying.",
+      "It does not address how language ecosystems and community conventions influence the preference for currying versus tuple style.",
+      "The usability and readability trade-offs for beginners versus experienced programmers are not extensively discussed.",
+      "The article does not consider multi-parameter functions in object-oriented or mixed-paradigm languages beyond brief mentions.",
+      "It does not explore how currying interacts with advanced type system features beyond dependent types, such as higher-kinded types or type classes."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers on the pros and cons of currying in programming languages, with several commenters agreeing with the article's criticism of currying's implicitness and advocating for explicit partial application or named parameters. Some express personal preferences for currying, while others highlight its drawbacks in clarity and ergonomics.",
+    "comments": [
+      {
+        "id": 47477745,
+        "author": "paldepind2",
+        "text": "I completely agree with the points in this article and have come to the same conclusion after using languages that default to unary curried functions.\u003cp\u003e\u0026gt; I\u0026#x27;d also love to hear if you know any (dis)advantages of curried functions other than the ones mentioned.\u003cp\u003eI think it fundamentally boils down to the curried style being _implicit_ partial application, whereas a syntax for partial application is _explicit_. And as if often the case, being explicit is clearer. If you see something like\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    let f = foobinade a b\n\u003c/code\u003e\u003c/pre\u003e\nin a curried language then you don\u0026#x27;t immediately know if `f` is the result of foobinading `a` and `b` or if `f` is `foobinade` partially applied to some of its arguments. Without currying you\u0026#x27;d either write\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    let f = foobinade(a, b)\n\u003c/code\u003e\u003c/pre\u003e\nor\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    let f = foobinade(a, b, $) \u0026#x2F;\u0026#x2F; (using the syntax in the blog post)\n\u003c/code\u003e\u003c/pre\u003e\nand now it\u0026#x27;s immediately explicitly clear which of the two cases we\u0026#x27;re in.\u003cp\u003eThis clarity not only helps humans, it also help compilers give better error messages. In a curried languages, if a function is mistakenly applied to too few arguments then the compiler can\u0026#x27;t always immediately detect the error. For instance, if `foobinate` takes 3 arguments, then `let f = foobinade a b` doesn\u0026#x27;t give rise to any errors, whereas a compiler can immediately detect the error in `let f = foobinade(a, b)`.\u003cp\u003eA syntax for partial application offers the same practical benefits of currying without the downsides (albeit loosing some of the theoretical simplicity).",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a clear and well-reasoned explanation of the downsides of implicit currying, emphasizing clarity and compiler error detection benefits of explicit partial application syntax."
+      },
+      {
+        "id": 47477618,
+        "author": "lukev",
+        "text": "I\u0026#x27;d got a step further and say that in business software, named parameters are preferable for all but the smallest functions.\u003cp\u003eUsing curried OR tuple arg lists requires remembering the name of an argument by its position. This saves room on the screen but is mental overhead.\u003cp\u003eThe fact is that arguments \u003ci\u003edo\u003c/i\u003e always have names anyway and you always have to know what they are.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment insightfully points out the cognitive overhead of positional arguments in curried or tuple styles and advocates for named parameters, which aligns with common best practices in software engineering."
+      },
+      {
+        "id": 47477721,
+        "author": "layer8",
+        "text": "I completely agree. Giving the first parameter of a function special treatment only makes sense in a limited subset of cases, while forcing an artificial asymmetry in the general case that I find unergonomic.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment highlights a valid ergonomic concern about currying's asymmetry, which can complicate function usage outside of specific scenarios."
+      },
+      {
+        "id": 47477649,
+        "author": "leoc",
+        "text": "Right. Currying as the default means of passing arguments in functional languages is a gimmick, a hack in the derogatory sense. It\u0026#x27;s low-level and anti-declarative.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "While somewhat emotional, the comment reflects a common critique that currying can obscure declarative intent, though it lacks detailed justification."
+      },
+      {
+        "id": 47477569,
+        "author": "Pay08",
+        "text": "I\u0026#x27;m biased here since the easy currying is by far my favourite feature in Haskell (it always bothers me that I have to explicitly create a lamba in Lisps) but the arguments in the article don\u0026#x27;t convince me, what with the synctactic overhead for the \u0026quot;tuple style\u0026quot;.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment offers a personal preference for currying and challenges the article's points, though it does not provide detailed counterarguments."
+      },
+      {
+        "id": 47477509,
+        "author": "recursivecaveat",
+        "text": "Currying was recently removed from Coalton: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;coalton-lang.github.io\u0026#x2F;20260312-coalton0p2\u0026#x2F;#fixed-arity-functions\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;coalton-lang.github.io\u0026#x2F;20260312-coalton0p2\u0026#x2F;#fixed-ar...\u003c/a\u003e",
+        "indicators": [
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment provides a factual update about a language removing currying, supporting the article's critical stance, but lacks elaboration."
+      },
+      {
+        "id": 47477792,
+        "author": "jwarden",
+        "text": "Here’s an article I wrote a while ago about a hypothetical language feature I call “folded application”, that makes parameter-list style and folded style equivalent.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;jonathanwarden.com\u0026#x2F;implicit-currying-and-folded-application\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;jonathanwarden.com\u0026#x2F;implicit-currying-and-folded-appl...\u003c/a\u003e",
+        "indicators": [
+          "constructive",
+          "intelligent"
+        ],
+        "accuracyRank": 7,
+        "analysis": "The comment shares a related resource proposing an alternative approach, adding constructive context though not directly critiquing currying."
+      },
+      {
+        "id": 47477481,
+        "author": "messe",
+        "text": "What benefit does drawing a distinction between parameter list and single-parameter tuple style bring?\u003cp\u003eI\u0026#x27;m failing to see how they\u0026#x27;re not isomorphic.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment questions the practical difference between parameter list and tuple styles, encouraging deeper examination but not addressing currying explicitly."
+      }
+    ]
+  }
+}

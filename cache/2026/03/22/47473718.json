@@ -21,45 +21,19 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the causes and nature of JavaScript bloat, with many commenters attributing it to excessive dependencies, outdated browser support, and front-end frameworks like React. Some emphasize the need for better maintenance, minimalism, and updated standards, while others highlight socio-economic factors and developer culture as contributing factors.",
+    "summary": "The discussion centers on the causes and implications of JavaScript bloat, with contributors debating the roles of tiny atomic packages, legacy browser support, and front-end frameworks like React. Many agree that outdated dependencies and excessive modularization contribute significantly, while some emphasize the need for better maintenance and tooling to reduce unnecessary code.",
     "comments": [
       {
-        "id": 47475400,
-        "author": "onion2k",
-        "text": "Fallback support is a legitimate reason for additional code being in the bundle, but it\u0026#x27;s not \u0026#x27;bloat\u0026#x27; because it\u0026#x27;s necessary. In an ideal world every website would generate ES5, ES6, and ES2025 bundles and serve the smallest one that\u0026#x27;s necessary for the app to run based on the browser capabilities, but that is genuinely quite hard to get right and the cost of getting it wrong is a broken app so it\u0026#x27;s understandable why devs don\u0026#x27;t.\u003cp\u003eThe other two, atomic architecture and ponyfills, are simply developer inexperience (or laziness). If you\u0026#x27;re not looking at the source of a package and considering if you actually need it then you\u0026#x27;re not working well enough. And if you\u0026#x27;ve added code in the past that the metrics about what browsers your visitors are using show isn\u0026#x27;t needed any more, then you\u0026#x27;re not actively maintaining and removing things when you can. That\u0026#x27;s not putting the user first, so you suck.",
+        "id": 47475305,
+        "author": "procaryote",
+        "text": "The most frustrating thing with the \u0026quot;Atomic architecture\u0026quot; bit with tiny packages is how obviously stupid it is. Any borderline sane person should look at isOdd\u0026#x2F;isEven and see that it\u0026#x27;s an awful idea\u003cp\u003eInstead they\u0026#x27;ve elevated it to a cultural pillar and think they\u0026#x27;ve come up with a great innovation. It\u0026#x27;s like talking to antivaxers",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
-          "constructive"
+          "emotional"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a nuanced view distinguishing necessary code from bloat and highlights developer responsibility, which aligns well with common expert opinions."
-      },
-      {
-        "id": 47474977,
-        "author": "grishka",
-        "text": "Yes, of course the tiny packages cause \u003ci\u003esome\u003c/i\u003e of the bloat. As mainly a Java developer being pretty paranoid about my dependency tree (I\u0026#x27;m responsible for every byte of code I ship to my users, whether I wrote it or not), I\u0026#x27;m always blown away by JS dependency trees. Why would you reach for a library for this three-line function? Just write it yourself, ffs.\u003cp\u003eBut the \u003ci\u003ereal\u003c/i\u003e cause of JS bloat is the so-called \u0026quot;front-end frameworks\u0026quot;. Especially React.\u003cp\u003eFirst of all, why would you want to abstract away the only platform your app runs on? What for? That just changes the shape of your code but it ends up doing the same thing as if you were calling browser APIs directly, just less efficiently.\u003cp\u003eSecond of all, what\u0026#x27;s this deal with mutating some model object, \u003ci\u003ediscarding the exact change that was made\u003c/i\u003e, and then making the \u0026quot;framework\u0026quot; diff the old object with the new one, call your code to render the \u0026quot;virtual DOM\u0026quot;, then diff \u003ci\u003ethat\u003c/i\u003e, and only then update the real DOM tree? This is such an utterly bonkers idea to me. Like, you could just modify your real DOM straight from your networking code, you know?\u003cp\u003eSeriously, I don\u0026#x27;t understand modern web development. Neither does this guy who spent an hour and some to try to figure out React from the first principles using much the same approach I myself apply to new technologies: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=XAGCULPO_DE\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=XAGCULPO_DE\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment insightfully critiques front-end frameworks as a major source of bloat, a widely recognized viewpoint in the web development community."
-      },
-      {
-        "id": 47475495,
-        "author": "stevoski",
-        "text": "Well-written article, manages not to sound rant-y while describing the problem well.\u003cp\u003eI feel like part of the blame for the situation is that JavaScript has always lacked a standard library which contains the \u0026quot;atomic architecture\u0026quot; style packages. (A standard library wouldn\u0026#x27;t solve everything, of course.)",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment constructively identifies the lack of a robust standard library as a contributing factor, a common critique in JS ecosystem discussions."
+        "analysis": "This comment insightfully critiques the cultural elevation of tiny utility packages, highlighting the inefficiency and unnecessary complexity they introduce."
       },
       {
         "id": 47474354,
@@ -71,45 +45,55 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "Provides a detailed and balanced analysis of the issues with atomic packages and ponyfills, suggesting practical automated solutions."
+        "accuracyRank": 2,
+        "analysis": "Provides a nuanced analysis of the ponyfill problem and suggests practical tooling improvements to automate removal of outdated dependencies."
       },
       {
-        "id": 47474565,
-        "author": "rtpg",
-        "text": "I think on the first point, we have to start calling out authors of packages  which (IMO) have built out these deptrees to their own subpackages basically entirely for the purpose of getting high download counts on their github account\u003cp\u003eLike seriously... at 50 million downloads maybe you should vendor some shit in.\u003cp\u003ePackages like this which have _7 lines of code_ should not exist! The metadata of the lockfile is bigger than the minified version of this code!\u003cp\u003eAt one point in the past like 5% of create-react-app\u0026#x27;s dep list was all from one author who had built out their own little depgraph in a library they controlled. That person also included download counts on their Github page. They have since \u0026quot;fixed\u0026quot; the main entrypoint to the rats nest though, thankfully.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.npmjs.com\u0026#x2F;package\u0026#x2F;has-symbols\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.npmjs.com\u0026#x2F;package\u0026#x2F;has-symbols\u003c/a\u003e\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.npmjs.com\u0026#x2F;package\u0026#x2F;is-string\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.npmjs.com\u0026#x2F;package\u0026#x2F;is-string\u003c/a\u003e\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;ljharb\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;ljharb\u003c/a\u003e",
+        "id": 47474977,
+        "author": "grishka",
+        "text": "Yes, of course the tiny packages cause \u003ci\u003esome\u003c/i\u003e of the bloat. As mainly a Java developer being pretty paranoid about my dependency tree (I\u0026#x27;m responsible for every byte of code I ship to my users, whether I wrote it or not), I\u0026#x27;m always blown away by JS dependency trees. Why would you reach for a library for this three-line function? Just write it yourself, ffs.\u003cp\u003eBut the \u003ci\u003ereal\u003c/i\u003e cause of JS bloat is the so-called \u0026quot;front-end frameworks\u0026quot;. Especially React.\u003cp\u003eFirst of all, why would you want to abstract away the only platform your app runs on? What for? That just changes the shape of your code but it ends up doing the same thing as if you were calling browser APIs directly, just less efficiently.\u003cp\u003eSecond of all, what\u0026#x27;s this deal with mutating some model object, \u003ci\u003ediscarding the exact change that was made\u003c/i\u003e, and then making the \u0026quot;framework\u0026quot; diff the old object with the new one, call your code to render the \u0026quot;virtual DOM\u0026quot;, then diff \u003ci\u003ethat\u003c/i\u003e, and only then update the real DOM tree? This is such an utterly bonkers idea to me. Like, you could just modify your real DOM straight from your networking code, you know?\u003cp\u003eSeriously, I don\u0026#x27;t understand modern web development. Neither does this guy who spent an hour and some to try to figure out React from the first principles using much the same approach I myself apply to new technologies: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=XAGCULPO_DE\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=XAGCULPO_DE\u003c/a\u003e",
         "indicators": [
           "thoughtful",
           "likely-true",
+          "emotional"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Offers a detailed critique of front-end frameworks as a major source of bloat and questions the architectural decisions behind them."
+      },
+      {
+        "id": 47475400,
+        "author": "onion2k",
+        "text": "Fallback support is a legitimate reason for additional code being in the bundle, but it\u0026#x27;s not \u0026#x27;bloat\u0026#x27; because it\u0026#x27;s necessary. In an ideal world every website would generate ES5, ES6, and ES2025 bundles and serve the smallest one that\u0026#x27;s necessary for the app to run based on the browser capabilities, but that is genuinely quite hard to get right and the cost of getting it wrong is a broken app so it\u0026#x27;s understandable why devs don\u0026#x27;t.\u003cp\u003eThe other two, atomic architecture and ponyfills, are simply developer inexperience (or laziness). If you\u0026#x27;re not looking at the source of a package and considering if you actually need it then you\u0026#x27;re not working well enough. And if you\u0026#x27;ve added code in the past that the metrics about what browsers your visitors are using show isn\u0026#x27;t needed any more, then you\u0026#x27;re not actively maintaining and removing things when you can. That\u0026#x27;s not putting the user first, so you suck.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
           "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Distinguishes between necessary fallback code and true bloat, emphasizing developer responsibility in maintaining and pruning dependencies."
+      },
+      {
+        "id": 47475495,
+        "author": "stevoski",
+        "text": "Well-written article, manages not to sound rant-y while describing the problem well.\u003cp\u003eI feel like part of the blame for the situation is that JavaScript has always lacked a standard library which contains the \u0026quot;atomic architecture\u0026quot; style packages. (A standard library wouldn\u0026#x27;t solve everything, of course.)",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
         ],
         "accuracyRank": 5,
-        "analysis": "Highlights a real problem of micro-packages inflated for popularity metrics, which is a documented issue in the JS ecosystem."
+        "analysis": "Acknowledges the article's balanced tone and points out the absence of a comprehensive standard library as a contributing factor to bloat."
       },
       {
-        "id": 47474070,
-        "author": "zdc1",
-        "text": "A lot of this basically reads to me like hidden tech debt: people aren\u0026#x27;t updating their compilation targets to ESx, people aren\u0026#x27;t updating their packages, package authors aren\u0026#x27;t updating their implementations, etc.\u003cp\u003eAncient browser support is a thing, but ES5 has been supported everywhere for like 13 years now (as per \u003ca href=\"https:\u0026#x2F;\u0026#x2F;caniuse.com\u0026#x2F;es5\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;caniuse.com\u0026#x2F;es5\u003c/a\u003e).",
+        "id": 47477102,
+        "author": "derodero24",
+        "text": "The polyfill treadmill is the one that gets me. I work on native Node addons so the JS layer is basically just a loader and types — no polyfills, no transpilation targets. Really puts into perspective how much of a typical npm package is compatibility layers for environments nobody actually runs anymore. josephg\u0026#x27;s right that just tracking Node\u0026#x27;s EOL schedule would kill a huge chunk of this overnight.",
         "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
+          "thoughtful",
+          "likely-true"
         ],
         "accuracyRank": 6,
-        "analysis": "Accurately points out that legacy support and lack of updates contribute to bloat, a common and verifiable issue."
-      },
-      {
-        "id": 47474608,
-        "author": "stephenr",
-        "text": "The primary cause of JS bloat is assuming you need JS or that customers want whatever you\u0026#x27;re using it to provide.\u003cp\u003eFor $client we\u0026#x27;ve taken a very minimal approach to JavaScript, particularly on customer facing pages. An upcoming feature finally replaces the last jquery (+ plugin) dependent component on the sales page,  with a custom implementation.\u003cp\u003eThat change shaved off ~100K (jquery plus a plugin removed) and for most projects now that probably seems like nothing.\u003cp\u003eThe sales page after the change is now just 160K of JS.\u003cp\u003eThe combination of not relying on JS for everything and preferring use-case-specific implementations where we do, means we aren\u0026#x27;t loading 5 libraries and using 1% of each.\u003cp\u003eI\u0026#x27;m aware that telling most js community \u0026quot;developers\u0026quot; to \u0026quot;write your own code\u0026quot; is tantamount to telling fish to \u0026quot;just breathe air\u0026quot;.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Emphasizes minimalism and use-case-specific implementations, a practical and effective approach to reducing bloat."
+        "analysis": "Highlights how legacy compatibility layers inflate package size unnecessarily, supporting the argument for dropping support for obsolete environments."
       },
       {
         "id": 47475433,
@@ -118,47 +102,10 @@
         "indicators": [
           "intelligent",
           "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Provides a technical insight into how code splitting can paradoxically cause bloat, reflecting real bundler behavior."
-      },
-      {
-        "id": 47474386,
-        "author": "auxiliarymoose",
-        "text": "I really think writing dependency-free JavaScript is the way to go nowadays. The standard library in JS\u0026#x2F;CSS is great. So are static analysis (TypeScript can check JSDoc), imports (ES modules), UI (web components), etc.\u003cp\u003ePeople keep telling me the approach I am taking won\u0026#x27;t scale or will be hard to maintain, yet my experience has been that things stay simple and easy to change in a way I haven\u0026#x27;t experienced in dependency-heavy projects.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 9,
-        "analysis": "Advocates for minimal dependencies and modern JS features, a valid and constructive perspective."
-      },
-      {
-        "id": 47476239,
-        "author": "wheattoast",
-        "text": "“Alternatively, what’d be really nice is if they upgraded“\u003cp\u003eEasy enough for y’all with techie salaries, but as one of the millions of poor folks whose paychecks barely (or don’t even) pay the bills, it’d be really nice if we didn\u0026#x27;t have to junkheap our backbreakingly expensive hardware every few years just cuz y’all are anorexically obsessed with lean code, and find complex dependancies too confusing\u0026#x2F;bothersome to maintain.",
-        "indicators": [
-          "emotional",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 10,
-        "analysis": "Raises an important socio-economic perspective on hardware upgrade cycles and developer priorities, adding depth to the discussion."
-      },
-      {
-        "id": 47475305,
-        "author": "procaryote",
-        "text": "The most frustrating thing with the \u0026quot;Atomic architecture\u0026quot; bit with tiny packages is how obviously stupid it is. Any borderline sane person should look at isOdd\u0026#x2F;isEven and see that it\u0026#x27;s an awful idea\u003cp\u003eInstead they\u0026#x27;ve elevated it to a cultural pillar and think they\u0026#x27;ve come up with a great innovation. It\u0026#x27;s like talking to antivaxers",
-        "indicators": [
-          "emotional",
-          "belligerent",
           "likely-true"
         ],
-        "accuracyRank": 11,
-        "analysis": "Expresses strong criticism of micro-packages culture but uses inflammatory language, reducing constructive value."
+        "accuracyRank": 7,
+        "analysis": "Provides a technical explanation of how code splitting and bundler optimizations can paradoxically cause bloat through module duplication."
       },
       {
         "id": 47476016,
@@ -169,8 +116,31 @@
           "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 12,
-        "analysis": "Defends the ecosystem and calls for informed discussion, promoting a balanced engineering mindset."
+        "accuracyRank": 8,
+        "analysis": "Calls for a more nuanced understanding of JavaScript's evolution and criticizes simplistic blame on developers, promoting an engineering mindset."
+      },
+      {
+        "id": 47474386,
+        "author": "auxiliarymoose",
+        "text": "I really think writing dependency-free JavaScript is the way to go nowadays. The standard library in JS\u0026#x2F;CSS is great. So are static analysis (TypeScript can check JSDoc), imports (ES modules), UI (web components), etc.\u003cp\u003ePeople keep telling me the approach I am taking won\u0026#x27;t scale or will be hard to maintain, yet my experience has been that things stay simple and easy to change in a way I haven\u0026#x27;t experienced in dependency-heavy projects.",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Advocates for minimal dependencies and leveraging modern web standards and tools to reduce bloat and maintain simplicity."
+      },
+      {
+        "id": 47476817,
+        "author": "g947o",
+        "text": "\u003ca href=\"https:\u0026#x2F;\u0026#x2F;immich.app\u0026#x2F;cursed-knowledge\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;immich.app\u0026#x2F;cursed-knowledge\u003c/a\u003e\u003cp\u003e\u0026gt; There is a user in the JavaScript community who goes around adding \u0026quot;backwards compatibility\u0026quot; to projects. They do this by adding 50 extra package dependencies to your project, which are maintained by them.\u003cp\u003e\u0026gt; \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;immich-app\u0026#x2F;immich\u0026#x2F;pull\u0026#x2F;10690\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;immich-app\u0026#x2F;immich\u0026#x2F;pull\u0026#x2F;10690\u003c/a\u003e",
+        "indicators": [
+          "likely-true",
+          "emotional"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Points out a specific example of how backward compatibility efforts can lead to excessive dependencies, illustrating one cause of bloat."
       }
     ]
   }

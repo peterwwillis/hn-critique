@@ -22,8 +22,32 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around the impressive technical achievement of running a 397B parameter model on a Mac with 48GB RAM, focusing on performance bottlenecks, hardware implications, and potential extensions to other platforms. Participants express both enthusiasm and caution regarding practical usability and hardware wear.",
+    "summary": "The discussion centers on the feasibility and performance of running large language models like Qwen 3.5 397B on consumer hardware, particularly Macs with limited RAM. Commenters debate the trade-offs in quantization, model quality, speed, and hardware limitations such as SSD wear and memory bottlenecks.",
     "comments": [
+      {
+        "id": 47477552,
+        "author": "tarruda",
+        "text": "Note that this is not the only way to run Qwen 3.5 397B on consumer devices, there are excellent ~2.5 BPW quants available that make it viable for 128G devices.\u003cp\u003eI\u0026#x27;ve had great success (~20 t\u0026#x2F;s) running it on a M1 Ultra with room for 256k context. Here are some lm-evaluation-harness results I ran against it:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    mmlu: 87.86%\n\n    gpqa diamond: 82.32%\n\n    gsm8k: 86.43%\n\n    ifeval: 75.90%\n\u003c/code\u003e\u003c/pre\u003e\nMore details of my experience:\u003cp\u003e- \u003ca href=\"https:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discussions\u0026#x2F;8\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discu...\u003c/a\u003e\u003cp\u003e- \u003ca href=\"https:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discussions\u0026#x2F;2\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discu...\u003c/a\u003e\u003cp\u003e- \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;simonw\u0026#x2F;67c754bbc0bc609a6caedee16fef89e8?permalink_comment_id=5991165#gistcomment-5991165\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;simonw\u0026#x2F;67c754bbc0bc609a6caedee16fef8...\u003c/a\u003e\u003cp\u003eOverall an excellent model to have for offline inference.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides concrete performance metrics and references to additional resources, indicating a well-informed perspective on alternative quantization methods and practical experience."
+      },
+      {
+        "id": 47477630,
+        "author": "Aurornis",
+        "text": "Reading the details, he is using 2-bit quantization and reduced the number of experts per token from 10 down to 4 to get 5 tokens\u0026#x2F;sec. Cool proof of concept but it’s far from the quality and performance of the 397B model as normally used. Dropping the number of experts is particularly misleading.\u003cp\u003eThis is some interesting work, but applying such extreme measures to LLMs to get them to run severely degrades quality. I know he claims negligible quality loss, but in my experience 2-bit quantizations are completely useless for real work. You can get them to respond to prompts, but they lose their intelligence and will go around in circles.\u003cp\u003eHe also shows 5-6 tokens per second. Again that’s impressive for a large model on limited hardware but it’s very slow. Between the severely degraded model abilities and the extremely slow output the 397B result should be considered an attempt at proving something can technically run, not evidence that it can run well and produce output you’d expect from a 397B model.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment critically evaluates the trade-offs in model quality and speed due to aggressive quantization and expert reduction, aligning with known limitations of such techniques."
+      },
       {
         "id": 47476725,
         "author": "rvz",
@@ -33,20 +57,30 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a balanced and realistic assessment of the current limitations, highlighting performance and hardware longevity concerns which are valid given SSD wear from sustained heavy usage."
+        "accuracyRank": 3,
+        "analysis": "Raises valid concerns about practical usage, including throughput limitations and hardware wear, which are important considerations for long-term deployment."
       },
       {
         "id": 47476802,
         "author": "JSR_FDED",
         "text": "This is a very impressive result. If I understand correctly the bottleneck is the SSD in this architecture - the author seems to get almost 15GB\u0026#x2F;s - but I seem to remember the max b\u0026#x2F;w was about 8GB\u0026#x2F;s. What am I missing?",
         "indicators": [
-          "intelligent",
           "thoughtful",
-          "likely-true"
+          "intelligent"
         ],
-        "accuracyRank": 2,
-        "analysis": "The comment raises a technical question about bandwidth discrepancies, showing understanding of the system's bottlenecks and prompting clarification, which is relevant and accurate."
+        "accuracyRank": 4,
+        "analysis": "This comment questions the reported SSD bandwidth, indicating engagement with technical details though it lacks a definitive conclusion."
+      },
+      {
+        "id": 47477005,
+        "author": "zozbot234",
+        "text": "The github page mentions that a naïve mmap approach is bottlenecked by per-page overhead. Can this be mitigated by setting up explicit \u0026quot;huge\u0026quot; pages? (2M using the CONT PTE feature if the \u0026quot;native\u0026quot; page size is 16k; 32M using a PMD level block mapping; or 1G using the CONT PMD feature.) Does macOS support this out of the box?  Alternatively, one might use a simple mmap and then something like posix_fadvise to set up prefetching of the data.",
+        "indicators": [
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Poses a technically relevant question about memory management optimizations that could improve performance, showing understanding of system-level details."
       },
       {
         "id": 47476848,
@@ -54,32 +88,51 @@
         "text": "Very impressive! I wonder if there is a similar path for Linux using system memory instead of SSD? Hell, maybe even a case for the return of some kind of ROMs of weights?",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment constructively explores alternative implementations and hardware approaches, showing curiosity about extending the technique beyond the current Mac/SSD setup."
+        "accuracyRank": 6,
+        "analysis": "Explores alternative hardware approaches and future possibilities, contributing constructively to the discussion."
+      },
+      {
+        "id": 47477260,
+        "author": "spwa4",
+        "text": "Does this mean that it should be possible to load up a system with ~10 (seems to me at least the number of active experts) SSDs to get 40 tok\u0026#x2F;s even on truly gigantic models?",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Raises a practical question about scaling throughput with multiple SSDs, relevant but speculative without further data."
       },
       {
         "id": 47476883,
         "author": "pdyc",
         "text": "impressive, i wish someone takes a stab at using this technique on mobile gpu\u0026#x27;s even if it does not use storage it would still be a win. I am running llama.cpp on adreno 830 with oepncl and i am getting pathetic 2-3t\u0026#x2F;s for output tokens",
         "indicators": [
-          "thoughtful",
-          "likely-true"
+          "thoughtful"
         ],
-        "accuracyRank": 4,
-        "analysis": "The comment adds value by suggesting exploration on mobile GPUs and sharing personal performance experience, which is relevant and plausible."
+        "accuracyRank": 8,
+        "analysis": "Expresses interest in extending the technique to mobile GPUs, showing forward-looking thinking but no technical detail."
       },
       {
-        "id": 47476718,
-        "author": "harshhhhhhhhh",
-        "text": "seems promising , this is the way , can someone benchmark this",
+        "id": 47477659,
+        "author": "maxloh",
+        "text": "Can you add a license to the report? Legally we couldn\u0026#x27;t run any code without a license attached to it.",
         "indicators": [
-          "emotional",
           "constructive"
         ],
-        "accuracyRank": 5,
-        "analysis": "While brief and somewhat vague, the comment expresses optimism and calls for benchmarking, contributing positively but lacking technical depth."
+        "accuracyRank": 9,
+        "analysis": "A practical legal concern about licensing, important for usability but unrelated to technical accuracy."
+      },
+      {
+        "id": 47477741,
+        "author": "m-hodges",
+        "text": "As frontier models get closer and closer to consumer hardware, what’s the most for the API-driven $trillion labs?",
+        "indicators": [
+          "useless",
+          "emotional"
+        ],
+        "accuracyRank": 10,
+        "analysis": "A vague and speculative comment with little substantive content or technical insight."
       },
       {
         "id": 47476717,
@@ -88,8 +141,40 @@
         "indicators": [
           "useless"
         ],
-        "accuracyRank": 6,
-        "analysis": "This comment only provides a link to an external discussion without adding original insight or analysis, making it less useful in this context."
+        "accuracyRank": 11,
+        "analysis": "Provides a link without additional commentary or analysis, adding minimal value to the discussion."
+      },
+      {
+        "id": 47476917,
+        "author": "vilequeef",
+        "text": "Why so much RAM?",
+        "indicators": [
+          "useless",
+          "emotional"
+        ],
+        "accuracyRank": 12,
+        "analysis": "A short question lacking context or elaboration, contributing little to the technical discussion."
+      },
+      {
+        "id": 47477139,
+        "author": "lostmsu",
+        "text": "How large is the KV cache?",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 13,
+        "analysis": "A brief question without further detail or follow-up, limiting its usefulness."
+      },
+      {
+        "id": 47476718,
+        "author": "harshhhhhhhhh",
+        "text": "seems promising , this is the way , can someone benchmark this",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 14,
+        "analysis": "Expresses enthusiasm but lacks technical depth or constructive input."
       }
     ]
   }

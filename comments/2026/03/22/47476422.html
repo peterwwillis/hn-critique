@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">45 points</span>
+        <span class="score">127 points</span>
         by <a href="https://news.ycombinator.com/user?id=mft_" class="hnuser">mft_</a>
-        <span class="age">1 hour ago</span>
+        <span class="age">3 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/22/47476422.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47476422" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around the impressive technical achievement of running a 397B parameter model on a Mac with 48GB RAM, focusing on performance bottlenecks, hardware implications, and potential extensions to other platforms. Participants express both enthusiasm and caution regarding practical usability and hardware wear.</p>
+      <p>The discussion centers on the feasibility and performance of running large language models like Qwen 3.5 397B on consumer hardware, particularly Macs with limited RAM. Commenters debate the trade-offs in quantization, model quality, speed, and hardware limitations such as SSD wear and memory bottlenecks.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,68 +56,164 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=rvz" class="hnuser">rvz</a>
+        <a href="https://news.ycombinator.com/user?id=tarruda" class="hnuser">tarruda</a>
         &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Note that this is not the only way to run Qwen 3.5 397B on consumer devices, there are excellent ~2.5 BPW quants available that make it viable for 128G devices.<p>I&#x27;ve had great success (~20 t&#x2F;s) running it on a M1 Ultra with room for 256k context. Here are some lm-evaluation-harness results I ran against it:<p><pre><code>    mmlu: 87.86%
+
+    gpqa diamond: 82.32%
+
+    gsm8k: 86.43%
+
+    ifeval: 75.90%
+</code></pre>
+More details of my experience:<p>- <a href="https:&#x2F;&#x2F;huggingface.co&#x2F;ubergarm&#x2F;Qwen3.5-397B-A17B-GGUF&#x2F;discussions&#x2F;8" rel="nofollow">https:&#x2F;&#x2F;huggingface.co&#x2F;ubergarm&#x2F;Qwen3.5-397B-A17B-GGUF&#x2F;discu...</a><p>- <a href="https:&#x2F;&#x2F;huggingface.co&#x2F;ubergarm&#x2F;Qwen3.5-397B-A17B-GGUF&#x2F;discussions&#x2F;2" rel="nofollow">https:&#x2F;&#x2F;huggingface.co&#x2F;ubergarm&#x2F;Qwen3.5-397B-A17B-GGUF&#x2F;discu...</a><p>- <a href="https:&#x2F;&#x2F;gist.github.com&#x2F;simonw&#x2F;67c754bbc0bc609a6caedee16fef89e8?permalink_comment_id=5991165#gistcomment-5991165" rel="nofollow">https:&#x2F;&#x2F;gist.github.com&#x2F;simonw&#x2F;67c754bbc0bc609a6caedee16fef8...</a><p>Overall an excellent model to have for offline inference.</div>
+      <div class="comment-analysis"><em>This comment provides concrete performance metrics and references to additional resources, indicating a well-informed perspective on alternative quantization methods and practical experience.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Aurornis" class="hnuser">Aurornis</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Reading the details, he is using 2-bit quantization and reduced the number of experts per token from 10 down to 4 to get 5 tokens&#x2F;sec. Cool proof of concept but it’s far from the quality and performance of the 397B model as normally used. Dropping the number of experts is particularly misleading.<p>This is some interesting work, but applying such extreme measures to LLMs to get them to run severely degrades quality. I know he claims negligible quality loss, but in my experience 2-bit quantizations are completely useless for real work. You can get them to respond to prompts, but they lose their intelligence and will go around in circles.<p>He also shows 5-6 tokens per second. Again that’s impressive for a large model on limited hardware but it’s very slow. Between the severely degraded model abilities and the extremely slow output the 397B result should be considered an attempt at proving something can technically run, not evidence that it can run well and produce output you’d expect from a 397B model.</div>
+      <div class="comment-analysis"><em>This comment critically evaluates the trade-offs in model quality and speed due to aggressive quantization and expert reduction, aligning with known limitations of such techniques.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=rvz" class="hnuser">rvz</a>
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The technical write up is great, but Mac users should not get too excited just yet on running 300B+ parameter models locally as the TPS isn&#x27;t that good.<p>&gt;...at 4.4+ tokens&#x2F;second<p>That is even when it is using 4-bit quantization and it is still at that speed.<p>&gt; The entire 209GB model streams from SSD through a custom Metal compute pipeline.<p>This is my main problem.<p>If I were to run this on a Mac SSD, 24&#x2F;7 for heavy usage such as Openclaw, that is going to significantly reduce the lifetime of the SSD.<p>Can&#x27;t imagine using this in the long term right now, but improvements will follow. Still a great write up anyways.</div>
-      <div class="comment-analysis"><em>This comment provides a balanced and realistic assessment of the current limitations, highlighting performance and hardware longevity concerns which are valid given SSD wear from sustained heavy usage.</em></div>
+      <div class="comment-analysis"><em>Raises valid concerns about practical usage, including throughput limitations and hardware wear, which are important considerations for long-term deployment.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=JSR_FDED" class="hnuser">JSR_FDED</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
       </div>
       <div class="comment-text">This is a very impressive result. If I understand correctly the bottleneck is the SSD in this architecture - the author seems to get almost 15GB&#x2F;s - but I seem to remember the max b&#x2F;w was about 8GB&#x2F;s. What am I missing?</div>
-      <div class="comment-analysis"><em>The comment raises a technical question about bandwidth discrepancies, showing understanding of the system&#39;s bottlenecks and prompting clarification, which is relevant and accurate.</em></div>
+      <div class="comment-analysis"><em>This comment questions the reported SSD bandwidth, indicating engagement with technical details though it lacks a definitive conclusion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=zozbot234" class="hnuser">zozbot234</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">The github page mentions that a naïve mmap approach is bottlenecked by per-page overhead. Can this be mitigated by setting up explicit &quot;huge&quot; pages? (2M using the CONT PTE feature if the &quot;native&quot; page size is 16k; 32M using a PMD level block mapping; or 1G using the CONT PMD feature.) Does macOS support this out of the box?  Alternatively, one might use a simple mmap and then something like posix_fadvise to set up prefetching of the data.</div>
+      <div class="comment-analysis"><em>Poses a technically relevant question about memory management optimizations that could improve performance, showing understanding of system-level details.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=bertili" class="hnuser">bertili</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Very impressive! I wonder if there is a similar path for Linux using system memory instead of SSD? Hell, maybe even a case for the return of some kind of ROMs of weights?</div>
-      <div class="comment-analysis"><em>This comment constructively explores alternative implementations and hardware approaches, showing curiosity about extending the technique beyond the current Mac/SSD setup.</em></div>
+      <div class="comment-analysis"><em>Explores alternative hardware approaches and future possibilities, contributing constructively to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=spwa4" class="hnuser">spwa4</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Does this mean that it should be possible to load up a system with ~10 (seems to me at least the number of active experts) SSDs to get 40 tok&#x2F;s even on truly gigantic models?</div>
+      <div class="comment-analysis"><em>Raises a practical question about scaling throughput with multiple SSDs, relevant but speculative without further data.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=pdyc" class="hnuser">pdyc</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">impressive, i wish someone takes a stab at using this technique on mobile gpu&#x27;s even if it does not use storage it would still be a win. I am running llama.cpp on adreno 830 with oepncl and i am getting pathetic 2-3t&#x2F;s for output tokens</div>
-      <div class="comment-analysis"><em>The comment adds value by suggesting exploration on mobile GPUs and sharing personal performance experience, which is relevant and plausible.</em></div>
+      <div class="comment-analysis"><em>Expresses interest in extending the technique to mobile GPUs, showing forward-looking thinking but no technical detail.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=harshhhhhhhhh" class="hnuser">harshhhhhhhhh</a>
-        &nbsp;|&nbsp;rank #5
+        <a href="https://news.ycombinator.com/user?id=maxloh" class="hnuser">maxloh</a>
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
+        <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">seems promising , this is the way , can someone benchmark this</div>
-      <div class="comment-analysis"><em>While brief and somewhat vague, the comment expresses optimism and calls for benchmarking, contributing positively but lacking technical depth.</em></div>
+      <div class="comment-text">Can you add a license to the report? Legally we couldn&#x27;t run any code without a license attached to it.</div>
+      <div class="comment-analysis"><em>A practical legal concern about licensing, important for usability but unrelated to technical accuracy.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=m-hodges" class="hnuser">m-hodges</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> <span class="indicator">emotional</span> 
+      </div>
+      <div class="comment-text">As frontier models get closer and closer to consumer hardware, what’s the most for the API-driven $trillion labs?</div>
+      <div class="comment-analysis"><em>A vague and speculative comment with little substantive content or technical insight.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=homarp" class="hnuser">homarp</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #11
         &nbsp;|&nbsp;
         <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">&#x2F;r&#x2F;localllama discussion: <a href="https:&#x2F;&#x2F;old.reddit.com&#x2F;r&#x2F;LocalLLaMA&#x2F;comments&#x2F;1rxmmu5&#x2F;running_qwen35_397b_on_m3_macbook_pro_with_48gb&#x2F;" rel="nofollow">https:&#x2F;&#x2F;old.reddit.com&#x2F;r&#x2F;LocalLLaMA&#x2F;comments&#x2F;1rxmmu5&#x2F;running...</a></div>
-      <div class="comment-analysis"><em>This comment only provides a link to an external discussion without adding original insight or analysis, making it less useful in this context.</em></div>
+      <div class="comment-analysis"><em>Provides a link without additional commentary or analysis, adding minimal value to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=vilequeef" class="hnuser">vilequeef</a>
+        &nbsp;|&nbsp;rank #12
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> <span class="indicator">emotional</span> 
+      </div>
+      <div class="comment-text">Why so much RAM?</div>
+      <div class="comment-analysis"><em>A short question lacking context or elaboration, contributing little to the technical discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=lostmsu" class="hnuser">lostmsu</a>
+        &nbsp;|&nbsp;rank #13
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">How large is the KV cache?</div>
+      <div class="comment-analysis"><em>A brief question without further detail or follow-up, limiting its usefulness.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=harshhhhhhhhh" class="hnuser">harshhhhhhhhh</a>
+        &nbsp;|&nbsp;rank #14
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">seems promising , this is the way , can someone benchmark this</div>
+      <div class="comment-analysis"><em>Expresses enthusiasm but lacks technical depth or constructive input.</em></div>
     </div>
     
 
@@ -129,7 +225,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-22 12:51 UTC &nbsp;|&nbsp;
+    Generated 2026-03-22 14:33 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
