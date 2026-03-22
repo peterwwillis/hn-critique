@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Critique: Linking Smaller Haskell Binaries | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://brandon.si/code/linking-smaller-haskell-binaries/" rel="noreferrer noopener">Linking Smaller Haskell Binaries</a>
+        <span class="sitebit"> (brandon.si)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">5 points</span>
+        by <a href="https://news.ycombinator.com/user?id=PaulHoule" class="hnuser">PaulHoule</a>
+        <span class="age">3 days ago</span>
+        &nbsp;|&nbsp;<a href="../../../../comments/2026/03/18/47432789.html">1&nbsp;comments critique</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47432789" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+    <div class="critique-content">
+
+      <section class="critique-section">
+        <h3>Summary</h3>
+        <p>The article discusses techniques to reduce the size of Haskell binaries, which can be quite large due to many transitive dependencies. It explores using linker options like -split-sections, --gc-sections, and identical code folding (ICF) with the lld linker to significantly reduce binary size, using the pandoc binary as a test case.</p>
+      </section>
+
+      <section class="critique-section">
+        <h3>Main Points &amp; Arguments</h3>
+        <ul>
+          <li>Haskell binaries can be very large, often around 100MB or more.</li><li>Using GHC options like -split-sections and linker options like --gc-sections can reduce binary size by removing dead code.</li><li>The lld linker supports identical code folding (ICF), which merges functionally equivalent sections to further reduce binary size.</li><li>Applying these techniques to the pandoc binary reduced its size from 113MB to 64MB.</li><li>ICF works well because Haskell binaries often contain many duplicated code sections due to inlining and specialization.</li><li>Debugging with these optimizations can be complicated because some debug info sections may be folded or removed.</li><li>The author experimented with tools like bloaty and kcov for binary analysis but found them incompatible with Haskell binaries.</li>
+        </ul>
+      </section>
+
+      <section class="critique-section">
+        <h3>Truthfulness Assessment</h3>
+        <div class="rating-badge rating-reliable">
+          Reliable
+        </div>
+        <p>The claims in the article are consistent with known practices in Haskell and general compilation/linking optimization. The use of -split-sections and --gc-sections to remove dead code is a standard technique supported by GHC and modern linkers. Identical code folding (ICF) is a documented feature of linkers like lld and gold, and its effectiveness in reducing binary size is well established. The reported size reductions and the challenges with debugging symbols align with practical experience from other sources. The mention of tool incompatibilities with Haskell binaries is plausible given the complexity of Haskell&#39;s runtime and binary format. Overall, the article provides accurate and practical information based on real experiments.</p>
+      </section>
+
+      
+      <section class="critique-section">
+        <h3>Additional Considerations</h3>
+        <ul>
+          <li>The article focuses on the pandoc binary and GHC 9.2.5; results may vary with other projects or GHC versions.</li><li>The impact of these optimizations on runtime performance and debugging experience is not deeply explored.</li><li>The article does not discuss potential trade-offs, such as increased link time or complexity in build configuration.</li><li>Compatibility of these linker options with different platforms or build environments is not addressed.</li><li>The experimental nature of some techniques (like ICF with lld) suggests caution before applying them in production builds.</li>
+        </ul>
+      </section>
+      
+
+    </div>
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-22 08:38 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>

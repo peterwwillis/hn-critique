@@ -1,0 +1,41 @@
+{
+  "story_id": 47432789,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article discusses techniques to reduce the size of Haskell binaries, which can be quite large due to many transitive dependencies. It explores using linker options like -split-sections, --gc-sections, and identical code folding (ICF) with the lld linker to significantly reduce binary size, using the pandoc binary as a test case.",
+    "mainPoints": [
+      "Haskell binaries can be very large, often around 100MB or more.",
+      "Using GHC options like -split-sections and linker options like --gc-sections can reduce binary size by removing dead code.",
+      "The lld linker supports identical code folding (ICF), which merges functionally equivalent sections to further reduce binary size.",
+      "Applying these techniques to the pandoc binary reduced its size from 113MB to 64MB.",
+      "ICF works well because Haskell binaries often contain many duplicated code sections due to inlining and specialization.",
+      "Debugging with these optimizations can be complicated because some debug info sections may be folded or removed.",
+      "The author experimented with tools like bloaty and kcov for binary analysis but found them incompatible with Haskell binaries."
+    ],
+    "truthfulness": "The claims in the article are consistent with known practices in Haskell and general compilation/linking optimization. The use of -split-sections and --gc-sections to remove dead code is a standard technique supported by GHC and modern linkers. Identical code folding (ICF) is a documented feature of linkers like lld and gold, and its effectiveness in reducing binary size is well established. The reported size reductions and the challenges with debugging symbols align with practical experience from other sources. The mention of tool incompatibilities with Haskell binaries is plausible given the complexity of Haskell's runtime and binary format. Overall, the article provides accurate and practical information based on real experiments.",
+    "considerations": [
+      "The article focuses on the pandoc binary and GHC 9.2.5; results may vary with other projects or GHC versions.",
+      "The impact of these optimizations on runtime performance and debugging experience is not deeply explored.",
+      "The article does not discuss potential trade-offs, such as increased link time or complexity in build configuration.",
+      "Compatibility of these linker options with different platforms or build environments is not addressed.",
+      "The experimental nature of some techniques (like ICF with lld) suggests caution before applying them in production builds."
+    ],
+    "rating": "reliable"
+  },
+  "comments_critique": {
+    "summary": "The discussion focuses on the size reduction of Haskell binaries, with one user sharing their experience of achieving a 64MB binary size and comparing it to the size of the pandoc binary on their system.",
+    "comments": [
+      {
+        "id": 47436512,
+        "author": "internet_points",
+        "text": "\u0026gt; This gets the binary down to 64M for me (a further -23%).\u003cp\u003ewhile on my system, \u0026#x2F;usr\u0026#x2F;bin\u0026#x2F;pandoc takes 199M; not bad.",
+        "indicators": [
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 1,
+        "analysis": "The comment provides a personal data point on binary size reduction and compares it with a known binary size, which is plausible and relevant to the discussion."
+      }
+    ]
+  }
+}

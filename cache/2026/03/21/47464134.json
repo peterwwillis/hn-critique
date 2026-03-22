@@ -21,7 +21,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on Ubuntu 26.04's change to show sudo password input feedback, ending the long-standing silent input tradition. Commenters debate the UX improvements, security implications, and alternative approaches to password feedback.",
+    "summary": "The discussion centers on Ubuntu 26.04's change to show sudo password input feedback, ending decades of silent password entry. Commenters debate the UX improvements versus security trade-offs, with many supporting the change as a positive modernization while others raise concerns about revealing password length and potential vulnerabilities.",
     "comments": [
       {
         "id": 47464890,
@@ -33,31 +33,19 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately highlights the UX improvement and minimal security risk, reflecting a balanced and informed perspective."
+        "analysis": "This comment accurately highlights the UX confusion around silent password input and reasonably argues that the security risk is minimal, reflecting a balanced and informed perspective."
       },
       {
         "id": 47469909,
         "author": "JoshTriplett",
         "text": "I\u0026#x27;m glad to see this change. This was already the case for GUI password prompts, and I\u0026#x27;m happy to see terminals following suit.\u003cp\u003eThis wasn\u0026#x27;t someone seeing Chesterton\u0026#x27;s fence and deciding to knock it down thoughtlessly. This is a change that someone can in fact think all the way through and say \u0026quot;yeah, this should be changed, it\u0026#x27;s an improvement and doesn\u0026#x27;t cause any meaningful reduction in security\u0026quot;.",
         "indicators": [
-          "intelligent",
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Provides a reasoned endorsement of the change, noting consistency with GUI behavior and dismissing security concerns effectively."
-      },
-      {
-        "id": 47471212,
-        "author": "dietr1ch",
-        "text": "I like the idea of showing keystrokes, but I think that a 1:1 entry has arguably better alternatives.\u003cp\u003eThe default entry on xsecurelock[^0] shows a character jumping on a line between keystrokes, which works well on giving key press feedback while visibly obfuscating password length,\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    ________|_______________________    \u0026#x2F;\u0026#x2F; after pressing a key it\u0026#x27;d move around,\n    ___________________|____________\n\n\n\u003c/code\u003e\u003c/pre\u003e\nAlso, for anyone looking into preserving this last resort obfuscation behaviour you can do it with,\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    # \u0026#x2F;etc\u0026#x2F;sudoers\n    Defaults !pwfeedback\n\n\u003c/code\u003e\u003c/pre\u003e\nOn NixOS (using sudo-rs),\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    security.sudo-rs.extraConfig = \u0026#x27;\u0026#x27;\n      # NixOS extraConfig\n      # ===========\n      Defaults !pwfeedback\n    \u0026#x27;\u0026#x27;;\n\n\u003c/code\u003e\u003c/pre\u003e\nI\u0026#x27;ve got to say, if you were able to see me typing, you can probably record me doing so, bug my USB keyboard, or buy a $10 wrench. I guess for people streaming it might be worth it? I don\u0026#x27;t think it\u0026#x27;s a big enough deal to warrant the fuss around this change though, it\u0026#x27;s just an ok UX improvement that could be slightly better at retaining the sense of security.\u003cp\u003e[^0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;google\u0026#x2F;xsecurelock#options\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;google\u0026#x2F;xsecurelock#options\u003c/a\u003e",
-        "indicators": [
-          "thoughtful",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 3,
-        "analysis": "Offers nuanced suggestions for improving password input feedback while maintaining security, showing technical understanding."
+        "analysis": "The comment provides a well-reasoned endorsement of the change, noting consistency with GUI behavior and emphasizing that the security impact is negligible."
       },
       {
         "id": 47468924,
@@ -65,21 +53,102 @@
         "text": "They could have just made it an option to enable the new behavior. There was no need to change the default.\u003cp\u003eAs for security: \u0026#x27;shoulder surfing\u0026#x27; may not be \u003ci\u003eas much\u003c/i\u003e of a concern, but watching a livestream or presentation of someone who uses sudo will now expose the password length over the internet (and it\u0026#x27;s recorded for posterity, so all the hackers can find it later!). They\u0026#x27;ve just introduced a new vulnerability to the remote world.",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Raises a valid security concern about revealing password length during livestreams or recordings, suggesting a more cautious rollout approach."
+      },
+      {
+        "id": 47471212,
+        "author": "dietr1ch",
+        "text": "I like the idea of showing keystrokes, but I think that a 1:1 entry has arguably better alternatives.\u003cp\u003eThe default entry on xsecurelock[^0] shows a character jumping on a line between keystrokes, which works well on giving key press feedback while visibly obfuscating password length,\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    ________|_______________________    \u0026#x2F;\u0026#x2F; after pressing a key it\u0026#x27;d move around,\n    ___________________|____________\n\n\n\u003c/code\u003e\u003c/pre\u003e\nAlso, for anyone looking into preserving this last resort obfuscation behaviour you can do it with,\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    # \u0026#x2F;etc\u0026#x2F;sudoers\n    Defaults !pwfeedback\n\n\u003c/code\u003e\u003c/pre\u003e\nOn NixOS (using sudo-rs),\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    security.sudo-rs.extraConfig = \u0026#x27;\u0026#x27;\n      # NixOS extraConfig\n      # ===========\n      Defaults !pwfeedback\n    \u0026#x27;\u0026#x27;;\n\n\u003c/code\u003e\u003c/pre\u003e\nI\u0026#x27;ve got to say, if you were able to see me typing, you can probably record me doing so, bug my USB keyboard, or buy a $10 wrench. I guess for people streaming it might be worth it? I don\u0026#x27;t think it\u0026#x27;s a big enough deal to warrant the fuss around this change though, it\u0026#x27;s just an ok UX improvement that could be slightly better at retaining the sense of security.\u003cp\u003e[^0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;google\u0026#x2F;xsecurelock#options\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;google\u0026#x2F;xsecurelock#options\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Raises valid concerns about exposing password length during livestreams, highlighting a potential new vulnerability."
+        "analysis": "Provides a nuanced UX critique and suggests alternative feedback mechanisms that balance usability and security, showing depth of understanding."
+      },
+      {
+        "id": 47465972,
+        "author": "jiehong",
+        "text": "This fixes another issue with that if you make a typo in your password, you don\u0026#x27;t know how many characters you need to delete, but now you would.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Correctly identifies a practical usability problem that this change addresses, improving user experience during password entry."
+      },
+      {
+        "id": 47469381,
+        "author": "pvillano",
+        "text": "How much information is there in knowing the length of someone\u0026#x27;s password?\u003cp\u003eIf we know the password\u0026#x27;s length, it saves us from guessing any shorter passwords. For example, for a numeric password, knowing the length is 4 saves us from having to guess [blank], 0-9, 00-99 and 000-999. This lowers the number of possibilities from 1111 to 1000. The password has 90% of it\u0026#x27;s original strength. A [0-9a-zA-Z] password retains 98% of it\u0026#x27;s original strength",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Provides a clear and accurate explanation of the limited security impact of revealing password length, quantifying the effect on password strength."
+      },
+      {
+        "id": 47474064,
+        "author": "emmelaich",
+        "text": "This is a good change.\u003cp\u003eTo reduce the length exposure, the software could randomly show multiple asterisks per key-stroke.  I think Lotus Notes did this.  Of course, this may lead to people suspecting keybounce.\u003cp\u003eI\u0026#x27;ve successfully shoulder-surfed someone to discover their password (in response to a sudo prompt) by watching their hands and fingers.  So if the person is close enough, having echoed stars or not makes no difference.\nIt was long password too, but contained two whole lowercase words.",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Offers a constructive suggestion to mitigate length exposure while acknowledging practical limitations of shoulder surfing."
       },
       {
         "id": 47464755,
         "author": "Tepix",
         "text": "Why not just display a single character out of a changing set of characters such as\n    \u0026#x2F; - \\ | \n(starting with a random one from the set) after every character entered?\nThat way you can be certain whether or not you entered a character but and observer can‘t tell how many characters your password has.",
         "indicators": [
-          "constructive",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Suggests a clever UX solution to provide input feedback without revealing password length, showing creative problem-solving."
+      },
+      {
+        "id": 47464872,
+        "author": "timhh",
+        "text": "I did this!\u003cp\u003eI didn\u0026#x27;t actually know that Mint had enabled this by default. That would have been a useful counterpoint to the naysayers.\u003cp\u003eIf you want the original behaviour you don\u0026#x27;t actually need to change the configuration - they added a patch afterwards so you can press tab and it will hide the password just for that time.\u003cp\u003e\u0026gt; The catalyst for Ubuntu’s change is sudo-rs\u003cp\u003eActually it was me getting sufficiently pissed off at the 2 second delay for invalid passwords in sudo (actually PAM\u0026#x27;s fault). There\u0026#x27;s no reason for it (if you think there is look up unix_chkpwd). I tried to fix it but the PAM people have this strange idea that people \u003ci\u003elike\u003c/i\u003e the delay. So I gave up on that and thought I may as well try fixing this other UX facepalm too. I doubt it would have happened with the original sudo (and they said as much) so it did require sudo-rs to exist.\u003cp\u003eI think this is one of the benefits of rewriting coreutils and so on in Rust - people are way more open to fixing long-standing issues. You don\u0026#x27;t get the whole \u0026quot;why are you overturning 46 years of tradition??\u0026quot; nonsense.\u003cp\u003eIf anyone wants to rewrite PAM in Rust... :-D\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;linux-pam\u0026#x2F;linux-pam\u0026#x2F;issues\u0026#x2F;778\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;linux-pam\u0026#x2F;linux-pam\u0026#x2F;issues\u0026#x2F;778\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
           "thoughtful"
         ],
-        "accuracyRank": 5,
-        "analysis": "Proposes a clever alternative to reveal input activity without revealing password length, balancing usability and security."
+        "accuracyRank": 9,
+        "analysis": "Provides insider context on the development and rationale behind the change, highlighting the role of Rust rewriting in enabling improvements."
+      },
+      {
+        "id": 47472208,
+        "author": "caditinpiscinam",
+        "text": "It surprises me how many applications don\u0026#x27;t give you the option to see your password in plain text as you enter it. The messaging around password security is that we should be making them complex and unique, but then password UIs make that as difficult to do as possible. Is visual password stealing really a bigger issue than weak passwords \u0026#x2F; password reuse?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Raises a broader usability critique about password input design, questioning the balance between security and user convenience."
+      },
+      {
+        "id": 47473357,
+        "author": "linsomniac",
+        "text": "Normalize asking people to turn their back if you are entering a password and they are watching your screen, for some reason.\u003cp\u003eThe other side of that coin: If you see a password prompt on someone\u0026#x27;s screen, turn your back.",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 11,
+        "analysis": "Offers a simple social practice to mitigate shoulder surfing risks, emphasizing user behavior alongside technical solutions."
       },
       {
         "id": 47472006,
@@ -89,43 +158,8 @@
           "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 6,
-        "analysis": "Correctly points out the misleading nature of the article's claim about Ubuntu ending 46 years of silent sudo passwords."
-      },
-      {
-        "id": 47473131,
-        "author": "eapressoandcats",
-        "text": "One thing to note is that pretty much every other password field shows length, and the fact that sudo is so much more paranoid reminds me of this XKCD: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;xkcd.com\u0026#x2F;1200\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;xkcd.com\u0026#x2F;1200\u0026#x2F;\u003c/a\u003e\u003cp\u003eSeriously, what does sudo even protect anymore, and when are you typing it with someone looking over your shoulder?\u003cp\u003eIf you have a Linux or Mac desktop, the login password prompt has the same design choice regarding showing characters and is much more likely to actually be used in front of someone. In modern Linux development, you shouldn’t be using sudo most of the time, and on ssh machines, you shouldn’t have a sudo password.\u003cp\u003eAnd even if someone did see it then they’d have to get physical access to your machine. If someone has easy physical access to your machine and wishes you harm, then knowing the length of your desktop login is probably the least of your worries.",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Provides context on password input norms and questions the practical security impact of sudo's previous behavior."
-      },
-      {
-        "id": 47467482,
-        "author": "b0ringdeveloper",
-        "text": "Someone should make a joke version that replaces the ***s with comedic passwords or ridiculously bad ones: When you\u0026#x27;re typing your real password, \u0026quot;iloveyouiloveyou\u0026quot;, \u0026quot;12345612345\u0026quot;, or \u0026quot;hunter42hunter..\u0026quot; gets printed to the screen.",
-        "indicators": [
-          "emotional",
-          "trolling",
-          "useless"
-        ],
-        "accuracyRank": 8,
-        "analysis": "A humorous but unconstructive comment that does not add meaningful insight to the discussion."
-      },
-      {
-        "id": 47472208,
-        "author": "caditinpiscinam",
-        "text": "It surprises me how many applications don\u0026#x27;t give you the option to see your password in plain text as you enter it. The messaging around password security is that we should be making them complex and unique, but then password UIs make that as difficult to do as possible. Is visual password stealing really a bigger issue than weak passwords \u0026#x2F; password reuse?",
-        "indicators": [
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 9,
-        "analysis": "Raises a valid UX concern about password input design and the balance between security and usability."
+        "accuracyRank": 12,
+        "analysis": "Correctly points out the misleading nature of the article's headline, clarifying historical context about sudo password behavior."
       },
       {
         "id": 47465595,
@@ -133,10 +167,77 @@
         "text": "This was actually the thing that derailed my first attempt at Linux. I was like 14 or 15 and didn’t understand that concept so couldn’t log in lol",
         "indicators": [
           "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 13,
+        "analysis": "Shares a personal anecdote illustrating the usability challenge of silent password input for new users, supporting the change's rationale."
+      },
+      {
+        "id": 47474849,
+        "author": "smallstepforman",
+        "text": "I’m so frustrated that the default for password fields is “hidden”. The number of times I had someone observing me type a password is \u0026lt; 0.001% of password entries. There is a post it note on most peoples monitors with visible passwords anyway.\u003cp\u003eReverse the logic and make a “sudo_h” script which hides the password entry for those rare times you need it.",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 14,
+        "analysis": "Expresses frustration with traditional password hiding defaults and suggests reversing the logic, reflecting a user-centric viewpoint."
+      },
+      {
+        "id": 47470621,
+        "author": "wpm",
+        "text": "So, the article says that sudo hid the password by default because of shared terminals and so on.\u003cp\u003eI would\u0026#x27;ve thought it would\u0026#x27;ve been a simple carry over from before terminals were glass. Like, yeah, I get up from a glass terminal and someone else goes to use it, but wouldn\u0026#x27;t the scrollback be cleared when I log out? But silent logins from before glass terminals makes a ton of sense; it would literally print your typed characters on a real, physical medium. having\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    login: cool_user\n    password: hunter2\n\u003c/code\u003e\u003c/pre\u003e\nsitting on a printout in a trash can? Yeah, obvious security issue.\u003cp\u003eI dunno, I take them at their word but if you had asked me why password prompts in the terminal don\u0026#x27;t echo, I would\u0026#x27;ve guessed it was a carry-over from the days of real teletype terminals.",
+        "indicators": [
+          "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 10,
-        "analysis": "Personal anecdote illustrating the confusion caused by silent password input, supporting the rationale for the change."
+        "accuracyRank": 15,
+        "analysis": "Provides historical context explaining why silent password input was originally implemented, adding depth to the discussion."
+      },
+      {
+        "id": 47465497,
+        "author": "prmoustache",
+        "text": "How many people with a loud mechanical keyboard shut their microphone to type a password whem sharing their screen in an audio\u0026#x2F;video call?",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 16,
+        "analysis": "Highlights an overlooked security vector related to audio leaks during password entry, broadening the conversation about password security."
+      },
+      {
+        "id": 47465084,
+        "author": "Elhana",
+        "text": "Deoxodizing is rather easy for now:\u003cp\u003eapt install sudo-ws\u003cp\u003eapt remove coreutils-from-uutils --allow-remove-essential",
+        "indicators": [
+          "likely-untrue",
+          "useless"
+        ],
+        "accuracyRank": 17,
+        "analysis": "This comment appears off-topic or unclear in relevance and lacks context, reducing its usefulness and credibility."
+      },
+      {
+        "id": 47465871,
+        "author": "indubioprorubik",
+        "text": "The paranoids have had a say in way to many things, way to loud, way to long.",
+        "indicators": [
+          "emotional",
+          "belligerent",
+          "useless"
+        ],
+        "accuracyRank": 18,
+        "analysis": "Dismissive and emotional without substantive argument, this comment adds little value to the discussion."
+      },
+      {
+        "id": 47469019,
+        "author": "GuB-42",
+        "text": "Inacceptable! This incident will be reported.",
+        "indicators": [
+          "emotional",
+          "belligerent",
+          "useless"
+        ],
+        "accuracyRank": 19,
+        "analysis": "An emotional outburst lacking constructive content or reasoning, contributing no meaningful insight."
       }
     ]
   }

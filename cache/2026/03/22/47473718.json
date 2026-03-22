@@ -21,19 +21,19 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the causes of JavaScript bloat, with commenters debating the roles of tiny atomic packages, front-end frameworks like React, legacy browser support, and developer practices. Some emphasize the overuse of dependencies and advocate for minimal or dependency-free JavaScript, while others note systemic issues like outdated compilation targets and the incentives behind package publishing.",
+    "summary": "The discussion revolves around the causes of JavaScript bloat, focusing on issues like tiny atomic packages, legacy browser support, front-end frameworks, and dependency management. Commenters debate the impact of developer practices, tooling, and cultural factors on bloat, with some advocating for minimal dependencies and others pointing to systemic issues in the ecosystem.",
     "comments": [
       {
-        "id": 47474977,
-        "author": "grishka",
-        "text": "Yes, of course the tiny packages cause \u003ci\u003esome\u003c/i\u003e of the bloat. As mainly a Java developer being pretty paranoid about my dependency tree (I\u0026#x27;m responsible for every byte of code I ship to my users, whether I wrote it or not), I\u0026#x27;m always blown away by JS dependency trees. Why would you reach for a library for this three-line function? Just write it yourself, ffs.\u003cp\u003eBut the \u003ci\u003ereal\u003c/i\u003e cause of JS bloat is the so-called \u0026quot;front-end frameworks\u0026quot;. Especially React.\u003cp\u003eFirst of all, why would you want to abstract away the only platform your app runs on? What for? That just changes the shape of your code but it ends up doing the same thing as if you were calling browser APIs directly, just less efficiently.\u003cp\u003eSecond of all, what\u0026#x27;s this deal with mutating some model object, \u003ci\u003ediscarding the exact change that was made\u003c/i\u003e, and then making the \u0026quot;framework\u0026quot; diff the old object with the new one, call your code to render the \u0026quot;virtual DOM\u0026quot;, then diff \u003ci\u003ethat\u003c/i\u003e, and only then update the real DOM tree? This is such an utterly bonkers idea to me. Like, you could just modify your real DOM straight from your networking code, you know?\u003cp\u003eSeriously, I don\u0026#x27;t understand modern web development. Neither does this guy who spent an hour and some to try to figure out React from the first principles using much the same approach I myself apply to new technologies: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=XAGCULPO_DE\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=XAGCULPO_DE\u003c/a\u003e",
+        "id": 47475400,
+        "author": "onion2k",
+        "text": "Fallback support is a legitimate reason for additional code being in the bundle, but it\u0026#x27;s not \u0026#x27;bloat\u0026#x27; because it\u0026#x27;s necessary. In an ideal world every website would generate ES5, ES6, and ES2025 bundles and serve the smallest one that\u0026#x27;s necessary for the app to run based on the browser capabilities, but that is genuinely quite hard to get right and the cost of getting it wrong is a broken app so it\u0026#x27;s understandable why devs don\u0026#x27;t.\u003cp\u003eThe other two, atomic architecture and ponyfills, are simply developer inexperience (or laziness). If you\u0026#x27;re not looking at the source of a package and considering if you actually need it then you\u0026#x27;re not working well enough. And if you\u0026#x27;ve added code in the past that the metrics about what browsers your visitors are using show isn\u0026#x27;t needed any more, then you\u0026#x27;re not actively maintaining and removing things when you can. That\u0026#x27;s not putting the user first, so you suck.",
         "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment insightfully highlights how frameworks like React contribute significantly to bloat through architectural choices, a widely acknowledged issue in the community."
+        "analysis": "This comment accurately distinguishes between necessary polyfills and unnecessary bloat caused by poor maintenance or overuse of tiny packages, providing a balanced and practical viewpoint."
       },
       {
         "id": 47474354,
@@ -46,19 +46,19 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment provides a nuanced view of the ecosystem dynamics and incentives that lead to dependency bloat, offering practical suggestions for automated tooling."
+        "analysis": "This comment insightfully explains the philosophical origins of atomic packages and how npm's ease of publishing led to unintended widespread bloat, suggesting automated tooling as a potential solution."
       },
       {
-        "id": 47474608,
-        "author": "stephenr",
-        "text": "The primary cause of JS bloat is assuming you need JS or that customers want whatever you\u0026#x27;re using it to provide.\u003cp\u003eFor $client we\u0026#x27;ve taken a very minimal approach to JavaScript, particularly on customer facing pages. An upcoming feature finally replaces the last jquery (+ plugin) dependent component on the sales page,  with a custom implementation.\u003cp\u003eThat change shaved off ~100K (jquery plus a plugin removed) and for most projects now that probably seems like nothing.\u003cp\u003eThe sales page after the change is now just 160K of JS.\u003cp\u003eThe combination of not relying on JS for everything and preferring use-case-specific implementations where we do, means we aren\u0026#x27;t loading 5 libraries and using 1% of each.\u003cp\u003eI\u0026#x27;m aware that telling most js community \u0026quot;developers\u0026quot; to \u0026quot;write your own code\u0026quot; is tantamount to telling fish to \u0026quot;just breathe air\u0026quot;.",
+        "id": 47474977,
+        "author": "grishka",
+        "text": "Yes, of course the tiny packages cause \u003ci\u003esome\u003c/i\u003e of the bloat. As mainly a Java developer being pretty paranoid about my dependency tree (I\u0026#x27;m responsible for every byte of code I ship to my users, whether I wrote it or not), I\u0026#x27;m always blown away by JS dependency trees. Why would you reach for a library for this three-line function? Just write it yourself, ffs.\u003cp\u003eBut the \u003ci\u003ereal\u003c/i\u003e cause of JS bloat is the so-called \u0026quot;front-end frameworks\u0026quot;. Especially React.\u003cp\u003eFirst of all, why would you want to abstract away the only platform your app runs on? What for? That just changes the shape of your code but it ends up doing the same thing as if you were calling browser APIs directly, just less efficiently.\u003cp\u003eSecond of all, what\u0026#x27;s this deal with mutating some model object, \u003ci\u003ediscarding the exact change that was made\u003c/i\u003e, and then making the \u0026quot;framework\u0026quot; diff the old object with the new one, call your code to render the \u0026quot;virtual DOM\u0026quot;, then diff \u003ci\u003ethat\u003c/i\u003e, and only then update the real DOM tree? This is such an utterly bonkers idea to me. Like, you could just modify your real DOM straight from your networking code, you know?\u003cp\u003eSeriously, I don\u0026#x27;t understand modern web development. Neither does this guy who spent an hour and some to try to figure out React from the first principles using much the same approach I myself apply to new technologies: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=XAGCULPO_DE\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=XAGCULPO_DE\u003c/a\u003e",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "emotional",
+          "likely-true"
         ],
         "accuracyRank": 3,
-        "analysis": "This real-world example supports the argument that careful dependency management and minimalism can effectively reduce bloat."
+        "analysis": "The critique of front-end frameworks like React highlights a significant source of bloat due to abstraction overhead, though the emotional tone slightly weakens the objectivity."
       },
       {
         "id": 47474565,
@@ -70,19 +70,30 @@
           "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "The comment raises valid concerns about package proliferation and metadata overhead, though it is somewhat emotional and anecdotal."
+        "analysis": "This comment correctly identifies the incentive problem where authors create many tiny packages to inflate download stats, contributing to bloat, and calls for community accountability."
+      },
+      {
+        "id": 47475495,
+        "author": "stevoski",
+        "text": "Well-written article, manages not to sound rant-y while describing the problem well.\u003cp\u003eI feel like part of the blame for the situation is that JavaScript has always lacked a standard library which contains the \u0026quot;atomic architecture\u0026quot; style packages. (A standard library wouldn\u0026#x27;t solve everything, of course.)",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment provides a constructive observation that the absence of a comprehensive standard library in JS contributes to reliance on many small packages, which can cause bloat."
       },
       {
         "id": 47474070,
         "author": "zdc1",
         "text": "A lot of this basically reads to me like hidden tech debt: people aren\u0026#x27;t updating their compilation targets to ESx, people aren\u0026#x27;t updating their packages, package authors aren\u0026#x27;t updating their implementations, etc.\u003cp\u003eAncient browser support is a thing, but ES5 has been supported everywhere for like 13 years now (as per \u003ca href=\"https:\u0026#x2F;\u0026#x2F;caniuse.com\u0026#x2F;es5\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;caniuse.com\u0026#x2F;es5\u003c/a\u003e).",
         "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
+          "thoughtful",
+          "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "This comment correctly identifies legacy support and outdated tooling as contributors to bloat, a recognized issue in the ecosystem."
+        "accuracyRank": 6,
+        "analysis": "This comment correctly points out that outdated tooling and targets contribute to unnecessary bloat, framing it as technical debt rather than inherent ecosystem flaws."
       },
       {
         "id": 47474386,
@@ -93,31 +104,20 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "Advocating for dependency-free code aligns with best practices for reducing bloat and improving code simplicity."
+        "accuracyRank": 7,
+        "analysis": "This comment advocates for minimal dependencies and reliance on native features, which is a practical approach to reducing bloat, supported by personal experience."
       },
       {
-        "id": 47474373,
-        "author": "andai",
-        "text": "Great article, but I think these are all marginal.\u003cp\u003eThe main cause of bloat is not polyfills or atomic packages. The cause of bloat is bloat!\u003cp\u003eI love this quote by Antoine de Saint-Exupéry (author of the Little Prince):\u003cp\u003e\u003ci\u003e\u0026quot;Perfection is achieved, not when there is nothing left to add, but nothing to take away.\u0026quot;\u003c/i\u003e\u003cp\u003eMost software is not written like that. It\u0026#x27;s not asking \u0026quot;how can we make this more elegant?\u0026quot; It\u0026#x27;s asking \u0026quot;what\u0026#x27;s the easiest way to add more stuff?\u0026quot;\u003cp\u003eThe answer is `npm i more-stuff`.",
+        "id": 47475077,
+        "author": "casey2",
+        "text": "There is a clear and widespread cultural problem with javascript. Sites should think seriously hard about server side rendering, both for user privacy (can\u0026#x27;t port the site to i2p if you drop 5MB every time they load a page) and freedom. Even this antibloat site smacks you with ~100KB and links to one that smacks you with ~200KB. At this rate if you follow 20 links you\u0026#x27;ll hit a site with 104 GB of JS.",
         "indicators": [
           "thoughtful",
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "While somewhat philosophical, this comment captures the general tendency in software development to accumulate unnecessary complexity."
-      },
-      {
-        "id": 47474532,
-        "author": "il-b",
-        "text": "The elephants in the room are react and webpack.",
-        "indicators": [
-          "emotional",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 8,
-        "analysis": "This brief comment correctly points out major contributors to bloat but lacks elaboration."
+        "analysis": "This comment expands the discussion to cultural and privacy concerns, suggesting server-side rendering as a way to mitigate bloat and improve user experience."
       },
       {
         "id": 47474530,
@@ -128,18 +128,19 @@
           "likely-true"
         ],
         "accuracyRank": 9,
-        "analysis": "This comment distinguishes between JS language bloat and ecosystem/tooling bloat, a useful perspective though somewhat simplified."
+        "analysis": "This comment distinguishes between JavaScript and Node.js ecosystem bloat, suggesting that avoiding Node.js dependencies can reduce bloat in some cases."
       },
       {
-        "id": 47474033,
-        "author": "burntoutgray",
-        "text": "I have a single pillar, admittedly for in-house PWAs: \u003ci\u003eUpgrade to the current version of Chrome\u003c/i\u003e then if your problem persists, we\u0026#x27;ll look into it.",
+        "id": 47475433,
+        "author": "wonnage",
+        "text": "An underappreciated source of bloat is module duplication stemming from code splitting. SPAs have a bad rep because you don\u0026#x27;t expect to download an entire app just to load one page on the web. You can solve this by code splitting. But if you just naively split your app by route, you\u0026#x27;ll end up with duplicate copies of every shared module.\u003cp\u003eBundlers handle this by automatically creating bundles for shared modules. But if you optimize to avoid all shared modules, you end up with hundreds of tiny files. So most bundlers enforce a minimum size limit. That\u0026#x27;s probably fine for a small app. But one or more of these things happens:\u003cp\u003e1. Over time everybody at the company tends to join one giant SPA because it\u0026#x27;s the easiest way to add a new page.\n2. Code splitting works so well you decide to go ham and code split all of the things - modals, below-the-fold content, tracking scripts, etc.\u003cp\u003eNow you\u0026#x27;ll run into situations where 20 different unrelated bundles happen to share a single module, but that module is too small for the bundler to split out, and so you end up downloading it N times.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "This practical approach highlights how modern browser support can reduce the need for polyfills and legacy code."
+        "analysis": "This comment provides a nuanced technical insight into how code splitting and bundler heuristics can inadvertently cause bloat through module duplication."
       }
     ]
   }

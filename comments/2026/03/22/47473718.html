@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Comments Critique: The Three Pillars of JavaScript Bloat | HN Critique</title>
+  <title>Comments Critique: The three pillars of JavaScript bloat | HN Critique</title>
   <link rel="stylesheet" href="../../../../style.css"/>
 </head>
 <body>
@@ -30,14 +30,14 @@
     <div class="story-header">
       <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
       
-      <h2><a href="https://43081j.com/2026/03/three-pillars-of-javascript-bloat" rel="noreferrer noopener">The Three Pillars of JavaScript Bloat</a>
+      <h2><a href="https://43081j.com/2026/03/three-pillars-of-javascript-bloat" rel="noreferrer noopener">The three pillars of JavaScript bloat</a>
         <span class="sitebit"> (43081j.com)</span>
       </h2>
       
       <p class="meta">
-        <span class="score">136 points</span>
+        <span class="score">200 points</span>
         by <a href="https://news.ycombinator.com/user?id=onlyspaceghost" class="hnuser">onlyspaceghost</a>
-        <span class="age">5 hours ago</span>
+        <span class="age">7 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/22/47473718.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47473718" rel="noopener">original on HN</a>
       </p>
@@ -47,24 +47,24 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the causes of JavaScript bloat, with commenters debating the roles of tiny atomic packages, front-end frameworks like React, legacy browser support, and developer practices. Some emphasize the overuse of dependencies and advocate for minimal or dependency-free JavaScript, while others note systemic issues like outdated compilation targets and the incentives behind package publishing.</p>
+      <p>The discussion revolves around the causes of JavaScript bloat, focusing on issues like tiny atomic packages, legacy browser support, front-end frameworks, and dependency management. Commenters debate the impact of developer practices, tooling, and cultural factors on bloat, with some advocating for minimal dependencies and others pointing to systemic issues in the ecosystem.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 17 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47473718" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 25 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47473718" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=grishka" class="hnuser">grishka</a>
+        <a href="https://news.ycombinator.com/user?id=onion2k" class="hnuser">onion2k</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Yes, of course the tiny packages cause <i>some</i> of the bloat. As mainly a Java developer being pretty paranoid about my dependency tree (I&#x27;m responsible for every byte of code I ship to my users, whether I wrote it or not), I&#x27;m always blown away by JS dependency trees. Why would you reach for a library for this three-line function? Just write it yourself, ffs.<p>But the <i>real</i> cause of JS bloat is the so-called &quot;front-end frameworks&quot;. Especially React.<p>First of all, why would you want to abstract away the only platform your app runs on? What for? That just changes the shape of your code but it ends up doing the same thing as if you were calling browser APIs directly, just less efficiently.<p>Second of all, what&#x27;s this deal with mutating some model object, <i>discarding the exact change that was made</i>, and then making the &quot;framework&quot; diff the old object with the new one, call your code to render the &quot;virtual DOM&quot;, then diff <i>that</i>, and only then update the real DOM tree? This is such an utterly bonkers idea to me. Like, you could just modify your real DOM straight from your networking code, you know?<p>Seriously, I don&#x27;t understand modern web development. Neither does this guy who spent an hour and some to try to figure out React from the first principles using much the same approach I myself apply to new technologies: <a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=XAGCULPO_DE" rel="nofollow">https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=XAGCULPO_DE</a></div>
-      <div class="comment-analysis"><em>This comment insightfully highlights how frameworks like React contribute significantly to bloat through architectural choices, a widely acknowledged issue in the community.</em></div>
+      <div class="comment-text">Fallback support is a legitimate reason for additional code being in the bundle, but it&#x27;s not &#x27;bloat&#x27; because it&#x27;s necessary. In an ideal world every website would generate ES5, ES6, and ES2025 bundles and serve the smallest one that&#x27;s necessary for the app to run based on the browser capabilities, but that is genuinely quite hard to get right and the cost of getting it wrong is a broken app so it&#x27;s understandable why devs don&#x27;t.<p>The other two, atomic architecture and ponyfills, are simply developer inexperience (or laziness). If you&#x27;re not looking at the source of a package and considering if you actually need it then you&#x27;re not working well enough. And if you&#x27;ve added code in the past that the metrics about what browsers your visitors are using show isn&#x27;t needed any more, then you&#x27;re not actively maintaining and removing things when you can. That&#x27;s not putting the user first, so you suck.</div>
+      <div class="comment-analysis"><em>This comment accurately distinguishes between necessary polyfills and unnecessary bloat caused by poor maintenance or overuse of tiny packages, providing a balanced and practical viewpoint.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -77,18 +77,18 @@
       <div class="comment-text">The cross-realm argument for packages like is-string is the one I find hardest to dismiss, but even there the math doesn&#x27;t add up. The number of projects actually passing values across realms is tiny, and those projects should be the ones pulling in cross-realm-safe utilities, not every downstream consumer of every package that ever considered it.
 The deeper problem with Pillar 2 is that atomic packages made sense as a philosophical argument but broke down the moment npm made it trivially easy to publish. The incentive was &quot;publish everything, let consumers pick what they need&quot; but the reality is consumers never audit their trees,they just install and forget. So the cost that was supposed to be opt-in became opt-out by default.
 The ponyfill problem feels most tractable to me. A simple automated check &quot;does every LTS version of Node support this natively?&quot; could catch most of these. The e18e CLI is a good start but it still requires someone to run it intentionally. I wonder if something like a Renovate-style bot that opens PRs to remove outdated ponyfills would move the needle faster than waiting for maintainers to notice.</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced view of the ecosystem dynamics and incentives that lead to dependency bloat, offering practical suggestions for automated tooling.</em></div>
+      <div class="comment-analysis"><em>This comment insightfully explains the philosophical origins of atomic packages and how npm&#39;s ease of publishing led to unintended widespread bloat, suggesting automated tooling as a potential solution.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=stephenr" class="hnuser">stephenr</a>
+        <a href="https://news.ycombinator.com/user?id=grishka" class="hnuser">grishka</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">The primary cause of JS bloat is assuming you need JS or that customers want whatever you&#x27;re using it to provide.<p>For $client we&#x27;ve taken a very minimal approach to JavaScript, particularly on customer facing pages. An upcoming feature finally replaces the last jquery (+ plugin) dependent component on the sales page,  with a custom implementation.<p>That change shaved off ~100K (jquery plus a plugin removed) and for most projects now that probably seems like nothing.<p>The sales page after the change is now just 160K of JS.<p>The combination of not relying on JS for everything and preferring use-case-specific implementations where we do, means we aren&#x27;t loading 5 libraries and using 1% of each.<p>I&#x27;m aware that telling most js community &quot;developers&quot; to &quot;write your own code&quot; is tantamount to telling fish to &quot;just breathe air&quot;.</div>
-      <div class="comment-analysis"><em>This real-world example supports the argument that careful dependency management and minimalism can effectively reduce bloat.</em></div>
+      <div class="comment-text">Yes, of course the tiny packages cause <i>some</i> of the bloat. As mainly a Java developer being pretty paranoid about my dependency tree (I&#x27;m responsible for every byte of code I ship to my users, whether I wrote it or not), I&#x27;m always blown away by JS dependency trees. Why would you reach for a library for this three-line function? Just write it yourself, ffs.<p>But the <i>real</i> cause of JS bloat is the so-called &quot;front-end frameworks&quot;. Especially React.<p>First of all, why would you want to abstract away the only platform your app runs on? What for? That just changes the shape of your code but it ends up doing the same thing as if you were calling browser APIs directly, just less efficiently.<p>Second of all, what&#x27;s this deal with mutating some model object, <i>discarding the exact change that was made</i>, and then making the &quot;framework&quot; diff the old object with the new one, call your code to render the &quot;virtual DOM&quot;, then diff <i>that</i>, and only then update the real DOM tree? This is such an utterly bonkers idea to me. Like, you could just modify your real DOM straight from your networking code, you know?<p>Seriously, I don&#x27;t understand modern web development. Neither does this guy who spent an hour and some to try to figure out React from the first principles using much the same approach I myself apply to new technologies: <a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=XAGCULPO_DE" rel="nofollow">https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=XAGCULPO_DE</a></div>
+      <div class="comment-analysis"><em>The critique of front-end frameworks like React highlights a significant source of bloat due to abstraction overhead, though the emotional tone slightly weakens the objectivity.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
@@ -99,51 +99,51 @@ The ponyfill problem feels most tractable to me. A simple automated check &quot;
         <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I think on the first point, we have to start calling out authors of packages  which (IMO) have built out these deptrees to their own subpackages basically entirely for the purpose of getting high download counts on their github account<p>Like seriously... at 50 million downloads maybe you should vendor some shit in.<p>Packages like this which have _7 lines of code_ should not exist! The metadata of the lockfile is bigger than the minified version of this code!<p>At one point in the past like 5% of create-react-app&#x27;s dep list was all from one author who had built out their own little depgraph in a library they controlled. That person also included download counts on their Github page. They have since &quot;fixed&quot; the main entrypoint to the rats nest though, thankfully.<p><a href="https:&#x2F;&#x2F;www.npmjs.com&#x2F;package&#x2F;has-symbols" rel="nofollow">https:&#x2F;&#x2F;www.npmjs.com&#x2F;package&#x2F;has-symbols</a><p><a href="https:&#x2F;&#x2F;www.npmjs.com&#x2F;package&#x2F;is-string" rel="nofollow">https:&#x2F;&#x2F;www.npmjs.com&#x2F;package&#x2F;is-string</a><p><a href="https:&#x2F;&#x2F;github.com&#x2F;ljharb" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;ljharb</a></div>
-      <div class="comment-analysis"><em>The comment raises valid concerns about package proliferation and metadata overhead, though it is somewhat emotional and anecdotal.</em></div>
+      <div class="comment-analysis"><em>This comment correctly identifies the incentive problem where authors create many tiny packages to inflate download stats, contributing to bloat, and calls for community accountability.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=stevoski" class="hnuser">stevoski</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Well-written article, manages not to sound rant-y while describing the problem well.<p>I feel like part of the blame for the situation is that JavaScript has always lacked a standard library which contains the &quot;atomic architecture&quot; style packages. (A standard library wouldn&#x27;t solve everything, of course.)</div>
+      <div class="comment-analysis"><em>This comment provides a constructive observation that the absence of a comprehensive standard library in JS contributes to reliance on many small packages, which can cause bloat.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=zdc1" class="hnuser">zdc1</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">A lot of this basically reads to me like hidden tech debt: people aren&#x27;t updating their compilation targets to ESx, people aren&#x27;t updating their packages, package authors aren&#x27;t updating their implementations, etc.<p>Ancient browser support is a thing, but ES5 has been supported everywhere for like 13 years now (as per <a href="https:&#x2F;&#x2F;caniuse.com&#x2F;es5" rel="nofollow">https:&#x2F;&#x2F;caniuse.com&#x2F;es5</a>).</div>
-      <div class="comment-analysis"><em>This comment correctly identifies legacy support and outdated tooling as contributors to bloat, a recognized issue in the ecosystem.</em></div>
+      <div class="comment-analysis"><em>This comment correctly points out that outdated tooling and targets contribute to unnecessary bloat, framing it as technical debt rather than inherent ecosystem flaws.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=auxiliarymoose" class="hnuser">auxiliarymoose</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I really think writing dependency-free JavaScript is the way to go nowadays. The standard library in JS&#x2F;CSS is great. So are static analysis (TypeScript can check JSDoc), imports (ES modules), UI (web components), etc.<p>People keep telling me the approach I am taking won&#x27;t scale or will be hard to maintain, yet my experience has been that things stay simple and easy to change in a way I haven&#x27;t experienced in dependency-heavy projects.</div>
-      <div class="comment-analysis"><em>Advocating for dependency-free code aligns with best practices for reducing bloat and improving code simplicity.</em></div>
+      <div class="comment-analysis"><em>This comment advocates for minimal dependencies and reliance on native features, which is a practical approach to reducing bloat, supported by personal experience.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=andai" class="hnuser">andai</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Great article, but I think these are all marginal.<p>The main cause of bloat is not polyfills or atomic packages. The cause of bloat is bloat!<p>I love this quote by Antoine de Saint-Exupéry (author of the Little Prince):<p><i>&quot;Perfection is achieved, not when there is nothing left to add, but nothing to take away.&quot;</i><p>Most software is not written like that. It&#x27;s not asking &quot;how can we make this more elegant?&quot; It&#x27;s asking &quot;what&#x27;s the easiest way to add more stuff?&quot;<p>The answer is `npm i more-stuff`.</div>
-      <div class="comment-analysis"><em>While somewhat philosophical, this comment captures the general tendency in software development to accumulate unnecessary complexity.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=il-b" class="hnuser">il-b</a>
+        <a href="https://news.ycombinator.com/user?id=casey2" class="hnuser">casey2</a>
         &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">The elephants in the room are react and webpack.</div>
-      <div class="comment-analysis"><em>This brief comment correctly points out major contributors to bloat but lacks elaboration.</em></div>
+      <div class="comment-text">There is a clear and widespread cultural problem with javascript. Sites should think seriously hard about server side rendering, both for user privacy (can&#x27;t port the site to i2p if you drop 5MB every time they load a page) and freedom. Even this antibloat site smacks you with ~100KB and links to one that smacks you with ~200KB. At this rate if you follow 20 links you&#x27;ll hit a site with 104 GB of JS.</div>
+      <div class="comment-analysis"><em>This comment expands the discussion to cultural and privacy concerns, suggesting server-side rendering as a way to mitigate bloat and improve user experience.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -154,18 +154,19 @@ The ponyfill problem feels most tractable to me. A simple automated check &quot;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">More like a nodejs bloat rather than JS bloat.<p>For personal objects I always prompt the AI to write JS directly, never introduce nodejs stack unless absolutely have to.<p>Turns out you don&#x27;t always need Nodejs&#x2F;Reactto make a functional SPA.</div>
-      <div class="comment-analysis"><em>This comment distinguishes between JS language bloat and ecosystem/tooling bloat, a useful perspective though somewhat simplified.</em></div>
+      <div class="comment-analysis"><em>This comment distinguishes between JavaScript and Node.js ecosystem bloat, suggesting that avoiding Node.js dependencies can reduce bloat in some cases.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=burntoutgray" class="hnuser">burntoutgray</a>
+        <a href="https://news.ycombinator.com/user?id=wonnage" class="hnuser">wonnage</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">I have a single pillar, admittedly for in-house PWAs: <i>Upgrade to the current version of Chrome</i> then if your problem persists, we&#x27;ll look into it.</div>
-      <div class="comment-analysis"><em>This practical approach highlights how modern browser support can reduce the need for polyfills and legacy code.</em></div>
+      <div class="comment-text">An underappreciated source of bloat is module duplication stemming from code splitting. SPAs have a bad rep because you don&#x27;t expect to download an entire app just to load one page on the web. You can solve this by code splitting. But if you just naively split your app by route, you&#x27;ll end up with duplicate copies of every shared module.<p>Bundlers handle this by automatically creating bundles for shared modules. But if you optimize to avoid all shared modules, you end up with hundreds of tiny files. So most bundlers enforce a minimum size limit. That&#x27;s probably fine for a small app. But one or more of these things happens:<p>1. Over time everybody at the company tends to join one giant SPA because it&#x27;s the easiest way to add a new page.
+2. Code splitting works so well you decide to go ham and code split all of the things - modals, below-the-fold content, tracking scripts, etc.<p>Now you&#x27;ll run into situations where 20 different unrelated bundles happen to share a single module, but that module is too small for the bundler to split out, and so you end up downloading it N times.</div>
+      <div class="comment-analysis"><em>This comment provides a nuanced technical insight into how code splitting and bundler heuristics can inadvertently cause bloat through module duplication.</em></div>
     </div>
     
 
@@ -177,7 +178,7 @@ The ponyfill problem feels most tractable to me. A simple automated check &quot;
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-22 06:54 UTC &nbsp;|&nbsp;
+    Generated 2026-03-22 08:38 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
