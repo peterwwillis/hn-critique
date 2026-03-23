@@ -23,18 +23,43 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the technical aspects of how Ctrl-C cancels queries in Postgres, with insights into network features and security considerations. Participants debate the underlying mechanisms and potential vulnerabilities.",
+    "summary": "The discussion focuses on the hacky nature of CTRL-C query cancellation in Postgres, highlighting legacy design trade-offs between backward compatibility and security. Commenters explore technical details of the protocol, potential improvements, and the practical impact of these issues in real-world deployments.",
     "comments": [
+      {
+        "id": 47488525,
+        "author": "i18nagentai",
+        "text": "What strikes me most about this is how it illustrates the tension between backward compatibility and security in long-lived systems. The cancel key approach made total sense in the context of early Unix networking assumptions, but those assumptions have quietly eroded over decades. The fact that the cancel token is only 32 bits of entropy and sent in cleartext means it was never really designed for adversarial environments -- it was a convenience feature that became load-bearing infrastructure. I wonder if the Postgres community will eventually move toward a multiplexed protocol layer (similar to what HTTP\u0026#x2F;2 did for HTTP) rather than trying to bolt security onto the existing out-of-band mechanism.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a nuanced understanding of the historical context and security implications, accurately identifying the root cause of the hacky design."
+      },
       {
         "id": 47486773,
         "author": "rlpb",
         "text": "TCP has an \u0026quot;urgent data\u0026quot; feature that might have been used for this kind of thing, used for Ctrl-C in telnet, etc. It can be used to bypass any pending send buffer and received by the server ahead of any unread data.",
         "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment correctly points out a relevant TCP feature that could have been leveraged, adding valuable technical context to the discussion."
+      },
+      {
+        "id": 47487952,
+        "author": "ZiiS",
+        "text": "A good write up explaining how assumptions of network and security design have changed so much over the years. Also you have to give credit nowadays for not overly sensationalizing \u0026#x27;heebie-jeebies level 6\u0026#x27;. I certainly continue reusing a connection I assumed was TLS after a cancel so was vulnerable to a DoS; but equally if the next statement was canceled I would switch to a new connection no harm no foul.",
+        "indicators": [
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a technically accurate explanation of TCP's urgent data feature and its possible relevance to query cancellation mechanisms."
+        "accuracyRank": 3,
+        "analysis": "The comment reflects practical experience and acknowledges the evolving security assumptions, contributing a real-world perspective."
       },
       {
         "id": 47486473,
@@ -44,18 +69,31 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment offers a reasonable perspective on security priorities, implying that network exposure is a more critical concern than the specific cancellation method."
+        "accuracyRank": 4,
+        "analysis": "This comment pragmatically highlights that in many cases, the security issue is overshadowed by larger network exposure risks, providing useful context."
+      },
+      {
+        "id": 47488713,
+        "author": "gpderetta",
+        "text": "TLS is not async signal safe. But having a dedicated thread whose responsibility is to only send cancel tokens via a TLS connection and is woken up by a posix semaphore seems a small, self contained change that doesn\u0026#x27;t require any major refactoring.",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment offers a technically plausible solution to the problem, showing understanding of TLS limitations and proposing a manageable workaround."
       },
       {
         "id": 47486381,
         "author": "jtwaleson",
         "text": "From the title I was hoping for this being hacky on the server application side, like how it aborts and clears the memory for a running query.\u003cp\u003eStill an interesting read. Just wondering, why can\u0026#x27;t the TCP connection of the query not be used to send a cancellation request? Why does it have the be out of band?",
         "indicators": [
-          "thoughtful"
+          "thoughtful",
+          "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment raises valid questions about the technical implementation of query cancellation, highlighting curiosity about in-band versus out-of-band communication methods."
+        "accuracyRank": 6,
+        "analysis": "The comment raises valid questions about design choices but lacks detailed knowledge of protocol constraints, making it less accurate than others."
       }
     ]
   }
