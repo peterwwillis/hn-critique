@@ -1,0 +1,88 @@
+{
+  "story_id": 47486287,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article presents Agent Kernel, a minimalistic framework that enables any AI coding agent to maintain state across sessions using just three markdown files and a git repository. It emphasizes simplicity by avoiding databases or complex frameworks and supports multiple agents with distinct identities and knowledge bases.",
+    "mainPoints": [
+      "Agent Kernel uses three markdown files (AGENTS.md, IDENTITY.md, KNOWLEDGE.md) plus folders for knowledge and notes to maintain an AI agent's state.",
+      "The system works with various AI coding agents like OpenCode, Claude Code, Codex, Cursor, and Windsurf.",
+      "Memory is divided into 'knowledge' (mutable facts about the world) and 'notes' (append-only session logs).",
+      "No need for databases, vector stores, or custom frameworks; the git repository stores all memory.",
+      "Multiple agents can be created by cloning the repository and assigning different identities and knowledge."
+    ],
+    "truthfulness": "The claims about the functionality of Agent Kernel are consistent with the description provided in the GitHub repository. The approach of using markdown files and git for state management is plausible and aligns with known practices for lightweight state persistence. The compatibility with multiple AI coding agents is credible given the generic file-based design. However, no external sources or independent reviews are cited to verify performance or usability claims.",
+    "considerations": [
+      "The article does not discuss potential limitations such as scalability, performance with large knowledge bases, or concurrency issues with git-based state management.",
+      "Security and privacy implications of storing agent memory in plain markdown files and git repositories are not addressed.",
+      "No user testimonials, benchmarks, or comparisons with other agent state management frameworks are provided.",
+      "The ease of integration with different AI agents beyond the ones listed is not elaborated."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around the reliability and scalability of using markdown files and logs for AI agent memory and statefulness. Commenters debate the effectiveness of such approaches compared to existing tools like Claude Code and the use of git history, while also raising concerns about context window bloat and agent behavior.",
+    "comments": [
+      {
+        "id": 47487427,
+        "author": "bigbezet",
+        "text": "A lot of devs, including me, have tried something similar already. I don\u0026#x27;t really find this approach reliable.\u003cp\u003eFirstly, tools like Claude Code already have things like auto memory.\u003cp\u003eSecondly, I think we all learned by now that agents will not always reliably follow instructions in the AGENTS.md file, especially as the size of the context increases. If we want to guarantee that something happens, we should use hooks.\u003cp\u003eThere are already solutions to track what the agent did and even summarising it without affecting the context window of the agent. Tools like Claude Code log activity in a way which is possible to analyze, so you can use tools to process that.\u003cp\u003eWhen I tried something similar in the past, the agent would not really understand what is important to \u0026quot;memorise\u0026quot; in a KNOWLEDGE.md file, and would create a lot of bloat which I would then need to clean up anyway.\u003cp\u003eThere are existing tools to tell the agent what has happened recently: git. By looking at the commit messages and list of changed files, the agent usually gets most of the information it needs. If there are any very important decisions or learnings which are necessary for the agent to understand more, they should be written down \u0026gt;manually\u0026lt; by a developer, as I don\u0026#x27;t trust the agent to decide that.\u003cp\u003eAlso, there is an ongoing discussion about whether AGENTS.md files are even needed, or whether they should be kept to an absolute minimum. Despite what we all initially thought, those files can actually negatively affect the output, based on recent research.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a well-rounded critique based on experience, highlighting practical issues with agent memory management and referencing existing tools, making it highly reliable and constructive."
+      },
+      {
+        "id": 47487176,
+        "author": "esperent",
+        "text": "\u0026gt; notes\u0026#x2F; — Narrative. What happened each session — decisions, actions, open items. Append-only. Never modified after the day ends\u003cp\u003eI already have to fight the agent constantly to prevent it adding backwards compatibility, workarounds, wrappers etc. for things that I changed or removed. If there\u0026#x27;s even one forgotten comment that references the old way, it\u0026#x27;ll write a whole converter system if I walk out of the room for 5 minutes, just in case we ever need it, and even though my agents file specifically says not to (YAGNI, all backwards compatibility must be cleared by me, no wrappers without my explicit approval, etc.). Having a log of the things we tried last month but which failed and got discarded sounds like a bad idea, unless it\u0026#x27;s \u003ci\u003especifically\u003c/i\u003e curated to say \u0026quot;list of things that failed: ...\u0026quot;, which by definition, an append only log can\u0026#x27;t do.\u003cp\u003eI have hit the situation where it discovered removed systems through git history, even. At least that\u0026#x27;s rare though.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment offers a detailed user perspective on the challenges of managing agent behavior and the limitations of append-only logs, adding valuable nuance to the discussion."
+      },
+      {
+        "id": 47486798,
+        "author": "aiboost",
+        "text": "Text files + Git \u0026gt; Vector DBs. Nice work.\nI\u0026#x27;m curious about how this scales. As the notes\u0026#x2F; directory grows over weeks or months, reading past daily logs will eat up the context window.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Raises a valid scalability concern regarding context window limits, emphasizing practical constraints of the proposed method compared to vector databases."
+      },
+      {
+        "id": 47487463,
+        "author": "renewiltord",
+        "text": "Yeah, all the claw based agents use similar structure. I experimented a little with SQLite DB with embedding so it could vector search but I did not manage to get it to do better. Best is still to just stuff things in context and let it full text search history.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Shares experimental insights on alternative approaches like embedding-based vector search, supporting the idea that simpler context stuffing might currently be more effective."
+      },
+      {
+        "id": 47487491,
+        "author": "_pdp_",
+        "text": "\u0026gt; AI agents already read AGENTS.md (or CLAUDE.md, .cursorrules, etc.) as project instructions. This kernel uses that mechanism to teach the agent how to remember.\u003cp\u003eDude, this is just prompts. It is as useful as asking claude code to write these files itself.",
+        "indicators": [
+          "emotional",
+          "trolling",
+          "likely-untrue"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment dismisses the approach with a simplistic comparison and lacks constructive detail, reducing its credibility and usefulness."
+      }
+    ]
+  }
+}

@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">42 points</span>
+        <span class="score">54 points</span>
         by <a href="https://news.ycombinator.com/user?id=jtsylve" class="hnuser">jtsylve</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/19/47439948.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on a cryptographic bug in PSpice&#39;s AES-256 encryption implementation, specifically a copy-paste error that reduces the effective keyspace drastically. Commenters highlight the insecurity of the encryption mode used and suggest the encryption was more for obfuscation than real security.</p>
+      <p>The discussion centers on a discovered bug in PSpice&#39;s AES-256 encryption implementation, specifically in mode 4, which uses a flawed key derivation and ECB mode, severely weakening security. Commenters highlight the poor choice of ECB mode, the limited effective keyspace, and the likelihood that the encryption was more for obfuscation than real security.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -62,7 +62,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I posted SpiceCrypt (<a href="https:&#x2F;&#x2F;github.com&#x2F;jtsylve&#x2F;spice-crypt" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;jtsylve&#x2F;spice-crypt</a>) a few days ago for decrypting LTspice models. It now supports all six PSpice encryption modes as well.<p>PSpice is Cadence&#x27;s SPICE simulator. Vendors encrypt component models with it, which locks them to PSpice and prevents use in NGSpice, Xyce, etc. Modes 0-3 and 5 derive keys entirely from constants in the binary, so those are straightforward once you extract them.<p>Mode 4 is the interesting one. It&#x27;s the only mode with user-supplied key material and uses AES-256 in ECB mode. The key derivation has two base keys: a 4-byte short key (originally for DES) and a 27-byte extended key (intended for AES). The code passes only the short key to the AES engine -- it looks like a copy-paste from the DES path that was never corrected. The short key gets null-terminated and zero-padded to 32 bytes, so 28 of 32 AES key bytes are known. Effective keyspace is 2^32, brute-forceable in seconds with AES-NI.<p>The first encrypted block after every marker is a metadata header with a known plaintext prefix, which gives you a crib for validation. Once you recover the 4-byte short key, the full user key is also recoverable from the decrypted header.<p>This has likely been shipping since PSpice 16.6 in 2014. Fixing it would break every encrypted model created in the last twelve years.<p>The blog post linked above walks through the full details. The repo also has specifications documenting all the encryption schemes: <a href="https:&#x2F;&#x2F;github.com&#x2F;jtsylve&#x2F;spice-crypt&#x2F;tree&#x2F;v2.0.1&#x2F;SPECIFICATIONS" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;jtsylve&#x2F;spice-crypt&#x2F;tree&#x2F;v2.0.1&#x2F;SPECIFICA...</a></div>
-      <div class="comment-analysis"><em>This comment provides a detailed, technical explanation of the bug, supported by references to the code and cryptographic principles, making it the most accurate and informative.</em></div>
+      <div class="comment-analysis"><em>This comment provides a detailed, technical explanation of the bug with supporting evidence from the author&#39;s own research and tools, making it highly credible and informative.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -77,7 +77,7 @@
   Mode 4 uses AES-256 in ECB mode ...
 </code></pre>
 ECB is the least secure encryption mode you can use, the one that&#x27;s warned against in every beginner text.  Seeing this is a bit like seeing &quot;We vibe-coded our firewall in PHP...&quot;, it&#x27;s pretty much a written guarantee that the rest of it will be a catalogue of wrong.<p>They did use AES-256 though, because using keys that go to 11 for your insecure encryption looks good in the marketing materials.</div>
-      <div class="comment-analysis"><em>This comment correctly identifies the use of ECB mode as a major security weakness, reinforcing the critique of the encryption approach.</em></div>
+      <div class="comment-analysis"><em>This comment correctly identifies the use of ECB mode as a critical weakness, reflecting common cryptographic knowledge and reinforcing the severity of the bug.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -88,18 +88,29 @@ ECB is the least secure encryption mode you can use, the one that&#x27;s warned 
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">A 4-byte key and a 32-byte key both produce output that looks like ciphertext. Unlike most bugs, crypto bugs don&#x27;t produce visible errors. That&#x27;s why this one survived 12 years.</div>
-      <div class="comment-analysis"><em>This comment insightfully explains why the bug went unnoticed for so long, though it is less technical than the top comments.</em></div>
+      <div class="comment-analysis"><em>This comment insightfully explains why such a cryptographic flaw can persist undetected, emphasizing the subtlety of crypto bugs compared to typical software bugs.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=userbinator" class="hnuser">userbinator</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">This &quot;encryption&quot; was arguably never for any security anyway, just obfuscation.</div>
-      <div class="comment-analysis"><em>While somewhat speculative, this comment reflects a common viewpoint that the encryption was intended more as a deterrent than robust security.</em></div>
+      <div class="comment-analysis"><em>This perspective aligns with the idea that the encryption scheme was not designed for strong security, which is consistent with the weak implementation details described.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=esnard" class="hnuser">esnard</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Nice find! Have you contacted the vendor to check if they&#x27;re planning a fix?</div>
+      <div class="comment-analysis"><em>While encouraging and constructive, this comment does not add technical insight or verification but reflects a common and reasonable next step.</em></div>
     </div>
     
 
@@ -111,7 +122,7 @@ ECB is the least secure encryption mode you can use, the one that&#x27;s warned 
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-23 09:04 UTC &nbsp;|&nbsp;
+    Generated 2026-03-23 11:04 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

@@ -23,19 +23,18 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the hacky nature of how Ctrl-C cancels queries in Postgres CLI, with comments exploring TCP's urgent data feature, security implications of network exposure, and questions about the cancellation mechanism's design.",
+    "summary": "The discussion revolves around the technical aspects of how Ctrl-C cancels queries in Postgres, with insights into network features and security considerations. Participants debate the underlying mechanisms and potential vulnerabilities.",
     "comments": [
       {
         "id": 47486773,
         "author": "rlpb",
         "text": "TCP has an \u0026quot;urgent data\u0026quot; feature that might have been used for this kind of thing, used for Ctrl-C in telnet, etc. It can be used to bypass any pending send buffer and received by the server ahead of any unread data.",
         "indicators": [
-          "intelligent",
-          "likely-true",
-          "thoughtful"
+          "thoughtful",
+          "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately references the TCP urgent data feature, which is relevant to out-of-band signaling like Ctrl-C, showing technical understanding of network protocols."
+        "analysis": "This comment provides a technically accurate explanation of TCP's urgent data feature and its possible relevance to query cancellation mechanisms."
       },
       {
         "id": 47486473,
@@ -46,18 +45,17 @@
           "likely-true"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment provides a reasonable security perspective, suggesting that network exposure issues overshadow the hacky Ctrl-C handling, which is a valid consideration."
+        "analysis": "This comment offers a reasonable perspective on security priorities, implying that network exposure is a more critical concern than the specific cancellation method."
       },
       {
         "id": 47486381,
         "author": "jtwaleson",
         "text": "From the title I was hoping for this being hacky on the server application side, like how it aborts and clears the memory for a running query.\u003cp\u003eStill an interesting read. Just wondering, why can\u0026#x27;t the TCP connection of the query not be used to send a cancellation request? Why does it have the be out of band?",
         "indicators": [
-          "thoughtful",
-          "intelligent"
+          "thoughtful"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment raises insightful questions about the design of query cancellation, showing curiosity about why out-of-band signaling is used instead of in-band TCP messages."
+        "analysis": "This comment raises valid questions about the technical implementation of query cancellation, highlighting curiosity about in-band versus out-of-band communication methods."
       }
     ]
   }

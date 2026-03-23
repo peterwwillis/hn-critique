@@ -23,125 +23,109 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around low-level optimization techniques in game development, particularly assembly language use and bit-shift operations, with some debate on compiler optimizations and the role of game designers in performance considerations. Several comments share historical insights and personal opinions on the balance between human and compiler optimizations.",
+    "summary": "The discussion revolves around technical aspects of game optimization, assembly programming, compiler behavior, and the interplay between technical constraints and game design. Participants share insights, personal experiences, and opinions on the importance of low-level coding and optimization strategies.",
     "comments": [
       {
         "id": 47484507,
         "author": "netcoyote",
         "text": "Warcraft 1 (1994), Warcraft 2 (1995), and StarCraft (1998) all use power-of-2 aligned map sizes (64 blocks, 128 blocks, and 256 blocks) so the shift-factor could be pre-computed to avoid division\u0026#x2F;multiplication, which was dang slow on those old 386\u0026#x2F;486 computers.\u003cp\u003eEach map block was 2x2 cells, and each cell, 8x8 pixels. Made rendering background cells and fog-of-war overlays very straightforward assembly language.\u003cp\u003eAll of Warcraft\u0026#x2F;etc. had only a few thousand lines of assembly language to render maps\u0026#x2F;sprites\u0026#x2F;fonts\u0026#x2F;fog-of-war into the offscreen buffer, and to blit from the offscreen buffer to the screen.\u003cp\u003eThe rest of the code didn\u0026#x27;t need to be in assembly, which is too time-consuming to write for code where the performance doesn\u0026#x27;t matter. Everything else was written in portable assembler, by which I mean C.\u003cp\u003eEdit:\u003cp\u003eBy way of comparison, Blackthorne for Super Nintendo was all 85816 assembly. The Genesis version (Motorola 68000) and DOS version (Intel 80386) were manually transcribed into their respective assembly languages.\u003cp\u003eThe PC version of Blackthorne also had a lot of custom assembler macros to generate 100K of rendering code to do pixel-scrollable chunky-planar VGA mode X (written by Bryan Waters - \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.mobygames.com\u0026#x2F;person\u0026#x2F;5641\u0026#x2F;bryan-waters\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.mobygames.com\u0026#x2F;person\u0026#x2F;5641\u0026#x2F;bryan-waters\u0026#x2F;\u003c/a\u003e).\u003cp\u003eAt Blizzard we learned from working on those console app ports that writing assembly code takes too much programmer time.\u003cp\u003eEdit 2:\u003cp\u003eI recall that Comanche: Maximum Overkill (1992, a voxel-based helicopter simulator) was written in all assembly in DOS real mode. A huge technical feat, but so much work to port to protected mode that I think they switched to polygon-rendering for later versions.",
         "indicators": [
-          "intelligent",
-          "likely-true",
           "thoughtful",
-          "constructive"
+          "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides detailed historical and technical context about assembly optimization in classic games, which aligns with known facts about game development in the 90s."
+        "analysis": "Provides a detailed historical account of optimization techniques used in early RTS games, highlighting the importance of assembly for performance."
       },
       {
         "id": 47482973,
         "author": "youarentrightjr",
         "text": "\u0026gt; The same trick can also be used for the other direction to save a division:\nNewValue = OldValue \u0026gt;\u0026gt; 3;\nThis is basically the same as \nNewValue = OldValue \u0026#x2F; 8;\nRCT does this trick all the time, and even in its OpenRCT2 version, this syntax hasn’t been changed, since \u003ci\u003ecompilers won’t do this optimization for you\u003c/i\u003e.\u003cp\u003e(emphasis mine)\u003cp\u003eNot at all true. Assuming the types are such that \u0026gt;\u0026gt; is equivalent to \u0026#x2F;, modern compilers will implement division by a power of two as a shift every single time.",
         "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
+          "thoughtful",
+          "likely-true"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment correctly challenges a common misconception about compiler optimizations, reflecting current compiler behavior accurately."
+        "analysis": "Corrects a common misconception about compiler optimizations, emphasizing that modern compilers handle such cases efficiently."
       },
       {
-        "id": 47482166,
-        "author": "applfanboysbgon",
-        "text": "\u0026gt; Imagine a programmer asking a game designer if they could change their formula to use an 8 instead of a 9.5 because it is a number that the CPU prefers to calculate with. There is a very good argument to be made that a game designer should never have to worry about the runtime performance characteristics of binary arithmetic in their life, that’s a fate reserved for programmers\u003cp\u003eNumeric characteristics are \u003ci\u003eabsolutely\u003c/i\u003e still a consideration for game designers even in 2026, one that influences what numbers they use in their game designs. The good ones, anyways. There are, of course, also countless bad developers\u0026#x2F;designers who ignore these things these days, but not because it is free to do so; rather, because they don\u0026#x27;t know better, and in many cases it is one of many silent contributing factors to a noticeable decrease in the quality of their game.",
+        "id": 47481850,
+        "author": "HelloUsername",
+        "text": "Fun read, thx! I\u0026#x27;d also recommend more about RCT:\u003cp\u003e\u0026quot;Interview with RollerCoaster Tycoon\u0026#x27;s Creator, Chris Sawyer (2024)\u0026quot; \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=46130335\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=46130335\u003c/a\u003e\u003cp\u003e\u0026quot;Rollercoaster Tycoon (Or, MicroProse\u0026#x27;s Last Hurrah)\u0026quot; \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=44758842\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=44758842\u003c/a\u003e\u003cp\u003e\u0026quot;RollerCoaster Tycoon at 25: \u0026#x27;It\u0026#x27;s mind-blowing how it inspired me\u0026#x27;\u0026quot; \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=39792034\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=39792034\u003c/a\u003e\u003cp\u003e\u0026quot;RollerCoaster Tycoon was the last of its kind [video]\u0026quot; \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=42346463\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=42346463\u003c/a\u003e\u003cp\u003e\u0026quot;The Story of RollerCoaster Tycoon\u0026quot; \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=ts4BD8AqD9g\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.youtube.com\u0026#x2F;watch?v=ts4BD8AqD9g\u003c/a\u003e",
         "indicators": [
-          "thoughtful",
-          "likely-true",
-          "intelligent"
+          "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment insightfully highlights the ongoing relevance of numeric optimization considerations in game design, which is a nuanced and realistic perspective."
-      },
-      {
-        "id": 47484501,
-        "author": "troad",
-        "text": "\u0026gt; When reading through OpenRCT2’s source, there is a common syntax that you rarely see in modern code, lines like this:\u003cp\u003e\u0026gt; NewValue = OldValue \u0026lt;\u0026lt; 2;\u003cp\u003eI disagree with the framing of this section. Bit shifts are used all the time in low-level code. They\u0026#x27;re not just some archaic optimisation, they\u0026#x27;re also a natural way of working with binary data (aka all data on a computer). Modern low-level code continues to use lots of bit shifts, bitwise operators, etc.\u003cp\u003eLow-level programming is absolutely crucial to performant games. Even if you\u0026#x27;re not doing low-level programming yourself, you\u0026#x27;re almost certainly using an engine or library that uses it extensively. I\u0026#x27;m surprised an article about optimisation in gaming, of all things, would take the somewhat tired \u0026quot;in ye olde days\u0026quot; angle on low-level code.",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "This comment provides a balanced view on the use of bit shifts, emphasizing their continued relevance in performance-critical code."
-      },
-      {
-        "id": 47482206,
-        "author": "lefty2",
-        "text": "\u0026gt; The same trick can also be used for the other direction to save a division:\u003cp\u003e\u0026gt; NewValue = OldValue \u0026gt;\u0026gt; 3;\u003cp\u003eYou need to be careful, because this doesn\u0026#x27;t work if the value is negative.\nA",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "This comment correctly points out a technical limitation of using bit shifts for division, showing attention to detail."
-      },
-      {
-        "id": 47481974,
-        "author": "fweimer",
-        "text": "What language is this article talking where compilers don\u0026#x27;t optimize multiplication and division by powers of two? Even for division of signed integers, current compilers emit inline code that handles positive and negative values separately, still avoiding the division instruction (unless when optimizing for size, of course).",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment reinforces the accurate point that compilers handle power-of-two arithmetic optimizations well, supporting the previous correction."
-      },
-      {
-        "id": 47486707,
-        "author": "pmg102",
-        "text": "The article refers several times to the benefits of the game designer and the coder being the same person. I\u0026#x27;ve often felt that this is the only way to build anything impressive, and in fact I\u0026#x27;m amazed that corporations with their hierarchical organisation model ever get anything built at all but I suppose you can brute force anything with enough employees.\u003cp\u003eIt does make you wonder if the future of AI-assisted development will look more like the early days of coding, where one single mind can build and deliver a whole piece of software from beginning to end.",
-        "indicators": [
-          "thoughtful",
-          "intelligent"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment offers a reflective perspective on development workflows and the potential impact of AI, though speculative."
-      },
-      {
-        "id": 47482918,
-        "author": "bluelightning2k",
-        "text": "Great write up. Thank you. Really great!\u003cp\u003eI was reminded of the factorio blog. That game\u0026#x27;s such a huge optimization challenge even by today\u0026#x27;s standards and I believe works with the design.\u003cp\u003eOne interesting thing I remember is if you have a long conveyor belt of 10,000 copper coils, you can basically simplify it to just be only the entry and exit tile are actually active. All the others don\u0026#x27;t actually have to move because nothing changes... As long as the belts are fully or uniformly saturated. So you avoid mechanics which would stop that.",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "This comment provides a relevant example of modern game optimization strategies, adding value to the discussion."
+        "analysis": "Provides useful resources for those interested in the history and design of RCT, encouraging further exploration."
       },
       {
         "id": 47486294,
         "author": "Validark",
         "text": "\u0026quot;Since the number is stored in a binary system, every shift to the left means the number is doubled.\u003cp\u003eAt first this sounds like a strange technical obscurity\u0026quot;\u003cp\u003eDo we not know binary in 2026? Why is this a surprise to the intended audience?",
         "indicators": [
-          "emotional",
           "thoughtful"
         ],
-        "accuracyRank": 9,
-        "analysis": "This comment expresses frustration about the article's basic explanations, which might be valid depending on the target audience."
+        "accuracyRank": 4,
+        "analysis": "Raises a valid point about the familiarity with binary operations among modern programmers, suggesting the topic's relevance has diminished."
       },
       {
-        "id": 47483230,
-        "author": "sghiassy",
-        "text": "Another great optimization is storing the year as two digits, because you only need the back half…\u003cp\u003e… oh wait, nvm. Don’t preoptimize!",
+        "id": 47484742,
+        "author": "evandale",
+        "text": "The pathfinding section reminded me that there\u0026#x27;s a YouTube steamer, Marcel Vos, who goes into a deep dive of how the pathfinding works.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;youtu.be\u0026#x2F;twU1SsFP-bE\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;youtu.be\u0026#x2F;twU1SsFP-bE\u003c/a\u003e\u003cp\u003eHe has lots of videos that are deep dives into how RCT works and how things are implemented!",
         "indicators": [
-          "thoughtful",
-          "intelligent"
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Offers a helpful pointer to further technical content, enriching the discussion with external educational material."
+      },
+      {
+        "id": 47486672,
+        "author": "bze12",
+        "text": "\u0026gt; This part is especially fascinating to me, since it turns an optimization done out of technical necessity into a gameplay feature.\u003cp\u003eReminds me of blood moons in Zelda \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.polygon.com\u0026#x2F;legend-zelda-tears-kingdom\u0026#x2F;23834440\u0026#x2F;totk-blood-moon-hidden-trick\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.polygon.com\u0026#x2F;legend-zelda-tears-kingdom\u0026#x2F;23834440\u0026#x2F;...\u003c/a\u003e",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Insightfully connects technical constraints with creative game design, illustrating how limitations can inspire gameplay mechanics."
+      },
+      {
+        "id": 47486299,
+        "author": "raffraffraff",
+        "text": "On huge games produced by large game studios, I wonder if the idea of using a real world technical challenge as a \u0026quot;feature\u0026quot; within the game is considered genius? Consider a coder and a game designer who are on different teams and don\u0026#x27;t attend the same meetings.\u003cp\u003eBut if you look at creative writing, story arcs are all about obstacles. A boring story is made interesting by an obstacle. It is what our protagonist needs to overcome. A one-man-band game dev who simultaneously holds the story and the technical challenge their head, might spot the opportunity to use a glitch or limitation as, I dunno, a mini game that riffs on the glitch.",
+        "indicators": [
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Provides an interesting perspective on integrating technical limitations into game narrative and design, though more speculative."
+      },
+      {
+        "id": 47484783,
+        "author": "maxglute",
+        "text": "Is there a place to find stories of recent game optimization? What\u0026#x27;s most ridiculous on like quick inverse square route. As someone who spent way too much time vraying in prior life, I still can\u0026#x27;t believe we got real time ray tracing.",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Focuses on recent innovations without directly analyzing the article's content, offering a more general curiosity."
+      },
+      {
+        "id": 47486614,
+        "author": "makapuf",
+        "text": "Compilers won\u0026#x27;t do multiplication by power of two to bit shift for you ? I remember reading in ~2000: the only thing writing a\u0026lt;\u0026lt;2 instead of a\u0026#x2F;4 will do is make your compiler yawn",
+        "indicators": [
+          "likely-untrue"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Incorrectly asserts that modern compilers do not perform such optimizations, overlooking current compiler capabilities."
+      },
+      {
+        "id": 47484501,
+        "author": "troad",
+        "text": "\u0026gt; When reading through OpenRCT2’s source, there is a common syntax that you rarely see in modern code, lines like this:\u003cp\u003e\u0026gt; NewValue = OldValue \u0026lt;\u0026lt; 2;\u003cp\u003eI disagree with the framing of this section. Bit shifts are used all the time in low-level code. They\u0026#x27;re not just some archaic optimisation, they\u0026#x27;re also a natural way of working with binary data (aka all data on a computer). Modern low-level code continues to use lots of bit shifts, bitwise operators, etc.\u003cp\u003eLow-level programming is absolutely crucial to performant games. Even if you\u0026#x27;re not doing low-level programming yourself, you\u0026#x27;re almost certainly using an engine or library that uses it extensively. I\u0026#x27;m surprised an article about optimisation in gaming, of all things, would take the somewhat tired \u0026quot;in ye olde days\u0026quot; angle on low-level code.",
+        "indicators": [
+          "thoughtful"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment wisely warns against premature optimization, a common best practice in software development."
+        "analysis": "Provides a balanced view on low-level optimizations, correctly asserting their relevance in modern game development."
       }
     ]
   }

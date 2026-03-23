@@ -22,7 +22,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the feasibility and practicality of running extremely large language models (LLMs) like the 397B parameter Qwen 3.5 on consumer hardware, particularly laptops. While some praise the technical achievement and innovative approaches like 2-bit quantization and SSD streaming, many express skepticism about the severe quality degradation, slow token generation speeds, and hardware limitations that make such setups impractical for real-world use.",
+    "summary": "The discussion revolves around the feasibility and practicality of running large language models like Qwen 3.5 397B on consumer hardware, particularly laptops. While some commenters praise the technical achievement and innovative approaches like 2-bit quantization and SSD streaming, others criticize the significant quality degradation, slow token generation speeds, and hardware limitations that make these models currently impractical for real-world use.",
     "comments": [
       {
         "id": 47477630,
@@ -34,7 +34,19 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed critique of the technical compromises and their impact on model quality and usability, aligning well with known issues in extreme quantization and expert reduction."
+        "analysis": "This comment provides a detailed critique of the trade-offs involved in extreme quantization and expert reduction, aligning with known issues in model compression and performance."
+      },
+      {
+        "id": 47478292,
+        "author": "justacatbot",
+        "text": "The quality degradation at 2-bit is a real issue. For actual work tasks, a well-tuned 30B at 4-bit usually outperforms a 70B+ at 2-bit in my experience. The expert reduction on top of that compounds things - you\u0026#x27;re essentially running a fairly different model. Still interesting to see the upper bound of what consumer hardware can attempt, even if the result isn\u0026#x27;t production-ready.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment corroborates the quality concerns raised by others and offers practical insight based on experience, reinforcing the limitations of aggressive quantization."
       },
       {
         "id": 47477552,
@@ -45,32 +57,32 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment offers concrete benchmark data and alternative approaches, providing a balanced and informed perspective on running large models on consumer hardware."
-      },
-      {
-        "id": 47478292,
-        "author": "justacatbot",
-        "text": "The quality degradation at 2-bit is a real issue. For actual work tasks, a well-tuned 30B at 4-bit usually outperforms a 70B+ at 2-bit in my experience. The expert reduction on top of that compounds things - you\u0026#x27;re essentially running a fairly different model. Still interesting to see the upper bound of what consumer hardware can attempt, even if the result isn\u0026#x27;t production-ready.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 3,
-        "analysis": "This comment concisely summarizes practical experience with quantization trade-offs, reinforcing the consensus that extreme quantization harms model performance."
+        "analysis": "This comment provides concrete performance data and references, suggesting alternative quantization methods that maintain better model quality on consumer hardware."
       },
       {
         "id": 47478657,
         "author": "mkw",
         "text": "TLDR I took a stab at leveraging Dan\u0026#x27;s work and making it more practical:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\u003c/a\u003e\u003cp\u003e2 bit quantization lobotomizes the model but is impressive nonetheless!   Maybe one day we\u0026#x27;ll be able to have intelligent 2 bit quants... I wonder.\u003cp\u003emy version supports - 4bit quantization, hybrid streaming (Disk + ram), arbitrary model compatibility, tested on Mamba2, and lets up the framework for LM Studio integration\u003cp\u003eI leveraged this work (Credit to Danveloper) and am in the middle of making this work on more practical models and quants.  It still uses flash streaming, but done so with a control knob so you can choose how much ram and how little ram to use.  In the craziest case, it uses as little ram as possible but is very slow, however, in the balanced case you use some ram and it\u0026#x27;s much faster.\u003cp\u003eI designed it around the intelligence dense Nemotron 3 Nano 30B and Nemotron Cascade 2 30B models (which are smaller, more intelligence density) and can run on low end 16GB machines, though you can run arbitrarily large models on larger machines (designed for very low end, but capable of high end).",
         "indicators": [
-          "intelligent",
+          "thoughtful",
           "constructive",
           "likely-true"
         ],
         "accuracyRank": 4,
-        "analysis": "This comment adds value by describing an applied improvement that addresses some limitations of the original approach, showing constructive progress."
+        "analysis": "This comment adds value by describing ongoing efforts to improve practicality and intelligence density in quantized models, addressing some limitations discussed earlier."
+      },
+      {
+        "id": 47481034,
+        "author": "jllyhill",
+        "text": "To be honest, I\u0026#x27;m getting tired of a \u0026quot;laptop\u0026quot; in every one of these clickbait titles turning out to be $3000 Macbook. Sure, it\u0026#x27;s impressive to achieve this degree of the LLM compression, but I really don\u0026#x27;t like that the title implies local LLM becomes a viable for an average person with the actual hardware being out of reach for 99%.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Raises a valid point about marketing and accessibility, highlighting the gap between impressive demos and real-world affordability."
       },
       {
         "id": 47485701,
@@ -81,19 +93,8 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "This comment provides a nuanced technical insight into bottlenecks and latency concerns, highlighting practical challenges in the architecture."
-      },
-      {
-        "id": 47481034,
-        "author": "jllyhill",
-        "text": "To be honest, I\u0026#x27;m getting tired of a \u0026quot;laptop\u0026quot; in every one of these clickbait titles turning out to be $3000 Macbook. Sure, it\u0026#x27;s impressive to achieve this degree of the LLM compression, but I really don\u0026#x27;t like that the title implies local LLM becomes a viable for an average person with the actual hardware being out of reach for 99%.",
-        "indicators": [
-          "emotional",
-          "thoughtful"
-        ],
         "accuracyRank": 6,
-        "analysis": "This comment raises a valid concern about marketing language and accessibility, reflecting a common frustration in the community."
+        "analysis": "Provides technical insight into hardware bottlenecks impacting token throughput, supporting the discussion on performance limitations."
       },
       {
         "id": 47485739,
@@ -104,7 +105,18 @@
           "belligerent"
         ],
         "accuracyRank": 7,
-        "analysis": "While the speed critique is valid, the tone is overly harsh and dismissive, reducing the constructive value of the comment."
+        "analysis": "While expressing a strong opinion on performance, the comment lacks constructive detail and is overly dismissive."
+      },
+      {
+        "id": 47487594,
+        "author": "utopiah",
+        "text": "I honestly don\u0026#x27;t get \u0026quot;why\u0026quot; despite having done similar things myself, e.g. run on a model on a VR headset itself.\u003cp\u003eI mean I\u0026#x27;ve done it because I could, so I imagine others are doing that too. But then... once it\u0026#x27;s done I don\u0026#x27;t actually use it. I ticked that box but eventually when STOA aren\u0026#x27;t that useful I have a hard time imagining actual positive use cases (... not like offline spam or naughty chat in the woods) that would benefit from such technically impressive demos.",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Offers a philosophical perspective on the value of technical achievements versus practical applications, adding depth to the discussion."
       },
       {
         "id": 47477005,
@@ -112,10 +124,10 @@
         "text": "The github page mentions that a naïve mmap approach is bottlenecked by per-page overhead. Can this be mitigated by setting up explicit \u0026quot;huge\u0026quot; pages? (2M using the CONT PTE feature if the \u0026quot;native\u0026quot; page size is 16k; 32M using a PMD level block mapping; or 1G using the CONT PMD feature.) Does macOS support this out of the box?  Alternatively, one might use a simple mmap and then something like posix_fadvise to set up prefetching of the data.",
         "indicators": [
           "intelligent",
-          "thoughtful"
+          "constructive"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment shows technical curiosity about system-level optimizations but lacks direct evidence or results."
+        "accuracyRank": 9,
+        "analysis": "Poses a relevant technical question about memory management optimizations that could impact model streaming performance."
       },
       {
         "id": 47476725,
@@ -123,20 +135,11 @@
         "text": "The technical write up is great, but Mac users should not get too excited just yet on running 300B+ parameter models locally as the TPS isn\u0026#x27;t that good.\u003cp\u003e\u0026gt;...at 4.4+ tokens\u0026#x2F;second\u003cp\u003eThat is even when it is using 4-bit quantization and it is still at that speed.\u003cp\u003e\u0026gt; The entire 209GB model streams from SSD through a custom Metal compute pipeline.\u003cp\u003eThis is my main problem.\u003cp\u003eIf I were to run this on a Mac SSD, 24\u0026#x2F;7 for heavy usage such as Openclaw, that is going to significantly reduce the lifetime of the SSD.\u003cp\u003eCan\u0026#x27;t imagine using this in the long term right now, but improvements will follow. Still a great write up anyways.",
         "indicators": [
           "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 9,
-        "analysis": "This comment highlights practical concerns about performance and hardware wear, which are important considerations for real-world deployment."
-      },
-      {
-        "id": 47479203,
-        "author": "mannyv",
-        "text": "Everyone is focused on the bad 2 bit result but who cares? He says don’t use it because it’s bad.",
-        "indicators": [
-          "thoughtful"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment points out that the poor 2-bit quantization results are acknowledged by the author, suggesting some criticism may be misplaced."
+        "analysis": "Highlights practical concerns about hardware wear and performance sustainability, grounding the discussion in real-world implications."
       }
     ]
   }

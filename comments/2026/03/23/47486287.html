@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Show HN: Agent Kernel – Three Markdown files that make any AI agent stateful | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://github.com/oguzbilgic/agent-kernel" rel="noreferrer noopener">Show HN: Agent Kernel – Three Markdown files that make any AI agent stateful</a>
+        <span class="sitebit"> (github.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">17 points</span>
+        by <a href="https://news.ycombinator.com/user?id=obilgic" class="hnuser">obilgic</a>
+        <span class="age">4 hours ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/23/47486287.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47486287" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion revolves around the reliability and scalability of using markdown files and logs for AI agent memory and statefulness. Commenters debate the effectiveness of such approaches compared to existing tools like Claude Code and the use of git history, while also raising concerns about context window bloat and agent behavior.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=bigbezet" class="hnuser">bigbezet</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">A lot of devs, including me, have tried something similar already. I don&#x27;t really find this approach reliable.<p>Firstly, tools like Claude Code already have things like auto memory.<p>Secondly, I think we all learned by now that agents will not always reliably follow instructions in the AGENTS.md file, especially as the size of the context increases. If we want to guarantee that something happens, we should use hooks.<p>There are already solutions to track what the agent did and even summarising it without affecting the context window of the agent. Tools like Claude Code log activity in a way which is possible to analyze, so you can use tools to process that.<p>When I tried something similar in the past, the agent would not really understand what is important to &quot;memorise&quot; in a KNOWLEDGE.md file, and would create a lot of bloat which I would then need to clean up anyway.<p>There are existing tools to tell the agent what has happened recently: git. By looking at the commit messages and list of changed files, the agent usually gets most of the information it needs. If there are any very important decisions or learnings which are necessary for the agent to understand more, they should be written down &gt;manually&lt; by a developer, as I don&#x27;t trust the agent to decide that.<p>Also, there is an ongoing discussion about whether AGENTS.md files are even needed, or whether they should be kept to an absolute minimum. Despite what we all initially thought, those files can actually negatively affect the output, based on recent research.</div>
+      <div class="comment-analysis"><em>This comment provides a well-rounded critique based on experience, highlighting practical issues with agent memory management and referencing existing tools, making it highly reliable and constructive.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=esperent" class="hnuser">esperent</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&gt; notes&#x2F; — Narrative. What happened each session — decisions, actions, open items. Append-only. Never modified after the day ends<p>I already have to fight the agent constantly to prevent it adding backwards compatibility, workarounds, wrappers etc. for things that I changed or removed. If there&#x27;s even one forgotten comment that references the old way, it&#x27;ll write a whole converter system if I walk out of the room for 5 minutes, just in case we ever need it, and even though my agents file specifically says not to (YAGNI, all backwards compatibility must be cleared by me, no wrappers without my explicit approval, etc.). Having a log of the things we tried last month but which failed and got discarded sounds like a bad idea, unless it&#x27;s <i>specifically</i> curated to say &quot;list of things that failed: ...&quot;, which by definition, an append only log can&#x27;t do.<p>I have hit the situation where it discovered removed systems through git history, even. At least that&#x27;s rare though.</div>
+      <div class="comment-analysis"><em>This comment offers a detailed user perspective on the challenges of managing agent behavior and the limitations of append-only logs, adding valuable nuance to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=aiboost" class="hnuser">aiboost</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Text files + Git &gt; Vector DBs. Nice work.
+I&#x27;m curious about how this scales. As the notes&#x2F; directory grows over weeks or months, reading past daily logs will eat up the context window.</div>
+      <div class="comment-analysis"><em>Raises a valid scalability concern regarding context window limits, emphasizing practical constraints of the proposed method compared to vector databases.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=renewiltord" class="hnuser">renewiltord</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Yeah, all the claw based agents use similar structure. I experimented a little with SQLite DB with embedding so it could vector search but I did not manage to get it to do better. Best is still to just stuff things in context and let it full text search history.</div>
+      <div class="comment-analysis"><em>Shares experimental insights on alternative approaches like embedding-based vector search, supporting the idea that simpler context stuffing might currently be more effective.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=_pdp_" class="hnuser">_pdp_</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">trolling</span> <span class="indicator">likely-untrue</span> 
+      </div>
+      <div class="comment-text">&gt; AI agents already read AGENTS.md (or CLAUDE.md, .cursorrules, etc.) as project instructions. This kernel uses that mechanism to teach the agent how to remember.<p>Dude, this is just prompts. It is as useful as asking claude code to write these files itself.</div>
+      <div class="comment-analysis"><em>This comment dismisses the approach with a simplistic comparison and lacks constructive detail, reducing its credibility and usefulness.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-23 11:04 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+
