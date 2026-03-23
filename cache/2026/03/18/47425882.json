@@ -18,7 +18,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the use of side-effectful expressions in C, particularly the ++, --, and assignment operators. One commenter expresses skepticism about the need to replace C based on the examples, while another supports restricting these operators to statements only, as done in Go, to reduce bugs and improve code clarity.",
+    "summary": "The discussion revolves around the use and readability of side-effectful expressions in C, particularly the ++ and -- operators and assignment expressions. Some commenters share code refactorings to avoid these constructs, while others debate their necessity and aesthetics in programming.",
     "comments": [
       {
         "id": 47492795,
@@ -31,7 +31,19 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a well-reasoned critique of side-effectful expressions, referencing Go's design choice and emphasizing maintainability and bug reduction, which aligns with common best practices."
+        "analysis": "This comment provides a well-reasoned critique of side-effectful expressions, supporting the idea with a language design example (Go) and practical coding preferences, making it highly accurate and constructive."
+      },
+      {
+        "id": 47495575,
+        "author": "amavect",
+        "text": "For fun, my attempt to rewrite the functions. Eliminate ++ and pointer arithmetic by introducing a counter. Obviously less terse.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  void *my_memcpy(void *dst, const void *src, size_t n)\n  {\n   const uint8_t *s = src;\n   uint8_t *d = dst;\n   for (size_t i = 0; i \u0026lt; n; i += 1) d[i] = s[i];\n   return dst;\n  }\n\n  int powi(int x, int y)\n  {\n   int result = 1;\n   for (int i = 0; i \u0026lt; y; i += 1) result *= x;\n   return result;\n  }\n\u003c/code\u003e\u003c/pre\u003e\nFor itoa, I experiment with the comma operator to show the post-increment on the same line, but visibly after. I also move the negation sign block to the absolute value block.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  void itoa(int n, char s[])\n  {\n   int i = 0;\n   if (n \u0026lt; 0){\n    n = -n;\n    s[0] = \u0026#x27;-\u0026#x27;, s += 1; \u0026#x2F;\u0026#x2F; exclude from reverse\n   }\n   do{\n    s[i] = n % 10 + \u0026#x27;0\u0026#x27;, i += 1;\n    n \u0026#x2F;= 10;\n   }while(n \u0026gt; 0);\n   s[i] = \u0026#x27;\\0\u0026#x27;;\n   \u0026#x2F;\u0026#x2F; reverse\n   for(int j = 0, hi = i \u0026#x2F; 2; j \u0026lt; hi; j += 1) {\n    i -= 1;\n    char swap = s[j];\n    s[j] = s[i];\n    s[i] = swap;\n   }\n  }\n\u003c/code\u003e\u003c/pre\u003e\nTest code:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  #include \u0026lt;stdio.h\u0026gt;\n  #include \u0026lt;stdint.h\u0026gt;\n  \u0026#x2F;\u0026#x2F; insert functions\n  int main(void){\n   char src[] = \u0026quot;hello\u0026quot;;\n   char dst[10];\n   my_memcpy(dst, src, sizeof(src));\n   printf(\u0026quot;%s == hello\\n\u0026quot;, dst);\n   printf(\u0026quot;%d == 27\\n\u0026quot;, powi(3,3));\n   itoa(-12345, dst);\n   printf(\u0026quot;%s == -12345\\n\u0026quot;, dst);\n   itoa(0, dst);\n   printf(\u0026quot;%s == 0\\n\u0026quot;, dst);\n  }\u003c/code\u003e\u003c/pre\u003e",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment offers practical code examples that avoid side-effectful expressions, demonstrating an alternative approach. It is accurate and constructive but less analytical than the top comment."
       },
       {
         "id": 47494214,
@@ -42,8 +54,8 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment expresses a subjective but reasonable skepticism about the article's argument, highlighting personal attachment to C and questioning the strength of the examples for replacing the language."
+        "accuracyRank": 3,
+        "analysis": "This comment expresses a subjective opinion about the article's examples lacking impact. While thoughtful, it is less substantive and more emotional compared to others."
       }
     ]
   }

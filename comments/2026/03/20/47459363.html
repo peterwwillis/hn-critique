@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">80 points</span>
+        <span class="score">99 points</span>
         by <a href="https://news.ycombinator.com/user?id=zdw" class="hnuser">zdw</a>
         <span class="age">3 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47459363.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the technical aspects and implications of the Bao I/O Coprocessor (BIO) compared to existing programmable I/O solutions like the RP2040&#39;s PIO and the Parallax Propeller. Commenters explore timing, instruction execution models, hardware synchronization, and FPGA implementation efficiency.</p>
+      <p>The discussion revolves around the technical aspects and implications of the Bao I/O Coprocessor (BIO) and its comparison to other I/O and processing models like the RP2040 PIO and Parallax Propeller. Commenters explore timing models, hardware synchronization, and implementation efficiency, with some expressing enthusiasm and others raising concerns about complexity and debugging.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -62,7 +62,7 @@
         <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I loved this article and had wanted to play with PIO for a long time (or at least, learn from it through playing!).<p>One thing jumped out here - I assumed CISC inside PIO had a mental model of &quot;one instruction by cycle&quot; and thus it was pretty easy to reason about the underlying machine (including any delay slots etc...).<p>For this RISC model using C, we are now reasoning about compiled code which has a somewhat variable instruction timing (1-3 cycles) and that introduces an uncertainty - the compiler and understanding its implementation.<p>I think this means that the PIO is timing-first, as timing == waveform where BIO is clarity-first with C as the expression and then explicit hardware synchronization.<p>I like both models! I am wondering about the quantum delays however that are being used to set the deadlines - here, human derived wait delays are utilized knowledge of the compiled instructions to set the timing.<p>Might there not be a model of &#x27;preparing the next hardware transaction&#x27; and then &#x27;waiting for an external synchronization&#x27; such as an external signal or internal clock, so we don&#x27;t need to count the instruction cycles so precisely. On the external signal side, I guess the instruction is &#x27;wait for GPIO change&#x27; or something, so the value is immediately ready (int i = GPIO_read_wait_high(23) or something) and the external one is doing the same, but synchronizing (GPIO_write_wait_clock( 24, CLOCK_DEF)) as an alternative to the explicit quantum delays.<p>This might be a shadow register &#x2F; latch model in more generic terms - prep the work in shadow, latch&#x2F;commit on trigger.<p>Anyway, great work Bunnie!</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced comparison of instruction timing models between PIO and BIO, highlighting the challenges and design trade-offs in timing and synchronization, showing deep understanding.</em></div>
+      <div class="comment-analysis"><em>This comment provides a nuanced understanding of the timing and synchronization challenges in BIO versus PIO, offering a plausible alternative model that reflects deep technical insight.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -73,7 +73,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">&gt; Above is the logic path isolated as one of the longest combination paths in the design, and below is a detailed report of what the cells are.<p>which is an argument that &quot;fpga_pio&quot; is badly implemented or that PIO is unsuitable for FPGA impls. Real silicon does not need to use a shitton of LUT4s to implement this logic and it can be done much more efficiently and closes timing at higher clocks (as we know since PIO will run near a GHz)</div>
-      <div class="comment-analysis"><em>The comment critiques FPGA implementation efficiency of PIO, correctly noting that real silicon can be optimized better, which aligns with known FPGA design principles.</em></div>
+      <div class="comment-analysis"><em>The critique is grounded in FPGA design principles and known performance characteristics, making it a credible and valuable technical observation.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -84,7 +84,7 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">This is actually super cool, you can use those as both math accelerators and as io, and them being in lockstep you can kind of use them as int only shader units. I don&#x27;t know how this is useful yet.<p>Btw I am curious what about edge cases. Maybe I have missed that from the article but what is the size of the FIFO?<p>Or the more dangerous part that is you have complex to determine timing now for complex cases like each reqd from FIFO is and ISR and you have until the next read from the FIFO amount of instructions otherwise you would stall the system and that looks to me too hard to debug.</div>
-      <div class="comment-analysis"><em>The comment raises valid questions about FIFO size and timing complexity, reflecting a practical concern about debugging and system stalls, though it admits some uncertainty.</em></div>
+      <div class="comment-analysis"><em>The comment raises valid practical concerns about system complexity and debugging, though it lacks detailed technical backing compared to higher-ranked comments.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -95,30 +95,52 @@
         <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I appreciate the intro, motivation and comparison to the PIO of the RP2040&#x2F;2350.  How would this compare to the (considerably older, slower, but more flexible) Parallax P8X32A (&quot;Propeller&quot;)?</div>
-      <div class="comment-analysis"><em>This comment seeks a comparative perspective with another known architecture, encouraging broader understanding but does not provide technical analysis itself.</em></div>
+      <div class="comment-analysis"><em>This comment contributes by contextualizing BIO within the landscape of similar hardware, prompting useful comparative discussion.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=bunnie" class="hnuser">bunnie</a>
+        <a href="https://news.ycombinator.com/user?id=RS-232" class="hnuser">RS-232</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
+        <span class="indicator">emotional</span> <span class="indicator">trolling</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">&gt; The build script compiles C code down to a clang intermediate assembly, which is then handed off to a Python script that translates it into a Rust macro which is checked into Xous as a buildable artifact using its pure-Rust toolchain.<p>Ah yes, the good ol “we solved the C problem by turning it into four other problems” pipeline</div>
+      <div class="comment-analysis"><em>While the comment humorously highlights potential complexity in the build process, it lacks constructive detail and leans on sarcasm.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=bunnie" class="hnuser">bunnie</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">Hello again HN, I&#x27;m bunnie! Unfortunately, time zones strike again...I&#x27;ll check back when I can, and respond to your questions.</div>
-      <div class="comment-analysis"><em>This is a polite introductory comment from the author, showing engagement but not contributing technical content.</em></div>
+      <div class="comment-analysis"><em>This is a meta-comment from the author with no technical content, serving only as a greeting and logistical note.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=genxy" class="hnuser">genxy</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">Thanks for making this a blog post!<p>Have some on the way! Can&#x27;t wait!</div>
+      <div class="comment-analysis"><em>This comment is purely appreciative and does not add technical insight or critique.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jauntywundrkind" class="hnuser">jauntywundrkind</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
         <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">3 comments on this, from 2d ago,
 <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47469744">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47469744</a></div>
-      <div class="comment-analysis"><em>This comment provides a link to previous discussion without adding new insight or analysis.</em></div>
+      <div class="comment-analysis"><em>This comment provides a link without context or analysis, offering minimal value to the discussion.</em></div>
     </div>
     
 
@@ -130,7 +152,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-23 20:52 UTC &nbsp;|&nbsp;
+    Generated 2026-03-23 22:44 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
