@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">505 points</span>
+        <span class="score">531 points</span>
         by <a href="https://news.ycombinator.com/user?id=mariuz" class="hnuser">mariuz</a>
-        <span class="age">22 hours ago</span>
+        <span class="age">1 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/22/47480886.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47480886" rel="noopener">original on HN</a>
       </p>
@@ -47,12 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around the technical optimizations in RollerCoaster Tycoon and related games, focusing on bit-shifting versus division, assembly language use, and the impact of design constraints on development. Several comments correct misconceptions about compiler optimizations and emphasize the importance of low-level programming knowledge in game development.</p>
+      <p>The discussion centers on the technical details and historical context of optimization techniques used in RollerCoaster Tycoon and other games, particularly focusing on bit-shifting versus division optimizations and the role of assembly language in game development. Several commenters debate compiler optimizations, the relevance of low-level programming, and the interplay between game design and technical constraints.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 32 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47480886" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 33 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47480886" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -68,7 +68,7 @@ NewValue = OldValue &gt;&gt; 3;
 This is basically the same as 
 NewValue = OldValue &#x2F; 8;
 RCT does this trick all the time, and even in its OpenRCT2 version, this syntax hasn’t been changed, since <i>compilers won’t do this optimization for you</i>.<p>(emphasis mine)<p>Not at all true. Assuming the types are such that &gt;&gt; is equivalent to &#x2F;, modern compilers will implement division by a power of two as a shift every single time.</div>
-      <div class="comment-analysis"><em>This comment accurately corrects the misconception about compilers not optimizing division by powers of two, reflecting current compiler behavior.</em></div>
+      <div class="comment-analysis"><em>This comment correctly challenges the article&#39;s claim about compilers not optimizing division by powers of two, reflecting current compiler behavior accurately.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -80,95 +80,95 @@ RCT does this trick all the time, and even in its OpenRCT2 version, this syntax 
       </div>
       <div class="comment-text">&gt; The same trick can also be used for the other direction to save a division:<p>&gt; NewValue = OldValue &gt;&gt; 3;
 &gt; This is basically the same as<p>&gt; NewValue = OldValue &#x2F; 8;<p>&gt; RCT does this trick all the time, and even in its OpenRCT2 version, this syntax hasn’t been changed, since compilers won’t do this optimization for you.<p>The author loses a lot of credibility by suggesting the compiler won&#x27;t replace multiplying or dividing by a factor of 2 with the equivalent bit shift.  That&#x27;s a trivial optimization that&#x27;s always been done.  I&#x27;m sure compilers were doing that in the 70s.</div>
-      <div class="comment-analysis"><em>This comment provides a historically informed correction about compiler optimizations, reinforcing that bit-shift optimizations have been standard for decades.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=troad" class="hnuser">troad</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">&gt; When reading through OpenRCT2’s source, there is a common syntax that you rarely see in modern code, lines like this:<p>&gt; NewValue = OldValue &lt;&lt; 2;<p>I disagree with the framing of this section. Bit shifts are used all the time in low-level code. They&#x27;re not just some archaic optimisation, they&#x27;re also a natural way of working with binary data (aka all data on a computer). Modern low-level code continues to use lots of bit shifts, bitwise operators, etc.<p>Low-level programming is absolutely crucial to performant games. Even if you&#x27;re not doing low-level programming yourself, you&#x27;re almost certainly using an engine or library that uses it extensively. I&#x27;m surprised an article about optimisation in gaming, of all things, would take the somewhat tired &quot;in ye olde days&quot; angle on low-level code.</div>
-      <div class="comment-analysis"><em>This comment thoughtfully challenges the framing of bit-shifting as outdated, emphasizing its ongoing relevance in low-level programming.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=fweimer" class="hnuser">fweimer</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">What language is this article talking where compilers don&#x27;t optimize multiplication and division by powers of two? Even for division of signed integers, current compilers emit inline code that handles positive and negative values separately, still avoiding the division instruction (unless when optimizing for size, of course).</div>
-      <div class="comment-analysis"><em>This comment correctly points out that modern compilers handle these optimizations well, including edge cases like signed division.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=londons_explore" class="hnuser">londons_explore</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">&gt; it turns an optimization done out of technical necessity into a gameplay feature<p>And this folks is why an optimizing compiler can never beat sufficient quantities of human optimization.<p>The human can decide when the abstraction layers should be deliberately broken for performance reasons.    A compiler cannot do that.</div>
-      <div class="comment-analysis"><em>This comment insightfully highlights the unique value of human judgment in optimization beyond what compilers can automate.</em></div>
+      <div class="comment-analysis"><em>This comment supports the previous one by emphasizing that compiler optimizations for powers of two have been standard for decades, reinforcing the inaccuracy in the article&#39;s claim.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=netcoyote" class="hnuser">netcoyote</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Warcraft 1 (1994), Warcraft 2 (1995), and StarCraft (1998) all use power-of-2 aligned map sizes (64 blocks, 128 blocks, and 256 blocks) so the shift-factor could be pre-computed to avoid division&#x2F;multiplication, which was dang slow on those old 386&#x2F;486 computers.<p>Each map block was 2x2 cells, and each cell, 8x8 pixels. Made rendering background cells and fog-of-war overlays very straightforward assembly language.<p>All of Warcraft&#x2F;etc. had only a few thousand lines of assembly language to render maps&#x2F;sprites&#x2F;fonts&#x2F;fog-of-war into the offscreen buffer, and to blit from the offscreen buffer to the screen.<p>The rest of the code didn&#x27;t need to be in assembly, which is too time-consuming to write for code where the performance doesn&#x27;t matter. Everything else was written in portable assembler, by which I mean C.<p>Edit:<p>By way of comparison, Blackthorne for Super Nintendo was all 85816 assembly. The Genesis version (Motorola 68000) and DOS version (Intel 80386) were manually transcribed into their respective assembly languages.<p>The PC version of Blackthorne also had a lot of custom assembler macros to generate 100K of rendering code to do pixel-scrollable chunky-planar VGA mode X (written by Bryan Waters - <a href="https:&#x2F;&#x2F;www.mobygames.com&#x2F;person&#x2F;5641&#x2F;bryan-waters&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.mobygames.com&#x2F;person&#x2F;5641&#x2F;bryan-waters&#x2F;</a>).<p>At Blizzard we learned from working on those console app ports that writing assembly code takes too much programmer time.<p>Edit 2:<p>I recall that Comanche: Maximum Overkill (1992, a voxel-based helicopter simulator) was written in all assembly in DOS real mode. A huge technical feat, but so much work to port to protected mode that I think they switched to polygon-rendering for later versions.</div>
-      <div class="comment-analysis"><em>This comment provides valuable historical context on optimization strategies in classic games, supporting the discussion with concrete examples.</em></div>
+      <div class="comment-analysis"><em>This detailed historical account provides valuable context on assembly use in classic games, supporting the discussion with specific examples and technical insights.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=TheGRS" class="hnuser">TheGRS</a>
-        &nbsp;|&nbsp;rank #7
+        <a href="https://news.ycombinator.com/user?id=troad" class="hnuser">troad</a>
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">This is a fun read, its one of my favorite games growing up by far, countless hours sunk into it. I didn&#x27;t need this write-up to know that Chris Sawyer was god among men and that the open source version is a huge labor of love, but its a good reminder :) I will need to give OpenRCT a try some time, I&#x27;ve tried a little OpenTTD and really enjoy it, but RCT was always my jam.<p>For the lesson here, I think re-contextualizing the product design in order to ease development should be a core tenant of modern software engineering (or really any form of engineering). This is why we are usually saying that we need to shift left on problems, discussing the constraints up-front lets us inform designers how we might be able to tweak a few designs early in order to save big time on the calendar. All of the projects that I loved being a part of in my career did this well, all of the slogs were ones that employed a leadership-driven approach that amounted to waterfall.</div>
-      <div class="comment-analysis"><em>This comment offers a thoughtful perspective on the importance of early design considerations to optimize development effort.</em></div>
+      <div class="comment-text">&gt; When reading through OpenRCT2’s source, there is a common syntax that you rarely see in modern code, lines like this:<p>&gt; NewValue = OldValue &lt;&lt; 2;<p>I disagree with the framing of this section. Bit shifts are used all the time in low-level code. They&#x27;re not just some archaic optimisation, they&#x27;re also a natural way of working with binary data (aka all data on a computer). Modern low-level code continues to use lots of bit shifts, bitwise operators, etc.<p>Low-level programming is absolutely crucial to performant games. Even if you&#x27;re not doing low-level programming yourself, you&#x27;re almost certainly using an engine or library that uses it extensively. I&#x27;m surprised an article about optimisation in gaming, of all things, would take the somewhat tired &quot;in ye olde days&quot; angle on low-level code.</div>
+      <div class="comment-analysis"><em>This comment offers a nuanced perspective on bit shifts, emphasizing their ongoing relevance beyond mere optimization, which adds depth to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=fweimer" class="hnuser">fweimer</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">What language is this article talking where compilers don&#x27;t optimize multiplication and division by powers of two? Even for division of signed integers, current compilers emit inline code that handles positive and negative values separately, still avoiding the division instruction (unless when optimizing for size, of course).</div>
+      <div class="comment-analysis"><em>This comment correctly questions the article&#39;s claim about compiler optimizations, highlighting modern compiler behavior for signed integers.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=applfanboysbgon" class="hnuser">applfanboysbgon</a>
-        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">&gt; Imagine a programmer asking a game designer if they could change their formula to use an 8 instead of a 9.5 because it is a number that the CPU prefers to calculate with. There is a very good argument to be made that a game designer should never have to worry about the runtime performance characteristics of binary arithmetic in their life, that’s a fate reserved for programmers<p>Numeric characteristics are <i>absolutely</i> still a consideration for game designers even in 2026, one that influences what numbers they use in their game designs. The good ones, anyways. There are, of course, also countless bad developers&#x2F;designers who ignore these things these days, but not because it is free to do so; rather, because they don&#x27;t know better, and in many cases it is one of many silent contributing factors to a noticeable decrease in the quality of their game.</div>
-      <div class="comment-analysis"><em>This comment correctly emphasizes that performance considerations remain relevant for game designers, contrary to the idea that they should ignore runtime characteristics.</em></div>
+      <div class="comment-analysis"><em>This comment thoughtfully argues that game designers still consider numeric performance implications, adding an important design perspective to the technical discussion.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=derodero24" class="hnuser">derodero24</a>
-        &nbsp;|&nbsp;rank #9
+        <a href="https://news.ycombinator.com/user?id=hermitcrab" class="hnuser">hermitcrab</a>
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Biggest lesson from string matching work: layout beats instructions every time. Batch your comparisons into a contiguous buffer so the prefetcher can actually help, and you&#x27;ll outperform hand-rolled SIMD on random-access data. Compilers handle the arithmetic tricks fine now — they can&#x27;t fix your cache misses though.</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced insight into optimization, stressing the importance of memory layout over micro-optimizations in instructions.</em></div>
+      <div class="comment-text">&gt;the game was written in the low-level language Assembly<p>Surely it wasn&#x27;t <i>all</i> assembly. There is little to be gained in performance from writing non-bottleneck parts of the code in assembly.</div>
+      <div class="comment-analysis"><em>This comment provides a realistic view on assembly usage, suggesting that only critical parts are written in assembly for performance reasons.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=Validark" class="hnuser">Validark</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">&quot;Since the number is stored in a binary system, every shift to the left means the number is doubled.<p>At first this sounds like a strange technical obscurity&quot;<p>Do we not know binary in 2026? Why is this a surprise to the intended audience?</div>
-      <div class="comment-analysis"><em>This comment questions the article&#39;s assumption about the audience&#39;s familiarity with binary, suggesting the explanation might be overly simplistic or outdated.</em></div>
+      <div class="comment-analysis"><em>This comment expresses mild frustration at the article explaining basic binary concepts, questioning the assumed audience knowledge.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=random__duck" class="hnuser">random__duck</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">So this is what programing on hard mode looks like ?</div>
+      <div class="comment-analysis"><em>This brief comment adds little substantive value, serving mostly as an emotional reaction to the technical complexity discussed.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=throw_m239339" class="hnuser">throw_m239339</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Fantastic write-up, that&#x27;s exactly why I came to HN many years ago, to find such articles about mundane things or products, but the technical aspect is just fascinating.</div>
+      <div class="comment-analysis"><em>This comment positively acknowledges the article&#39;s value but does not contribute technical insights.</em></div>
     </div>
     
 
@@ -180,7 +180,7 @@ RCT does this trick all the time, and even in its OpenRCT2 version, this syntax 
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-23 17:12 UTC &nbsp;|&nbsp;
+    Generated 2026-03-23 19:03 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

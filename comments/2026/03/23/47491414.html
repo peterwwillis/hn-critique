@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">18 points</span>
+        <span class="score">39 points</span>
         by <a href="https://news.ycombinator.com/user?id=jer-irl" class="hnuser">jer-irl</a>
-        <span class="age">1 hour ago</span>
+        <span class="age">3 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/23/47491414.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47491414" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the concept of executables sharing one address space to avoid copying data, with participants weighing the potential benefits and risks. Some highlight the potential for performance improvements and novel architectural patterns, while others express concerns about memory safety and the loss of process isolation.</p>
+      <p>The discussion centers around the concept of executables sharing one address space to enable zero-copy pointers, with commenters debating its safety, practicality, and historical precedents. Some highlight existing OS designs and IPC mechanisms, while others caution about risks like data corruption and reliability issues.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -69,41 +69,110 @@ We present two implementations: libriscv (12-14ns overhead, emulated execution) 
 IPRE maintains stable tail latency (p99&lt;5us), while a state-of-the-art lock-free IPC framework shows 1,463× p99 degradation (4.1us to 6ms) when all CPU cores are saturated. IPRE thus enables architectural patterns (per-request isolation, fine-grained microservices) that incur millisecond-scale tail latency in busy
 multi-tenant systems using traditional IPC.<p>Bottom line: If you&#x27;re doing synchronous calls to a remote party, IPRE wouldn&#x27;t require any scheduler mediation. The same applies to your repo.
 Passing allocator-less structures to the remote is probably a landmine waiting to happen. If you structure both parties to use custom allocators, at least for the remote calls, you can track and even steal allocations (using a shared memory area). With IPRE there is extra risk of stale pointers because the remote part is removed from the callers memory after it completes. The paper will explain all the details, but for example since we control the VMM we can close the remote session if anything bad happens.
-(This paper is not out yet, but it should be very soon)<p>The best part about this kind of architecture, which you immediately mention, is the ability to completely avoid serialization. Passing a complex struct by reference and being able to use the data as-is is a big benefit. It breaks down when you try to do this with something like Deno, unfortunately. But you could do Deno &lt;-&gt; C++, for example.<p>For libriscv the implementation is simpler: Just loan remote-looking pages temporarily so that read&#x2F;write&#x2F;execute works, and then let exception-handling handle abnormal disconnection.</div>
-      <div class="comment-analysis"><em>This comment provides detailed technical context and references an academic paper, offering a nuanced view of the benefits and challenges of merged address spaces, making it the most accurate and informative.</em></div>
+(This paper is not out yet, but it should be very soon)<p>The best part about this kind of architecture, which you immediately mention, is the ability to completely avoid serialization. Passing a complex struct by reference and being able to use the data as-is is a big benefit. It breaks down when you try to do this with something like Deno, unfortunately. But you could do Deno &lt;-&gt; C++, for example.<p>For libriscv the implementation is simpler: Just loan remote-looking pages temporarily so that read&#x2F;write&#x2F;execute works, and then let exception-handling handle abnormal disconnection. With libriscv it&#x27;s also possible for the host to take over the guests global heap allocator, which makes it possible to free something that was remotely allocated. You can divide the address space into the number of possible callers, and one or more remotes, then if you give the remote a std::string larger than SSO, the address will reveal the source and the source tracks its own allocations, so we know if something didn&#x27;t go right.
+Note that this is only an interest for me, as even though (for example) libriscv is used in large codebases, the remote RPC feature is not used at all, and hasn&#x27;t been attemped. It&#x27;s a Cool Idea that kinda works out, but not ready for something high stakes.</div>
+      <div class="comment-analysis"><em>This comment provides a detailed, knowledgeable explanation of a related technology with practical implementations and acknowledges limitations, making it highly credible and informative.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=kgeist" class="hnuser">kgeist</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">From what I remember, in the Linux kernel, there&#x27;s already barely any distinction between processes and threads, a thread is just a process that shares virtual memory with another process, you specify if memory should be shared or not when calling clone()<p>So we already have threads that do exactly what you&#x27;re trying to do? Isn&#x27;t it somewhat easier and less risky to just compile several programs into one binary? If you have no control over the programs you&#x27;re trying to &quot;fuse&quot; (no source), then you probably don&#x27;t want to fuse them, because it&#x27;s very unsafe.<p>Maybe I don&#x27;t understand something. I think it can work if you want processes with different lib versions or even different languages, but it sounds somewhat risky to pass data just like that (possible data corruption)</div>
+      <div class="comment-analysis"><em>Accurately describes Linux threading and raises valid concerns about safety when merging executables without source control, reflecting a solid understanding of OS concepts.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=PaulDavisThe1st" class="hnuser">PaulDavisThe1st</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Are you familiar with the Opal OS from UW CS&amp;E during the 90s ? All tasks in a single system-wide address space, with h&#x2F;w access control for memory regions.<p>&gt; The Opal project is exploring a new operating system structure, tuned to the needs of complex applications, such as CAD&#x2F;CAM, where a number of cooperating programs manipulate a large shared persistent database of objects. In Opal, all code and data exists with in a single, huge, shared address space. The single address space enhances sharing and cooperation, because addresses have a unique (for all time) interpretation. Thus, pointer-based data structures can be directly communicated and shared between programs at any time, and can be stored directly on secondary storage without the need for translation. This structure is simplified by the availability of a large address space, such as those provided by the DEC Alpha, MIPS, HP&#x2F;PA-RISC, IBM RS6000, and future Intel processors.<p>&gt; Protection in Opal is independent of the single address space; each Opal thread executes within a protection domain that defines which virtual pages it has the right to access. The rights to access a page can be easily transmitted from one process to another. The result is a much more flexible protection structure, permitting different (and dynamically changing) protection options depending on the trust relationship between cooperating parties. We believe that this organization can improve both the structure and performance of complex, cooperating applications.<p>&gt; An Opal prototype has been built for the DEC Alpha platform on top of the Mach operating system.<p><a href="https:&#x2F;&#x2F;homes.cs.washington.edu&#x2F;~levy&#x2F;opal&#x2F;opal.html" rel="nofollow">https:&#x2F;&#x2F;homes.cs.washington.edu&#x2F;~levy&#x2F;opal&#x2F;opal.html</a></div>
+      <div class="comment-analysis"><em>Provides historical context and a relevant example of a similar system, supporting the discussion with factual information about OS research.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=tombert" class="hnuser">tombert</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Interesting.<p>I gotta admit that my smell test tells me that this is a step backwards; at least naively (I haven&#x27;t looked through the code thoroughly yet), this just kind of feels like we&#x27;re going back to pre-protected-memory operating systems like AmigaOS; there are reasons that we have the process boundary and the overhead associated with it.<p>If there are zero copies being shared across threadprocs, what&#x27;s to stop Threadproc B from screwing up Threadproc A&#x27;s memory? And if the answer to this is &quot;nothing&quot;, then what does this buy over a vanilla pthread?<p>I&#x27;m not trying to come off as negative, I&#x27;m actually curious about the answer to this.</div>
-      <div class="comment-analysis"><em>Raises valid concerns about memory safety and the loss of process isolation, which are fundamental to modern OS design, highlighting potential risks of the approach.</em></div>
+      <div class="comment-analysis"><em>Raises important security and architectural concerns about the approach, emphasizing the value of process boundaries and memory protection.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=L8D" class="hnuser">L8D</a>
-        &nbsp;|&nbsp;rank #3
+        <a href="https://news.ycombinator.com/user?id=lifis" class="hnuser">lifis</a>
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">It is lovely to see experimentation like this going on. I think this has a lot of potential with something like Haskell&#x27;s green threading model, basically taking it up a notch and doing threading across pthreads instead of being restricted to the VM threads. Surely, if this can be well fleshed-out, it could be implemented at the compiler-level or library-level so existing multi-threaded Haskell software can switch over to something like this to squeeze out even more performance. I&#x27;m not an expert here, though, so ¯\_(ツ)_&#x2F;¯ take my words with a grain of salt.</div>
-      <div class="comment-analysis"><em>Offers a positive perspective on potential applications and improvements, though it is more speculative and less detailed than the top comments.</em></div>
+      <div class="comment-text">&quot;Your scientists were so preoccupied with whether or not they could, they didn&#x27;t stop to think if they should&quot;<p>It&#x27;s very cool, but would only be useful in some marginal cases, specifically if you don&#x27;t want to modify the programs significantly and the reliability reduction is worth either the limited performance upside of avoiding mm switches or the ability to do somewhat easier shared memory.<p>Generally this problem would be better solved in either of these ways: 
+1. Recompile the modules as shared libraries (or statically link them together) and run them with a custom host program. This has less memory waste and faster startup.
+2. Have processes that share memory via explicit shared memory mechanisms. This is more reliable.</div>
+      <div class="comment-analysis"><em>Offers practical alternatives and cautions about reliability, providing a balanced view on when such an approach might be justified.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=whalesalad" class="hnuser">whalesalad</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I feel like this could unlock some huge performance gains with Python. If you want to truly &quot;defeat the GIL&quot; you must use processes instead of threads. This could be a middle ground.</div>
+      <div class="comment-analysis"><em>Insightful comment linking the concept to a known Python concurrency limitation, suggesting a potential practical benefit.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=wswin" class="hnuser">wswin</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Cool project. I think most real life problems would be solved with shared memory objects, c.f. shm_open [1].<p>Python has a wrapper on in the standard library [2], not sure about other languages<p>1. <a href="https:&#x2F;&#x2F;www.man7.org&#x2F;linux&#x2F;man-pages&#x2F;man3&#x2F;shm_open.3.html" rel="nofollow">https:&#x2F;&#x2F;www.man7.org&#x2F;linux&#x2F;man-pages&#x2F;man3&#x2F;shm_open.3.html</a><p>2. <a href="https:&#x2F;&#x2F;docs.python.org&#x2F;3&#x2F;library&#x2F;multiprocessing.shared_memory.html" rel="nofollow">https:&#x2F;&#x2F;docs.python.org&#x2F;3&#x2F;library&#x2F;multiprocessing.shared_mem...</a></div>
+      <div class="comment-analysis"><em>Points to existing shared memory mechanisms as simpler solutions, grounding the discussion in practical, well-supported alternatives.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=junon" class="hnuser">junon</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I considered this with my OS, and ultimately decided it was indeed the wrong approach. Really cool to see someone experimenting with these ideas nonetheless.</div>
+      <div class="comment-analysis"><em>Shares personal experience and judgment, adding a perspective that validates the risks and challenges of the approach.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=L8D" class="hnuser">L8D</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">It is lovely to see experimentation like this going on. I think this has a lot of potential with something like Haskell&#x27;s green threading model, basically taking it up a notch and doing threading across pthreads instead of being restricted to the VM threads. Surely, if this can be well fleshed-out, it could be implemented at the compiler-level or library-level so existing multi-threaded Haskell software can switch over to something like this to squeeze out even more performance. I&#x27;m not an expert here, though, so ¯\_(ツ)_&#x2F;¯ take my words with a grain of salt.</div>
+      <div class="comment-analysis"><em>Offers a positive outlook on potential applications in functional programming, though admits limited expertise, so less authoritative.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=philipwhiuk" class="hnuser">philipwhiuk</a>
+        &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">I feel like this could unlock some huge performance gains with Python. If you want to truly &quot;defeat the GIL&quot; you must use processes instead of threads. This could be a middle ground.</div>
-      <div class="comment-analysis"><em>Makes a reasonable suggestion about Python&#39;s GIL limitations and how this approach might offer a compromise, though it lacks technical depth.</em></div>
+      <div class="comment-text">This is basically &#x27;De-ASLR&#x27; is it not?</div>
+      <div class="comment-analysis"><em>Raises a security-related question about address space layout randomization, which is relevant but not elaborated upon.</em></div>
     </div>
     
 
@@ -115,7 +184,7 @@ Passing allocator-less structures to the remote is probably a landmine waiting t
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-23 17:12 UTC &nbsp;|&nbsp;
+    Generated 2026-03-23 19:03 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
