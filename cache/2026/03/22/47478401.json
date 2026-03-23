@@ -20,7 +20,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the potential and limitations of using CRDTs (Conflict-free Replicated Data Types) for version control systems. While some commenters appreciate the exploration of new ideas beyond Git, others argue that CRDTs cannot fully address semantic conflicts and that existing tools and workflows already solve many practical problems.",
+    "summary": "The discussion centers on the potential and limitations of using CRDTs (Conflict-free Replicated Data Types) for version control systems, with many commenters debating whether CRDTs can effectively handle semantic conflicts and improve merge processes compared to traditional systems like Git. Some highlight existing tools and approaches that address merge conflicts, while others emphasize the need for semantic understanding and scalability improvements in version control.",
     "comments": [
       {
         "id": 47482035,
@@ -33,7 +33,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately highlights that CRDTs cannot resolve semantic conflicts inherent in version control, emphasizing the importance of manual conflict resolution and the limitations of CRDTs in this domain."
+        "analysis": "This comment accurately explains the fundamental limitations of CRDTs in version control, emphasizing the importance of semantic conflict resolution and the practical difficulties CRDTs introduce."
       },
       {
         "id": 47481239,
@@ -46,7 +46,20 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment correctly distinguishes between system-level and semantic conflicts, explaining why CRDTs cannot capture developer intent, and also points out usability issues in current VCS tools."
+        "analysis": "The comment correctly points out that CRDTs do not handle semantic conflicts and highlights usability issues in Git, suggesting improvements in UI and conflict warnings."
+      },
+      {
+        "id": 47484322,
+        "author": "modeless",
+        "text": "\u0026gt; the key insight is that changes should be flagged as conflicting when they touch each other\u003cp\u003eNot really. Changes should be flagged as conflicting when they conflict semantically, not when they touch the same lines. A rename of a variable shouldn\u0026#x27;t conflict with a refactor that touches the same lines, and a change that renames a function should conflict with a change that uses the function\u0026#x27;s old name in a new place. I don\u0026#x27;t think I would bother switching to a new VCS that didn\u0026#x27;t provide some kind of semantic understanding like this.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment insightfully stresses the importance of semantic conflict detection over simple line-based conflict detection, a key challenge in version control."
       },
       {
         "id": 47479687,
@@ -57,19 +70,8 @@
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment provides a practical perspective on improving merge conflict resolution through tooling rather than changing the underlying VCS, highlighting user experience improvements."
-      },
-      {
-        "id": 47479374,
-        "author": "radarsat1",
-        "text": "Is it a good thing to have merges that never fail? Often a merge failure indicates a semantic conflict, not just \u0026quot;two changes in the same place\u0026quot;. You want to be aware of and forced to manually deal with such cases.\u003cp\u003eI assume the proposed system addresses it somehow but I don\u0026#x27;t see it in my quick read of this.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
         "accuracyRank": 4,
-        "analysis": "This comment raises an important point that merge failures often signal semantic conflicts that require manual resolution, questioning the desirability of conflict-free merges."
+        "analysis": "The comment offers a practical solution to merge conflict visualization without changing the underlying VCS, highlighting existing tooling improvements."
       },
       {
         "id": 47479162,
@@ -81,31 +83,18 @@
           "likely-true"
         ],
         "accuracyRank": 5,
-        "analysis": "This comment provides historical context about the evolution of version control concepts related to CRDTs and weaves, showing a knowledgeable understanding of the field."
+        "analysis": "This comment provides valuable historical context linking current ideas to earlier version control concepts, enhancing understanding of the topic."
       },
       {
-        "id": 47485283,
-        "author": "toomim",
-        "text": "CRDTs actually have a long history in version control.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  - The original 1977 version control system, SCCS, was a CRDT: https:\u0026#x2F;\u0026#x2F;braid.org\u0026#x2F;meeting-60\u0026#x2F;sccs-is-a-time-collapse\n\n  - It called its data structure a \u0026#x27;weave\u0026quot;\n\n  - Brahm\u0026#x27;s old project \u0026quot;Codeville\u0026quot; used a weave for version control\n\n  - But then git blew up in popularity.\n\n  - The project \u0026quot;DARCS\u0026quot; tried to make a robust \u0026quot;theory of patches,\u0026quot; and eventually led to the development of Pijul\n\n  - Pijul is a VCS that is a CRDT: https:\u0026#x2F;\u0026#x2F;pijul.org\u003c/code\u003e\u003c/pre\u003e",
+        "id": 47479374,
+        "author": "radarsat1",
+        "text": "Is it a good thing to have merges that never fail? Often a merge failure indicates a semantic conflict, not just \u0026quot;two changes in the same place\u0026quot;. You want to be aware of and forced to manually deal with such cases.\u003cp\u003eI assume the proposed system addresses it somehow but I don\u0026#x27;t see it in my quick read of this.",
         "indicators": [
-          "intelligent",
-          "likely-true",
-          "thoughtful"
+          "thoughtful",
+          "likely-true"
         ],
         "accuracyRank": 6,
-        "analysis": "This comment correctly notes that CRDT-like concepts have historical precedent in version control and mentions modern implementations, providing valuable background."
-      },
-      {
-        "id": 47484674,
-        "author": "chungy",
-        "text": "The merge conflict syntax and \u0026quot;doesn\u0026#x27;t destroy history\u0026quot; both sound exactly like what Fossil does.  (Fossil is at \u003ca href=\"https:\u0026#x2F;\u0026#x2F;fossil-scm.org\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;fossil-scm.org\u0026#x2F;\u003c/a\u003e)\u003cp\u003eJust a trivial example here:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    lorem ipsum\n    \u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt; BEGIN MERGE CONFLICT: local copy shown first \u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt;\u0026lt; (line 2)\n    dolor sit amet,\n    ####### SUGGESTED CONFLICT RESOLUTION follows ###################\n    consectetur adipiscing elit\n    ||||||| COMMON ANCESTOR content follows ||||||||||||||||||||||||| (line 2)\n    ======= MERGED IN content follows =============================== (line 2)\n    consectetur adipiscing elit\n    \u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt; END MERGE CONFLICT \u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u0026gt;\u003c/code\u003e\u003c/pre\u003e",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment points out that some features described are not novel and have been implemented in existing systems like Fossil, adding useful comparative insight."
+        "analysis": "The comment correctly highlights that merge failures often signal important semantic conflicts that require human intervention, questioning the value of always successful merges."
       },
       {
         "id": 47479492,
@@ -113,34 +102,43 @@
         "text": "Interesting idea.   While conflicts can be improved, I personally don\u0026#x27;t see it as a critical challenge with VCS.\u003cp\u003eWhat I do think is the critical challenge (particularly with Git) is scalability.\u003cp\u003eSize of repository \u0026amp; rate of change of repositories are starting to push limits of git, and I think this needs revisited across the server, client \u0026amp; wire protocols.\u003cp\u003eWhat exactly, I don\u0026#x27;t know. :). But I do know that in my current role (mid-size well-known tech company) is hitting these limits today.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment shifts focus from merge conflicts to scalability issues in Git, highlighting a practical challenge that might deserve more attention."
+        "accuracyRank": 7,
+        "analysis": "The comment brings up an important practical challenge in version control—scalability—which is often overlooked in discussions focused solely on merge conflicts."
       },
       {
-        "id": 47479347,
-        "author": "ZoomZoomZoom",
-        "text": "The key insight in the third sentence?\u003cp\u003e\u0026gt; ... CRDTs for version control, which is long overdue but hasn’t happened yet\u003cp\u003ePijul happened and it has hundreds - perhaps thousands - of hours of real expert developer\u0026#x27;s toil put in it.\u003cp\u003eNot that Bram is not one of those, but the post reads like you all know what.",
+        "id": 47480539,
+        "author": "BlueHotDog2",
+        "text": "This is cool and i keep thinking about CRDTs as a baseline for version control, but CRDTs has some major issues, mainly the fact that most of them are strict and \u0026quot;magic\u0026quot; in the way they actually converge(like the joke: CRDTs always converge, but to what).\ni didn\u0026#x27;t read if he\u0026#x27;s using some special CRDT that might solve for that, but i think that for agentic work especially this is very interesting",
         "indicators": [
-          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment correctly points out a known limitation of CRDTs regarding convergence to semantically correct states, a critical concern for version control."
+      },
+      {
+        "id": 47480673,
+        "author": "nkmnz",
+        "text": "I don\u0026#x27;t quite understand how CRDTs should help with merges. The difficult thing about merges is not that two changes touch the same part of the code; the difficult thing is that two changes can touch different parts of the code and still break each other - right?",
+        "indicators": [
+          "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 9,
-        "analysis": "This comment corrects the notion that CRDT-based VCS are novel by citing Pijul as an existing mature example, providing a reality check."
+        "analysis": "The comment raises a valid question about the limitations of CRDTs in handling semantic conflicts that arise from changes in different code areas."
       },
       {
-        "id": 47479621,
-        "author": "jFriedensreich",
-        "text": "starts with “based on the fundamentally sound approach of using CRDTs for version control”. How on earth is crdt a sound base for a version control system? This makes no sense fundamentally, you need to reach a consistent state that is what you intended not what some crdt decided and jj shows you can do that also without blocking on merges but with first level conflicts that need to be resolved. ai and language aware merge drivers are helping so much here i really wonder if the world these “replace version control” projects were made for still exists at all.",
+        "id": 47481290,
+        "author": "injidup",
+        "text": "I\u0026#x27;m confused about what this solves. They give the example of someone editing a function and someone deleting the same function and claim that the merge never fails and then go on to demonstrate that indeed rightly the merges still fails. There are still merge markers in the sources. What is the improvement exactly?",
         "indicators": [
-          "emotional",
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment questions the fundamental suitability of CRDTs for version control, emphasizing the importance of preserving developer intent and the role of AI-assisted merges."
+        "analysis": "This comment critically questions the practical benefits of the proposed system, noting that merge conflicts still appear and asking for clearer improvements."
       }
     ]
   }
