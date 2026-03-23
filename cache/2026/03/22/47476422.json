@@ -22,20 +22,8 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the feasibility and practicality of running extremely large language models (LLMs) like Qwen 3.5 397B on consumer hardware, particularly laptops. While some praise the technical achievement and innovative approaches like 2-bit quantization and flash streaming, many express skepticism about the severe quality degradation, slow performance, and hardware limitations such as SSD wear and RAM requirements.",
+    "summary": "The discussion revolves around the feasibility and practicality of running very large language models (LLMs) like Qwen 3.5 397B on consumer hardware using techniques such as 2-bit quantization and SSD streaming. While some commenters appreciate the technical achievement and potential for offline inference, many highlight significant quality degradation, slow token generation speeds, and hardware limitations that make the approach currently impractical for real-world use.",
     "comments": [
-      {
-        "id": 47477630,
-        "author": "Aurornis",
-        "text": "Reading the details, he is using 2-bit quantization and reduced the number of experts per token from 10 down to 4 to get 5 tokens\u0026#x2F;sec. Cool proof of concept but it’s far from the quality and performance of the 397B model as normally used. Dropping the number of experts is particularly misleading.\u003cp\u003eThis is some interesting work, but applying such extreme measures to LLMs to get them to run severely degrades quality. I know he claims negligible quality loss, but in my experience 2-bit quantizations are completely useless for real work. You can get them to respond to prompts, but they lose their intelligence and will go around in circles.\u003cp\u003eHe also shows 5-6 tokens per second. Again that’s impressive for a large model on limited hardware but it’s very slow. Between the severely degraded model abilities and the extremely slow output the 397B result should be considered an attempt at proving something can technically run, not evidence that it can run well and produce output you’d expect from a 397B model.\u003cp\u003eHe even mentions the obvious problems with his changes:\u003cp\u003e\u0026gt; *2-bit quantization produces \\name\\ instead of \u0026quot;name\u0026quot; in JSON output, making tool calling unreliable.\u003cp\u003eSo right out of the gate this isn’t useful if you want to do anything with it. He could have tried smaller models or less quantizations to get actual useful output from the model, but it wouldn’t look as impressive. It’s honestly getting kind of exhausting to read all of these AI-coded (admitted in the link) and AI-written papers made more for resume building. It would have been interesting to see this work applied to running a useful model that hadn’t been lobotomized instead of applying tricks to get an impressive headline but useless output.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment accurately highlights the trade-offs of extreme quantization and expert reduction, which are well-known to degrade model quality and speed, aligning with common expert understanding."
-      },
       {
         "id": 47477552,
         "author": "tarruda",
@@ -45,20 +33,20 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "Provides concrete benchmark data and references, supporting the claim that running large models on consumer hardware is possible with certain quantization techniques."
+        "accuracyRank": 1,
+        "analysis": "This comment provides concrete performance numbers and references to further details, making it a credible and informative contribution about alternative quantization methods and hardware setups."
       },
       {
-        "id": 47478657,
-        "author": "mkw",
-        "text": "TLDR I took a stab at leveraging Dan\u0026#x27;s work and making it more practical:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\u003c/a\u003e\u003cp\u003e2 bit quantization lobotomizes the model but is impressive nonetheless!   Maybe one day we\u0026#x27;ll be able to have intelligent 2 bit quants... I wonder.\u003cp\u003emy version supports - 4bit quantization, hybrid streaming (Disk + ram), arbitrary model compatibility, tested on Mamba2, and lets up the framework for LM Studio integration\u003cp\u003eI leveraged this work (Credit to Danveloper) and am in the middle of making this work on more practical models and quants.  It still uses flash streaming, but done so with a control knob so you can choose how much ram and how little ram to use.  In the craziest case, it uses as little ram as possible but is very slow, however, in the balanced case you use some ram and it\u0026#x27;s much faster.\u003cp\u003eI designed it around the intelligence dense Nemotron 3 Nano 30B and Nemotron Cascade 2 30B models (which are smaller, more intelligence density) and can run on low end 16GB machines, though you can run arbitrarily large models on larger machines (designed for very low end, but capable of high end).",
+        "id": 47477630,
+        "author": "Aurornis",
+        "text": "Reading the details, he is using 2-bit quantization and reduced the number of experts per token from 10 down to 4 to get 5 tokens\u0026#x2F;sec. Cool proof of concept but it’s far from the quality and performance of the 397B model as normally used. Dropping the number of experts is particularly misleading.\u003cp\u003eThis is some interesting work, but applying such extreme measures to LLMs to get them to run severely degrades quality. I know he claims negligible quality loss, but in my experience 2-bit quantizations are completely useless for real work. You can get them to respond to prompts, but they lose their intelligence and will go around in circles.\u003cp\u003eHe also shows 5-6 tokens per second. Again that’s impressive for a large model on limited hardware but it’s very slow. Between the severely degraded model abilities and the extremely slow output the 397B result should be considered an attempt at proving something can technically run, not evidence that it can run well and produce output you’d expect from a 397B model.\u003cp\u003eHe even mentions the obvious problems with his changes:\u003cp\u003e\u0026gt; *2-bit quantization produces \\name\\ instead of \u0026quot;name\u0026quot; in JSON output, making tool calling unreliable.\u003cp\u003eSo right out of the gate this isn’t useful if you want to do anything with it. He could have tried smaller models or less quantizations to get actual useful output from the model, but it wouldn’t look as impressive. It’s honestly getting kind of exhausting to read all of these AI-coded (admitted in the link) and AI-written papers made more for resume building. It would have been interesting to see this work applied to running a useful model that hadn’t been lobotomized instead of applying tricks to get an impressive headline but useless output.",
         "indicators": [
-          "intelligent",
-          "constructive",
-          "likely-true"
+          "thoughtful",
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "Offers a practical extension of the original work, addressing known issues with 2-bit quantization and improving usability on consumer hardware."
+        "accuracyRank": 2,
+        "analysis": "This comment critically evaluates the trade-offs made to achieve the demonstration, emphasizing the significant quality and speed degradation, which aligns with known challenges in extreme quantization."
       },
       {
         "id": 47478292,
@@ -69,32 +57,32 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "Reinforces the consensus that extreme quantization and model simplification reduce practical utility, consistent with known performance trade-offs."
+        "accuracyRank": 3,
+        "analysis": "This comment shares practical experience highlighting that lower-bit quantization on larger models can lead to worse results than moderately quantized smaller models, reinforcing concerns about 2-bit quantization."
       },
       {
-        "id": 47481034,
-        "author": "jllyhill",
-        "text": "To be honest, I\u0026#x27;m getting tired of a \u0026quot;laptop\u0026quot; in every one of these clickbait titles turning out to be $3000 Macbook. Sure, it\u0026#x27;s impressive to achieve this degree of the LLM compression, but I really don\u0026#x27;t like that the title implies local LLM becomes a viable for an average person with the actual hardware being out of reach for 99%.",
+        "id": 47478657,
+        "author": "mkw",
+        "text": "TLDR I took a stab at leveraging Dan\u0026#x27;s work and making it more practical:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\u003c/a\u003e\u003cp\u003e2 bit quantization lobotomizes the model but is impressive nonetheless!   Maybe one day we\u0026#x27;ll be able to have intelligent 2 bit quants... I wonder.\u003cp\u003emy version supports - 4bit quantization, hybrid streaming (Disk + ram), arbitrary model compatibility, tested on Mamba2, and lets up the framework for LM Studio integration\u003cp\u003eI leveraged this work (Credit to Danveloper) and am in the middle of making this work on more practical models and quants.  It still uses flash streaming, but done so with a control knob so you can choose how much ram and how little ram to use.  In the craziest case, it uses as little ram as possible but is very slow, however, in the balanced case you use some ram and it\u0026#x27;s much faster.\u003cp\u003eI designed it around the intelligence dense Nemotron 3 Nano 30B and Nemotron Cascade 2 30B models (which are smaller, more intelligence density) and can run on low end 16GB machines, though you can run arbitrarily large models on larger machines (designed for very low end, but capable of high end).",
         "indicators": [
-          "emotional",
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment adds value by describing efforts to improve practicality and acknowledging current limitations of 2-bit quantization while expressing optimism for future improvements."
+      },
+      {
+        "id": 47485701,
+        "author": "shubhamintech",
+        "text": "4.4 tok\u0026#x2F;s with reliable structured output is a solid local benchmark altho the question is whether SSD streaming introduces per-token latency variance that messes up tool call parsing downstream. The gap between 400 GB\u0026#x2F;s unified memory bandwidth and 17.5 GB\u0026#x2F;s SSD reads means you\u0026#x27;re in the hot path pretty much every time an expert isn\u0026#x27;t cached.",
+        "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 5,
-        "analysis": "Raises a valid point about marketing versus reality in hardware accessibility, reflecting a common user frustration."
-      },
-      {
-        "id": 47484838,
-        "author": "RandyOrion",
-        "text": "This project shows an interesting automated search for engineering problems that I like to see more.\u003cp\u003eThe experience of utilizing tiered storage (gpu vram, ram, and ssd) is generally poor for a lot of LLM inference engines out there, e.g., llama.cpp, sglang, vllm, etc..\u003cp\u003eMy own experience shows that both weight and KV cache offload to ram on sglang and vllm is unavailable or unusable. Copying extra parameters from documents and adding them to already working commands results in errors. Llama.cpp does support weight offload, but the experience is not pleasant, low pcie (gpu \u0026lt;-\u0026gt; ram) utilization, low gpu utilization, and really low tokens per second.",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Provides a knowledgeable critique of current LLM inference engine limitations, supporting the discussion about hardware bottlenecks."
+        "analysis": "This comment insightfully points out potential latency issues due to SSD streaming, which could affect downstream applications relying on consistent token timing."
       },
       {
         "id": 47476725,
@@ -105,30 +93,42 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "Highlights practical concerns about hardware longevity and performance that are important for real-world usage considerations."
+        "accuracyRank": 6,
+        "analysis": "This comment provides a realistic perspective on performance limitations and hardware wear concerns, cautioning users about practical usage implications."
       },
       {
-        "id": 47477005,
-        "author": "zozbot234",
-        "text": "The github page mentions that a naïve mmap approach is bottlenecked by per-page overhead. Can this be mitigated by setting up explicit \u0026quot;huge\u0026quot; pages? (2M using the CONT PTE feature if the \u0026quot;native\u0026quot; page size is 16k; 32M using a PMD level block mapping; or 1G using the CONT PMD feature.) Does macOS support this out of the box?  Alternatively, one might use a simple mmap and then something like posix_fadvise to set up prefetching of the data.",
+        "id": 47481034,
+        "author": "jllyhill",
+        "text": "To be honest, I\u0026#x27;m getting tired of a \u0026quot;laptop\u0026quot; in every one of these clickbait titles turning out to be $3000 Macbook. Sure, it\u0026#x27;s impressive to achieve this degree of the LLM compression, but I really don\u0026#x27;t like that the title implies local LLM becomes a viable for an average person with the actual hardware being out of reach for 99%.",
         "indicators": [
-          "intelligent",
-          "constructive"
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment expresses frustration about marketing language and accessibility, raising a valid point about the gap between demonstration hardware and typical consumer devices."
+      },
+      {
+        "id": 47485739,
+        "author": "NamlchakKhandro",
+        "text": "lmao 4.4 tokens per second is hilariously and utterly bad.\u003cp\u003eanyone suggesting that it\u0026#x27;s a reasonable speed should find another career",
+        "indicators": [
+          "emotional",
+          "belligerent",
+          "likely-true"
         ],
         "accuracyRank": 8,
-        "analysis": "Raises a technical question about memory management optimizations that could improve performance, showing thoughtful engagement."
+        "analysis": "While the comment is harshly worded, it correctly highlights that the token generation speed is very slow for practical use, though the tone detracts from constructive discussion."
       },
       {
         "id": 47477975,
         "author": "383toast",
         "text": "yeah 4tok\u0026#x2F;s is kinda unusable though",
         "indicators": [
-          "emotional",
-          "likely-true"
+          "likely-true",
+          "thoughtful"
         ],
         "accuracyRank": 9,
-        "analysis": "Concise but accurate critique of the slow inference speed, reflecting common user expectations."
+        "analysis": "This brief comment concisely agrees with others on the impracticality of the current token generation speed."
       },
       {
         "id": 47479203,
@@ -139,7 +139,7 @@
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "Valid reminder that the original work frames 2-bit quantization as a technical demonstration rather than a production-ready solution."
+        "analysis": "This comment reminds readers that the author of the project acknowledges the limitations of 2-bit quantization, suggesting the demonstration is more about feasibility than production readiness."
       }
     ]
   }

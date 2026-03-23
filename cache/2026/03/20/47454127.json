@@ -1,0 +1,25 @@
+{
+  "story_id": 47454127,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article discusses how the Ctrl-C command in the Postgres command-line interface (psql) cancels queries using a CancelRequest message sent over a separate connection. It highlights security concerns, particularly that CancelRequest messages are sent unencrypted even over TLS, exposing potential denial-of-service vulnerabilities and privacy issues.",
+    "mainPoints": [
+      "Postgres cancels queries by sending a CancelRequest message over a new connection identified by a process ID and secret key.",
+      "CancelRequest messages have traditionally been sent unencrypted, even if the original query connection uses TLS.",
+      "Postgres 17 introduced support for encrypted CancelRequest messages in libpq, but psql itself has not yet adopted this due to technical challenges.",
+      "Unencrypted CancelRequest messages can be intercepted and replayed by attackers to cause denial-of-service by cancelling queries repeatedly.",
+      "The Postgres protocol was updated to allow longer secret keys to mitigate brute-force attacks, but adoption requires explicit protocol version settings.",
+      "Tools like Neon’s Elephantshark proxy have had to implement workarounds to handle unencrypted CancelRequest messages, especially for TLS connections without SNI.",
+      "The article recommends using Postgres 18 with protocol 3.2, VPNs, and avoiding Ctrl-C in psql until encrypted cancellation is implemented."
+    ],
+    "truthfulness": "The article's technical explanation of how Postgres handles query cancellation via CancelRequest messages aligns with official Postgres documentation and known behavior. The claim that CancelRequest messages are sent unencrypted by psql despite TLS on the main connection is accurate and documented in Postgres community discussions. The security concerns about denial-of-service attacks through replaying CancelRequest messages are valid and recognized by Postgres developers. The mention of Postgres 17 adding encrypted CancelRequest support in libpq but not yet used by psql is consistent with recent Postgres release notes and community updates. The article is factual and provides a detailed, accurate account of the current state and ongoing development in Postgres query cancellation security.",
+    "considerations": [
+      "The article does not deeply explore the practical impact or likelihood of denial-of-service attacks exploiting unencrypted CancelRequest messages in typical deployment environments.",
+      "It does not discuss alternative query cancellation methods or client tools that might already implement encrypted cancellation.",
+      "There is no mention of how widespread the use of older protocol versions is in production and how that affects security risks.",
+      "The article focuses on psql and libpq but does not cover other Postgres clients or drivers in detail regarding their support for encrypted CancelRequest.",
+      "Potential mitigations like network-level protections (firewalls, VPNs) are only briefly mentioned without detailed guidance."
+    ],
+    "rating": "reliable"
+  }
+}

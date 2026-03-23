@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">456 points</span>
+        <span class="score">492 points</span>
         by <a href="https://news.ycombinator.com/user?id=c17r" class="hnuser">c17r</a>
-        <span class="age">13 hours ago</span>
+        <span class="age">16 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/22/47478401.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47478401" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the potential and limitations of using CRDTs for version control, with many participants skeptical about their suitability for semantic conflict resolution. Several commenters highlight existing tools and approaches that address merge conflicts and version control usability, while others emphasize the need for improvements in scalability and semantic understanding.</p>
+      <p>The discussion revolves around the potential and limitations of using CRDTs (Conflict-free Replicated Data Types) for version control systems. While some commenters appreciate the exploration of new ideas beyond Git, others argue that CRDTs cannot fully address semantic conflicts and that existing tools and workflows already solve many practical problems.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -64,7 +64,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">You can&#x27;t use CRDTs for version control, having conflicts is the whole point of version control. Sometimes two developers will make changes that fundamentally tries to change the code in two different ways, a merge conflict then leaves it up to the developer who is merging&#x2F;rebasing to make a choice about the semantics of the program they want to keep. A CRDT would just produce garbage code, its fundamentally the wrong solution. If you want better developer UX for merge conflicts then there are both a bunch of tooling on top of Git, as well as other version control systems, that try to present it in a better way; but that has very little to do with the underlaying datastructure. The very fact that cherry-picking and reverting becomes difficult with this approach should show you that its the wrong approach! Those are really easy operations to do in Git.</div>
-      <div class="comment-analysis"><em>This comment accurately points out the fundamental semantic challenges in version control that CRDTs do not solve, emphasizing the importance of manual conflict resolution.</em></div>
+      <div class="comment-analysis"><em>This comment accurately highlights that CRDTs cannot resolve semantic conflicts inherent in version control, emphasizing the importance of manual conflict resolution and the limitations of CRDTs in this domain.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -75,7 +75,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">What CRDT&#x27;s solve is conflicts at the system level. Not at the semantic level. 2 or more engineers setting a var to a different value cannot be handled by a CRDT.<p>Engineer A intended value = 1<p>Engineer B intended value = 2<p>CRDT picks 2<p>The outcome could be semantically wrong. It doesn&#x27;t reflect the intent.<p>I think the primary issue with git and every other version control is the terrible names for everything. pull, push, merge, fast forward, stash, squash, rebase, theirs, ours, origin, upstream and that&#x27;s just a subset. And the GUI&#x27;s. They&#x27;re all very confusing even to engineers who have been doing this for a decade. On top of this, conflict resolution is confusing because you don&#x27;t have any prior warnings.<p>It would be incredibly useful if <i>before</i> you were about to edit a file, the version control system would warn you that someone else has made changes to it already or are actively working on it. In large teams, this sort of automation would reduce conflicts, as long as humans agree to not touch the same file. This would also reduce the amount of quality regressions that result from bad conflict resolutions.<p>Shameless self plug: I am trying to solve both issues with a simpler UI around git that automates some of this and it&#x27;s free. <a href="https:&#x2F;&#x2F;www.satishmaha.com&#x2F;BetterGit" rel="nofollow">https:&#x2F;&#x2F;www.satishmaha.com&#x2F;BetterGit</a></div>
-      <div class="comment-analysis"><em>This comment correctly distinguishes between system-level conflict resolution by CRDTs and the semantic conflicts that require human judgment, highlighting a key limitation.</em></div>
+      <div class="comment-analysis"><em>This comment correctly distinguishes between system-level and semantic conflicts, explaining why CRDTs cannot capture developer intent, and also points out usability issues in current VCS tools.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -86,7 +86,7 @@
         <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">The thing about how merges are presented seems orthogonal to how to represent history. I also hate the default in git, but that is why I just use p4merge as a merge tool and get a proper 4-pane merge tool (left, right, common base, merged result) which shows everything needed to figure out why there is a conflict and how to resolve it. I don&#x27;t understand why you need to switch out the VCS to fix that issue.</div>
-      <div class="comment-analysis"><em>Provides a practical solution to merge conflict visualization without changing the underlying VCS, showing a pragmatic approach to usability.</em></div>
+      <div class="comment-analysis"><em>This comment provides a practical perspective on improving merge conflict resolution through tooling rather than changing the underlying VCS, highlighting user experience improvements.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -97,15 +97,26 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Is it a good thing to have merges that never fail? Often a merge failure indicates a semantic conflict, not just &quot;two changes in the same place&quot;. You want to be aware of and forced to manually deal with such cases.<p>I assume the proposed system addresses it somehow but I don&#x27;t see it in my quick read of this.</div>
-      <div class="comment-analysis"><em>Raises an important point that merge failures can signal semantic conflicts, which automated merges might obscure, questioning the benefit of conflict-free merges.</em></div>
+      <div class="comment-analysis"><em>This comment raises an important point that merge failures often signal semantic conflicts that require manual resolution, questioning the desirability of conflict-free merges.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=bos" class="hnuser">bos</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This is sort of a revival and elaboration of some of Bram’s ideas from Codeville, an earlier effort that dates back to the early 2000s Cambrian explosion of DVCS.<p>Codeville also used a weave for storage and merge, a concept that originated with SCCS (and thence into Teamware and BitKeeper).<p>Codeville predates the introduction of CRDTs by almost a decade, and at least on the face of it the two concepts seem like a natural fit.<p>It was always kind of difficult to argue that weaves produced unambiguously better merge results (and more limited conflicts) than the more heuristically driven approaches of git, Mercurial, et al, because the edit histories required to produce test cases were difficult (at least for me) to reason about.<p>I like that Bram hasn’t let go of the problem, and is still trying out new ideas in the space.</div>
+      <div class="comment-analysis"><em>This comment provides historical context about the evolution of version control concepts related to CRDTs and weaves, showing a knowledgeable understanding of the field.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=toomim" class="hnuser">toomim</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">CRDTs actually have a long history in version control.<p><pre><code>  - The original 1977 version control system, SCCS, was a CRDT: https:&#x2F;&#x2F;braid.org&#x2F;meeting-60&#x2F;sccs-is-a-time-collapse
 
@@ -118,29 +129,26 @@
   - The project &quot;DARCS&quot; tried to make a robust &quot;theory of patches,&quot; and eventually led to the development of Pijul
 
   - Pijul is a VCS that is a CRDT: https:&#x2F;&#x2F;pijul.org</code></pre></div>
-      <div class="comment-analysis"><em>Provides historical context showing that CRDT concepts have been explored in version control, adding depth to the discussion.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=astrostl" class="hnuser">astrostl</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Disagree. We all are — or should be — Linux kernel developers. What&#x27;s more, we should align to a specific and singular VCS worldview informed by BitKeeper, which no longer exists, whether or not we used it. Therefore Git. Thank you for your attention to this matter!</div>
-      <div class="comment-analysis"><em>Expresses a strong opinion favoring Git&#39;s dominance based on historical lineage, though somewhat dismissive of alternatives.</em></div>
+      <div class="comment-analysis"><em>This comment correctly notes that CRDT-like concepts have historical precedent in version control and mentions modern implementations, providing valuable background.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=danpalmer" class="hnuser">danpalmer</a>
+        <a href="https://news.ycombinator.com/user?id=chungy" class="hnuser">chungy</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I&#x27;m struggling to understand the problem this solves for me. I can see in the abstract why this might be useful, but in practice I don&#x27;t see the problems.<p>For me, jj represents a massive step forward from git in terms of usability, usefulness, and solving problems I actually have.<p>I think the next step forward for version control would be something that works at a lower level, such as the AST. I&#x27;d love to see an exploration of what versioning looks like when we don&#x27;t have files and directories, and a piece of software is one whole tree that can be edited at any level. Things like LightTable and Dark have tried bits of this, it would be good to see a VCS demo of that sort of thing.</div>
-      <div class="comment-analysis"><em>Offers a forward-looking perspective on version control improvements focusing on semantic structures rather than just merges.</em></div>
+      <div class="comment-text">The merge conflict syntax and &quot;doesn&#x27;t destroy history&quot; both sound exactly like what Fossil does.  (Fossil is at <a href="https:&#x2F;&#x2F;fossil-scm.org&#x2F;" rel="nofollow">https:&#x2F;&#x2F;fossil-scm.org&#x2F;</a>)<p>Just a trivial example here:<p><pre><code>    lorem ipsum
+    &lt;&lt;&lt;&lt;&lt;&lt;&lt; BEGIN MERGE CONFLICT: local copy shown first &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; (line 2)
+    dolor sit amet,
+    ####### SUGGESTED CONFLICT RESOLUTION follows ###################
+    consectetur adipiscing elit
+    ||||||| COMMON ANCESTOR content follows ||||||||||||||||||||||||| (line 2)
+    ======= MERGED IN content follows =============================== (line 2)
+    consectetur adipiscing elit
+    &gt;&gt;&gt;&gt;&gt;&gt;&gt; END MERGE CONFLICT &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code></pre></div>
+      <div class="comment-analysis"><em>This comment points out that some features described are not novel and have been implemented in existing systems like Fossil, adding useful comparative insight.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -148,10 +156,10 @@
         <a href="https://news.ycombinator.com/user?id=mikey-k" class="hnuser">mikey-k</a>
         &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Interesting idea.   While conflicts can be improved, I personally don&#x27;t see it as a critical challenge with VCS.<p>What I do think is the critical challenge (particularly with Git) is scalability.<p>Size of repository &amp; rate of change of repositories are starting to push limits of git, and I think this needs revisited across the server, client &amp; wire protocols.<p>What exactly, I don&#x27;t know. :). But I do know that in my current role (mid-size well-known tech company) is hitting these limits today.</div>
-      <div class="comment-analysis"><em>Highlights an important practical limitation of Git related to scalability rather than merge conflict resolution.</em></div>
+      <div class="comment-analysis"><em>This comment shifts focus from merge conflicts to scalability issues in Git, highlighting a practical challenge that might deserve more attention.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -162,18 +170,18 @@
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">The key insight in the third sentence?<p>&gt; ... CRDTs for version control, which is long overdue but hasn’t happened yet<p>Pijul happened and it has hundreds - perhaps thousands - of hours of real expert developer&#x27;s toil put in it.<p>Not that Bram is not one of those, but the post reads like you all know what.</div>
-      <div class="comment-analysis"><em>Corrects an oversight by pointing out that CRDT-based VCS like Pijul are already developed and in use.</em></div>
+      <div class="comment-analysis"><em>This comment corrects the notion that CRDT-based VCS are novel by citing Pijul as an existing mature example, providing a reality check.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=gavinhoward" class="hnuser">gavinhoward</a>
+        <a href="https://news.ycombinator.com/user?id=jFriedensreich" class="hnuser">jFriedensreich</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">Bram Cohen is awesome, but this feels a little bare. I&#x27;ve put much more thought into version control ([1]), including the use of CRDTs (search for &quot;# History Model&quot; and read through the &quot;Implementing CRDTs&quot; section).<p>[1]: <a href="https:&#x2F;&#x2F;gavinhoward.com&#x2F;uploads&#x2F;designs&#x2F;yore.md" rel="nofollow">https:&#x2F;&#x2F;gavinhoward.com&#x2F;uploads&#x2F;designs&#x2F;yore.md</a></div>
-      <div class="comment-analysis"><em>Offers additional resources and a more comprehensive take on CRDTs in version control, suggesting the discussion could be deeper.</em></div>
+      <div class="comment-text">starts with “based on the fundamentally sound approach of using CRDTs for version control”. How on earth is crdt a sound base for a version control system? This makes no sense fundamentally, you need to reach a consistent state that is what you intended not what some crdt decided and jj shows you can do that also without blocking on merges but with first level conflicts that need to be resolved. ai and language aware merge drivers are helping so much here i really wonder if the world these “replace version control” projects were made for still exists at all.</div>
+      <div class="comment-analysis"><em>This comment questions the fundamental suitability of CRDTs for version control, emphasizing the importance of preserving developer intent and the role of AI-assisted merges.</em></div>
     </div>
     
 
@@ -185,7 +193,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-23 04:39 UTC &nbsp;|&nbsp;
+    Generated 2026-03-23 07:18 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
