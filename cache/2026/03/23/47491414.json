@@ -24,7 +24,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers around the concept of executables sharing one address space to enable zero-copy pointers, with commenters debating its safety, practicality, and historical precedents. Some highlight existing OS designs and IPC mechanisms, while others caution about risks like data corruption and reliability issues.",
+    "summary": "The discussion centers on the concept of executables sharing a single address space, with participants debating its safety, historical precedents, and potential performance benefits. Some highlight risks related to memory protection and data corruption, while others reference past research and similar systems, noting both potential and limitations.",
     "comments": [
       {
         "id": 47491965,
@@ -37,20 +37,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed, knowledgeable explanation of a related technology with practical implementations and acknowledges limitations, making it highly credible and informative."
-      },
-      {
-        "id": 47492650,
-        "author": "kgeist",
-        "text": "From what I remember, in the Linux kernel, there\u0026#x27;s already barely any distinction between processes and threads, a thread is just a process that shares virtual memory with another process, you specify if memory should be shared or not when calling clone()\u003cp\u003eSo we already have threads that do exactly what you\u0026#x27;re trying to do? Isn\u0026#x27;t it somewhat easier and less risky to just compile several programs into one binary? If you have no control over the programs you\u0026#x27;re trying to \u0026quot;fuse\u0026quot; (no source), then you probably don\u0026#x27;t want to fuse them, because it\u0026#x27;s very unsafe.\u003cp\u003eMaybe I don\u0026#x27;t understand something. I think it can work if you want processes with different lib versions or even different languages, but it sounds somewhat risky to pass data just like that (possible data corruption)",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "Accurately describes Linux threading and raises valid concerns about safety when merging executables without source control, reflecting a solid understanding of OS concepts."
+        "analysis": "This comment provides a detailed, researched approach to similar technology with practical implementations and caveats, making it highly accurate and informative."
       },
       {
         "id": 47492406,
@@ -62,8 +49,21 @@
           "likely-true",
           "constructive"
         ],
+        "accuracyRank": 2,
+        "analysis": "The comment references a historical and academic example of a similar system with hardware-enforced protection, adding valuable context and credibility."
+      },
+      {
+        "id": 47492650,
+        "author": "kgeist",
+        "text": "From what I remember, in the Linux kernel, there\u0026#x27;s already barely any distinction between processes and threads, a thread is just a process that shares virtual memory with another process, you specify if memory should be shared or not when calling clone()\u003cp\u003eSo we already have threads that do exactly what you\u0026#x27;re trying to do? Isn\u0026#x27;t it somewhat easier and less risky to just compile several programs into one binary? If you have no control over the programs you\u0026#x27;re trying to \u0026quot;fuse\u0026quot; (no source), then you probably don\u0026#x27;t want to fuse them, because it\u0026#x27;s very unsafe.\u003cp\u003eMaybe I don\u0026#x27;t understand something. I think it can work if you want processes with different lib versions or even different languages, but it sounds somewhat risky to pass data just like that (possible data corruption)",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 3,
-        "analysis": "Provides historical context and a relevant example of a similar system, supporting the discussion with factual information about OS research."
+        "analysis": "This comment accurately describes Linux process/thread memory sharing semantics and raises valid concerns about safety and practicality."
       },
       {
         "id": 47491835,
@@ -71,12 +71,11 @@
         "text": "Interesting.\u003cp\u003eI gotta admit that my smell test tells me that this is a step backwards; at least naively (I haven\u0026#x27;t looked through the code thoroughly yet), this just kind of feels like we\u0026#x27;re going back to pre-protected-memory operating systems like AmigaOS; there are reasons that we have the process boundary and the overhead associated with it.\u003cp\u003eIf there are zero copies being shared across threadprocs, what\u0026#x27;s to stop Threadproc B from screwing up Threadproc A\u0026#x27;s memory? And if the answer to this is \u0026quot;nothing\u0026quot;, then what does this buy over a vanilla pthread?\u003cp\u003eI\u0026#x27;m not trying to come off as negative, I\u0026#x27;m actually curious about the answer to this.",
         "indicators": [
           "thoughtful",
-          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Raises important security and architectural concerns about the approach, emphasizing the value of process boundaries and memory protection."
+        "analysis": "Raises important concerns about memory safety and the rationale for process boundaries, reflecting common understanding of OS design trade-offs."
       },
       {
         "id": 47492445,
@@ -84,48 +83,11 @@
         "text": "\u0026quot;Your scientists were so preoccupied with whether or not they could, they didn\u0026#x27;t stop to think if they should\u0026quot;\u003cp\u003eIt\u0026#x27;s very cool, but would only be useful in some marginal cases, specifically if you don\u0026#x27;t want to modify the programs significantly and the reliability reduction is worth either the limited performance upside of avoiding mm switches or the ability to do somewhat easier shared memory.\u003cp\u003eGenerally this problem would be better solved in either of these ways: \n1. Recompile the modules as shared libraries (or statically link them together) and run them with a custom host program. This has less memory waste and faster startup.\n2. Have processes that share memory via explicit shared memory mechanisms. This is more reliable.",
         "indicators": [
           "thoughtful",
-          "intelligent",
-          "likely-true",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
         "accuracyRank": 5,
-        "analysis": "Offers practical alternatives and cautions about reliability, providing a balanced view on when such an approach might be justified."
-      },
-      {
-        "id": 47491892,
-        "author": "whalesalad",
-        "text": "I feel like this could unlock some huge performance gains with Python. If you want to truly \u0026quot;defeat the GIL\u0026quot; you must use processes instead of threads. This could be a middle ground.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Insightful comment linking the concept to a known Python concurrency limitation, suggesting a potential practical benefit."
-      },
-      {
-        "id": 47492693,
-        "author": "wswin",
-        "text": "Cool project. I think most real life problems would be solved with shared memory objects, c.f. shm_open [1].\u003cp\u003ePython has a wrapper on in the standard library [2], not sure about other languages\u003cp\u003e1. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.man7.org\u0026#x2F;linux\u0026#x2F;man-pages\u0026#x2F;man3\u0026#x2F;shm_open.3.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.man7.org\u0026#x2F;linux\u0026#x2F;man-pages\u0026#x2F;man3\u0026#x2F;shm_open.3.html\u003c/a\u003e\u003cp\u003e2. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;docs.python.org\u0026#x2F;3\u0026#x2F;library\u0026#x2F;multiprocessing.shared_memory.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;docs.python.org\u0026#x2F;3\u0026#x2F;library\u0026#x2F;multiprocessing.shared_mem...\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Points to existing shared memory mechanisms as simpler solutions, grounding the discussion in practical, well-supported alternatives."
-      },
-      {
-        "id": 47493155,
-        "author": "junon",
-        "text": "I considered this with my OS, and ultimately decided it was indeed the wrong approach. Really cool to see someone experimenting with these ideas nonetheless.",
-        "indicators": [
-          "thoughtful",
-          "intelligent",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Shares personal experience and judgment, adding a perspective that validates the risks and challenges of the approach."
+        "analysis": "Provides a pragmatic perspective on when such an approach might be useful and suggests more conventional alternatives."
       },
       {
         "id": 47491923,
@@ -133,11 +95,68 @@
         "text": "It is lovely to see experimentation like this going on. I think this has a lot of potential with something like Haskell\u0026#x27;s green threading model, basically taking it up a notch and doing threading across pthreads instead of being restricted to the VM threads. Surely, if this can be well fleshed-out, it could be implemented at the compiler-level or library-level so existing multi-threaded Haskell software can switch over to something like this to squeeze out even more performance. I\u0026#x27;m not an expert here, though, so ¯\\_(ツ)_\u0026#x2F;¯ take my words with a grain of salt.",
         "indicators": [
           "thoughtful",
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Offers an optimistic view on the potential for this approach in specific programming models, though less technical detail is provided."
+      },
+      {
+        "id": 47492693,
+        "author": "wswin",
+        "text": "Cool project. I think most real life problems would be solved with shared memory objects, c.f. shm_open [1].\u003cp\u003ePython has a wrapper on in the standard library [2], not sure about other languages\u003cp\u003e1. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.man7.org\u0026#x2F;linux\u0026#x2F;man-pages\u0026#x2F;man3\u0026#x2F;shm_open.3.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.man7.org\u0026#x2F;linux\u0026#x2F;man-pages\u0026#x2F;man3\u0026#x2F;shm_open.3.html\u003c/a\u003e\u003cp\u003e2. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;docs.python.org\u0026#x2F;3\u0026#x2F;library\u0026#x2F;multiprocessing.shared_memory.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;docs.python.org\u0026#x2F;3\u0026#x2F;library\u0026#x2F;multiprocessing.shared_mem...\u003c/a\u003e",
+        "indicators": [
+          "constructive",
           "likely-true",
-          "constructive"
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Suggests existing shared memory mechanisms as practical alternatives, providing useful references."
+      },
+      {
+        "id": 47494091,
+        "author": "self_awareness",
+        "text": "Wait. Wasn\u0026#x27;t address space separation an \u003ci\u003eimprovement\u003c/i\u003e?\u003cp\u003eThis is going back to DOS age.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Expresses skepticism about the approach by referencing historical OS design principles, though lacks detailed technical reasoning."
+      },
+      {
+        "id": 47493155,
+        "author": "junon",
+        "text": "I considered this with my OS, and ultimately decided it was indeed the wrong approach. Really cool to see someone experimenting with these ideas nonetheless.",
+        "indicators": [
+          "thoughtful",
+          "emotional"
         ],
         "accuracyRank": 9,
-        "analysis": "Offers a positive outlook on potential applications in functional programming, though admits limited expertise, so less authoritative."
+        "analysis": "Shares personal experience rejecting this approach but encourages experimentation, adding a subjective but relevant viewpoint."
+      },
+      {
+        "id": 47494089,
+        "author": "Retr0id",
+        "text": "\u0026gt; Unlike dlopen-based plugin systems, threadprocs run traditional executables with a `main()` function.\u003cp\u003eWhy not dlopen with something that calls plugin_main() (etc.) in its own thread?",
+        "indicators": [
+          "constructive",
+          "thoughtful"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Questions the design choice by comparing it to existing plugin systems, suggesting a potentially simpler alternative."
+      },
+      {
+        "id": 47491892,
+        "author": "whalesalad",
+        "text": "I feel like this could unlock some huge performance gains with Python. If you want to truly \u0026quot;defeat the GIL\u0026quot; you must use processes instead of threads. This could be a middle ground.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 11,
+        "analysis": "Highlights a relevant use case for Python performance improvements, though the comment is brief and speculative."
       },
       {
         "id": 47492346,
@@ -147,8 +166,8 @@
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 10,
-        "analysis": "Raises a security-related question about address space layout randomization, which is relevant but not elaborated upon."
+        "accuracyRank": 12,
+        "analysis": "Raises a security concern by linking the approach to disabling address space layout randomization, a valid but brief observation."
       }
     ]
   }

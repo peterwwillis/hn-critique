@@ -23,33 +23,31 @@
     "rating": "opinion"
   },
   "comments_critique": {
-    "summary": "The discussion critiques DSPy primarily for its complexity, limited adoption, and unclear value proposition beyond prompt optimization. Several commenters note that DSPy's main strength is its prompt optimization and evaluation capabilities, but these come with significant overhead and learning curve, leading many to prefer lighter or more flexible alternatives.",
+    "summary": "The discussion critiques DSPy primarily for its complexity, slow onboarding, and limited practical advantages compared to alternatives like LangChain and lighter frameworks. Many commenters highlight that DSPy's core value lies in prompt optimization, but the article and DSPy itself often fail to clearly communicate or deliver this effectively, leading to low adoption despite some recognition of its innovative ideas.",
     "comments": [
       {
         "id": 47491023,
         "author": "deaux",
         "text": "I don\u0026#x27;t see it at all.\u003cp\u003e\u0026gt; Typed I\u0026#x2F;O for every LLM call. Use Pydantic. Define what goes in and out.\u003cp\u003eSure, not related to DSPy though, and completely tablestakes. Also not sure why the whole article assumes the only language in the world is Python.\u003cp\u003e\u0026gt; Separate prompts from code. Forces you to think about prompts as distinct things.\u003cp\u003eThere\u0026#x27;s really no reason prompts must live in a file with a .md or .json or .txt extension rather than .py\u0026#x2F;.ts\u0026#x2F;.go\u0026#x2F;.., except if you indeed work at a company that decided it\u0026#x27;s a good idea to let random people change prod runtime behavior. If someone can think of a scenario where this is actually a good idea, feel free to elighten me. I don\u0026#x27;t see how it\u0026#x27;s any more advisable than editing code in prod while it\u0026#x27;s running.\u003cp\u003e\u0026gt; Composable units. Every LLM call should be testable, mockable, chainable.\u003cp\u003e\u0026gt; Abstract model calls. Make swapping GPT-4 for Claude a one-line change.\u003cp\u003eAnd LiteLLM or `ai` (Vercel), the actually most used packages, aren\u0026#x27;t? You\u0026#x27;re comparing downloads with Langchain, probably the worst package to gain popularity of the last decade. It was just first to market, then after a short while most realized it\u0026#x27;s horrifically architected, and now it\u0026#x27;s just coasting on former name recognition while everyone who needs to get shit done uses something lighter like the above two.\u003cp\u003e\u0026gt; Eval infrastructure early. Day one. How will you know if a change helped?\u003cp\u003eSure, to an extent. Outside of programming, most things where LLMs deliver actual value are very nondeterministic with \u003ci\u003eno\u003c/i\u003e right answer. That\u0026#x27;s exactly what they offer. Plenty of which an LLM can\u0026#x27;t judge the quality of. Having basic evals is useful, but you can quickly run into their development taking more time than it\u0026#x27;s worth.\u003cp\u003eBut above all.. the comments on this post immediately make clear that the biggest differentiator of DSPy is the prompt optimization. Yet this article doesn\u0026#x27;t mention that at all? Weird.",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed critique addressing multiple points from the article, highlighting the omission of prompt optimization and questioning common assumptions, making it highly accurate and insightful."
+        "analysis": "Provides a nuanced critique of DSPy's features and adoption, highlighting practical issues and comparing it to other tools, making it a well-informed and accurate perspective."
       },
       {
         "id": 47492952,
         "author": "LudwigNagasena",
         "text": "The article starts with the comparison of DSPy and LangChain monthly downloads and then wastes time comparing DSPy to hand-rolling basic infra, which is quite trivial in every barely mature setup.\u003cp\u003eI conjecture that the core value proposition of DSPy is its optimizer? Yet the article doesn\u0026#x27;t really touch it in any important way. How does it work? How would I integrate it into my production? Is it even worth it for usual use-cases? Adding a retry is not a problem, creating and maintaining an AI control plane is. LangChain provides services for observability, online and offline evaluation, prompt engineering, deployment, you name it.",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment accurately identifies the article's lack of depth on DSPy's core feature, the optimizer, and contrasts it with existing solutions, providing a focused critique."
+        "analysis": "Accurately identifies a key omission in the article and raises relevant questions about DSPy's core value proposition and practical use."
       },
       {
         "id": 47490939,
@@ -57,51 +55,47 @@
         "text": "\u0026gt; f\u0026quot;Extract the company name from: {text}\u0026quot;\u003cp\u003eI think one thing that\u0026#x27;s lost in all of the LLM tooling is that it\u0026#x27;s LLM-or-nothing and people have lost knowledge of other ML approaches that actually work just fine, like entity recognition.\u003cp\u003eI understand it\u0026#x27;s easier to just throw every problem at an LLM but there are things where off-the-shelf ML\u0026#x2F;NLP products work just as well without the latency or expense.",
         "indicators": [
           "intelligent",
-          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment offers a valid perspective on the over-reliance on LLMs, reminding readers of simpler, effective ML alternatives, which is a well-founded observation."
+        "analysis": "Offers a valuable reminder that LLMs are not always the best solution, emphasizing practical ML alternatives that are often overlooked."
       },
       {
         "id": 47490729,
         "author": "memothon",
         "text": "I think the real problem with using DSPy is that many of the problems people are trying to solve with LLMs (agents, chat) don\u0026#x27;t have an obvious path to evaluate. You have to really think carefully on how to build up a training and evaluation dataset that you can throw to DSPy to get it to optimize.\u003cp\u003eThis takes a ton of upfront work and careful thinking. As soon as you move the goalposts of what you\u0026#x27;re trying to achieve you also have to update the training and evaluation dataset to cover that new use case.\u003cp\u003eThis can actually get in the way of moving fast. Often teams are not trying to optimize their prompts but even trying to figure out what the set of questions and right answers should be!",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "The comment insightfully discusses the practical challenges of using DSPy, especially the overhead in maintaining evaluation datasets, which aligns with common experiences."
-      },
-      {
-        "id": 47491489,
-        "author": "sethkim",
-        "text": "We build a product that\u0026#x27;s somewhat similar in spirit to DSPy, but people come to us for different reasons than the OP listed here.\u003cp\u003e1) It\u0026#x27;s slow: you first have to get acquainted with DSPY and then get hand-labeled data for prompt optimization. This can be a slow process so it\u0026#x27;s important to just label cases that are ambiguous, not obvious.\u003cp\u003e2) They know that manual prompt engineering is brittle, and want a prompt that\u0026#x27;s optimized and robust against a model they\u0026#x27;re invoking, which DSPy offers. However, it\u0026#x27;s really the optimizer (ex. GEPA) doing the heavy-lifting.\u003cp\u003e3) They don\u0026#x27;t actually want a model or prompt at all. They want a task completed, reliably, and they want that task to not regress in performance. Ideally, the task keeps improving in production.\u003cp\u003eCurious if folks in this thread feel more of these pains than the ones in the article.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "This comment provides a balanced view of DSPy's strengths and weaknesses, emphasizing the importance of its optimizer and the cost of onboarding."
+        "analysis": "Provides a realistic assessment of the challenges in using DSPy effectively, especially regarding evaluation and prompt optimization workflows."
       },
       {
         "id": 47490986,
         "author": "ijk",
         "text": "This matches my experience with Dspy. I ended up removing it from our production codebase because, at the time, it didn\u0026#x27;t quite work as effectively as just using Pydantic and so forth.\u003cp\u003eThe real killer feature is the prompt compilation; it\u0026#x27;s also the hardest to get to an effective place and I frequently found myself needing more control over the context than it would allow.  This was a while ago, so things may have improved. But good evals are hard and the really fancy algorithms will burn a lot of tokens to optimize your prompts.",
         "indicators": [
-          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Gives a credible user perspective that aligns with common criticisms about DSPy's complexity and limited immediate benefits."
+      },
+      {
+        "id": 47491489,
+        "author": "sethkim",
+        "text": "We build a product that\u0026#x27;s somewhat similar in spirit to DSPy, but people come to us for different reasons than the OP listed here.\u003cp\u003e1) It\u0026#x27;s slow: you first have to get acquainted with DSPY and then get hand-labeled data for prompt optimization. This can be a slow process so it\u0026#x27;s important to just label cases that are ambiguous, not obvious.\u003cp\u003e2) They know that manual prompt engineering is brittle, and want a prompt that\u0026#x27;s optimized and robust against a model they\u0026#x27;re invoking, which DSPy offers. However, it\u0026#x27;s really the optimizer (ex. GEPA) doing the heavy-lifting.\u003cp\u003e3) They don\u0026#x27;t actually want a model or prompt at all. They want a task completed, reliably, and they want that task to not regress in performance. Ideally, the task keeps improving in production.\u003cp\u003eCurious if folks in this thread feel more of these pains than the ones in the article.",
+        "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 6,
-        "analysis": "The comment highlights the core value and challenges of DSPy’s prompt compilation and evaluation, reflecting practical user experience."
+        "analysis": "Adds depth by explaining user motivations and challenges around prompt optimization and reliability, reinforcing key points about DSPy's niche."
       },
       {
         "id": 47492839,
@@ -110,50 +104,157 @@
         "indicators": [
           "intelligent",
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
         "accuracyRank": 7,
-        "analysis": "This comment provides a forward-looking perspective on how DSPy’s approach has been superseded by newer agentic development workflows."
-      },
-      {
-        "id": 47491116,
-        "author": "LoganDark",
-        "text": "This article seemingly misses any explanation of what DSPy even is or why it\u0026#x27;s supposedly so complicated and unfamiliar. Supposedly it solves the problems illustrated in the article, but it isn\u0026#x27;t explained how.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 8,
-        "analysis": "This comment correctly points out the article’s lack of clarity and detail about DSPy, which weakens the article’s effectiveness."
+        "analysis": "Provides an insightful industry perspective on how DSPy's approach fits into broader trends and why it may be less relevant now."
       },
       {
         "id": 47491354,
         "author": "CraftingLinks",
         "text": "I used dspy in production, then reverted the bloat as it literally gave me nothing of added value in practice but a lot of friction when i needed precise control over the context. Avoid!",
         "indicators": [
-          "intelligent",
+          "emotional",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Offers a blunt but valid user experience highlighting practical downsides of DSPy in real-world usage."
+      },
+      {
+        "id": 47491486,
+        "author": "deepsquirrelnet",
+        "text": "Good article, and I think the \u0026quot;evolution of every AI system\u0026quot; is spot on.\u003cp\u003eIn my opinion, the reason people don\u0026#x27;t use DSPy is because DSPy aims to be a machine learning platform. And like the article says -- this feels different or hard to people who are not used to engineering with probabilistic outputs. But these days, many more people are programming with probability machines than ever before.\u003cp\u003eThe absolute biggest time sink and \u0026#x27;here be dragons\u0026#x27; of using LLMs is poke and hope prompt \u0026quot;engineering\u0026quot; without proper evaluation metrics.\u003cp\u003e\u0026gt; You don’t have to use DSPy. But you should build like someone who understands why it exists.\u003cp\u003eAnd this is the salient point, and I think it\u0026#x27;s very well stated. It\u0026#x27;s not about the framework per se, but about the methodology.",
+        "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 9,
-        "analysis": "This user experience-based comment highlights practical downsides of DSPy, reinforcing common critiques about complexity and control."
+        "analysis": "Frames DSPy in a broader methodological context, emphasizing the importance of evaluation and probabilistic thinking in AI engineering."
+      },
+      {
+        "id": 47494034,
+        "author": "benh2477",
+        "text": "The adoption gap feels real. My experience is that developers don\u0026#x27;t trust AI outputs enough to build production workflows around them yet — the missing piece isn\u0026#x27;t better prompting frameworks, it\u0026#x27;s confidence signals that tell you when to trust the output.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Identifies a fundamental trust issue that may limit DSPy's adoption, offering a complementary perspective on the problem."
+      },
+      {
+        "id": 47491116,
+        "author": "LoganDark",
+        "text": "This article seemingly misses any explanation of what DSPy even is or why it\u0026#x27;s supposedly so complicated and unfamiliar. Supposedly it solves the problems illustrated in the article, but it isn\u0026#x27;t explained how.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 11,
+        "analysis": "Valid critique of the article's lack of clarity, which contributes to confusion about DSPy's purpose and benefits."
+      },
+      {
+        "id": 47491076,
+        "author": "tilt",
+        "text": "Curious what you think of \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;pipevals\u0026#x2F;pipevals\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;pipevals\u0026#x2F;pipevals\u003c/a\u003e (author)",
+        "indicators": [
+          "constructive"
+        ],
+        "accuracyRank": 12,
+        "analysis": "A minor but constructive inquiry showing engagement with the ecosystem around DSPy."
+      },
+      {
+        "id": 47491546,
+        "author": "msp26",
+        "text": "\u0026gt; Data extraction tasks are amongst the easiest to evaluate because there’s a known “right” answer.\u003cp\u003eWrong. There can be a lot of subjectivity and pretending that some golden answer exists does more harm and narrows down the scope of what you can build.\u003cp\u003eMy other main problem with data extraction tasks and why I\u0026#x27;m not satisfied with any of the existing eval tools is that the schemas I write change can drastically as my understanding of the problem increases. And nothing really seems to handle that well, I mostly just resort to reading diffs of what happens when I change something and reading the input\u0026#x2F;output data very closely. Marimo is fantastic for anything visual like this btw.\u003cp\u003eAlso there is a difference between: the problem in reality → the business model → your db\u0026#x2F;application schema → the schema you send to the LLM. And to actually improve your schema\u0026#x2F;prompt you have to be mindful of the entire problem stack and how you might separate things that are handled through post processing rather than by the LLM directly.\u003cp\u003e\u0026gt; Abstract model calls. Make swapping GPT-4 for Claude a one-line change.\u003cp\u003eAnd in practice random limitations like structured output API schema limits between providers can make this non-trivial. God I hate the Gemini API.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 13,
+        "analysis": "Provides a nuanced view on evaluation difficulties that complicate DSPy's optimization approach."
+      },
+      {
+        "id": 47491285,
+        "author": "Lerc",
+        "text": "If [programming_language] is so great, why isn\u0026#x27;t anyone using it?\u003cp\u003eFor many of the same reasons.  A plethora of alteratives, personal preference, weird ideology, appropriateness for the task, inertia, not-invented-here.\u003cp\u003eThe list goes on.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 14,
+        "analysis": "Offers a general but accurate observation about adoption dynamics that apply broadly beyond DSPy."
       },
       {
         "id": 47490882,
         "author": "ndr",
         "text": "It\u0026#x27;s not as ergonomic as they made it to be.\u003cp\u003eThe fact that you have to bundle input+output signatures and everything is dynamically typed (sometimes into the args) just make it annoying to use in codebases that have type annotations everywhere.\u003cp\u003ePlus their out of the box agent loop has been a joke for the longest time, and writing your own if feasible but it\u0026#x27;s night and day when trying to get something done with pydantic-ai.\u003cp\u003eToo bad because it has a lot of nice things, I wish it were more popular.",
         "indicators": [
-          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 10,
-        "analysis": "This comment discusses technical usability issues with DSPy, particularly in typed environments, which is a valid concern for many developers."
+        "accuracyRank": 15,
+        "analysis": "Highlights concrete technical drawbacks that reduce DSPy's usability in typed codebases."
+      },
+      {
+        "id": 47492829,
+        "author": "whinvik",
+        "text": "I don\u0026#x27;t get it. All these are provided by many different agent libs like langgraph, Pydantic AI etc. I thought DSPy was for prompt optimization but I could never wrap my head around that aspect since like Langchain, DSPy seems to hide stuff a bit too much.\u003cp\u003eSo this article seems surprising since it emphasizes more the non prompt optimization aspects. If that was the selling point I would rather use something like Pydantic AI when I already use Pydantic for so much of the rest.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 16,
+        "analysis": "Raises valid concerns about DSPy's differentiation and transparency, which may hinder adoption."
+      },
+      {
+        "id": 47490691,
+        "author": "tinyhouse",
+        "text": "A lot of these ideas Dspy and RLM (from the same people IIRC) are more marketing than solving a real problem.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 17,
+        "analysis": "A skeptical viewpoint that, while somewhat dismissive, reflects a common sentiment about hype versus substance."
+      },
+      {
+        "id": 47490650,
+        "author": "stephantul",
+        "text": "Mannnn, here I thought this was going to be an informative article! But it’s just a commercial for the author’s consulting business.",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 18,
+        "analysis": "An emotional reaction that adds little substantive critique or insight."
+      },
+      {
+        "id": 47494455,
+        "author": "MoonWalk",
+        "text": "Inaccessible: \u0026quot;net::ERR_CERT_AUTHORITY_INVALID\u0026quot;\nreply",
+        "indicators": [
+          "useless"
+        ],
+        "accuracyRank": 19,
+        "analysis": "Does not contribute to the discussion about DSPy or the article."
+      },
+      {
+        "id": 47494000,
+        "author": "tech_hutch",
+        "text": "I read the title as \u0026quot;If DarkSydePhil-y is so great, why isn\u0026#x27;t anyone using it?\u0026quot;",
+        "indicators": [
+          "trolling",
+          "useless"
+        ],
+        "accuracyRank": 20,
+        "analysis": "Off-topic humor that does not add value to the analysis."
       }
     ]
   }

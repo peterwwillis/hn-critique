@@ -23,5 +23,35 @@
       "The article is authored by the developer of RE#, which may introduce bias toward emphasizing its advantages."
     ],
     "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers on the performance challenges of regex engines, particularly the quadratic time complexity in finding all matches. One detailed comment explains how certain regex patterns cause repeated work leading to quadratic behavior and discusses potential fixes and alternatives like lookbehind assertions and different quantifiers.",
+    "comments": [
+      {
+        "id": 47494694,
+        "author": "zahlman",
+        "text": "\u0026gt; search a document for a pattern and it takes a second. search one a hundred times larger and it doesn\u0026#x27;t take a hundred seconds - it can take almost three hours.\u003cp\u003eMost of this is about quadratic time find-all operations where a search operation is linear. But it\u0026#x27;s also still possible to get quadratic behaviour out of a single search without catastrophic backtracking, more easily than you might expect. In late January to early February, Tim Peters was talking about an example of this on the Python forums (see e.g. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;add-re-prefixmatch-deprecate-re-match\u0026#x2F;105927\u0026#x2F;9\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;add-re-prefixmatch-deprecate-re...\u003c/a\u003e) and also related the experience of trying to diagnose the issue with AI (see \u003ca href=\"https:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;claude-code-how-much-hype-how-much-true-wizardry\u0026#x2F;105985\u0026#x2F;28\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;claude-code-how-much-hype-how-m...\u003c/a\u003e and onward). Peters\u0026#x27; example was:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  \\d+\\s+\n\u003c/code\u003e\u003c/pre\u003e\non a string containing only digits, a prefix match takes O(n) time as it considers every possible end position for the digit, and immediately sees no following whitespace. But the search is quadratic because it has to repeat that O(n) work at every position; the regex engine can\u0026#x27;t track the fact that it\u0026#x27;s already examined the string and found no whitespace, so it re-tries each digit match length.\u003cp\u003e(This is arguably \u0026quot;backtracking\u0026quot; since it tries the longest match first, but clearly not in a catastrophic way; if you use `\\d+?` instead then of course it only searches forward but is still O(n). It actually is slower in my testing in the Python implementation; I don\u0026#x27;t exactly know why. As noted in the discussion, the possessive quantifier `\\d++` is considerably faster, and of course doesn\u0026#x27;t backtrack, but still causes O(n^2) searching. The repeated attempts to match `\\s+` aren\u0026#x27;t the problem; the problem is repeatedly looking for \u003ci\u003edigits in places where digits were already found and rejected.)\u003cp\u003eThe way to fix this proposed in the discussion is to use a negative lookbehind assertion before the digits: `(?\u0026lt;!\\d)\\d+\\s+`. This way, the regex engine can bail out early when it\u0026#x27;s in the middle of a digit string; if the previous character was a digit, then either `\\d+\\s+` doesn\u0026#x27;t match here, or it would have matched there.\u003cp\u003eA simpler idea is to just search for `\\d\\s+`, or even `\\d\\s` — since these will be present if and only if `\\d+\\s+` is. This way, though, you still need to do extra work with the partial match to identify the start and end of the full match. My first idea was to use \u003c/i\u003epositive* lookbehind for the digits, since the lookbehind match doesn\u0026#x27;t need to backtrack. In fact lookbehinds require a fixed-length pattern, so this is really just a more complicated way to do the `\\d\\s+` simplification.\u003cp\u003e----\u003cp\u003e\u0026gt; Hyperscan (and its fork Vectorscan) is a true linear-time all-matches regex engine. it achieves this by using \u0026quot;earliest match\u0026quot; semantics - reporting a match the moment the DFA enters a match state, instead of continuing to find the longest one.\u003cp\u003eIs this not just equivalent to forcing \u0026quot;reluctant\u0026quot; quantifiers (`\\d+?`) everywhere?",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed, nuanced explanation of the regex quadratic problem with references to real discussions and examples, making it highly accurate and informative."
+      },
+      {
+        "id": 47494359,
+        "author": "adzm",
+        "text": "Is there any reason that RE#\u0026#x27;s two-pass approach couldn\u0026#x27;t be adopted by other regex engines?\u003cp\u003eAh, there is a post with more detail about RE# and discussion here recently that I must have missed: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment raises a relevant question about alternative regex engine implementations, contributing constructively to the discussion but without detailed technical analysis."
+      }
+    ]
   }
 }

@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">184 points</span>
+        <span class="score">203 points</span>
         by <a href="https://news.ycombinator.com/user?id=Klaster_1" class="hnuser">Klaster_1</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/19/47436592.html">critique article</a>
@@ -47,46 +47,46 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around the new property-based testing tool Bombadil for web UIs, with users expressing enthusiasm for its approach and simplicity, while also raising questions about its functionality, limitations, and practical use cases. Some commenters request more examples, videos, or documentation on what the tool can and cannot do, while others share concerns about frontend testing challenges and accessibility considerations.</p>
+      <p>The discussion centers on Bombadil, a property-based testing tool for web UIs using temporal logic. Commenters praise its novel approach and simplicity but also highlight limitations in action generation, state modeling, and practical usability for complex UI testing.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 12 of 16 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47436592" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 12 of 18 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47436592" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=IanCal" class="hnuser">IanCal</a>
+        <a href="https://news.ycombinator.com/user?id=Darmani" class="hnuser">Darmani</a>
         &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Timely! I spent a good chunk of yesterday investigating Bombadil. I&#x27;m a huge fan of PBT and a huge fan of temporal logic (though not linear temporal logic) and we&#x27;re currently trying to level up our QA, so it seemed like a good match.<p>Unfortunately, I concluded that <i>Bombadil is a toy</i>. Not as in &quot;Does some very nice things, but missing the features for enterprise adoption.&quot; I mean that in a very strong sense, as in: <i>I could not figure out how to do anything real with it.</i><p>The place where this is most obvious is in its action generator type. You give it a function that generates actions, where each action is drawn from a small menu of choices like &quot;scroll up this many pixel&quot; or &quot;click on this pixel.&quot; You cannot add new types of actions. If you want to click on a button, you need it to generate a sequence of actions to first scroll down enough, and then look up a pixel that&#x27;s on that button.<p>Except that it selects actions randomly from your list, so you somehow need the action generator, when run the first time, to generate only the scroll action, and then have it, when run the second time, generate only the click action. If you are silly enough as to have an action generator that, you know, actually gives a list of reasonable actions, you&#x27;ll get a tester that spends all its time going in circles clicking on the nav bar.<p>(Something in the docs claimed that actions are weighted, but I found nothing about an actual affordance for doing that. Having weights would make this go from basically impossible to somewhat impossible.)<p>(Edit: Found the weighted thing.)<p>I am terrified to imagine how to get Bombadil to fill out a form. At least that seems possible -- you can inspect the state of the web page to figure out what&#x27;s already been filled out. But if you want the state to be based on anything not on the current page, like the action that you took on the previous page, or <i>gasp</i> the state on disk (as for an Electron app), that seems completely impossible. Action generators are based on the current state, and the state must be a pure function of the web page.<p>Its temporal logic has a cool time-bounded construct, but it&#x27;s missing the U (until) operator. One of their few examples is &quot;If you show the user a notification, it disappears within 5 seconds.&quot; But I want to say &quot;When you click the Generate button, it says &#x27;Generating...&#x27; up until it&#x27;s finished generating.&quot; And I can&#x27;t.<p>(Note: everything above is according to the docs. Hopefully everything I said is a limitation of the docs, not an actual limitation of the framework.)<p>I shared my comments with the author yesterday on LinkedIn, but he hasn&#x27;t responded yet. Maybe I&#x27;ll hear from him here.<p>I have a pretty positive opinion of Antithesis as a company and they seem to be investing seriously in it, and generally see it as a strong positive sign when someone knows what temporal logic is, so I have hopes for this framework. I am nonetheless disappointed that I can&#x27;t use it now, especially because I was supposed to finish an internal GUI testing tool this week and my god I&#x27;m behind.</div>
+      <div class="comment-analysis"><em>This comment provides a detailed critique grounded in the documentation and practical testing experience, highlighting real limitations and suggesting areas for improvement.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=inaseer" class="hnuser">inaseer</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Bombadil takes a fresh approach to UI testing I haven&#x27;t seen before: online monitoring through LTL formulas. Unlike model-checking (say by TLC), LTL formulas over here unfold in lock-step with the UI and allow users to express interesting temporal properties during testing.<p>The other intriguing aspect was how state is modeled (or rather, maybe not explicitly modeled?). A lot of the examples show the state extracted from the DOM and temporal properties indicating what the next (or eventual) state _should be_. If we want to look at the existing state (according to the model&#x2F;spec) when predicting the next state (similar to how you can use s when specifying s&#x27; in TLA+), there seems to be no direct way to do that. It should of course be possible to capture the state at an earlier time in a closure and use it in a thunk at a later point, so it should be possible to work around this but that can be a little awkward, maybe. I&#x27;m working on a project in this space (primarily geared towards backend API model-based testing) and the state of the _real_ system isn&#x27;t globally inspectable unlike a web page so took a different route over there. Having said that, this is a very interesting design choice that&#x27;s very intriguing (in a good way).</div>
+      <div class="comment-analysis"><em>The comment insightfully explains Bombadil&#39;s unique approach to state and temporal logic, comparing it to other model-checking methods and noting design trade-offs.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=IanCal" class="hnuser">IanCal</a>
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">I&#x27;m a huge fan of property based testing, I&#x27;ve built some runners before, and I think it can be great for UI things too so very happy to see this coming around more.<p>Something I couldn&#x27;t see was how those examples actually work, there are no actions specified. Do they watch a user, default to randomly hitting the keyboard, neither and you need to specify some actions to take?<p>What about rerunning things?<p>Is there shrinking?<p>edit - a suggestion for examples, have a basic UI hosted on a static page which is broken in a way the test can find. Like a thing with a button that triggers a notification and doesn&#x27;t actually have a limit of 5 notifications.</div>
-      <div class="comment-analysis"><em>This comment raises valid and detailed questions about the tool&#39;s functionality, such as action specification, rerunning tests, and shrinking, which are important aspects of property-based testing.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=thibran" class="hnuser">thibran</a>
-        &nbsp;|&nbsp;rank #2
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">I&#x27;m doing propety-based test since years for frontend stuff. The hardest part is, that there is so much between the test inputs and the application under test, that I find 50% of the time problems with the frontend test frameworks&#x2F;libs and not in our code.</div>
-      <div class="comment-analysis"><em>Provides an experienced perspective on challenges in frontend property-based testing, highlighting issues with testing frameworks rather than the code itself.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=logicprog" class="hnuser">logicprog</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">This looks genuinely awesome! I&#x27;ve been thinking about how to do good property based testing on UIs, and this elegantly solves that problem — I love the language they&#x27;ve designed here. It really feels like model checking or something.</div>
-      <div class="comment-analysis"><em>Offers a positive and insightful evaluation of the tool&#39;s approach, comparing it to model checking, which is relevant and accurate in context.</em></div>
+      <div class="comment-analysis"><em>Raises valid questions about practical usage details that are important for evaluating the tool&#39;s effectiveness and usability.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -94,76 +94,76 @@
         <a href="https://news.ycombinator.com/user?id=warpspin" class="hnuser">warpspin</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">I especially like that it&#x27;s a single executable according to the docs.<p>Recently evaluated other testing tools&#x2F;frameworks and if you&#x27;re not already running the npm-dependencyhell-shitshow for your projects, most tools will pull in at least 100 dependencies.<p>I might be old fashioned but that&#x27;s just too much for my taste. I love single-use tools with limited scope like e.g. esbuild or now this.<p>Will give this a try, soon.</div>
-      <div class="comment-analysis"><em>Accurately highlights the advantage of minimal dependencies in Bombadil compared to other tools, reflecting a common concern in modern JavaScript tooling.</em></div>
+      <div class="comment-analysis"><em>Accurately notes the advantage of minimal dependencies, which can be a significant benefit in tooling.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=logicprog" class="hnuser">logicprog</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This looks genuinely awesome! I&#x27;ve been thinking about how to do good property based testing on UIs, and this elegantly solves that problem — I love the language they&#x27;ve designed here. It really feels like model checking or something.</div>
+      <div class="comment-analysis"><em>Expresses positive subjective impression but lacks detailed critique or evidence.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jryio" class="hnuser">jryio</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">Hey Oskar ~ great project and looks promising. I would be curious to hear what is still work-in-progress for Bombadil.<p>It&#x27;s helpful to know what the tool maintainers see as upcoming or incomplete work. It also saves a consultant like me a lot of time to evaluate new tools for clients if I also know the limitations before diving in. Maybe a section in the manual for &quot;What Bombadil can&#x27;t do&quot;.<p>Great work!</div>
-      <div class="comment-analysis"><em>Constructively requests transparency about the tool&#39;s limitations and ongoing work, which is useful for potential users and evaluators.</em></div>
+      <div class="comment-analysis"><em>Constructive request for transparency about limitations, useful for potential users and evaluators.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=thibran" class="hnuser">thibran</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I&#x27;m doing propety-based test since years for frontend stuff. The hardest part is, that there is so much between the test inputs and the application under test, that I find 50% of the time problems with the frontend test frameworks&#x2F;libs and not in our code.</div>
+      <div class="comment-analysis"><em>Provides relevant context about challenges in frontend testing that may apply to Bombadil&#39;s domain.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=wittjeff" class="hnuser">wittjeff</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">From your title my immediate thought was &quot;cool, maybe this will move us a bit closer to making components (or the testing thereof) cover accessibility thoroughly by default&quot;.<p>See, the idea with the semantic web, and the ARIA markup equivalents, is that things should have names, roles, values, and states. Devs frequently mess up role&#x2F;keyboard interaction agreement (example: role=menu means a list will drop on Enter keypress, and arrow keys will change the active element), and with ensuring that state info (aria-expanded, aria-invalid, etc.) is updated when it should be.<p>Then I checked the Antithesis website. They don&#x27;t even have focus state styling on any of the interactive elements. <i>sigh</i></div>
-      <div class="comment-analysis"><em>Raises a relevant accessibility concern but mixes critique of the tool with criticism of the website&#39;s design, which may not fully reflect the tool&#39;s capabilities.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=xaviervn" class="hnuser">xaviervn</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">The major breakthrough here is that they managed to write a project in Rust and not mention it on the headline!<p>Jokes aside, great project and documentation (manual)! Getting started was really simple, and I quickly understood what it can and cannot do.</div>
-      <div class="comment-analysis"><em>Positively reviews the project and documentation, noting ease of use, though the Rust comment is humorous and not directly related to accuracy.</em></div>
+      <div class="comment-analysis"><em>Raises a valid concern about accessibility practices related to the tool&#39;s presentation, though not directly about the tool itself.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=css_apologist" class="hnuser">css_apologist</a>
-        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
         <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">very cool! does this work? can you describe the kinds of real bugs you&#x27;ve caught with this?</div>
-      <div class="comment-analysis"><em>Asks for practical evidence of the tool&#39;s effectiveness, which is a reasonable and constructive inquiry.</em></div>
+      <div class="comment-analysis"><em>Seeks practical evidence of effectiveness, an important consideration for adoption.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=sequoia" class="hnuser">sequoia</a>
-        &nbsp;|&nbsp;rank #9
+        <a href="https://news.ycombinator.com/user?id=elcapitan" class="hnuser">elcapitan</a>
+        &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
-      <div class="comment-text">Struggling to understand what this is or how it works.</div>
-      <div class="comment-analysis"><em>Expresses confusion without elaboration, providing little substantive feedback or insight.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=orliesaurus" class="hnuser">orliesaurus</a>
-        &nbsp;|&nbsp;rank #10
-        &nbsp;|&nbsp;
-        <span class="indicator">trolling</span> <span class="indicator">useless</span> 
-      </div>
-      <div class="comment-text">Bombadillo Crocodillo<p>Ok I will see myself out<p>(Yes I know it&#x27;s actually from the Tolkien book)</div>
-      <div class="comment-analysis"><em>Makes a playful but irrelevant comment referencing Tolkien, adding no value to the discussion.</em></div>
+      <div class="comment-text">&quot;Bombadil&quot; means that I&#x27;ll probably skip most of these tests.</div>
+      <div class="comment-analysis"><em>A dismissive comment with no constructive content or explanation.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
@@ -174,18 +174,18 @@
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">My kingdom for a way to stop this godforsaken industry from stripping Tolkien&#x27;s fiction for parts.</div>
-      <div class="comment-analysis"><em>Expresses frustration unrelated to the technical discussion, contributing no useful information.</em></div>
+      <div class="comment-analysis"><em>Off-topic emotional complaint unrelated to the discussion about Bombadil.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=elcapitan" class="hnuser">elcapitan</a>
+        <a href="https://news.ycombinator.com/user?id=orliesaurus" class="hnuser">orliesaurus</a>
         &nbsp;|&nbsp;rank #12
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+        <span class="indicator">trolling</span> <span class="indicator">useless</span> 
       </div>
-      <div class="comment-text">&quot;Bombadil&quot; means that I&#x27;ll probably skip most of these tests.</div>
-      <div class="comment-analysis"><em>Makes a dismissive comment based on the name alone, lacking constructive or informative content.</em></div>
+      <div class="comment-text">Bombadillo Crocodillo<p>Ok I will see myself out<p>(Yes I know it&#x27;s actually from the Tolkien book)</div>
+      <div class="comment-analysis"><em>A joke comment with no relevance to the technical discussion.</em></div>
     </div>
     
 
@@ -197,7 +197,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-23 19:03 UTC &nbsp;|&nbsp;
+    Generated 2026-03-23 20:52 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

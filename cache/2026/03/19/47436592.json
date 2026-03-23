@@ -20,8 +20,34 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers around the new property-based testing tool Bombadil for web UIs, with users expressing enthusiasm for its approach and simplicity, while also raising questions about its functionality, limitations, and practical use cases. Some commenters request more examples, videos, or documentation on what the tool can and cannot do, while others share concerns about frontend testing challenges and accessibility considerations.",
+    "summary": "The discussion centers on Bombadil, a property-based testing tool for web UIs using temporal logic. Commenters praise its novel approach and simplicity but also highlight limitations in action generation, state modeling, and practical usability for complex UI testing.",
     "comments": [
+      {
+        "id": 47493809,
+        "author": "Darmani",
+        "text": "Timely! I spent a good chunk of yesterday investigating Bombadil. I\u0026#x27;m a huge fan of PBT and a huge fan of temporal logic (though not linear temporal logic) and we\u0026#x27;re currently trying to level up our QA, so it seemed like a good match.\u003cp\u003eUnfortunately, I concluded that \u003ci\u003eBombadil is a toy\u003c/i\u003e. Not as in \u0026quot;Does some very nice things, but missing the features for enterprise adoption.\u0026quot; I mean that in a very strong sense, as in: \u003ci\u003eI could not figure out how to do anything real with it.\u003c/i\u003e\u003cp\u003eThe place where this is most obvious is in its action generator type. You give it a function that generates actions, where each action is drawn from a small menu of choices like \u0026quot;scroll up this many pixel\u0026quot; or \u0026quot;click on this pixel.\u0026quot; You cannot add new types of actions. If you want to click on a button, you need it to generate a sequence of actions to first scroll down enough, and then look up a pixel that\u0026#x27;s on that button.\u003cp\u003eExcept that it selects actions randomly from your list, so you somehow need the action generator, when run the first time, to generate only the scroll action, and then have it, when run the second time, generate only the click action. If you are silly enough as to have an action generator that, you know, actually gives a list of reasonable actions, you\u0026#x27;ll get a tester that spends all its time going in circles clicking on the nav bar.\u003cp\u003e(Something in the docs claimed that actions are weighted, but I found nothing about an actual affordance for doing that. Having weights would make this go from basically impossible to somewhat impossible.)\u003cp\u003e(Edit: Found the weighted thing.)\u003cp\u003eI am terrified to imagine how to get Bombadil to fill out a form. At least that seems possible -- you can inspect the state of the web page to figure out what\u0026#x27;s already been filled out. But if you want the state to be based on anything not on the current page, like the action that you took on the previous page, or \u003ci\u003egasp\u003c/i\u003e the state on disk (as for an Electron app), that seems completely impossible. Action generators are based on the current state, and the state must be a pure function of the web page.\u003cp\u003eIts temporal logic has a cool time-bounded construct, but it\u0026#x27;s missing the U (until) operator. One of their few examples is \u0026quot;If you show the user a notification, it disappears within 5 seconds.\u0026quot; But I want to say \u0026quot;When you click the Generate button, it says \u0026#x27;Generating...\u0026#x27; up until it\u0026#x27;s finished generating.\u0026quot; And I can\u0026#x27;t.\u003cp\u003e(Note: everything above is according to the docs. Hopefully everything I said is a limitation of the docs, not an actual limitation of the framework.)\u003cp\u003eI shared my comments with the author yesterday on LinkedIn, but he hasn\u0026#x27;t responded yet. Maybe I\u0026#x27;ll hear from him here.\u003cp\u003eI have a pretty positive opinion of Antithesis as a company and they seem to be investing seriously in it, and generally see it as a strong positive sign when someone knows what temporal logic is, so I have hopes for this framework. I am nonetheless disappointed that I can\u0026#x27;t use it now, especially because I was supposed to finish an internal GUI testing tool this week and my god I\u0026#x27;m behind.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed critique grounded in the documentation and practical testing experience, highlighting real limitations and suggesting areas for improvement."
+      },
+      {
+        "id": 47494677,
+        "author": "inaseer",
+        "text": "Bombadil takes a fresh approach to UI testing I haven\u0026#x27;t seen before: online monitoring through LTL formulas. Unlike model-checking (say by TLC), LTL formulas over here unfold in lock-step with the UI and allow users to express interesting temporal properties during testing.\u003cp\u003eThe other intriguing aspect was how state is modeled (or rather, maybe not explicitly modeled?). A lot of the examples show the state extracted from the DOM and temporal properties indicating what the next (or eventual) state _should be_. If we want to look at the existing state (according to the model\u0026#x2F;spec) when predicting the next state (similar to how you can use s when specifying s\u0026#x27; in TLA+), there seems to be no direct way to do that. It should of course be possible to capture the state at an earlier time in a closure and use it in a thunk at a later point, so it should be possible to work around this but that can be a little awkward, maybe. I\u0026#x27;m working on a project in this space (primarily geared towards backend API model-based testing) and the state of the _real_ system isn\u0026#x27;t globally inspectable unlike a web page so took a different route over there. Having said that, this is a very interesting design choice that\u0026#x27;s very intriguing (in a good way).",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment insightfully explains Bombadil's unique approach to state and temporal logic, comparing it to other model-checking methods and noting design trade-offs."
+      },
       {
         "id": 47488981,
         "author": "IanCal",
@@ -31,31 +57,8 @@
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment raises valid and detailed questions about the tool's functionality, such as action specification, rerunning tests, and shrinking, which are important aspects of property-based testing."
-      },
-      {
-        "id": 47489836,
-        "author": "thibran",
-        "text": "I\u0026#x27;m doing propety-based test since years for frontend stuff. The hardest part is, that there is so much between the test inputs and the application under test, that I find 50% of the time problems with the frontend test frameworks\u0026#x2F;libs and not in our code.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 2,
-        "analysis": "Provides an experienced perspective on challenges in frontend property-based testing, highlighting issues with testing frameworks rather than the code itself."
-      },
-      {
-        "id": 47490430,
-        "author": "logicprog",
-        "text": "This looks genuinely awesome! I\u0026#x27;ve been thinking about how to do good property based testing on UIs, and this elegantly solves that problem — I love the language they\u0026#x27;ve designed here. It really feels like model checking or something.",
-        "indicators": [
-          "intelligent",
-          "constructive",
-          "likely-true"
-        ],
         "accuracyRank": 3,
-        "analysis": "Offers a positive and insightful evaluation of the tool's approach, comparing it to model checking, which is relevant and accurate in context."
+        "analysis": "Raises valid questions about practical usage details that are important for evaluating the tool's effectiveness and usability."
       },
       {
         "id": 47489322,
@@ -63,10 +66,23 @@
         "text": "I especially like that it\u0026#x27;s a single executable according to the docs.\u003cp\u003eRecently evaluated other testing tools\u0026#x2F;frameworks and if you\u0026#x27;re not already running the npm-dependencyhell-shitshow for your projects, most tools will pull in at least 100 dependencies.\u003cp\u003eI might be old fashioned but that\u0026#x27;s just too much for my taste. I love single-use tools with limited scope like e.g. esbuild or now this.\u003cp\u003eWill give this a try, soon.",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Accurately highlights the advantage of minimal dependencies in Bombadil compared to other tools, reflecting a common concern in modern JavaScript tooling."
+        "analysis": "Accurately notes the advantage of minimal dependencies, which can be a significant benefit in tooling."
+      },
+      {
+        "id": 47490430,
+        "author": "logicprog",
+        "text": "This looks genuinely awesome! I\u0026#x27;ve been thinking about how to do good property based testing on UIs, and this elegantly solves that problem — I love the language they\u0026#x27;ve designed here. It really feels like model checking or something.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Expresses positive subjective impression but lacks detailed critique or evidence."
       },
       {
         "id": 47489761,
@@ -76,8 +92,19 @@
           "constructive",
           "thoughtful"
         ],
-        "accuracyRank": 5,
-        "analysis": "Constructively requests transparency about the tool's limitations and ongoing work, which is useful for potential users and evaluators."
+        "accuracyRank": 6,
+        "analysis": "Constructive request for transparency about limitations, useful for potential users and evaluators."
+      },
+      {
+        "id": 47489836,
+        "author": "thibran",
+        "text": "I\u0026#x27;m doing propety-based test since years for frontend stuff. The hardest part is, that there is so much between the test inputs and the application under test, that I find 50% of the time problems with the frontend test frameworks\u0026#x2F;libs and not in our code.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Provides relevant context about challenges in frontend testing that may apply to Bombadil's domain."
       },
       {
         "id": 47493084,
@@ -85,22 +112,11 @@
         "text": "From your title my immediate thought was \u0026quot;cool, maybe this will move us a bit closer to making components (or the testing thereof) cover accessibility thoroughly by default\u0026quot;.\u003cp\u003eSee, the idea with the semantic web, and the ARIA markup equivalents, is that things should have names, roles, values, and states. Devs frequently mess up role\u0026#x2F;keyboard interaction agreement (example: role=menu means a list will drop on Enter keypress, and arrow keys will change the active element), and with ensuring that state info (aria-expanded, aria-invalid, etc.) is updated when it should be.\u003cp\u003eThen I checked the Antithesis website. They don\u0026#x27;t even have focus state styling on any of the interactive elements. \u003ci\u003esigh\u003c/i\u003e",
         "indicators": [
           "thoughtful",
-          "emotional"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Raises a relevant accessibility concern but mixes critique of the tool with criticism of the website's design, which may not fully reflect the tool's capabilities."
-      },
-      {
-        "id": 47490583,
-        "author": "xaviervn",
-        "text": "The major breakthrough here is that they managed to write a project in Rust and not mention it on the headline!\u003cp\u003eJokes aside, great project and documentation (manual)! Getting started was really simple, and I quickly understood what it can and cannot do.",
-        "indicators": [
           "emotional",
-          "constructive",
           "likely-true"
         ],
-        "accuracyRank": 7,
-        "analysis": "Positively reviews the project and documentation, noting ease of use, though the Rust comment is humorous and not directly related to accuracy."
+        "accuracyRank": 8,
+        "analysis": "Raises a valid concern about accessibility practices related to the tool's presentation, though not directly about the tool itself."
       },
       {
         "id": 47490293,
@@ -110,30 +126,19 @@
           "constructive",
           "thoughtful"
         ],
-        "accuracyRank": 8,
-        "analysis": "Asks for practical evidence of the tool's effectiveness, which is a reasonable and constructive inquiry."
+        "accuracyRank": 9,
+        "analysis": "Seeks practical evidence of effectiveness, an important consideration for adoption."
       },
       {
-        "id": 47489814,
-        "author": "sequoia",
-        "text": "Struggling to understand what this is or how it works.",
+        "id": 47489625,
+        "author": "elcapitan",
+        "text": "\u0026quot;Bombadil\u0026quot; means that I\u0026#x27;ll probably skip most of these tests.",
         "indicators": [
           "emotional",
           "useless"
         ],
-        "accuracyRank": 9,
-        "analysis": "Expresses confusion without elaboration, providing little substantive feedback or insight."
-      },
-      {
-        "id": 47489436,
-        "author": "orliesaurus",
-        "text": "Bombadillo Crocodillo\u003cp\u003eOk I will see myself out\u003cp\u003e(Yes I know it\u0026#x27;s actually from the Tolkien book)",
-        "indicators": [
-          "trolling",
-          "useless"
-        ],
         "accuracyRank": 10,
-        "analysis": "Makes a playful but irrelevant comment referencing Tolkien, adding no value to the discussion."
+        "analysis": "A dismissive comment with no constructive content or explanation."
       },
       {
         "id": 47489858,
@@ -144,18 +149,18 @@
           "useless"
         ],
         "accuracyRank": 11,
-        "analysis": "Expresses frustration unrelated to the technical discussion, contributing no useful information."
+        "analysis": "Off-topic emotional complaint unrelated to the discussion about Bombadil."
       },
       {
-        "id": 47489625,
-        "author": "elcapitan",
-        "text": "\u0026quot;Bombadil\u0026quot; means that I\u0026#x27;ll probably skip most of these tests.",
+        "id": 47489436,
+        "author": "orliesaurus",
+        "text": "Bombadillo Crocodillo\u003cp\u003eOk I will see myself out\u003cp\u003e(Yes I know it\u0026#x27;s actually from the Tolkien book)",
         "indicators": [
-          "emotional",
+          "trolling",
           "useless"
         ],
         "accuracyRank": 12,
-        "analysis": "Makes a dismissive comment based on the name alone, lacking constructive or informative content."
+        "analysis": "A joke comment with no relevance to the technical discussion."
       }
     ]
   }

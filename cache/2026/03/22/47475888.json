@@ -18,31 +18,66 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on a recent security incident involving compromised Trivy Docker images, highlighting concerns about credential security, the competence of security teams, and best practices for mitigating risks. Some comments express frustration and skepticism about ongoing vulnerabilities despite security measures like 2FA.",
+    "summary": "The discussion centers on a recent security breach involving Trivy and GitHub Actions, focusing on credential compromises, inadequate rotation of secrets, and the broader implications of supply chain vulnerabilities. Commenters debate GitHub's security practices, the persistence of attackers, and the challenges of securing developer tools.",
     "comments": [
+      {
+        "id": 47493539,
+        "author": "kevincloudsec",
+        "text": "second breach in a month from the same initial credential compromise. the first rotation didn\u0026#x27;t fully revoke access. the attacker walked right back in. no persistence needed.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment accurately highlights the critical failure in the credential rotation process, explaining how incomplete revocation allowed attackers to regain access without persistence."
+      },
+      {
+        "id": 47493607,
+        "author": "deathanatos",
+        "text": "My initial thought is that if this isn\u0026#x27;t a new compromise, Trivy must not have rotated the old credentials. They claim, however,\u003cp\u003e\u0026gt; \u003ci\u003eWe rotated secrets and tokens, but the process wasn\u0026#x27;t atomic and attackers may have been privy to refreshed tokens\u003c/i\u003e\u003cp\u003e… does anyone know what \u003ci\u003eexactly\u003c/i\u003e they\u0026#x27;re talking about, here? To my knowledge, GH does not divulge new tokens after they\u0026#x27;re issued, but it depends on the exact auth type we\u0026#x27;re talking about, and GH has an absurd number of different types of tokens\u0026#x2F;keys one can use.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "intelligent"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment thoughtfully questions the nature of the token rotation and the possibility of attackers accessing refreshed tokens, reflecting a nuanced understanding of token management complexities."
+      },
+      {
+        "id": 47494269,
+        "author": "tkzed49",
+        "text": "\u0026quot;GitHub\u0026#x27;s own security guidance recommends pinning actions to full commit SHAs as the only truly immutable way to consume an action\u0026quot;\u003cp\u003eWhy doesn\u0026#x27;t GitHub just enforce  immutable versioning for actions? If you don\u0026#x27;t want immutable releases, you don\u0026#x27;t get to publish an Action. They could decide to enforce this and mitigate this class of issue.",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The comment constructively suggests a practical mitigation by enforcing immutable versioning, aligning with known best practices for securing GitHub Actions."
+      },
       {
         "id": 47492405,
         "author": "Shank",
         "text": "\u0026gt; On March 22, 2026, a threat actor used compromised credentials to publish a malicious Trivy v0.69.5 and v0.69.6 DockerHub images. (\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;aquasecurity\u0026#x2F;trivy\u0026#x2F;security\u0026#x2F;advisories\u0026#x2F;GHSA-69fq-xp46-6x23\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;aquasecurity\u0026#x2F;trivy\u0026#x2F;security\u0026#x2F;advisories\u0026#x2F;GH...\u003c/a\u003e)\u003cp\u003eSo the first incident was on March 19th and the second incident is March 22nd —- evidently the attackers maintained persistence through maybe two separate credential rotation efforts.",
         "indicators": [
-          "intelligent",
           "likely-true",
+          "intelligent",
           "thoughtful"
         ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed timeline and analysis of the attacker's persistence, showing a good understanding of the incident's severity."
+        "accuracyRank": 4,
+        "analysis": "This comment provides a timeline and suggests attacker persistence across credential rotations, which is consistent with the reported incidents, though the exact persistence mechanism is speculative."
       },
       {
-        "id": 47492448,
-        "author": "progbits",
-        "text": "Friendly reminder that just because someone is building security software it doesn\u0026#x27;t mean they are competent and won\u0026#x27;t cause more harm than good.\u003cp\u003eEvery month the security team wants me to give full code or cloud access to some new scanner they want to trial. They love the fancy dashboards and lengthy reports but if I allowed just 10% of what they wanted we would be pwned on the regular...",
+        "id": 47494309,
+        "author": "g947o",
+        "text": "People have been warning about giant security holes in GitHub Actions dependency but MS did nothing.",
         "indicators": [
-          "thoughtful",
           "emotional",
-          "constructive"
+          "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "Raises a valid point about the risks of over-trusting security tools and teams, emphasizing caution and the potential for internal security flaws."
+        "accuracyRank": 5,
+        "analysis": "While the frustration is understandable, this comment lacks specifics and context but reflects a common criticism about slow responses to reported security issues."
       },
       {
         "id": 47493343,
@@ -52,8 +87,19 @@
           "emotional",
           "thoughtful"
         ],
-        "accuracyRank": 3,
-        "analysis": "Expresses frustration over credential compromises despite advanced security measures, highlighting a common concern in security discussions."
+        "accuracyRank": 6,
+        "analysis": "Raises a valid question about the limits of 2FA and token security, though it oversimplifies the complexity of credential compromise scenarios."
+      },
+      {
+        "id": 47492448,
+        "author": "progbits",
+        "text": "Friendly reminder that just because someone is building security software it doesn\u0026#x27;t mean they are competent and won\u0026#x27;t cause more harm than good.\u003cp\u003eEvery month the security team wants me to give full code or cloud access to some new scanner they want to trial. They love the fancy dashboards and lengthy reports but if I allowed just 10% of what they wanted we would be pwned on the regular...",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "The comment offers a cautionary perspective on security tool adoption but is somewhat anecdotal and lacks direct relevance to the breach specifics."
       },
       {
         "id": 47492621,
@@ -61,33 +107,20 @@
         "text": "I always run such tools inside sandboxes to limit the blast radius.",
         "indicators": [
           "constructive",
-          "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "Offers a practical mitigation strategy, demonstrating awareness of best practices for limiting damage from compromised tools."
+        "accuracyRank": 8,
+        "analysis": "Provides a practical security recommendation to mitigate risks from compromised tools, reflecting good security hygiene."
       },
       {
-        "id": 47492600,
-        "author": "xinayder",
-        "text": "Wasn\u0026#x27;t this discovered already last week, on Friday, that the threat actor had replaced the legit images with malware images? And republished 75 out of 76 tags?",
+        "id": 47493919,
+        "author": "d3nit",
+        "text": "Well, not my best 2 weeks at work, now I have to fill out a dozen forms and sit trough a shitload of meeting, just because they got pwned (twice, or once, but really badly :D )",
         "indicators": [
-          "likely-true",
-          "thoughtful"
+          "emotional"
         ],
-        "accuracyRank": 5,
-        "analysis": "Provides a timeline context that aligns with public reports, contributing to the understanding of the incident's discovery."
-      },
-      {
-        "id": 47493132,
-        "author": "PunchyHamster",
-        "text": "You\u0026#x27;re supposed to scan for vulnerabilities, not become one!",
-        "indicators": [
-          "emotional",
-          "trolling"
-        ],
-        "accuracyRank": 6,
-        "analysis": "A sarcastic remark that captures the irony of security tools being compromised but lacks substantive analysis."
+        "accuracyRank": 9,
+        "analysis": "Expresses frustration and personal impact of the breach but adds little substantive analysis."
       },
       {
         "id": 47492490,
@@ -97,50 +130,8 @@
           "trolling",
           "emotional"
         ],
-        "accuracyRank": 7,
-        "analysis": "Uses sarcasm to criticize misconceptions about security issues being isolated to specific ecosystems, but does not add factual information."
-      },
-      {
-        "id": 47492526,
-        "author": "yieldcrv",
-        "text": "fatiguing",
-        "indicators": [
-          "emotional",
-          "useless"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Expresses frustration but provides no constructive input or analysis."
-      },
-      {
-        "id": 47493251,
-        "author": "Pahacker",
-        "text": "jj",
-        "indicators": [
-          "useless"
-        ],
-        "accuracyRank": 9,
-        "analysis": "Non-substantive comment with no meaningful content."
-      },
-      {
-        "id": 47493253,
-        "author": "Pahacker",
-        "text": "GG",
-        "indicators": [
-          "useless"
-        ],
         "accuracyRank": 10,
-        "analysis": "A brief, non-informative comment likely meaning 'good game,' irrelevant to the discussion."
-      },
-      {
-        "id": 47492211,
-        "author": "dang",
-        "text": "Recent and related:\u003cp\u003e\u003ci\u003eTrivy ecosystem supply chain temporarily compromised\u003c/i\u003e - \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47450142\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47450142\u003c/a\u003e - March 2026 (35 comments)",
-        "indicators": [
-          "likely-true",
-          "thoughtful"
-        ],
-        "accuracyRank": 11,
-        "analysis": "Provides a relevant link to related discussion but adds little original analysis."
+        "analysis": "Sarcastic comment likely aimed at mocking misplaced blame on npm, but does not contribute meaningful insight."
       }
     ]
   }
