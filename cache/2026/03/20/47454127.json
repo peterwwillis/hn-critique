@@ -23,7 +23,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion focuses on the hacky nature of CTRL-C query cancellation in Postgres, highlighting legacy design trade-offs between backward compatibility and security. Commenters explore technical details of the protocol, potential improvements, and the practical impact of these issues in real-world deployments.",
+    "summary": "The discussion revolves around the hacky nature of how Postgres handles query cancellation via Ctrl-C, touching on protocol limitations, security concerns, and the challenges of evolving legacy systems. Commenters debate the technical constraints, security implications, and potential future improvements like multiplexed protocols.",
     "comments": [
       {
         "id": 47488525,
@@ -36,19 +36,20 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a nuanced understanding of the historical context and security implications, accurately identifying the root cause of the hacky design."
+        "analysis": "This comment insightfully captures the core issue of legacy design assumptions conflicting with modern security needs, highlighting the inherent risks and suggesting a protocol evolution."
       },
       {
-        "id": 47486773,
-        "author": "rlpb",
-        "text": "TCP has an \u0026quot;urgent data\u0026quot; feature that might have been used for this kind of thing, used for Ctrl-C in telnet, etc. It can be used to bypass any pending send buffer and received by the server ahead of any unread data.",
+        "id": 47489854,
+        "author": "kardianos",
+        "text": "In general I love postgres. There are to problems with postgresql in my book: the protocol (proto3) and no great way to directly query using a different language.\u003cp\u003eThe protocol has no direct in-protocol cancellation, like TDS has. TDS does this by making a framed protocol, at the application protocol level it can cancel queries. It has two variants (text and binary) and can cause fragmentation, and at the query and protocol level only supports positional parameters, no named parameters.\u003cp\u003eOne a query is on the server, it doesn\u0026#x27;t support directly acting on a language mode. I don\u0026#x27;t want to go into SQL mode and create a PL\u0026#x2F;SQL proc, I just want direct PL\u0026#x2F;SQL. Can\u0026#x27;t (really) do that well. Directly returning multiple result sets (eg for a matrxi, separate rows, columns, and fields) or related queries in a single round trip is technically possible, but hard to do. So frustrating.",
         "indicators": [
           "intelligent",
+          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment correctly points out a relevant TCP feature that could have been leveraged, adding valuable technical context to the discussion."
+        "analysis": "Provides a detailed technical perspective on protocol limitations and language integration issues, accurately describing the lack of direct cancellation and complexities in query handling."
       },
       {
         "id": 47487952,
@@ -56,10 +57,11 @@
         "text": "A good write up explaining how assumptions of network and security design have changed so much over the years. Also you have to give credit nowadays for not overly sensationalizing \u0026#x27;heebie-jeebies level 6\u0026#x27;. I certainly continue reusing a connection I assumed was TLS after a cancel so was vulnerable to a DoS; but equally if the next statement was canceled I would switch to a new connection no harm no foul.",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "The comment reflects practical experience and acknowledges the evolving security assumptions, contributing a real-world perspective."
+        "analysis": "Offers a practical view on connection reuse and security implications, acknowledging risks while suggesting reasonable mitigation strategies."
       },
       {
         "id": 47486473,
@@ -70,7 +72,30 @@
           "likely-true"
         ],
         "accuracyRank": 4,
-        "analysis": "This comment pragmatically highlights that in many cases, the security issue is overshadowed by larger network exposure risks, providing useful context."
+        "analysis": "Presents a pragmatic take that network exposure is often a more critical security concern, which may deprioritize fixing the cancellation mechanism."
+      },
+      {
+        "id": 47486773,
+        "author": "rlpb",
+        "text": "TCP has an \u0026quot;urgent data\u0026quot; feature that might have been used for this kind of thing, used for Ctrl-C in telnet, etc. It can be used to bypass any pending send buffer and received by the server ahead of any unread data.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Technically accurate comment suggesting an alternative TCP feature that could conceptually support query cancellation, though practical applicability to Postgres is not discussed."
+      },
+      {
+        "id": 47486381,
+        "author": "jtwaleson",
+        "text": "From the title I was hoping for this being hacky on the server application side, like how it aborts and clears the memory for a running query.\u003cp\u003eStill an interesting read. Just wondering, why can\u0026#x27;t the TCP connection of the query not be used to send a cancellation request? Why does it have the be out of band?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Raises a valid question about protocol design choices, though lacks detailed knowledge of Postgres internals to fully assess feasibility."
       },
       {
         "id": 47488713,
@@ -81,19 +106,8 @@
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "This comment offers a technically plausible solution to the problem, showing understanding of TLS limitations and proposing a manageable workaround."
-      },
-      {
-        "id": 47486381,
-        "author": "jtwaleson",
-        "text": "From the title I was hoping for this being hacky on the server application side, like how it aborts and clears the memory for a running query.\u003cp\u003eStill an interesting read. Just wondering, why can\u0026#x27;t the TCP connection of the query not be used to send a cancellation request? Why does it have the be out of band?",
-        "indicators": [
-          "thoughtful",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "The comment raises valid questions about design choices but lacks detailed knowledge of protocol constraints, making it less accurate than others."
+        "accuracyRank": 7,
+        "analysis": "Offers a plausible implementation suggestion addressing TLS limitations, though it may underestimate complexity in integrating with existing Postgres architecture."
       }
     ]
   }
