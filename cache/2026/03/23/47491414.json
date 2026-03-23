@@ -1,0 +1,79 @@
+{
+  "story_id": 47491414,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article describes Threadprocs, an experimental project that enables multiple executables to run in a shared address space, allowing zero-copy pointer sharing between processes. It blends POSIX process and threading models to facilitate efficient inter-process communication and memory sharing, with a proof-of-concept implementation on Linux for aarch64 and x86_64 architectures.",
+    "mainPoints": [
+      "Threadprocs allows multiple programs to run in a shared virtual address space with independent executables and libc instances.",
+      "Pointers are valid across threadprocs, enabling zero-copy access to shared data structures.",
+      "The project includes a server utility to host the shared address space and a launcher to start programs within it.",
+      "libtproc library supports detection of threadproc execution and provides a server-global scratch space for IPC and service discovery.",
+      "The project is a proof of concept with examples and tests, supporting Linux on aarch64 and x86_64 architectures.",
+      "Technical limitations include challenges with memory allocation across threadprocs, restrictions on brk/sbrk and mmap usage, lack of debugging support, and signal handling nuances.",
+      "Practical limitations include inability to deallocate memory across threadprocs due to independent libc instances, complicating certain IPC patterns.",
+      "The project is experimental and not production-ready, with ongoing exploration of potential improvements."
+    ],
+    "truthfulness": "The claims made in the article are consistent with the technical details provided in the repository and align with known constraints of Linux memory management and process isolation. The description of shared address space and zero-copy pointer sharing is plausible and supported by the provided code examples and documentation. The limitations and challenges mentioned, such as issues with malloc/free across processes and debugging difficulties, are well-known in similar systems and accurately described. The project is clearly labeled as experimental and proof-of-concept, which matches the state of the code and documentation. There is no indication of false or misleading information.",
+    "considerations": [
+      "The security implications of sharing an address space across multiple executables are significant and not deeply discussed.",
+      "Performance overhead or benefits compared to traditional IPC or threading models are not quantitatively analyzed.",
+      "Compatibility with other operating systems or architectures beyond Linux aarch64 and x86_64 is not addressed.",
+      "The impact on debugging and maintenance complexity for applications using threadprocs is a critical practical concern.",
+      "Potential use cases or scenarios where threadprocs provide clear advantages over existing models could be elaborated."
+    ],
+    "rating": "reliable"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around the concept of executables sharing one address space to avoid copying data, with participants weighing the potential benefits and risks. Some highlight the potential for performance improvements and novel architectural patterns, while others express concerns about memory safety and the loss of process isolation.",
+    "comments": [
+      {
+        "id": 47491965,
+        "author": "fwsgonzo",
+        "text": "I actually just published a paper about something like this, which I implemented in both libriscv and TinyKVM called \u0026quot;Inter-Process Remote Execution (IPRE):\nLow-latency IPC\u0026#x2F;RPC using merged address spaces\u0026quot;.\u003cp\u003eHere is the abstract:\nThis paper introduces Inter-Process Remote Execution (IPRE), whose primary function is enabling gated persistence for per-request isolation architectures with microsecond-latency access to persistent services. IPRE eliminates scheduler dependency for descheduled processes by allowing a virtual machine to directly and safely call, execute functions in a remote virtual machines address space. Unlike prior approaches requiring hardware modifications\n(dIPC) or kernel changes (XPC), IPRE works with standard virtualization primitives, making it immediately deployable on commodity systems.\nWe present two implementations: libriscv (12-14ns overhead, emulated execution) and TinyKVM (2-4us overhead, native execution). Both eliminate data serialization through address-space merging. Under realistic scheduler contention from schbench workloads (50-100% CPU utilization),\nIPRE maintains stable tail latency (p99\u0026lt;5us), while a state-of-the-art lock-free IPC framework shows 1,463× p99 degradation (4.1us to 6ms) when all CPU cores are saturated. IPRE thus enables architectural patterns (per-request isolation, fine-grained microservices) that incur millisecond-scale tail latency in busy\nmulti-tenant systems using traditional IPC.\u003cp\u003eBottom line: If you\u0026#x27;re doing synchronous calls to a remote party, IPRE wouldn\u0026#x27;t require any scheduler mediation. The same applies to your repo.\nPassing allocator-less structures to the remote is probably a landmine waiting to happen. If you structure both parties to use custom allocators, at least for the remote calls, you can track and even steal allocations (using a shared memory area). With IPRE there is extra risk of stale pointers because the remote part is removed from the callers memory after it completes. The paper will explain all the details, but for example since we control the VMM we can close the remote session if anything bad happens.\n(This paper is not out yet, but it should be very soon)\u003cp\u003eThe best part about this kind of architecture, which you immediately mention, is the ability to completely avoid serialization. Passing a complex struct by reference and being able to use the data as-is is a big benefit. It breaks down when you try to do this with something like Deno, unfortunately. But you could do Deno \u0026lt;-\u0026gt; C++, for example.\u003cp\u003eFor libriscv the implementation is simpler: Just loan remote-looking pages temporarily so that read\u0026#x2F;write\u0026#x2F;execute works, and then let exception-handling handle abnormal disconnection.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides detailed technical context and references an academic paper, offering a nuanced view of the benefits and challenges of merged address spaces, making it the most accurate and informative."
+      },
+      {
+        "id": 47491835,
+        "author": "tombert",
+        "text": "Interesting.\u003cp\u003eI gotta admit that my smell test tells me that this is a step backwards; at least naively (I haven\u0026#x27;t looked through the code thoroughly yet), this just kind of feels like we\u0026#x27;re going back to pre-protected-memory operating systems like AmigaOS; there are reasons that we have the process boundary and the overhead associated with it.\u003cp\u003eIf there are zero copies being shared across threadprocs, what\u0026#x27;s to stop Threadproc B from screwing up Threadproc A\u0026#x27;s memory? And if the answer to this is \u0026quot;nothing\u0026quot;, then what does this buy over a vanilla pthread?\u003cp\u003eI\u0026#x27;m not trying to come off as negative, I\u0026#x27;m actually curious about the answer to this.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "Raises valid concerns about memory safety and the loss of process isolation, which are fundamental to modern OS design, highlighting potential risks of the approach."
+      },
+      {
+        "id": 47491923,
+        "author": "L8D",
+        "text": "It is lovely to see experimentation like this going on. I think this has a lot of potential with something like Haskell\u0026#x27;s green threading model, basically taking it up a notch and doing threading across pthreads instead of being restricted to the VM threads. Surely, if this can be well fleshed-out, it could be implemented at the compiler-level or library-level so existing multi-threaded Haskell software can switch over to something like this to squeeze out even more performance. I\u0026#x27;m not an expert here, though, so ¯\\_(ツ)_\u0026#x2F;¯ take my words with a grain of salt.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Offers a positive perspective on potential applications and improvements, though it is more speculative and less detailed than the top comments."
+      },
+      {
+        "id": 47491892,
+        "author": "whalesalad",
+        "text": "I feel like this could unlock some huge performance gains with Python. If you want to truly \u0026quot;defeat the GIL\u0026quot; you must use processes instead of threads. This could be a middle ground.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Makes a reasonable suggestion about Python's GIL limitations and how this approach might offer a compromise, though it lacks technical depth."
+      }
+    ]
+  }
+}

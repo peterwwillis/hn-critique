@@ -1,0 +1,82 @@
+{
+  "story_id": 47490816,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article claims that the Cyber.mil website is serving file downloads using a TLS certificate that expired three days ago. However, the content provided shows a listing of STIG documents with future upload dates, suggesting the site is operational and updated.",
+    "mainPoints": [
+      "Cyber.mil allegedly uses an expired TLS certificate for file downloads.",
+      "The article provides a list of STIG documents with upload dates in 2026.",
+      "The site appears to be actively maintained with recent document uploads."
+    ],
+    "truthfulness": "The claim that Cyber.mil is using an expired TLS certificate cannot be verified from the provided content, which only shows a document listing with future dates. External verification via current web security tools or certificate checkers is necessary to confirm the certificate status. The presence of future-dated documents suggests the site is active and maintained, which contradicts the claim of an expired certificate causing issues.",
+    "considerations": [
+      "TLS certificate status should be verified using real-time SSL/TLS inspection tools or browsers.",
+      "The article does not provide evidence such as screenshots or certificate details to support the claim.",
+      "Future upload dates in the document list may be placeholders or errors and should be cross-checked.",
+      "The impact of an expired certificate on user access and security is not discussed."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around the expired TLS certificate on the cyber.mil site, with commenters analyzing the implications and the DoD's handling of certificate management. Some express skepticism about the competence of the site operators, while others discuss technical aspects of certificate renewal and security.",
+    "comments": [
+      {
+        "id": 47491613,
+        "author": "amluto",
+        "text": "This is kind of amazing.  I\u0026#x27;m suspicious that the site operator has absolutely no idea what they\u0026#x27;re doing.\u003cp\u003e\u0026gt; DoD Cyber Exchange site is undergoing a TSSL Certification renewal\u003cp\u003eI\u0026#x27;m imagining someone searching around for a consulting or testing company that will help them get a personal TSSL Certification, whatever that is (a quick search suggests that it does not exist, as one would expect).  And perhaps they have no idea what TLS is or how any modern WebPKI works, which is extra amazing, since cyber.mil \u003ci\u003eis\u003c/i\u003e apparently a government PKI provider (see the top bar).\u003cp\u003eOf course, the DoD realized that their whole web certificate system was incompatible with ordinary browsers and they wrote a memo (which you have to click past the certificate error to read):\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;dl.dod.cyber.mil\u0026#x2F;wp-content\u0026#x2F;uploads\u0026#x2F;pki-pke\u0026#x2F;pdf\u0026#x2F;unclass-cio_memo_update_commercial_certs.pdf\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;dl.dod.cyber.mil\u0026#x2F;wp-content\u0026#x2F;uploads\u0026#x2F;pki-pke\u0026#x2F;pdf\u0026#x2F;uncl...\u003c/a\u003e\u003cp\u003esaying that, through February 2024, unclassified DoD sites are permitted to use ordinary commercial CAs.\u003cp\u003eIf the DoD were remotely competent at this sort of thing, they would (a) have CAA records (because their written policy does nothing whatsoever to tell the CA\u0026#x2F;B-compliant CAs of the world not to issue .mil certificates, (b) run their own intermediate CA that had a signature from a root CA (or was even a root CA itself), and (c) use automatically-renewed short-lived certificates for the actual websites.\u003cp\u003ecyber.mil currently uses IdenTrust, which claims to be DoD approved.  They also, ahem, claim to support ACME:\u003cp\u003e\u0026gt; In support of the broader CA community, IdenTrust—through HID and the acquisition of ZeroSSL—actively contributes to the development and maintenance of major open-source ACME clients, including Caddy Server and ACME.sh. These efforts help promote accessibility, interoperability, and automation in certificate management.\u003cp\u003eErr... does that mean that they actually support ACME on their DoD-approved certificates or does that mean that they bought some companies that participate in the ACME ecosystem?  (ACME is not amazing except in contrast to what came before and as an exercise in getting something reasonable deployed in a very stodgy ecosystem, but ACME plus a well-designed DNS-01 implementation plus CAA can be very secure.)\u003cp\u003eThe offending certificate is:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    Certificate:\n        Data:\n            Version: 3 (0x2)\n            Serial Number:\n                40:01:95:b4:87:b3:a3:a9:12:e0:d7:21:f8:b3:91:61\n            Signature Algorithm: sha256WithRSAEncryption\n            Issuer: C=US, O=IdenTrust, OU=TrustID Server, CN=TrustID Server CA O1\n            Validity\n                Not Before: Mar 20 17:09:07 2025 GMT\n                Not After : Mar 20 17:08:07 2026 GMT\n            Subject: C=US, ST=Maryland, L=Fort Meade, O=DEFENSE INFORMATION SYSTEMS AGENCY, CN=public.cyber.mil\n\u003c/code\u003e\u003c/pre\u003e\nAt least the site uses TLS 1.3.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed and knowledgeable critique of the DoD's certificate management practices, citing specific technical details and policies, making it the most accurate and insightful."
+      },
+      {
+        "id": 47491161,
+        "author": "petcat",
+        "text": "Is there anything inherently insecure about an expired cert other than your browser just complaining about it?",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment raises a valid question about the security implications of expired certificates, reflecting a common user perspective and prompting further discussion."
+      },
+      {
+        "id": 47491237,
+        "author": "bilekas",
+        "text": "\u0026gt; DoD Cyber Exchange site is undergoing a TSSL Certification renewal\u003cp\u003eTSSL renewal does not cause downtime.. If it\u0026#x27;s actually done of course.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment clarifies a misconception about certificate renewal causing downtime, though it is somewhat brief and conditional."
+      },
+      {
+        "id": 47491135,
+        "author": "dmitrygr",
+        "text": "So what? They keep shortening the validity length of these certificates, making them more and more of a pain to deal with.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment expresses frustration about certificate validity periods, which is a known trend, but lacks depth or constructive suggestions."
+      },
+      {
+        "id": 47491149,
+        "author": "tuwtuwtuwtuw",
+        "text": "\u0026gt; Users on civilian network can continue downloads through the Advance tab in the error message.\u003cp\u003eGood stuff.",
+        "indicators": [
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment notes a workaround for users facing certificate errors, which is accurate but not deeply analytical."
+      }
+    ]
+  }
+}

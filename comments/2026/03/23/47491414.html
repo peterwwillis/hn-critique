@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Show HN: Threadprocs – executables sharing one address space (0-copy pointers) | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://github.com/jer-irl/threadprocs" rel="noreferrer noopener">Show HN: Threadprocs – executables sharing one address space (0-copy pointers)</a>
+        <span class="sitebit"> (github.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">18 points</span>
+        by <a href="https://news.ycombinator.com/user?id=jer-irl" class="hnuser">jer-irl</a>
+        <span class="age">1 hour ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/23/47491414.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47491414" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion revolves around the concept of executables sharing one address space to avoid copying data, with participants weighing the potential benefits and risks. Some highlight the potential for performance improvements and novel architectural patterns, while others express concerns about memory safety and the loss of process isolation.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=fwsgonzo" class="hnuser">fwsgonzo</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I actually just published a paper about something like this, which I implemented in both libriscv and TinyKVM called &quot;Inter-Process Remote Execution (IPRE):
+Low-latency IPC&#x2F;RPC using merged address spaces&quot;.<p>Here is the abstract:
+This paper introduces Inter-Process Remote Execution (IPRE), whose primary function is enabling gated persistence for per-request isolation architectures with microsecond-latency access to persistent services. IPRE eliminates scheduler dependency for descheduled processes by allowing a virtual machine to directly and safely call, execute functions in a remote virtual machines address space. Unlike prior approaches requiring hardware modifications
+(dIPC) or kernel changes (XPC), IPRE works with standard virtualization primitives, making it immediately deployable on commodity systems.
+We present two implementations: libriscv (12-14ns overhead, emulated execution) and TinyKVM (2-4us overhead, native execution). Both eliminate data serialization through address-space merging. Under realistic scheduler contention from schbench workloads (50-100% CPU utilization),
+IPRE maintains stable tail latency (p99&lt;5us), while a state-of-the-art lock-free IPC framework shows 1,463× p99 degradation (4.1us to 6ms) when all CPU cores are saturated. IPRE thus enables architectural patterns (per-request isolation, fine-grained microservices) that incur millisecond-scale tail latency in busy
+multi-tenant systems using traditional IPC.<p>Bottom line: If you&#x27;re doing synchronous calls to a remote party, IPRE wouldn&#x27;t require any scheduler mediation. The same applies to your repo.
+Passing allocator-less structures to the remote is probably a landmine waiting to happen. If you structure both parties to use custom allocators, at least for the remote calls, you can track and even steal allocations (using a shared memory area). With IPRE there is extra risk of stale pointers because the remote part is removed from the callers memory after it completes. The paper will explain all the details, but for example since we control the VMM we can close the remote session if anything bad happens.
+(This paper is not out yet, but it should be very soon)<p>The best part about this kind of architecture, which you immediately mention, is the ability to completely avoid serialization. Passing a complex struct by reference and being able to use the data as-is is a big benefit. It breaks down when you try to do this with something like Deno, unfortunately. But you could do Deno &lt;-&gt; C++, for example.<p>For libriscv the implementation is simpler: Just loan remote-looking pages temporarily so that read&#x2F;write&#x2F;execute works, and then let exception-handling handle abnormal disconnection.</div>
+      <div class="comment-analysis"><em>This comment provides detailed technical context and references an academic paper, offering a nuanced view of the benefits and challenges of merged address spaces, making it the most accurate and informative.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=tombert" class="hnuser">tombert</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Interesting.<p>I gotta admit that my smell test tells me that this is a step backwards; at least naively (I haven&#x27;t looked through the code thoroughly yet), this just kind of feels like we&#x27;re going back to pre-protected-memory operating systems like AmigaOS; there are reasons that we have the process boundary and the overhead associated with it.<p>If there are zero copies being shared across threadprocs, what&#x27;s to stop Threadproc B from screwing up Threadproc A&#x27;s memory? And if the answer to this is &quot;nothing&quot;, then what does this buy over a vanilla pthread?<p>I&#x27;m not trying to come off as negative, I&#x27;m actually curious about the answer to this.</div>
+      <div class="comment-analysis"><em>Raises valid concerns about memory safety and the loss of process isolation, which are fundamental to modern OS design, highlighting potential risks of the approach.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=L8D" class="hnuser">L8D</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">It is lovely to see experimentation like this going on. I think this has a lot of potential with something like Haskell&#x27;s green threading model, basically taking it up a notch and doing threading across pthreads instead of being restricted to the VM threads. Surely, if this can be well fleshed-out, it could be implemented at the compiler-level or library-level so existing multi-threaded Haskell software can switch over to something like this to squeeze out even more performance. I&#x27;m not an expert here, though, so ¯\_(ツ)_&#x2F;¯ take my words with a grain of salt.</div>
+      <div class="comment-analysis"><em>Offers a positive perspective on potential applications and improvements, though it is more speculative and less detailed than the top comments.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=whalesalad" class="hnuser">whalesalad</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I feel like this could unlock some huge performance gains with Python. If you want to truly &quot;defeat the GIL&quot; you must use processes instead of threads. This could be a middle ground.</div>
+      <div class="comment-analysis"><em>Makes a reasonable suggestion about Python&#39;s GIL limitations and how this approach might offer a compromise, though it lacks technical depth.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-23 17:12 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

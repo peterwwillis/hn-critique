@@ -23,7 +23,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the hacky nature of how Postgres handles query cancellation via Ctrl-C, touching on protocol limitations, security concerns, and the challenges of evolving legacy systems. Commenters debate the technical constraints, security implications, and potential future improvements like multiplexed protocols.",
+    "summary": "The discussion centers on the hacky nature of Ctrl-C cancellation in Postgres CLI, touching on protocol limitations, security implications, and potential improvements. Commenters analyze the trade-offs between backward compatibility and modern security needs, with some suggesting architectural changes.",
     "comments": [
       {
         "id": 47488525,
@@ -36,7 +36,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment insightfully captures the core issue of legacy design assumptions conflicting with modern security needs, highlighting the inherent risks and suggesting a protocol evolution."
+        "analysis": "This comment accurately highlights the historical context and security shortcomings of the cancellation mechanism, providing a nuanced view of the trade-offs involved."
       },
       {
         "id": 47489854,
@@ -49,7 +49,7 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Provides a detailed technical perspective on protocol limitations and language integration issues, accurately describing the lack of direct cancellation and complexities in query handling."
+        "analysis": "Provides detailed technical insight into Postgres protocol limitations and contrasts it with alternatives, offering a well-informed critique."
       },
       {
         "id": 47487952,
@@ -57,22 +57,11 @@
         "text": "A good write up explaining how assumptions of network and security design have changed so much over the years. Also you have to give credit nowadays for not overly sensationalizing \u0026#x27;heebie-jeebies level 6\u0026#x27;. I certainly continue reusing a connection I assumed was TLS after a cancel so was vulnerable to a DoS; but equally if the next statement was canceled I would switch to a new connection no harm no foul.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "Offers a practical view on connection reuse and security implications, acknowledging risks while suggesting reasonable mitigation strategies."
-      },
-      {
-        "id": 47486473,
-        "author": "michalc",
-        "text": "I think I can understand why this wasn’t addressed for so long: in the vast majority of cases if your db is exposed on a network level to untrusted sources, then you probably have far bigger problems?",
-        "indicators": [
-          "thoughtful",
+          "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "Presents a pragmatic take that network exposure is often a more critical security concern, which may deprioritize fixing the cancellation mechanism."
+        "accuracyRank": 3,
+        "analysis": "Offers a balanced perspective on evolving security assumptions and practical experience, adding context to the discussion."
       },
       {
         "id": 47486773,
@@ -83,19 +72,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 5,
-        "analysis": "Technically accurate comment suggesting an alternative TCP feature that could conceptually support query cancellation, though practical applicability to Postgres is not discussed."
-      },
-      {
-        "id": 47486381,
-        "author": "jtwaleson",
-        "text": "From the title I was hoping for this being hacky on the server application side, like how it aborts and clears the memory for a running query.\u003cp\u003eStill an interesting read. Just wondering, why can\u0026#x27;t the TCP connection of the query not be used to send a cancellation request? Why does it have the be out of band?",
-        "indicators": [
-          "thoughtful",
-          "intelligent"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Raises a valid question about protocol design choices, though lacks detailed knowledge of Postgres internals to fully assess feasibility."
+        "accuracyRank": 4,
+        "analysis": "Accurately describes a relevant TCP feature that could be related to cancellation mechanisms, contributing useful technical information."
       },
       {
         "id": 47488713,
@@ -106,8 +84,30 @@
           "constructive",
           "likely-true"
         ],
+        "accuracyRank": 5,
+        "analysis": "Proposes a plausible implementation improvement that respects TLS constraints, showing practical problem-solving."
+      },
+      {
+        "id": 47486473,
+        "author": "michalc",
+        "text": "I think I can understand why this wasn’t addressed for so long: in the vast majority of cases if your db is exposed on a network level to untrusted sources, then you probably have far bigger problems?",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Makes a reasonable point about prioritizing security concerns, though somewhat dismissive of the cancellation issue's importance."
+      },
+      {
+        "id": 47486381,
+        "author": "jtwaleson",
+        "text": "From the title I was hoping for this being hacky on the server application side, like how it aborts and clears the memory for a running query.\u003cp\u003eStill an interesting read. Just wondering, why can\u0026#x27;t the TCP connection of the query not be used to send a cancellation request? Why does it have the be out of band?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
         "accuracyRank": 7,
-        "analysis": "Offers a plausible implementation suggestion addressing TLS limitations, though it may underestimate complexity in integrating with existing Postgres architecture."
+        "analysis": "Raises a valid question about protocol design but lacks detailed technical explanation or evidence."
       }
     ]
   }
