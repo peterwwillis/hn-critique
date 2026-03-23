@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">64 points</span>
+        <span class="score">80 points</span>
         by <a href="https://news.ycombinator.com/user?id=azhenley" class="hnuser">azhenley</a>
-        <span class="age">7 hours ago</span>
+        <span class="age">10 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/22/47480900.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47480900" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the use of AI for mobile app QA, with commenters highlighting existing tools like WebdriverIO and Appium, challenges in enforcing isolated work environments for AI tasks, and parallels to hardware bot farms for testing.</p>
+      <p>The discussion centers around the use of AI and existing tools for mobile app QA, with emphasis on technical challenges and solutions related to testing frameworks, isolation in development environments, and hardware setups for testing. Commenters highlight the pros and cons of different approaches and share insights on tooling and practical experiences.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,35 +56,46 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=maxbeech" class="hnuser">maxbeech</a>
-        &nbsp;|&nbsp;rank #1
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">the worktree discipline failure is the most interesting part of this post to me. when claude is interactive, &quot;cd into the wrong repo&quot; is catchable. when it&#x27;s running unattended on a schedule, you find out in the morning.<p>the abstraction is right - isolated worktree, scoped task, commit only what belongs. the failure is enforcement. git worktrees don&#x27;t prevent a process from running `cd ..&#x2F;main-repo`. that requires something external imposing the boundary, not relying on the agent to respect it.<p>what you&#x27;ve built (the 8:47 sweep) is a narrow-scope autonomous job: well-defined inputs, deterministic outputs, bounded time. these work well because the scope is clear enough that deviation is obvious. the harder category is &quot;fix any failing tests&quot; - that task requires judgment about what&#x27;s in scope, and judgment is exactly where worktree escapes happen.<p>i&#x27;ve been working on tooling for scheduling this kind of claude work (openhelm.ai) and the isolation problem is front and center. separate working directories per run, no write access to the main repo unless that&#x27;s the explicit task. your experience here is exactly the failure mode that design is trying to prevent.</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced and accurate analysis of the technical limitations of git worktrees for isolation and the need for external enforcement, reflecting deep understanding.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=ptmkenny" class="hnuser">ptmkenny</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">It’s interesting to see the solution that the AI came up with, but WebdriverIO and Appium already exist for this use case, are open source like Capacitor, and come recommended from the Capacitor developers. <a href="https:&#x2F;&#x2F;ionic.io&#x2F;blog&#x2F;introducing-the-ionic-end-to-end-testing-reference-example" rel="nofollow">https:&#x2F;&#x2F;ionic.io&#x2F;blog&#x2F;introducing-the-ionic-end-to-end-testi...</a></div>
-      <div class="comment-analysis"><em>This comment correctly points out that established open-source tools exist for mobile app testing, providing useful context and suggesting that the AI solution may be redundant.</em></div>
+      <div class="comment-analysis"><em>This comment provides accurate context about existing, well-supported tools for mobile app testing, adding valuable perspective on the AI solution&#39;s novelty.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=sneg55" class="hnuser">sneg55</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">The CDP approach for Android is underrated here. Appium adds a translation layer on top of WebViews that often breaks with Capacitor&#x27;s hybrid rendering. Going direct to Chrome DevTools Protocol means you&#x27;re using the same primitives the browser uses internally, not fighting through abstraction.<p>The iOS section is the real story though. The TCC.db dance and AppleScript keyboard limitations feel like archaeological excavation.</div>
+      <div class="comment-analysis"><em>This comment insightfully explains technical advantages of using Chrome DevTools Protocol over Appium for Android testing, highlighting practical challenges with hybrid apps.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=maxbeech" class="hnuser">maxbeech</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">the worktree discipline failure is the most interesting part of this post to me. when claude is interactive, &quot;cd into the wrong repo&quot; is catchable. when it&#x27;s running unattended on a schedule, you find out in the morning.<p>the abstraction is right - isolated worktree, scoped task, commit only what belongs. the failure is enforcement. git worktrees don&#x27;t prevent a process from running `cd ..&#x2F;main-repo`. that requires something external imposing the boundary, not relying on the agent to respect it.<p>what you&#x27;ve built (the 8:47 sweep) is a narrow-scope autonomous job: well-defined inputs, deterministic outputs, bounded time. these work well because the scope is clear enough that deviation is obvious. the harder category is &quot;fix any failing tests&quot; - that task requires judgment about what&#x27;s in scope, and judgment is exactly where worktree escapes happen.<p>i&#x27;ve been working on tooling for scheduling this kind of claude work (openhelm.ai) and the isolation problem is front and center. separate working directories per run, no write access to the main repo unless that&#x27;s the explicit task. your experience here is exactly the failure mode that design is trying to prevent.</div>
+      <div class="comment-analysis"><em>This comment offers a nuanced analysis of automation pitfalls related to repository isolation and scheduling, backed by experience in tooling development.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=devmor" class="hnuser">devmor</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Reading through this reminds me of how bot farms will regularly consist of stripped down phones that are essentially just the mainboard hooked up to a controller that simulates the externals.<p>When struggling with failing to reverse engineer mobile apps for smart home devices, I’ve considered trying to set something like this up for a single device.</div>
-      <div class="comment-analysis"><em>The comment draws a relevant analogy to hardware bot farms for testing, which is insightful though somewhat tangential to the main discussion about AI-driven QA.</em></div>
+      <div class="comment-analysis"><em>This comment provides an interesting hardware perspective on testing setups, though it is less directly related to the AI or software testing tools discussed.</em></div>
     </div>
     
 
@@ -96,7 +107,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-23 02:03 UTC &nbsp;|&nbsp;
+    Generated 2026-03-23 04:39 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

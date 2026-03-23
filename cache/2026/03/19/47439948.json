@@ -1,0 +1,54 @@
+{
+  "story_id": 47439948,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article discusses a critical bug in PSpice's AES-256 encryption implementation that drastically reduces the effective keyspace, enabling a brute-force attack to recover user keys in seconds. The author introduces SpiceCrypt, a tool that exploits this vulnerability to decrypt PSpice-encrypted SPICE model files, restoring interoperability with other simulators.",
+    "mainPoints": [
+      "PSpice uses a proprietary encryption scheme with six modes; mode 4 incorporates user-supplied keys but has a key derivation bug.",
+      "The bug causes only a 4-byte portion of the key to be used in AES-256 encryption, reducing the keyspace from 2^256 to 2^32.",
+      "This reduction enables a brute-force attack using a known plaintext prefix to recover the user key quickly.",
+      "The root cause is likely a copy-paste error where the short key intended for DES was used for AES instead of the extended key.",
+      "SpiceCrypt is a released tool that implements this attack and supports decryption of multiple SPICE encryption formats.",
+      "Fixing the bug now would break compatibility with encrypted models created over the past twelve years."
+    ],
+    "truthfulness": "The technical details provided in the article align with established cryptographic principles and known vulnerabilities related to improper key handling and AES key sizes. The explanation of the bug, the reduced keyspace, and the brute-force attack using a known plaintext is plausible and consistent with cryptanalysis methods. The description of the tool SpiceCrypt and its capabilities is credible, and the timeline matches PSpice's AES-256 introduction in 2014. However, the article is authored by an individual researcher on a personal blog and does not cite independent sources or official statements from Cadence Design Systems, so external verification is limited.",
+    "considerations": [
+      "The article does not include responses or acknowledgments from Cadence Design Systems regarding the bug or its impact.",
+      "Legal and ethical implications of decrypting proprietary encrypted files are briefly mentioned but not deeply explored.",
+      "Potential mitigations or workarounds for users relying on PSpice-encrypted models are not discussed.",
+      "The article assumes the reader has advanced technical knowledge of cryptography and reverse engineering.",
+      "No information is provided on whether newer versions of PSpice have addressed this vulnerability."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers on a security flaw in PSpice's AES-256 encryption implementation, specifically a copy-paste bug that reduces the effective keyspace drastically. Commenters highlight the use of insecure ECB mode and the implications for encrypted models shipped since 2014.",
+    "comments": [
+      {
+        "id": 47439949,
+        "author": "jtsylve",
+        "text": "I posted SpiceCrypt (\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;jtsylve\u0026#x2F;spice-crypt\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;jtsylve\u0026#x2F;spice-crypt\u003c/a\u003e) a few days ago for decrypting LTspice models. It now supports all six PSpice encryption modes as well.\u003cp\u003ePSpice is Cadence\u0026#x27;s SPICE simulator. Vendors encrypt component models with it, which locks them to PSpice and prevents use in NGSpice, Xyce, etc. Modes 0-3 and 5 derive keys entirely from constants in the binary, so those are straightforward once you extract them.\u003cp\u003eMode 4 is the interesting one. It\u0026#x27;s the only mode with user-supplied key material and uses AES-256 in ECB mode. The key derivation has two base keys: a 4-byte short key (originally for DES) and a 27-byte extended key (intended for AES). The code passes only the short key to the AES engine -- it looks like a copy-paste from the DES path that was never corrected. The short key gets null-terminated and zero-padded to 32 bytes, so 28 of 32 AES key bytes are known. Effective keyspace is 2^32, brute-forceable in seconds with AES-NI.\u003cp\u003eThe first encrypted block after every marker is a metadata header with a known plaintext prefix, which gives you a crib for validation. Once you recover the 4-byte short key, the full user key is also recoverable from the decrypted header.\u003cp\u003eThis has likely been shipping since PSpice 16.6 in 2014. Fixing it would break every encrypted model created in the last twelve years.\u003cp\u003eThe blog post linked above walks through the full details. The repo also has specifications documenting all the encryption schemes: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;jtsylve\u0026#x2F;spice-crypt\u0026#x2F;tree\u0026#x2F;v2.0.1\u0026#x2F;SPECIFICATIONS\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;jtsylve\u0026#x2F;spice-crypt\u0026#x2F;tree\u0026#x2F;v2.0.1\u0026#x2F;SPECIFICA...\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a detailed technical explanation with references and a linked repository, making it highly credible and informative."
+      },
+      {
+        "id": 47464820,
+        "author": "pseudohadamard",
+        "text": "TFA says it all in the first sentence describing the problem:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  The Bug\n\n  Mode 4 uses AES-256 in ECB mode ...\n\u003c/code\u003e\u003c/pre\u003e\nECB is the least secure encryption mode you can use, the one that\u0026#x27;s warned against in every beginner text.  Seeing this is a bit like seeing \u0026quot;We vibe-coded our firewall in PHP...\u0026quot;, it\u0026#x27;s pretty much a written guarantee that the rest of it will be a catalogue of wrong.\u003cp\u003eThey did use AES-256 though, because using keys that go to 11 for your insecure encryption looks good in the marketing materials.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "emotional"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment correctly identifies the use of ECB mode as a major security weakness, though it is less detailed than the first comment."
+      }
+    ]
+  }
+}

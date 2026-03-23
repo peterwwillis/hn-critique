@@ -20,7 +20,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the potential and limitations of using CRDTs for version control, with many commenters skeptical about CRDTs fully addressing semantic conflicts. Several participants highlight existing tools and approaches that improve merge conflict handling, while others emphasize the need for semantic awareness and scalability in VCS. There is also interest in exploring AST-based version control and AI-assisted conflict resolution.",
+    "summary": "The discussion centers on the potential and limitations of using CRDTs for version control, with many participants skeptical about their suitability for semantic conflict resolution. Several commenters highlight existing tools and approaches that address merge conflicts and version control usability, while others emphasize the need for improvements in scalability and semantic understanding.",
     "comments": [
       {
         "id": 47482035,
@@ -33,7 +33,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately points out the fundamental issue with CRDTs in version control: semantic conflicts require human resolution, which CRDTs cannot handle properly."
+        "analysis": "This comment accurately points out the fundamental semantic challenges in version control that CRDTs do not solve, emphasizing the importance of manual conflict resolution."
       },
       {
         "id": 47481239,
@@ -46,72 +46,7 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment correctly distinguishes between system-level conflict resolution by CRDTs and the semantic conflicts that require developer intent, highlighting a key limitation."
-      },
-      {
-        "id": 47484322,
-        "author": "modeless",
-        "text": "\u0026gt; the key insight is that changes should be flagged as conflicting when they touch each other\u003cp\u003eNot really. Changes should be flagged as conflicting when they conflict semantically, not when they touch the same lines. A rename of a variable shouldn\u0026#x27;t conflict with a refactor that touches the same lines, and a change that renames a function should conflict with a change that uses the function\u0026#x27;s old name in a new place. I don\u0026#x27;t think I would bother switching to a new VCS that didn\u0026#x27;t provide some kind of semantic understanding like this.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 3,
-        "analysis": "The comment insightfully argues for semantic conflict detection rather than line-based conflict detection, which is a known limitation in many VCS."
-      },
-      {
-        "id": 47480815,
-        "author": "barrkel",
-        "text": "I don\u0026#x27;t really get the upside of focus on CRDTs.\u003cp\u003eThe semantic problem with conflicts exists either way. You get a consistent outcome and a slightly better description of the conflict, but in a way that possibly interleaves changes, which I don\u0026#x27;t think is an improvement at all.\u003cp\u003eI am completely rebase-pilled. I believe merge commits should be avoided at all costs, every commit should be a fast forward commit, and a unit of work that can be rolled back in isolation. And also all commits should be small. Gitflow is an anti-pattern and should be avoided. Long-running branches are for patch releases, not for feature development.\u003cp\u003eI don\u0026#x27;t think this is the future of VCS.\u003cp\u003eJujutsu (and Gerrit) solves a real git problem - multiple revisions of a change. That\u0026#x27;s one that creates pain in git when you have a chain of commits you need to rebase based on feedback.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "This comment provides a well-reasoned perspective on version control best practices emphasizing rebasing and small commits, which is a widely accepted approach."
-      },
-      {
-        "id": 47479162,
-        "author": "bos",
-        "text": "This is sort of a revival and elaboration of some of Bram’s ideas from Codeville, an earlier effort that dates back to the early 2000s Cambrian explosion of DVCS.\u003cp\u003eCodeville also used a weave for storage and merge, a concept that originated with SCCS (and thence into Teamware and BitKeeper).\u003cp\u003eCodeville predates the introduction of CRDTs by almost a decade, and at least on the face of it the two concepts seem like a natural fit.\u003cp\u003eIt was always kind of difficult to argue that weaves produced unambiguously better merge results (and more limited conflicts) than the more heuristically driven approaches of git, Mercurial, et al, because the edit histories required to produce test cases were difficult (at least for me) to reason about.\u003cp\u003eI like that Bram hasn’t let go of the problem, and is still trying out new ideas in the space.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "This comment provides historical context and connects the current discussion to earlier version control research, adding valuable background."
-      },
-      {
-        "id": 47483252,
-        "author": "danpalmer",
-        "text": "I\u0026#x27;m struggling to understand the problem this solves for me. I can see in the abstract why this might be useful, but in practice I don\u0026#x27;t see the problems.\u003cp\u003eFor me, jj represents a massive step forward from git in terms of usability, usefulness, and solving problems I actually have.\u003cp\u003eI think the next step forward for version control would be something that works at a lower level, such as the AST. I\u0026#x27;d love to see an exploration of what versioning looks like when we don\u0026#x27;t have files and directories, and a piece of software is one whole tree that can be edited at any level. Things like LightTable and Dark have tried bits of this, it would be good to see a VCS demo of that sort of thing.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment offers a practical viewpoint on existing tools and suggests an interesting future direction for version control focusing on semantic structures."
-      },
-      {
-        "id": 47479492,
-        "author": "mikey-k",
-        "text": "Interesting idea.   While conflicts can be improved, I personally don\u0026#x27;t see it as a critical challenge with VCS.\u003cp\u003eWhat I do think is the critical challenge (particularly with Git) is scalability.\u003cp\u003eSize of repository \u0026amp; rate of change of repositories are starting to push limits of git, and I think this needs revisited across the server, client \u0026amp; wire protocols.\u003cp\u003eWhat exactly, I don\u0026#x27;t know. :). But I do know that in my current role (mid-size well-known tech company) is hitting these limits today.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment highlights an important practical limitation of Git related to scalability, which is a real concern in large-scale development."
+        "analysis": "This comment correctly distinguishes between system-level conflict resolution by CRDTs and the semantic conflicts that require human judgment, highlighting a key limitation."
       },
       {
         "id": 47479687,
@@ -119,11 +54,11 @@
         "text": "The thing about how merges are presented seems orthogonal to how to represent history. I also hate the default in git, but that is why I just use p4merge as a merge tool and get a proper 4-pane merge tool (left, right, common base, merged result) which shows everything needed to figure out why there is a conflict and how to resolve it. I don\u0026#x27;t understand why you need to switch out the VCS to fix that issue.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment provides a pragmatic solution to merge visualization issues without changing the underlying VCS, which is a practical approach."
+        "accuracyRank": 3,
+        "analysis": "Provides a practical solution to merge conflict visualization without changing the underlying VCS, showing a pragmatic approach to usability."
       },
       {
         "id": 47479374,
@@ -131,23 +66,78 @@
         "text": "Is it a good thing to have merges that never fail? Often a merge failure indicates a semantic conflict, not just \u0026quot;two changes in the same place\u0026quot;. You want to be aware of and forced to manually deal with such cases.\u003cp\u003eI assume the proposed system addresses it somehow but I don\u0026#x27;t see it in my quick read of this.",
         "indicators": [
           "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Raises an important point that merge failures can signal semantic conflicts, which automated merges might obscure, questioning the benefit of conflict-free merges."
+      },
+      {
+        "id": 47485283,
+        "author": "toomim",
+        "text": "CRDTs actually have a long history in version control.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  - The original 1977 version control system, SCCS, was a CRDT: https:\u0026#x2F;\u0026#x2F;braid.org\u0026#x2F;meeting-60\u0026#x2F;sccs-is-a-time-collapse\n\n  - It called its data structure a \u0026#x27;weave\u0026quot;\n\n  - Brahm\u0026#x27;s old project \u0026quot;Codeville\u0026quot; used a weave for version control\n\n  - But then git blew up in popularity.\n\n  - The project \u0026quot;DARCS\u0026quot; tried to make a robust \u0026quot;theory of patches,\u0026quot; and eventually led to the development of Pijul\n\n  - Pijul is a VCS that is a CRDT: https:\u0026#x2F;\u0026#x2F;pijul.org\u003c/code\u003e\u003c/pre\u003e",
+        "indicators": [
+          "intelligent",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 9,
-        "analysis": "This comment raises a valid concern that automatic merges without failures may hide semantic conflicts, an important consideration."
+        "accuracyRank": 5,
+        "analysis": "Provides historical context showing that CRDT concepts have been explored in version control, adding depth to the discussion."
       },
       {
-        "id": 47479621,
-        "author": "jFriedensreich",
-        "text": "starts with “based on the fundamentally sound approach of using CRDTs for version control”. How on earth is crdt a sound base for a version control system? This makes no sense fundamentally, you need to reach a consistent state that is what you intended not what some crdt decided and jj shows you can do that also without blocking on merges but with first level conflicts that need to be resolved. ai and language aware merge drivers are helping so much here i really wonder if the world these “replace version control” projects were made for still exists at all.",
+        "id": 47482123,
+        "author": "astrostl",
+        "text": "Disagree. We all are — or should be — Linux kernel developers. What\u0026#x27;s more, we should align to a specific and singular VCS worldview informed by BitKeeper, which no longer exists, whether or not we used it. Therefore Git. Thank you for your attention to this matter!",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Expresses a strong opinion favoring Git's dominance based on historical lineage, though somewhat dismissive of alternatives."
+      },
+      {
+        "id": 47483252,
+        "author": "danpalmer",
+        "text": "I\u0026#x27;m struggling to understand the problem this solves for me. I can see in the abstract why this might be useful, but in practice I don\u0026#x27;t see the problems.\u003cp\u003eFor me, jj represents a massive step forward from git in terms of usability, usefulness, and solving problems I actually have.\u003cp\u003eI think the next step forward for version control would be something that works at a lower level, such as the AST. I\u0026#x27;d love to see an exploration of what versioning looks like when we don\u0026#x27;t have files and directories, and a piece of software is one whole tree that can be edited at any level. Things like LightTable and Dark have tried bits of this, it would be good to see a VCS demo of that sort of thing.",
         "indicators": [
           "thoughtful",
-          "likely-true",
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Offers a forward-looking perspective on version control improvements focusing on semantic structures rather than just merges."
+      },
+      {
+        "id": 47479492,
+        "author": "mikey-k",
+        "text": "Interesting idea.   While conflicts can be improved, I personally don\u0026#x27;t see it as a critical challenge with VCS.\u003cp\u003eWhat I do think is the critical challenge (particularly with Git) is scalability.\u003cp\u003eSize of repository \u0026amp; rate of change of repositories are starting to push limits of git, and I think this needs revisited across the server, client \u0026amp; wire protocols.\u003cp\u003eWhat exactly, I don\u0026#x27;t know. :). But I do know that in my current role (mid-size well-known tech company) is hitting these limits today.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Highlights an important practical limitation of Git related to scalability rather than merge conflict resolution."
+      },
+      {
+        "id": 47479347,
+        "author": "ZoomZoomZoom",
+        "text": "The key insight in the third sentence?\u003cp\u003e\u0026gt; ... CRDTs for version control, which is long overdue but hasn’t happened yet\u003cp\u003ePijul happened and it has hundreds - perhaps thousands - of hours of real expert developer\u0026#x27;s toil put in it.\u003cp\u003eNot that Bram is not one of those, but the post reads like you all know what.",
+        "indicators": [
+          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Corrects an oversight by pointing out that CRDT-based VCS like Pijul are already developed and in use."
+      },
+      {
+        "id": 47480695,
+        "author": "gavinhoward",
+        "text": "Bram Cohen is awesome, but this feels a little bare. I\u0026#x27;ve put much more thought into version control ([1]), including the use of CRDTs (search for \u0026quot;# History Model\u0026quot; and read through the \u0026quot;Implementing CRDTs\u0026quot; section).\u003cp\u003e[1]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gavinhoward.com\u0026#x2F;uploads\u0026#x2F;designs\u0026#x2F;yore.md\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gavinhoward.com\u0026#x2F;uploads\u0026#x2F;designs\u0026#x2F;yore.md\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
           "constructive"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment questions the fundamental suitability of CRDTs for version control and points to emerging AI-based tools as helpful alternatives."
+        "analysis": "Offers additional resources and a more comprehensive take on CRDTs in version control, suggesting the discussion could be deeper."
       }
     ]
   }

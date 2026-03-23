@@ -22,29 +22,43 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around recent advancements in running large language models on consumer hardware, focusing on quantization techniques, hardware limitations, and practical usability. Participants analyze the technical feasibility, performance trade-offs, and implications for accessibility and real-world applications.",
+    "summary": "The discussion centers on the feasibility and practicality of running extremely large language models (LLMs) like Qwen 3.5 397B on consumer hardware, particularly laptops. While some praise the technical achievement and innovative approaches like 2-bit quantization and flash streaming, many express skepticism about the severe quality degradation, slow performance, and hardware limitations such as SSD wear and RAM requirements.",
     "comments": [
-      {
-        "id": 47477552,
-        "author": "tarruda",
-        "text": "Note that this is not the only way to run Qwen 3.5 397B on consumer devices, there are excellent ~2.5 BPW quants available that make it viable for 128G devices.\u003cp\u003eI\u0026#x27;ve had great success (~20 t\u0026#x2F;s) running it on a M1 Ultra with room for 256k context. Here are some lm-evaluation-harness results I ran against it:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    mmlu: 87.86%\n\n    gpqa diamond: 82.32%\n\n    gsm8k: 86.43%\n\n    ifeval: 75.90%\n\u003c/code\u003e\u003c/pre\u003e\nMore details of my experience:\u003cp\u003e- \u003ca href=\"https:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discussions\u0026#x2F;8\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discu...\u003c/a\u003e\u003cp\u003e- \u003ca href=\"https:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discussions\u0026#x2F;2\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discu...\u003c/a\u003e\u003cp\u003e- \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;simonw\u0026#x2F;67c754bbc0bc609a6caedee16fef89e8?permalink_comment_id=5991165#gistcomment-5991165\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;simonw\u0026#x2F;67c754bbc0bc609a6caedee16fef8...\u003c/a\u003e\u003cp\u003eOverall an excellent model to have for offline inference.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 1,
-        "analysis": "Provides detailed personal experience and relevant benchmarks, supporting the feasibility of running large models on consumer hardware with quantization."
-      },
       {
         "id": 47477630,
         "author": "Aurornis",
         "text": "Reading the details, he is using 2-bit quantization and reduced the number of experts per token from 10 down to 4 to get 5 tokens\u0026#x2F;sec. Cool proof of concept but it’s far from the quality and performance of the 397B model as normally used. Dropping the number of experts is particularly misleading.\u003cp\u003eThis is some interesting work, but applying such extreme measures to LLMs to get them to run severely degrades quality. I know he claims negligible quality loss, but in my experience 2-bit quantizations are completely useless for real work. You can get them to respond to prompts, but they lose their intelligence and will go around in circles.\u003cp\u003eHe also shows 5-6 tokens per second. Again that’s impressive for a large model on limited hardware but it’s very slow. Between the severely degraded model abilities and the extremely slow output the 397B result should be considered an attempt at proving something can technically run, not evidence that it can run well and produce output you’d expect from a 397B model.\u003cp\u003eHe even mentions the obvious problems with his changes:\u003cp\u003e\u0026gt; *2-bit quantization produces \\name\\ instead of \u0026quot;name\u0026quot; in JSON output, making tool calling unreliable.\u003cp\u003eSo right out of the gate this isn’t useful if you want to do anything with it. He could have tried smaller models or less quantizations to get actual useful output from the model, but it wouldn’t look as impressive. It’s honestly getting kind of exhausting to read all of these AI-coded (admitted in the link) and AI-written papers made more for resume building. It would have been interesting to see this work applied to running a useful model that hadn’t been lobotomized instead of applying tricks to get an impressive headline but useless output.",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment accurately highlights the trade-offs of extreme quantization and expert reduction, which are well-known to degrade model quality and speed, aligning with common expert understanding."
+      },
+      {
+        "id": 47477552,
+        "author": "tarruda",
+        "text": "Note that this is not the only way to run Qwen 3.5 397B on consumer devices, there are excellent ~2.5 BPW quants available that make it viable for 128G devices.\u003cp\u003eI\u0026#x27;ve had great success (~20 t\u0026#x2F;s) running it on a M1 Ultra with room for 256k context. Here are some lm-evaluation-harness results I ran against it:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    mmlu: 87.86%\n\n    gpqa diamond: 82.32%\n\n    gsm8k: 86.43%\n\n    ifeval: 75.90%\n\u003c/code\u003e\u003c/pre\u003e\nMore details of my experience:\u003cp\u003e- \u003ca href=\"https:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discussions\u0026#x2F;8\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discu...\u003c/a\u003e\u003cp\u003e- \u003ca href=\"https:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discussions\u0026#x2F;2\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;huggingface.co\u0026#x2F;ubergarm\u0026#x2F;Qwen3.5-397B-A17B-GGUF\u0026#x2F;discu...\u003c/a\u003e\u003cp\u003e- \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;simonw\u0026#x2F;67c754bbc0bc609a6caedee16fef89e8?permalink_comment_id=5991165#gistcomment-5991165\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;simonw\u0026#x2F;67c754bbc0bc609a6caedee16fef8...\u003c/a\u003e\u003cp\u003eOverall an excellent model to have for offline inference.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Accurately critiques the limitations of the quantization approach, emphasizing the trade-off between speed and model quality."
+        "analysis": "Provides concrete benchmark data and references, supporting the claim that running large models on consumer hardware is possible with certain quantization techniques."
+      },
+      {
+        "id": 47478657,
+        "author": "mkw",
+        "text": "TLDR I took a stab at leveraging Dan\u0026#x27;s work and making it more practical:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;matt-k-wong\u0026#x2F;mlx-flash\u003c/a\u003e\u003cp\u003e2 bit quantization lobotomizes the model but is impressive nonetheless!   Maybe one day we\u0026#x27;ll be able to have intelligent 2 bit quants... I wonder.\u003cp\u003emy version supports - 4bit quantization, hybrid streaming (Disk + ram), arbitrary model compatibility, tested on Mamba2, and lets up the framework for LM Studio integration\u003cp\u003eI leveraged this work (Credit to Danveloper) and am in the middle of making this work on more practical models and quants.  It still uses flash streaming, but done so with a control knob so you can choose how much ram and how little ram to use.  In the craziest case, it uses as little ram as possible but is very slow, however, in the balanced case you use some ram and it\u0026#x27;s much faster.\u003cp\u003eI designed it around the intelligence dense Nemotron 3 Nano 30B and Nemotron Cascade 2 30B models (which are smaller, more intelligence density) and can run on low end 16GB machines, though you can run arbitrarily large models on larger machines (designed for very low end, but capable of high end).",
+        "indicators": [
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Offers a practical extension of the original work, addressing known issues with 2-bit quantization and improving usability on consumer hardware."
       },
       {
         "id": 47478292,
@@ -52,61 +66,80 @@
         "text": "The quality degradation at 2-bit is a real issue. For actual work tasks, a well-tuned 30B at 4-bit usually outperforms a 70B+ at 2-bit in my experience. The expert reduction on top of that compounds things - you\u0026#x27;re essentially running a fairly different model. Still interesting to see the upper bound of what consumer hardware can attempt, even if the result isn\u0026#x27;t production-ready.",
         "indicators": [
           "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 3,
-        "analysis": "Shares practical experience highlighting the impact of quantization on model performance, aligning with common findings in the field."
-      },
-      {
-        "id": 47476717,
-        "author": "homarp",
-        "text": "\u0026#x2F;r\u0026#x2F;localllama discussion: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;old.reddit.com\u0026#x2F;r\u0026#x2F;LocalLLaMA\u0026#x2F;comments\u0026#x2F;1rxmmu5\u0026#x2F;running_qwen35_397b_on_m3_macbook_pro_with_48gb\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;old.reddit.com\u0026#x2F;r\u0026#x2F;LocalLLaMA\u0026#x2F;comments\u0026#x2F;1rxmmu5\u0026#x2F;running...\u003c/a\u003e",
-        "indicators": [
-          "useless"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 4,
-        "analysis": "Provides a link to a related discussion but lacks substantive analysis or critique."
-      },
-      {
-        "id": 47476802,
-        "author": "JSR_FDED",
-        "text": "This is a very impressive result. If I understand correctly the bottleneck is the SSD in this architecture - the author seems to get almost 15GB\u0026#x2F;s - but I seem to remember the max b\u0026#x2F;w was about 8GB\u0026#x2F;s. What am I missing?",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "Raises a technical point about bandwidth limitations, though the exact figures may need further verification."
-      },
-      {
-        "id": 47477659,
-        "author": "maxloh",
-        "text": "Can you add a license to the repo? Legally we couldn\u0026#x27;t run any code without a license attached to it.",
-        "indicators": [
-          "useless"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Focuses on legal aspects unrelated to technical discussion, but relevant for open-source practices."
-      },
-      {
-        "id": 47477975,
-        "author": "383toast",
-        "text": "yeah 4tok\u0026#x2F;s is kinda unusable though",
-        "indicators": [
-          "useless"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Expresses skepticism about the practical usability based on speed but lacks detailed critique."
+        "analysis": "Reinforces the consensus that extreme quantization and model simplification reduce practical utility, consistent with known performance trade-offs."
       },
       {
         "id": 47481034,
         "author": "jllyhill",
         "text": "To be honest, I\u0026#x27;m getting tired of a \u0026quot;laptop\u0026quot; in every one of these clickbait titles turning out to be $3000 Macbook. Sure, it\u0026#x27;s impressive to achieve this degree of the LLM compression, but I really don\u0026#x27;t like that the title implies local LLM becomes a viable for an average person with the actual hardware being out of reach for 99%.",
         "indicators": [
-          "belligerent"
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Raises a valid point about marketing versus reality in hardware accessibility, reflecting a common user frustration."
+      },
+      {
+        "id": 47484838,
+        "author": "RandyOrion",
+        "text": "This project shows an interesting automated search for engineering problems that I like to see more.\u003cp\u003eThe experience of utilizing tiered storage (gpu vram, ram, and ssd) is generally poor for a lot of LLM inference engines out there, e.g., llama.cpp, sglang, vllm, etc..\u003cp\u003eMy own experience shows that both weight and KV cache offload to ram on sglang and vllm is unavailable or unusable. Copying extra parameters from documents and adding them to already working commands results in errors. Llama.cpp does support weight offload, but the experience is not pleasant, low pcie (gpu \u0026lt;-\u0026gt; ram) utilization, low gpu utilization, and really low tokens per second.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Provides a knowledgeable critique of current LLM inference engine limitations, supporting the discussion about hardware bottlenecks."
+      },
+      {
+        "id": 47476725,
+        "author": "rvz",
+        "text": "The technical write up is great, but Mac users should not get too excited just yet on running 300B+ parameter models locally as the TPS isn\u0026#x27;t that good.\u003cp\u003e\u0026gt;...at 4.4+ tokens\u0026#x2F;second\u003cp\u003eThat is even when it is using 4-bit quantization and it is still at that speed.\u003cp\u003e\u0026gt; The entire 209GB model streams from SSD through a custom Metal compute pipeline.\u003cp\u003eThis is my main problem.\u003cp\u003eIf I were to run this on a Mac SSD, 24\u0026#x2F;7 for heavy usage such as Openclaw, that is going to significantly reduce the lifetime of the SSD.\u003cp\u003eCan\u0026#x27;t imagine using this in the long term right now, but improvements will follow. Still a great write up anyways.",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Highlights practical concerns about hardware longevity and performance that are important for real-world usage considerations."
+      },
+      {
+        "id": 47477005,
+        "author": "zozbot234",
+        "text": "The github page mentions that a naïve mmap approach is bottlenecked by per-page overhead. Can this be mitigated by setting up explicit \u0026quot;huge\u0026quot; pages? (2M using the CONT PTE feature if the \u0026quot;native\u0026quot; page size is 16k; 32M using a PMD level block mapping; or 1G using the CONT PMD feature.) Does macOS support this out of the box?  Alternatively, one might use a simple mmap and then something like posix_fadvise to set up prefetching of the data.",
+        "indicators": [
+          "intelligent",
+          "constructive"
         ],
         "accuracyRank": 8,
-        "analysis": "Critiques the misleading marketing language, reflecting skepticism about accessibility claims."
+        "analysis": "Raises a technical question about memory management optimizations that could improve performance, showing thoughtful engagement."
+      },
+      {
+        "id": 47477975,
+        "author": "383toast",
+        "text": "yeah 4tok\u0026#x2F;s is kinda unusable though",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Concise but accurate critique of the slow inference speed, reflecting common user expectations."
+      },
+      {
+        "id": 47479203,
+        "author": "mannyv",
+        "text": "Everyone is focused on the bad 2 bit result but who cares? He says don’t use it because it’s bad.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 10,
+        "analysis": "Valid reminder that the original work frames 2-bit quantization as a technical demonstration rather than a production-ready solution."
       }
     ]
   }
