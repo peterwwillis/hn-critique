@@ -22,7 +22,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers on Rust's coherence and orphan rules, with participants debating their impact on the language's usability and ecosystem. Some express concern about Rust's complexity and rigidity compared to other languages like Scala, while others defend these rules as necessary for ecosystem quality and avoiding conflicts.",
+    "summary": "The discussion revolves around Rust's coherence and orphan rules, with many users debating their impact on language complexity, ecosystem health, and usability. Some appreciate the rules for maintaining consistency and avoiding conflicts, while others find them restrictive and a barrier to flexibility and ecosystem growth.",
     "comments": [
       {
         "id": 47495042,
@@ -34,7 +34,7 @@
           "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately describes a common and practical workaround for Rust's orphan rule, providing a clear explanation of how to handle serialization conflicts."
+        "analysis": "This comment accurately describes a common and practical Rust pattern to work around the orphan rule, providing a clear explanation of its rationale and limitations."
       },
       {
         "id": 47496528,
@@ -46,7 +46,79 @@
           "likely-true"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment thoughtfully argues that global coherence in serialization is problematic, supporting the rationale behind Rust's coherence rules despite some awkwardness."
+        "analysis": "This comment thoughtfully defends coherence rules, emphasizing the importance of avoiding global conflicts and acknowledging current tooling limitations without dismissing the rules."
+      },
+      {
+        "id": 47498350,
+        "author": "hdevalence",
+        "text": "I don’t think Rust needs this; Rust has done great for the last decade with the coherence rules it has.  I am glad to not have to worry about this, and to not have to worry about any of the downstream problems (like linker errors) that coherence structurally eliminates.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "As a knowledgeable contributor, this comment succinctly supports coherence rules by highlighting their practical benefits in preventing complex errors."
+      },
+      {
+        "id": 47495043,
+        "author": "nmilo",
+        "text": "I will never stop hating on the orphan rule, a perfect summary of what’s behind a lot of rust decisions. Purism and perfectionism at the cost of making a useful language, no better way to torpedo your ecosystem and make adding dependencies really annoying for no reason. Like not even a —dangerously-disable-the-orphan-rule, just no concessions here.",
+        "indicators": [
+          "emotional",
+          "belligerent",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "While emotionally charged, this comment reflects a common frustration with Rust's orphan rule and its impact on ecosystem growth, though it lacks constructive alternatives."
+      },
+      {
+        "id": 47498138,
+        "author": "bitbasher",
+        "text": "I used Rust for ~14 months and released one profitable SaaS product built entirely in Rust (actix-web, sqlx, askama).\u003cp\u003eI won\u0026#x27;t be using Rust moving forward. I do like the language but it\u0026#x27;s complicated (hard to hold in your head). I feel useless without the LSP and I don\u0026#x27;t like how taxing the compiler and LSP are on my system.\u003cp\u003eIt feels really wasteful to burn CPU and spin up fans every time I save a file. I find it hard to justify using 30+ GB of memory to run an LSP and compiler. I know those are tooling complaints and not really the fault of the language, but they go hand in hand. I\u0026#x27;ve tried using a ctags-based workflow using vim\u0026#x27;s built in compiler\u0026#x2F;makeprg, but it\u0026#x27;s less than ideal.\u003cp\u003eI also dislike the crates.io ecosystem. I hate how crates.io requires a GitHub account to publish anything. We are already centralized around GitHub and Microsoft, why give them more power? There\u0026#x27;s an open issue on crates.io to support email based signups but it has been open for a decade.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment provides a personal, experience-based critique of Rust's tooling and ecosystem centralization, valid concerns though somewhat subjective."
+      },
+      {
+        "id": 47496005,
+        "author": "kelnos",
+        "text": "This is one of the (several?) things that make me very worried about Rust long-term.  I love the language, and reach for it even when it sometimes isn\u0026#x27;t the most appropriate thing.  But reading some of the made-up syntax in the \u0026quot;Removing Coherence\u0026quot; section makes my head hurt.\u003cp\u003eWhen I used to write Scala, I accepted the fact that I don\u0026#x27;t have a background in type\u0026#x2F;set\u0026#x2F;etc. theory, and that there were some facets of the language that I\u0026#x27;d probably never understand, and some code that others had written that I\u0026#x27;d probably never understand.\u003cp\u003eWith a language like Rust, I feel like we\u0026#x27;re getting there.  Certain GAT syntxes sometimes take some time for me to wrap my head around when I encounter them.  Rust feels like it shouldn\u0026#x27;t be a language where you need to have some serious credentials to be able to understand all its features and syntax.\u003cp\u003eOn the other end we have Go, which was explicitly designed to be easy to learn (and, unrelatedly, I don\u0026#x27;t like for quite a few reasons).  But I was hoping that we could have a middle ground here, and that Rust could be a fully-graspable systems-level language.\u003cp\u003eThen again, for more comparison, I haven\u0026#x27;t used C++ since before they added lambdas.  I wonder if C++ has some hairy concepts and syntax today on par with Rust\u0026#x27;s more difficult parts.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment insightfully discusses Rust's learning curve and complexity, a widely acknowledged issue, though it is somewhat subjective."
+      },
+      {
+        "id": 47496771,
+        "author": "mbo",
+        "text": "I never understood why Rust couldn\u0026#x27;t figure this shit out. Scala did.\u003cp\u003e\u0026gt; If a crate doesn’t implement serde’s traits for its types then those types can’t be used with serde as downstream crates cannot implement serde’s traits for another crate’s types.\u003cp\u003eYou are allowed to do this in Scala.\u003cp\u003e\u0026gt; Worse yet, if someone publishes an alternative to serde (say, nextserde) then all crates which have added support for serde also need to add support for nextserde. Adding support for every new serialization library in existence is unrealistic and a lot of work for crate authors.\u003cp\u003eYou can easily autoderive a new typeclass instance. With Scala 3, that would be:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  trait Hash[A]:\n    extension (a: A) def hash: Int\n\n  trait PrettyPrint[A]:\n    extension (a: A) def pretty: String\n\n  \u0026#x2F;\u0026#x2F; If you have Hash for A, you automatically get PrettyPrint for A\n  given autoDerive[A](using h: Hash[A]): PrettyPrint[A] with\n    extension (a: A) def pretty: String = s\u0026quot;\u0026lt;#${a.hash.toHexString}\u0026gt;\u0026quot;\n\u003c/code\u003e\u003c/pre\u003e\n\u0026gt; Here we have two overlapping trait impls which specify different values for the associated type Assoc.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  trait Trait[A]:\n    type Assoc\n\n  object A:\n    given instance: Trait[Unit] with\n      type Assoc = Long\n\n    def makeAssoc: instance.Assoc = 0L\n\n  object B:\n    given instance: Trait[Unit] with\n      type Assoc = String\n\n    def dropAssoc(a: instance.Assoc): Unit =\n      val s: String = a\n      println(s.length)\n\n  @main def entry(): Unit =\n    B.dropAssoc(A.makeAssoc) \u0026#x2F;\u0026#x2F; Found: Playground.A.instance.Assoc Required: Playground.B.instance².Assoc²\n\n\u003c/code\u003e\u003c/pre\u003e\nScala catches this too.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment accurately compares Rust and Scala's trait systems, highlighting Rust's stricter coherence rules and Scala's more flexible approach with examples."
+      },
+      {
+        "id": 47497243,
+        "author": "egorelik",
+        "text": "Similar but not exactly the same as named impls, I\u0026#x27;d really like to see a language handle this by separating implementing a trait from making a particular existing implementation the implicit default. Orphan rules can apply to the latter, but can be overriden in a local scope by any choice of implementation.\u003cp\u003eThis is largely based on a paper I read a long time ago on how one might build a typeclass\u0026#x2F;trait system on top of an ML-style module system. But, I suspect such a setup can be beneficial even without the full module system.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This comment proposes a nuanced approach to trait coherence that could increase flexibility while preserving some safety, showing thoughtful language design insight."
       },
       {
         "id": 47495281,
@@ -57,108 +129,20 @@
           "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment insightfully frames the technical challenges as social issues in open source, highlighting the trade-offs between governance and technical workarounds."
+        "accuracyRank": 9,
+        "analysis": "This comment provides a broader perspective on ecosystem management challenges, relevant to Rust's package ecosystem debates."
       },
       {
-        "id": 47494820,
-        "author": "dathinab",
-        "text": "This isn\u0026#x27;t a new discussion it was there around the early rust days too.\u003cp\u003eAnd IMHO coherence and orphan rules have majorly contributed to the quality of the eco system.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 4,
-        "analysis": "The comment correctly notes the historical context and defends coherence and orphan rules as beneficial for ecosystem quality."
-      },
-      {
-        "id": 47496771,
-        "author": "mbo",
-        "text": "I never understood why Rust couldn\u0026#x27;t figure this shit out. Scala did.\u003cp\u003e\u0026gt; If a crate doesn’t implement serde’s traits for its types then those types can’t be used with serde as downstream crates cannot implement serde’s traits for another crate’s types.\u003cp\u003eYou are allowed to do this in Scala.\u003cp\u003e\u0026gt; Worse yet, if someone publishes an alternative to serde (say, nextserde) then all crates which have added support for serde also need to add support for nextserde. Adding support for every new serialization library in existence is unrealistic and a lot of work for crate authors.\u003cp\u003eYou can easily autoderive a new typeclass instance. With Scala 3, that would be:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  trait Hash[A]:\n    extension (a: A) def hash: Int\n\n  trait PrettyPrint[A]:\n    extension (a: A) def pretty: String\n\n  \u0026#x2F;\u0026#x2F; If you have Hash for A, you automatically get PrettyPrint for A\n  given autoDerive[A](using h: Hash[A]): PrettyPrint[A] with\n    extension (a: A) def pretty: String = s\u0026quot;\u0026lt;#${a.hash.toHexString}\u0026gt;\u0026quot;\n\u003c/code\u003e\u003c/pre\u003e\n\u0026gt; Here we have two overlapping trait impls which specify different values for the associated type Assoc.\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  trait Trait[A]:\n    type Assoc\n\n  object A:\n    given instance: Trait[Unit] with\n      type Assoc = Long\n\n    def makeAssoc: instance.Assoc = 0L\n\n  object B:\n    given instance: Trait[Unit] with\n      type Assoc = String\n\n    def dropAssoc(a: instance.Assoc): Unit =\n      val s: String = a\n      println(s.length)\n\n  @main def entry(): Unit =\n    B.dropAssoc(A.makeAssoc) \u0026#x2F;\u0026#x2F; Found: Playground.A.instance.Assoc Required: Playground.B.instance².Assoc²\n\n\u003c/code\u003e\u003c/pre\u003e\nScala catches this too.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "The comment provides a comparative perspective with Scala, accurately describing Scala's more flexible typeclass system and the challenges Rust faces with multiple serialization libraries."
-      },
-      {
-        "id": 47496005,
-        "author": "kelnos",
-        "text": "This is one of the (several?) things that make me very worried about Rust long-term.  I love the language, and reach for it even when it sometimes isn\u0026#x27;t the most appropriate thing.  But reading some of the made-up syntax in the \u0026quot;Removing Coherence\u0026quot; section makes my head hurt.\u003cp\u003eWhen I used to write Scala, I accepted the fact that I don\u0026#x27;t have a background in type\u0026#x2F;set\u0026#x2F;etc. theory, and that there were some facets of the language that I\u0026#x27;d probably never understand, and some code that others had written that I\u0026#x27;d probably never understand.\u003cp\u003eWith a language like Rust, I feel like we\u0026#x27;re getting there.  Certain GAT syntxes sometimes take some time for me to wrap my head around when I encounter them.  Rust feels like it shouldn\u0026#x27;t be a language where you need to have some serious credentials to be able to understand all its features and syntax.\u003cp\u003eOn the other end we have Go, which was explicitly designed to be easy to learn (and, unrelatedly, I don\u0026#x27;t like for quite a few reasons).  But I was hoping that we could have a middle ground here, and that Rust could be a fully-graspable systems-level language.\u003cp\u003eThen again, for more comparison, I haven\u0026#x27;t used C++ since before they added lambdas.  I wonder if C++ has some hairy concepts and syntax today on par with Rust\u0026#x27;s more difficult parts.",
-        "indicators": [
-          "emotional",
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "The comment expresses a valid concern about Rust's complexity and accessibility, reflecting a common sentiment among users about the language's learning curve."
-      },
-      {
-        "id": 47497105,
-        "author": "mastax",
-        "text": "Language changes could help for sure. There’s a library implementation we can use right now though: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;facet.rs\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;facet.rs\u0026#x2F;\u003c/a\u003e Basically a derive macro for reflection. Yeah it’s one (more) trait to derive on all your types but then users can use that to do reflection or pretty printing or diffing or whatever they want.",
-        "indicators": [
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment constructively suggests an existing tool to address some limitations, providing a practical resource for users."
-      },
-      {
-        "id": 47497243,
-        "author": "egorelik",
-        "text": "Similar but not exactly the same as named impls, I\u0026#x27;d really like to see a language handle this by separating implementing a trait from making a particular existing implementation the implicit default. Orphan rules can apply to the latter, but can be overriden in a local scope by any choice of implementation.\u003cp\u003eThis is largely based on a paper I read a long time ago on how one might build a typeclass\u0026#x2F;trait system on top of an ML-style module system. But, I suspect such a setup can be beneficial even without the full module system.",
+        "id": 47498070,
+        "author": "smj-edison",
+        "text": "I feel like encapsulation and composition are in strong tension, and this is one place where it boils over.\u003cp\u003eI\u0026#x27;ve written a decent bit of Rust, and am currently messing around with Zig. So the comparison is pretty fresh on my mind:\u003cp\u003eIn Rust, you can have private fields. In Zig all fields are public. The consequences are pretty well shown with how they print structs:\nIn Rust, you derive Debug, which is a macro that implements the Debug trait at the definition site. In Zig, the printing function uses reflection to enumerate the provided struct\u0026#x27;s fields, and creates a print string based on that. So Rust has the display logic at the definition site, while Zig has the logic at the call site.\u003cp\u003eIt\u0026#x27;s similar with hash maps: in Rust you derive\u0026#x2F;implement the Hash and PartialEq trait, in Zig you provide the hash and eq function at the call site.\u003cp\u003eEach one has pretty stark downsides:\nZig - since everything is public, you can\u0026#x27;t guarantee that your invariants are valid. Anyone can mess around with your internals.\nRust - once a field is private (which is the convention), nobody else can mess with the internals. This means outside modules can\u0026#x27;t access internal state, so if the API is bad, you\u0026#x27;re pretty screwed.\u003cp\u003eHonestly, I\u0026#x27;m not sure if there is a way to resolve this tension.\u003cp\u003eEDIT: one more thought: Zig vs Rust also shows up with how object destruction is handled. In Rust you implement a Drop trait, so each object can only have one way to be destroyed. In Zig you use defer\u0026#x2F;errdefer, so you can choose what type of destructor runs, but this also means you can mess up destruction in subtle ways.",
         "indicators": [
           "thoughtful",
           "intelligent",
           "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "The comment proposes an interesting theoretical approach to trait coherence, though it remains speculative and not currently implemented in Rust."
-      },
-      {
-        "id": 47495043,
-        "author": "nmilo",
-        "text": "I will never stop hating on the orphan rule, a perfect summary of what’s behind a lot of rust decisions. Purism and perfectionism at the cost of making a useful language, no better way to torpedo your ecosystem and make adding dependencies really annoying for no reason. Like not even a —dangerously-disable-the-orphan-rule, just no concessions here.",
-        "indicators": [
-          "emotional",
-          "belligerent"
-        ],
-        "accuracyRank": 9,
-        "analysis": "While expressing a strong opinion against the orphan rule, the comment lacks nuance and constructive suggestions, reducing its analytical value."
-      },
-      {
-        "id": 47495113,
-        "author": "nixpulvis",
-        "text": "I don\u0026#x27;t think explicit naming of impls is wise. They will regularly be TraitImpl or similar and add no real value. If you want to distinguish traits, perhaps force them to be within separate modules and use mod_a::mod_b::\u0026lt;Trait for Type\u0026gt; syntax.\u003cp\u003e\u0026gt; An interesting outcome of removing coherence and having trait bound parameters is that there becomes a meaningful difference between having a trait bound on an impl or on a struct:\u003cp\u003eThis seems unfortunate to me.",
-        "indicators": [
-          "thoughtful",
-          "intelligent"
-        ],
         "accuracyRank": 10,
-        "analysis": "The comment offers a critical view on a proposed language feature, providing a reasonable argument about naming conventions and modular organization."
-      },
-      {
-        "id": 47496962,
-        "author": "faresahmed",
-        "text": "Take a look at \u003ca href=\"https:\u0026#x2F;\u0026#x2F;contextgeneric.dev\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;contextgeneric.dev\u003c/a\u003e, it\u0026#x27;s as close as one can get to solving this issue without modifying rustc.",
-        "indicators": [
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 11,
-        "analysis": "This comment provides a helpful pointer to a relevant project addressing the discussed problem, adding practical value."
-      },
-      {
-        "id": 47495066,
-        "author": "grougnax",
-        "text": "If you think Rust has problems, it is that you\u0026#x27;ve have not understood well Rust.",
-        "indicators": [
-          "belligerent"
-        ],
-        "accuracyRank": 12,
-        "analysis": "This dismissive comment adds little constructive insight and comes across as confrontational rather than analytical."
+        "analysis": "This comment offers a detailed comparison of language design philosophies affecting encapsulation and API design, relevant to Rust's complexity discussion."
       }
     ]
   }

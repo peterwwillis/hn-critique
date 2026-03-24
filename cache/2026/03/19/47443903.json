@@ -25,32 +25,8 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the inherent quadratic time complexity in finding all regex matches, especially with overlapping matches and backtracking. Commenters share insights on different regex engine implementations, practical regex usage, and possible mitigations like sandboxing or restricting features.",
+    "summary": "The discussion revolves around the inherent quadratic complexity in finding all regex matches, with various commenters sharing insights on implementations, practical considerations, and potential mitigations. Some highlight specific regex engines or techniques that avoid or reduce this complexity, while others discuss the trade-offs and real-world applicability of such solutions.",
     "comments": [
-      {
-        "id": 47495045,
-        "author": "10000truths",
-        "text": "Restricting regex features to guarantee time complexity \u003ci\u003eworks\u003c/i\u003e, but it requires sacrificing potentially useful features like backtracking (or in the article\u0026#x27;s case, constraining oneself to fixed-upper-bound-length needles).\u003cp\u003eIn a real-world deployment where you want to run any arbitrary regex in an idiot\u0026#x2F;malice-proof manner, the best solution is the same solution you\u0026#x27;d use for running any other kind of untrusted code - sandbox it! A good regex API should limit its execution time and memory consumption and return a timeout error in case those limits are exceeded. Ideally, those parameters would be configurable at the API level. Unfortunately, the only regex libraries I know of that get this right are .NET\u0026#x27;s standard library Regex API and the third-party regex package in Python.",
-        "indicators": [
-          "thoughtful",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment accurately highlights the trade-offs between feature richness and guaranteed performance, and suggests a practical approach used in real-world systems."
-      },
-      {
-        "id": 47494954,
-        "author": "nine_k",
-        "text": "\u0026gt; \u003ci\u003enearly everything that matters in practice: where the matches are, how long they are, and how many there are\u003c/i\u003e\u003cp\u003eI would say that regexes that matter in practice, e.g. when digging through logs, have clear boundaries that curb the pathological backtracking behavior. In particular, I find it difficult to imagine a \u003ci\u003epractical\u003c/i\u003e need to find \u003ci\u003eall\u003c/i\u003e matches of an expression like \u0026#x2F;.*a|b\u0026#x2F;, as shown in the article. Realistically you\u0026#x27;d have to handle \u0026#x2F;\\b.*a|b\\b\u0026#x2F;, or similar, because realistically when you need \u003ci\u003eall\u003c/i\u003e matches, you don\u0026#x27;t want intersecting matches. This means you want to  proceed past the end of the \u003ci\u003en\u003c/i\u003e-th match to look for \u003ci\u003en+1\u003c/i\u003e-th match, and never want to use indeterminate prefixes like \u0026#x2F;.*a\u0026#x2F;.\u003cp\u003eThis OTOH gives a reasonably useful heuristic if your regexp comes from an untrusted source and could be adversarial. Check that it does not start with a prefix with a Kleene star, like \u0026#x2F;a*\u0026#x2F;. Require at least one positive match (in each alternate branch). Of course, \u0026#x2F;a+b|c\u0026#x2F; would still be quadratic if your text is long sequences of \u0026quot;a\u0026quot; interspersed with characters other than \u0026quot;b\u0026quot;. But this, again, is more of a theoretical case, to my mind.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 2,
-        "analysis": "The comment provides a nuanced view that many real-world regexes avoid pathological cases by design, making the worst-case quadratic behavior less common in practice."
-      },
       {
         "id": 47496304,
         "author": "conartist6",
@@ -60,8 +36,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment shares concrete experimental data and a specific engine implementation that partially addresses the problem, adding valuable practical insight."
+        "accuracyRank": 1,
+        "analysis": "Provides concrete experimental data and a plausible explanation of how the engine manages state evolution, making it a highly informative and accurate contribution."
       },
       {
         "id": 47494694,
@@ -70,21 +46,61 @@
         "indicators": [
           "intelligent",
           "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "Offers detailed and nuanced understanding of regex performance issues, supported by external references and concrete examples, enhancing the discussion's depth."
+      },
+      {
+        "id": 47495045,
+        "author": "10000truths",
+        "text": "Restricting regex features to guarantee time complexity \u003ci\u003eworks\u003c/i\u003e, but it requires sacrificing potentially useful features like backtracking (or in the article\u0026#x27;s case, constraining oneself to fixed-upper-bound-length needles).\u003cp\u003eIn a real-world deployment where you want to run any arbitrary regex in an idiot\u0026#x2F;malice-proof manner, the best solution is the same solution you\u0026#x27;d use for running any other kind of untrusted code - sandbox it! A good regex API should limit its execution time and memory consumption and return a timeout error in case those limits are exceeded. Ideally, those parameters would be configurable at the API level. Unfortunately, the only regex libraries I know of that get this right are .NET\u0026#x27;s standard library Regex API and the third-party regex package in Python.",
+        "indicators": [
+          "thoughtful",
+          "constructive",
           "likely-true"
         ],
+        "accuracyRank": 3,
+        "analysis": "Presents a practical approach to handling regex complexity and security concerns, referencing known implementations, which is a valuable real-world perspective."
+      },
+      {
+        "id": 47494954,
+        "author": "nine_k",
+        "text": "\u0026gt; \u003ci\u003enearly everything that matters in practice: where the matches are, how long they are, and how many there are\u003c/i\u003e\u003cp\u003eI would say that regexes that matter in practice, e.g. when digging through logs, have clear boundaries that curb the pathological backtracking behavior. In particular, I find it difficult to imagine a \u003ci\u003epractical\u003c/i\u003e need to find \u003ci\u003eall\u003c/i\u003e matches of an expression like \u0026#x2F;.*a|b\u0026#x2F;, as shown in the article. Realistically you\u0026#x27;d have to handle \u0026#x2F;\\b.*a|b\\b\u0026#x2F;, or similar, because realistically when you need \u003ci\u003eall\u003c/i\u003e matches, you don\u0026#x27;t want intersecting matches. This means you want to  proceed past the end of the \u003ci\u003en\u003c/i\u003e-th match to look for \u003ci\u003en+1\u003c/i\u003e-th match, and never want to use indeterminate prefixes like \u0026#x2F;.*a\u0026#x2F;.\u003cp\u003eThis OTOH gives a reasonably useful heuristic if your regexp comes from an untrusted source and could be adversarial. Check that it does not start with a prefix with a Kleene star, like \u0026#x2F;a*\u0026#x2F;. Require at least one positive match (in each alternate branch). Of course, \u0026#x2F;a+b|c\u0026#x2F; would still be quadratic if your text is long sequences of \u0026quot;a\u0026quot; interspersed with characters other than \u0026quot;b\u0026quot;. But this, again, is more of a theoretical case, to my mind.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 4,
-        "analysis": "The comment provides a detailed example and explanation of subtle sources of quadratic complexity, enhancing understanding of the problem's nuances."
+        "analysis": "Provides a pragmatic viewpoint on typical regex usage and potential safeguards, contributing useful heuristics for real-world scenarios."
       },
       {
         "id": 47497176,
         "author": "uwais12",
         "text": "This is a great writeup. The fact that this has been hiding in plain sight for so long is wild. Most people assume regex engines are well-optimized at this point, but the overlapping match case is genuinely tricky to handle without quadratic behavior. The Thompson NFA approach mentioned at the end seems like the right direction but I can see why nobody\u0026#x27;s prioritized it when most real-world patterns don\u0026#x27;t hit this case.",
         "indicators": [
+          "intelligent",
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 5,
-        "analysis": "This comment acknowledges the difficulty of the problem and the promise of known theoretical approaches, reflecting a balanced perspective."
+        "analysis": "Accurately summarizes the core challenge discussed in the article and supports a promising technical direction, adding clarity to the topic."
+      },
+      {
+        "id": 47496480,
+        "author": "nitely",
+        "text": "FWIW, nim-regex does achieve linear time in the rebar test[0], even if the regex includes capture groups. It\u0026#x27;s NFA based.\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;BurntSushi\u0026#x2F;rebar\u0026#x2F;pull\u0026#x2F;20#issuecomment-2562996491\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;BurntSushi\u0026#x2F;rebar\u0026#x2F;pull\u0026#x2F;20#issuecomment-256...\u003c/a\u003e",
+        "indicators": [
+          "likely-true",
+          "constructive",
+          "intelligent"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Provides a relevant example of an efficient regex implementation, though less detailed than others, it adds useful information."
       },
       {
         "id": 47497301,
@@ -94,60 +110,52 @@
           "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "The suggestion to prioritize safety by default is reasonable and aligns with best practices in security-sensitive software design."
-      },
-      {
-        "id": 47496480,
-        "author": "nitely",
-        "text": "FWIW, nim-regex does achieve linear time in the rebar test[0], even if the regex includes capture groups. It\u0026#x27;s NFA based.\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;BurntSushi\u0026#x2F;rebar\u0026#x2F;pull\u0026#x2F;20#issuecomment-2562996491\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;BurntSushi\u0026#x2F;rebar\u0026#x2F;pull\u0026#x2F;20#issuecomment-256...\u003c/a\u003e",
-        "indicators": [
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 7,
-        "analysis": "This comment provides a counterexample to the quadratic claim, though it lacks detailed explanation, making it less informative than others."
-      },
-      {
-        "id": 47495514,
-        "author": "thaumasiotes",
-        "text": "\u0026gt; the problem we\u0026#x27;re talking about in this post (finding all longest matches without quadratic blowup)\u003cp\u003eWait, what? I thought this was about finding all matches. With a minor tweak to the opening example:\u003cp\u003e\u003ci\u003eWe want to match `(.*a | b)` against `bbbbbabbbbb`.\u003c/i\u003e\u003cp\u003eI want to detect each `b` individually, and I also want to detect `bbbbba`, `bbbba`, `bbba`, `bba`, `ba`, and `a`. That\u0026#x27;s what it means to find all matches.",
-        "indicators": [
-          "thoughtful",
-          "intelligent"
-        ],
-        "accuracyRank": 8,
-        "analysis": "This comment correctly points out the difference between finding all matches and longest matches, clarifying the problem scope."
+        "analysis": "Offers a reasonable security-minded recommendation, though it is more of an opinion than a technical explanation."
       },
       {
         "id": 47495808,
         "author": "gpvos",
         "text": "I find it weird to have the Perl innovation (?:...) be called \u0026quot;traditional regex\u0026quot;. Perl was rather innovative back then, even if it\u0026#x27;s more than 30 years ago now. Traditional regex is what came before it (grep -E being the most advanced form). I wonder what counts as nontraditional in the author\u0026#x27;s eyes.",
         "indicators": [
+          "thoughtful",
           "intelligent"
         ],
+        "accuracyRank": 8,
+        "analysis": "Provides historical context and clarifies terminology, which is useful but peripheral to the main technical discussion."
+      },
+      {
+        "id": 47495514,
+        "author": "thaumasiotes",
+        "text": "\u0026gt; the problem we\u0026#x27;re talking about in this post (finding all longest matches without quadratic blowup)\u003cp\u003eWait, what? I thought this was about finding all matches. With a minor tweak to the opening example:\u003cp\u003e\u003ci\u003eWe want to match `(.*a | b)` against `bbbbbabbbbb`.\u003c/i\u003e\u003cp\u003eI want to detect each `b` individually, and I also want to detect `bbbbba`, `bbbba`, `bbba`, `bba`, `ba`, and `a`. That\u0026#x27;s what it means to find all matches.",
+        "indicators": [
+          "intelligent",
+          "thoughtful"
+        ],
         "accuracyRank": 9,
-        "analysis": "This is a minor historical correction that adds context but does not impact the main technical discussion."
+        "analysis": "Helps refine the discussion by distinguishing related concepts, improving understanding though not adding new technical solutions."
       },
       {
         "id": 47494359,
         "author": "adzm",
         "text": "Is there any reason that RE#\u0026#x27;s two-pass approach couldn\u0026#x27;t be adopted by other regex engines?\u003cp\u003eAh, there is a post with more detail about RE# and discussion here recently that I must have missed: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\u003c/a\u003e",
         "indicators": [
-          "constructive"
+          "constructive",
+          "thoughtful"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment raises a relevant question and provides a resource, but does not provide direct analysis or evidence."
+        "analysis": "Raises a relevant question and provides a resource, encouraging further exploration but without detailed analysis."
       },
       {
         "id": 47496903,
         "author": "babelfish",
         "text": "Cursor just wrote a great blog post on this - \u0026quot;Fast regex search: indexing text for agent tools\u0026quot; \u003ca href=\"https:\u0026#x2F;\u0026#x2F;cursor.com\u0026#x2F;blog\u0026#x2F;fast-regex-search\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;cursor.com\u0026#x2F;blog\u0026#x2F;fast-regex-search\u003c/a\u003e",
         "indicators": [
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
         "accuracyRank": 11,
-        "analysis": "This comment provides a useful reference but lacks substantive analysis or critique."
+        "analysis": "Contributes an external resource relevant to the topic, though without commentary or critique."
       }
     ]
   }
