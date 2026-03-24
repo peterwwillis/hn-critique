@@ -18,7 +18,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on a recent security breach involving Trivy and GitHub Actions, highlighting issues with credential compromises, ineffective secret rotation, and the broader risks of supply chain security tools. Commenters debate GitHub's role in enforcing immutable action versions and the general competence of security software teams.",
+    "summary": "The discussion revolves around a recent security breach involving Trivy and GitHub Actions, highlighting issues with credential compromises, the importance of immutable versioning, and the broader challenges in supply chain security. Commenters debate the effectiveness of current security practices, the role of GitHub's policies, and the implications for users relying on such tools.",
     "comments": [
       {
         "id": 47494269,
@@ -30,31 +30,7 @@
           "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately reflects GitHub's recommended best practice and suggests a feasible policy change that could mitigate similar issues, showing a clear understanding of the problem."
-      },
-      {
-        "id": 47493607,
-        "author": "deathanatos",
-        "text": "My initial thought is that if this isn\u0026#x27;t a new compromise, Trivy must not have rotated the old credentials. They claim, however,\u003cp\u003e\u0026gt; \u003ci\u003eWe rotated secrets and tokens, but the process wasn\u0026#x27;t atomic and attackers may have been privy to refreshed tokens\u003c/i\u003e\u003cp\u003e… does anyone know what \u003ci\u003eexactly\u003c/i\u003e they\u0026#x27;re talking about, here? To my knowledge, GH does not divulge new tokens after they\u0026#x27;re issued, but it depends on the exact auth type we\u0026#x27;re talking about, and GH has an absurd number of different types of tokens\u0026#x2F;keys one can use.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 2,
-        "analysis": "The comment provides a nuanced perspective on the credential rotation process and the complexity of token management, which aligns with known challenges in secure secret rotation."
-      },
-      {
-        "id": 47493539,
-        "author": "kevincloudsec",
-        "text": "second breach in a month from the same initial credential compromise. the first rotation didn\u0026#x27;t fully revoke access. the attacker walked right back in. no persistence needed.",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "thoughtful"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment correctly identifies the failure in the credential rotation process as the root cause of repeated breaches, consistent with the timeline and details shared in the discussion."
+        "analysis": "This comment accurately highlights a known best practice and suggests a reasonable policy change that could mitigate similar attacks."
       },
       {
         "id": 47496428,
@@ -65,31 +41,30 @@
           "intelligent",
           "likely-true"
         ],
+        "accuracyRank": 2,
+        "analysis": "The comment provides a broad but valid critique of supply chain security tools, emphasizing systemic risks inherent in such software."
+      },
+      {
+        "id": 47493539,
+        "author": "kevincloudsec",
+        "text": "second breach in a month from the same initial credential compromise. the first rotation didn\u0026#x27;t fully revoke access. the attacker walked right back in. no persistence needed.",
+        "indicators": [
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment correctly identifies a common failure in incident response where incomplete credential revocation allows attackers to maintain access."
+      },
+      {
+        "id": 47492600,
+        "author": "xinayder",
+        "text": "Wasn\u0026#x27;t this discovered already last week, on Friday, that the threat actor had replaced the legit images with malware images? And republished 75 out of 76 tags?",
+        "indicators": [
+          "likely-true",
+          "thoughtful"
+        ],
         "accuracyRank": 4,
-        "analysis": "The comment insightfully critiques the security industry’s tendency to trust tools that may themselves have vulnerabilities, a valid point given the incident's nature."
-      },
-      {
-        "id": 47492448,
-        "author": "progbits",
-        "text": "Friendly reminder that just because someone is building security software it doesn\u0026#x27;t mean they are competent and won\u0026#x27;t cause more harm than good.\u003cp\u003eEvery month the security team wants me to give full code or cloud access to some new scanner they want to trial. They love the fancy dashboards and lengthy reports but if I allowed just 10% of what they wanted we would be pwned on the regular...",
-        "indicators": [
-          "thoughtful",
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 5,
-        "analysis": "While somewhat emotional, this comment raises a valid concern about the competence and risk introduced by security teams deploying new tools without adequate safeguards."
-      },
-      {
-        "id": 47497322,
-        "author": "pietz",
-        "text": "So by wanting to improve the security of my application, I ended up lowering the security of my application? Nice.",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This expresses a common frustration when security tools introduce new vulnerabilities, reflecting a realistic user experience though it is more emotional than technical."
+        "analysis": "This comment provides timely context about the scope of the compromise, consistent with public reports."
       },
       {
         "id": 47493343,
@@ -97,22 +72,10 @@
         "text": "How the heck are credential compromises still a thing with 2FA and refresh tokens???",
         "indicators": [
           "emotional",
-          "likely-true"
+          "thoughtful"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment questions the persistence of credential compromises despite modern security measures, highlighting a valid concern though lacking detailed technical explanation."
-      },
-      {
-        "id": 47492621,
-        "author": "ashishb",
-        "text": "I always run such tools inside sandboxes to limit the blast radius.",
-        "indicators": [
-          "constructive",
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 8,
-        "analysis": "This practical advice reflects good security hygiene by isolating potentially risky tools to reduce impact from compromises."
+        "accuracyRank": 5,
+        "analysis": "The comment expresses frustration but raises a valid question about how advanced security measures can still be circumvented."
       },
       {
         "id": 47496233,
@@ -120,10 +83,33 @@
         "text": "\u0026gt; This allowed the threat actor to perform authenticated operations, including force-updating tags\u003cp\u003eHey look, infrastructure underpinning the security of thousands of products, being compromised in a way a simple setting could have prevented (\u003ci\u003eDo not allow overriding tags\u003c/i\u003e is an old GH setting). Yet another reason we need a Software Building Code. I wonder how many more of these reasons we\u0026#x27;ll find in 2026.",
         "indicators": [
           "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment points out a specific GitHub setting that could mitigate such attacks, adding constructive criticism."
+      },
+      {
+        "id": 47492448,
+        "author": "progbits",
+        "text": "Friendly reminder that just because someone is building security software it doesn\u0026#x27;t mean they are competent and won\u0026#x27;t cause more harm than good.\u003cp\u003eEvery month the security team wants me to give full code or cloud access to some new scanner they want to trial. They love the fancy dashboards and lengthy reports but if I allowed just 10% of what they wanted we would be pwned on the regular...",
+        "indicators": [
+          "thoughtful",
+          "emotional"
+        ],
+        "accuracyRank": 7,
+        "analysis": "While somewhat emotional, this comment reflects a realistic caution about trusting security tools without scrutiny."
+      },
+      {
+        "id": 47499143,
+        "author": "apexalpha",
+        "text": "This post is from March 20 and update on 22! Not today!!!\u003cp\u003ePlease don’t scare people like this!",
+        "indicators": [
+          "emotional",
           "likely-true"
         ],
-        "accuracyRank": 9,
-        "analysis": "The comment correctly identifies a specific vulnerability and advocates for higher standards in software development, a reasonable and relevant point."
+        "accuracyRank": 8,
+        "analysis": "This comment correctly clarifies the timing of the incident but is primarily emotional in tone."
       },
       {
         "id": 47492405,
@@ -133,8 +119,19 @@
           "likely-true",
           "thoughtful"
         ],
+        "accuracyRank": 9,
+        "analysis": "This comment provides a factual timeline and insight into the attacker's persistence, consistent with other reports."
+      },
+      {
+        "id": 47494309,
+        "author": "g947o",
+        "text": "People have been warning about giant security holes in GitHub Actions dependency but MS did nothing.",
+        "indicators": [
+          "emotional",
+          "likely-true"
+        ],
         "accuracyRank": 10,
-        "analysis": "This comment accurately summarizes the timeline and suggests the attackers maintained access despite rotation attempts, consistent with other comments."
+        "analysis": "This comment expresses frustration and assigns blame, which is plausible but lacks detailed evidence."
       }
     ]
   }

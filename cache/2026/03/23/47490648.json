@@ -22,7 +22,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around Rust's coherence and orphan rules, with many users debating their impact on language complexity, ecosystem health, and usability. Some appreciate the rules for maintaining consistency and avoiding conflicts, while others find them restrictive and a barrier to flexibility and ecosystem growth.",
+    "summary": "The discussion centers around Rust's coherence and orphan rules, with many commenters debating their impact on language complexity, ecosystem quality, and developer experience. Some appreciate Rust's strictness for ecosystem stability, while others find it overly restrictive and challenging compared to languages like Scala or Go.",
     "comments": [
       {
         "id": 47495042,
@@ -34,7 +34,7 @@
           "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately describes a common and practical Rust pattern to work around the orphan rule, providing a clear explanation of its rationale and limitations."
+        "analysis": "This comment accurately describes a common and practical approach in Rust to work around the orphan rule, providing a clear explanation of the rationale and tradeoffs."
       },
       {
         "id": 47496528,
@@ -42,11 +42,46 @@
         "text": "I’m not convinced that the problem is actually a problem. Suppose someone writes a type PairOfNumbers with a couple fields.  The author did not define a serialization. You use it in another type and want it to serialize it as:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    { \u0026quot;a\u0026quot;: 1, \u0026quot;b\u0026quot;: 2 }\n\u003c/code\u003e\u003c/pre\u003e\nI use it and want to serialize it as:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e    [ 1, 2 ]\n\u003c/code\u003e\u003c/pre\u003e\nWhat we’re doing is fine. You should get your serialization and I should get mine. But if either of us declares, process-wide, that one of us has determined the One True Serialization of PairOfInts, I think we are \u003ci\u003ewrong\u003c/i\u003e.\u003cp\u003eSure, maybe current Rust and current serde make it awkward to declare non-global serializers, but that doesn’t mean that coherence is a mistake.",
         "indicators": [
           "thoughtful",
-          "intelligent",
           "likely-true"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment thoughtfully defends coherence rules, emphasizing the importance of avoiding global conflicts and acknowledging current tooling limitations without dismissing the rules."
+        "analysis": "This comment thoughtfully argues that multiple serializations can coexist without conflict if no global standard is enforced, aligning with Rust's design philosophy."
+      },
+      {
+        "id": 47496005,
+        "author": "kelnos",
+        "text": "This is one of the (several?) things that make me very worried about Rust long-term.  I love the language, and reach for it even when it sometimes isn\u0026#x27;t the most appropriate thing.  But reading some of the made-up syntax in the \u0026quot;Removing Coherence\u0026quot; section makes my head hurt.\u003cp\u003eWhen I used to write Scala, I accepted the fact that I don\u0026#x27;t have a background in type\u0026#x2F;set\u0026#x2F;etc. theory, and that there were some facets of the language that I\u0026#x27;d probably never understand, and some code that others had written that I\u0026#x27;d probably never understand.\u003cp\u003eWith a language like Rust, I feel like we\u0026#x27;re getting there.  Certain GAT syntxes sometimes take some time for me to wrap my head around when I encounter them.  Rust feels like it shouldn\u0026#x27;t be a language where you need to have some serious credentials to be able to understand all its features and syntax.\u003cp\u003eOn the other end we have Go, which was explicitly designed to be easy to learn (and, unrelatedly, I don\u0026#x27;t like for quite a few reasons).  But I was hoping that we could have a middle ground here, and that Rust could be a fully-graspable systems-level language.\u003cp\u003eThen again, for more comparison, I haven\u0026#x27;t used C++ since before they added lambdas.  I wonder if C++ has some hairy concepts and syntax today on par with Rust\u0026#x27;s more difficult parts.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The comment reflects a common sentiment about Rust's learning curve and complexity, providing a personal perspective that is generally accurate though subjective."
+      },
+      {
+        "id": 47498813,
+        "author": "caditinpiscinam",
+        "text": "I think a lot of developers look at Typescript and come away thinking that a static type system is something you can retrofit onto any language. These devs ask why anyone would still want to use a dynamically typed language, as though static typing is something that can be had for free. But the reality is that a robust type system ends up profoundly shaping the design of a language, and introduces these sorts of thorny design questions, with each option bringing its own tradeoffs and limitations.\u003cp\u003eWe want our languages to make it easy to write correct programs. And we want our languages to make it hard to write incorrect programs. And trying to have both at once is very difficult.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment insightfully explains the complexity behind static typing and language design, which is a well-recognized truth in programming language theory."
+      },
+      {
+        "id": 47498138,
+        "author": "bitbasher",
+        "text": "I used Rust for ~14 months and released one profitable SaaS product built entirely in Rust (actix-web, sqlx, askama).\u003cp\u003eI won\u0026#x27;t be using Rust moving forward. I do like the language but it\u0026#x27;s complicated (hard to hold in your head). I feel useless without the LSP and I don\u0026#x27;t like how taxing the compiler and LSP are on my system.\u003cp\u003eIt feels really wasteful to burn CPU and spin up fans every time I save a file. I find it hard to justify using 30+ GB of memory to run an LSP and compiler. I know those are tooling complaints and not really the fault of the language, but they go hand in hand. I\u0026#x27;ve tried using a ctags-based workflow using vim\u0026#x27;s built in compiler\u0026#x2F;makeprg, but it\u0026#x27;s less than ideal.\u003cp\u003eI also dislike the crates.io ecosystem. I hate how crates.io requires a GitHub account to publish anything. We are already centralized around GitHub and Microsoft, why give them more power? There\u0026#x27;s an open issue on crates.io to support email based signups but it has been open for a decade.",
+        "indicators": [
+          "emotional",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "The comment provides a valid critique of Rust's tooling and ecosystem centralization, reflecting real developer frustrations though focused on tooling rather than language design."
       },
       {
         "id": 47498350,
@@ -57,44 +92,19 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "As a knowledgeable contributor, this comment succinctly supports coherence rules by highlighting their practical benefits in preventing complex errors."
-      },
-      {
-        "id": 47495043,
-        "author": "nmilo",
-        "text": "I will never stop hating on the orphan rule, a perfect summary of what’s behind a lot of rust decisions. Purism and perfectionism at the cost of making a useful language, no better way to torpedo your ecosystem and make adding dependencies really annoying for no reason. Like not even a —dangerously-disable-the-orphan-rule, just no concessions here.",
-        "indicators": [
-          "emotional",
-          "belligerent",
-          "likely-true"
-        ],
-        "accuracyRank": 4,
-        "analysis": "While emotionally charged, this comment reflects a common frustration with Rust's orphan rule and its impact on ecosystem growth, though it lacks constructive alternatives."
-      },
-      {
-        "id": 47498138,
-        "author": "bitbasher",
-        "text": "I used Rust for ~14 months and released one profitable SaaS product built entirely in Rust (actix-web, sqlx, askama).\u003cp\u003eI won\u0026#x27;t be using Rust moving forward. I do like the language but it\u0026#x27;s complicated (hard to hold in your head). I feel useless without the LSP and I don\u0026#x27;t like how taxing the compiler and LSP are on my system.\u003cp\u003eIt feels really wasteful to burn CPU and spin up fans every time I save a file. I find it hard to justify using 30+ GB of memory to run an LSP and compiler. I know those are tooling complaints and not really the fault of the language, but they go hand in hand. I\u0026#x27;ve tried using a ctags-based workflow using vim\u0026#x27;s built in compiler\u0026#x2F;makeprg, but it\u0026#x27;s less than ideal.\u003cp\u003eI also dislike the crates.io ecosystem. I hate how crates.io requires a GitHub account to publish anything. We are already centralized around GitHub and Microsoft, why give them more power? There\u0026#x27;s an open issue on crates.io to support email based signups but it has been open for a decade.",
-        "indicators": [
-          "emotional",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 5,
-        "analysis": "This comment provides a personal, experience-based critique of Rust's tooling and ecosystem centralization, valid concerns though somewhat subjective."
-      },
-      {
-        "id": 47496005,
-        "author": "kelnos",
-        "text": "This is one of the (several?) things that make me very worried about Rust long-term.  I love the language, and reach for it even when it sometimes isn\u0026#x27;t the most appropriate thing.  But reading some of the made-up syntax in the \u0026quot;Removing Coherence\u0026quot; section makes my head hurt.\u003cp\u003eWhen I used to write Scala, I accepted the fact that I don\u0026#x27;t have a background in type\u0026#x2F;set\u0026#x2F;etc. theory, and that there were some facets of the language that I\u0026#x27;d probably never understand, and some code that others had written that I\u0026#x27;d probably never understand.\u003cp\u003eWith a language like Rust, I feel like we\u0026#x27;re getting there.  Certain GAT syntxes sometimes take some time for me to wrap my head around when I encounter them.  Rust feels like it shouldn\u0026#x27;t be a language where you need to have some serious credentials to be able to understand all its features and syntax.\u003cp\u003eOn the other end we have Go, which was explicitly designed to be easy to learn (and, unrelatedly, I don\u0026#x27;t like for quite a few reasons).  But I was hoping that we could have a middle ground here, and that Rust could be a fully-graspable systems-level language.\u003cp\u003eThen again, for more comparison, I haven\u0026#x27;t used C++ since before they added lambdas.  I wonder if C++ has some hairy concepts and syntax today on par with Rust\u0026#x27;s more difficult parts.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
         "accuracyRank": 6,
-        "analysis": "This comment insightfully discusses Rust's learning curve and complexity, a widely acknowledged issue, though it is somewhat subjective."
+        "analysis": "This comment defends Rust's coherence rules as beneficial for ecosystem stability and avoiding complex issues, a widely accepted position among Rust experts."
+      },
+      {
+        "id": 47494820,
+        "author": "dathinab",
+        "text": "This isn\u0026#x27;t a new discussion it was there around the early rust days too.\u003cp\u003eAnd IMHO coherence and orphan rules have majorly contributed to the quality of the eco system.",
+        "indicators": [
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment correctly notes the historical importance of coherence and orphan rules in maintaining Rust's ecosystem quality."
       },
       {
         "id": 47496771,
@@ -103,34 +113,22 @@
         "indicators": [
           "intelligent",
           "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment accurately compares Rust and Scala's trait systems, highlighting Rust's stricter coherence rules and Scala's more flexible approach with examples."
-      },
-      {
-        "id": 47497243,
-        "author": "egorelik",
-        "text": "Similar but not exactly the same as named impls, I\u0026#x27;d really like to see a language handle this by separating implementing a trait from making a particular existing implementation the implicit default. Orphan rules can apply to the latter, but can be overriden in a local scope by any choice of implementation.\u003cp\u003eThis is largely based on a paper I read a long time ago on how one might build a typeclass\u0026#x2F;trait system on top of an ML-style module system. But, I suspect such a setup can be beneficial even without the full module system.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true"
+          "thoughtful"
         ],
         "accuracyRank": 8,
-        "analysis": "This comment proposes a nuanced approach to trait coherence that could increase flexibility while preserving some safety, showing thoughtful language design insight."
+        "analysis": "This comment accurately contrasts Rust's orphan rules with Scala's more flexible trait system, highlighting a real difference in language design."
       },
       {
-        "id": 47495281,
-        "author": "Animats",
-        "text": "Note the use case - someone wants to have the ability to replace a base-level crate such as serde.\u003cp\u003eWhen something near the bottom needs work, should there be a process for fixing it, which is a people problem? Or should there be a mechanism for bypassing it, which is a technical solution to a people problem? This is one of the curses of open source.\nThe first approach means that there will be confrontations which must be resolved. The second means a proliferation of very similar packages.\u003cp\u003eThis is part of the life cycle of an open source language. Early on, you don\u0026#x27;t have enough packages to get anything done, and are grateful that someone took the time to code something.\nThen it becomes clear that the early packages lacked something, and additional packages appear. Over time, you\u0026#x27;re drowning in cruft. In a previous posting, I mentioned ten years of getting a single standard ISO 8601 date parser adopted, instead of six packages with different bugs.\nSomeone else went through the same exercise with Javascript.\u003cp\u003eGo tends to take the first approach, while Python takes the second. One of Go\u0026#x27;s strengths is that most of the core packages are maintained and used internally by Google. So you know they\u0026#x27;ve been well-exercised.\u003cp\u003eBetween Github and AI, it\u0026#x27;s all too easy to create minor variants of packages. Plus we now have package supply chain attacks. Curation has thus become more important. At this point in history, it\u0026#x27;s probably good to push towards the first approach.",
+        "id": 47495043,
+        "author": "nmilo",
+        "text": "I will never stop hating on the orphan rule, a perfect summary of what’s behind a lot of rust decisions. Purism and perfectionism at the cost of making a useful language, no better way to torpedo your ecosystem and make adding dependencies really annoying for no reason. Like not even a —dangerously-disable-the-orphan-rule, just no concessions here.",
         "indicators": [
-          "thoughtful",
-          "intelligent",
-          "likely-true"
+          "emotional",
+          "likely-true",
+          "belligerent"
         ],
         "accuracyRank": 9,
-        "analysis": "This comment provides a broader perspective on ecosystem management challenges, relevant to Rust's package ecosystem debates."
+        "analysis": "While emotionally charged, this comment reflects a common criticism about Rust's strict rules limiting ecosystem flexibility, though it may understate the benefits."
       },
       {
         "id": 47498070,
@@ -142,7 +140,7 @@
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "This comment offers a detailed comparison of language design philosophies affecting encapsulation and API design, relevant to Rust's complexity discussion."
+        "analysis": "This comment provides a nuanced comparison between Rust and Zig, highlighting tradeoffs in language design regarding encapsulation and API safety."
       }
     ]
   }

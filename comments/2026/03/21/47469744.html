@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: BIO – The Bao I/O Co-Processor | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://www.crowdsupply.com/baochip/dabao/updates/bio-the-bao-i-o-co-processor" rel="noreferrer noopener">BIO – The Bao I/O Co-Processor</a>
+        <span class="sitebit"> (crowdsupply.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">20 points</span>
+        by <a href="https://news.ycombinator.com/user?id=hasheddan" class="hnuser">hasheddan</a>
+        <span class="age">3 days ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/21/47469744.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47469744" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion revolves around the technical merits and challenges of the Bao I/O co-processor (BIO) compared to traditional PIO approaches. Commenters analyze hardware resource usage, timing constraints, and instruction set innovations, with some expressing concerns about complexity and efficiency.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=theamk" class="hnuser">theamk</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">It&#x27;s a very nice write-up, but this part makes me uneasy:<p>&gt; So long as all the computation in the loop finishes before the next quantum, the timing requirements [...] are met.<p>Seems like we are back to cycle counting then? but instead of having just 32 1-IPC instructions, we have up to 4K instructions with various latency, and there is C compiler too, so even if you had enough cycles in budget now, the things might break when compiler is upgraded.<p>I am wondering if the original PIO approach was still salvageable if the binary compatibility is not a goal. Because while co-processors are useful, people did some amazing things with PIO, like fully software DVI.</div>
+      <div class="comment-analysis"><em>This comment provides a nuanced concern about timing guarantees and compiler impacts on cycle counting, reflecting a deep understanding of hardware-software interaction challenges.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=rasz" class="hnuser">rasz</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">PIOs might be heavier on hardware resources<p>&gt;The BIO uses 14597 cells, while the PIO uses 39087 cells<p>and BIO might reach higher clock speeds<p>&gt; when ported to an ASIC flow, the clock rate achieved by the BIO is over 4x that of a PIO implemented in the same process node.<p>but BIO is ~15x less efficient per clock. RP2350 is capable of reading IOs at 400Mbps (<a href="https:&#x2F;&#x2F;github.com&#x2F;gusmanb&#x2F;logicanalyzer" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;gusmanb&#x2F;logicanalyzer</a>) and bitbanging at 800 Mbps (HSTX). From Bunnie writeup BIO needs 700MHz to do pedestrian 25Mhz SPI.</div>
+      <div class="comment-analysis"><em>This comment offers specific quantitative comparisons and references external sources, providing a balanced view on resource usage and performance trade-offs.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jauntywundrkind" class="hnuser">jauntywundrkind</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Really glad to get this write-up, adds a very nice broad picture &amp; does a good job introducing the queue too.<p>I&#x27;m an unranked unwashed neophyte at hardware design, but I did spend some time looking at BIO. One particular thing that caught my eye a while ago was Streaming Semantic Registers, which is an instruction set extension for risc-v where load and store are implicit, with data pointers that automatically walk on each instruction. This greatly increases code density, allowing for DSP like capabilities on risc-v.
+<a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;1911.08356" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;1911.08356</a><p>I forget how exactly I was convinced, but after spending a while chatting with the LLM, I became somewhat convinced that the FIFO queues here gave a lot of similar capabilities. With additional interesting use for decoupling multiple systems. Register mapped data arrays, that can be used without having to load&#x2F;store each word. I felt then and felt now that I still have a good bit to learn about how exactly each of the FIFO registers works, but it was cool to see, and I love this idea of code that can run without having to issue endless load&#x2F;stores all the time.</div>
+      <div class="comment-analysis"><em>The comment connects BIO&#39;s design to related RISC-V innovations, showing thoughtful insight though some uncertainty remains about the detailed workings.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=fragmede" class="hnuser">fragmede</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">dupe of <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47459363">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47459363</a> ?</div>
+      <div class="comment-analysis"><em>This comment adds no substantive content to the discussion, only pointing out potential duplication.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-24 07:11 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

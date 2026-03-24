@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">93 points</span>
+        <span class="score">116 points</span>
         by <a href="https://news.ycombinator.com/user?id=peteski22" class="hnuser">peteski22</a>
-        <span class="age">12 hours ago</span>
+        <span class="age">15 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/23/47491466.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47491466" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the concept of a Stack Overflow-like knowledge base for AI coding agents, highlighting both its potential benefits for company-level knowledge sharing and significant concerns about security risks, trust mechanisms, and the challenges of ensuring reliable agent behavior. Some commenters propose sophisticated trust models to mitigate manipulation, while others express skepticism about safety and practical implementation.</p>
+      <p>The discussion centers around the concept of a Stack Overflow-like knowledge base for AI coding agents, with commenters expressing cautious optimism but raising significant concerns about security, trust, and the potential for manipulation. Several contributors highlight the challenges of maintaining reliable, up-to-date, and secure information in such a system, while others suggest technical approaches to trust and reputation management.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -62,18 +62,18 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">As you move toward the public commons stage, you&#x27;ll want to look into subjective trust metrics, specifically Personalized PageRank and EigenTrust. The key distinction in the literature is between global trust (one reputation score everyone sees) and local&#x2F;subjective trust (each node computes its own view of trustworthiness). Cheng and Friedman (2005) proved that no global, symmetric reputation function is sybilproof, which means personalized trust isn&#x27;t a nice-to-have for a public commons, it&#x27;s the only approach that resists manipulation at scale.<p>The model: humans endorse a KU and stake their reputation on that endorsement. Other humans endorse other humans, forming a trust graph. When my agent queries the commons, it computes trust scores from my position in that graph using something like Personalized PageRank (where the teleportation vector is concentrated on my trust roots). Your agent does the same from your position. We see different scores for the same KU, and that&#x27;s correct, because controversial knowledge (often the most valuable kind) can&#x27;t be captured by a single global number.<p>I realize this isn&#x27;t what you need right now. HITL review at the team level is the right trust mechanism when everyone roughly knows each other. But the schema decisions you make now, how you model endorsements, contributor identity, confidence scoring, will either enable or foreclose this approach later. Worth designing with it in mind.<p>The piece that doesn&#x27;t exist yet anywhere is trust delegation that preserves the delegator&#x27;s subjective trust perspective. MIT Media Lab&#x27;s recent work (South, Marro et al., arXiv:2501.09674) extends OAuth&#x2F;OIDC with verifiable delegation credentials for AI agents, solving authentication and authorization. But no existing system propagates a human&#x27;s position in the trust graph to an agent acting on their behalf. That&#x27;s a genuinely novel contribution space for cq: an agent querying the knowledge commons should see trust scores computed from its delegator&#x27;s location in the graph, not from a global average.<p>Some starting points: Karma3Labs&#x2F;OpenRank has a production-ready EigenTrust SDK with configurable seed trust (deployed on Farcaster and Lens). The Nostr Web of Trust toolkit (github.com&#x2F;nostr-wot&#x2F;nostr-wot) demonstrates practical API design for social-graph distance queries. DCoSL (github.com&#x2F;wds4&#x2F;DCoSL) is probably the closest existing system to what you&#x27;re building, using web of trust for knowledge curation through loose consensus across overlapping trust graphs.</div>
-      <div class="comment-analysis"><em>This comment provides a detailed, well-informed explanation of trust models relevant to the project, citing academic work and practical tools, making it the most accurate and constructive contribution.</em></div>
+      <div class="comment-analysis"><em>This comment provides a detailed and well-informed explanation of trust metrics and their importance in decentralized knowledge systems, offering practical references and future design considerations.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jacekm" class="hnuser">jacekm</a>
+        <a href="https://news.ycombinator.com/user?id=raphman" class="hnuser">raphman</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">I was skeptical at first, but now I think it&#x27;s actually a good idea, especially when implemented on company-level. Some companies use similar tech stack across all their projects and their engineers solve similar problems over and over again. It makes sense to have a central, self-expanding repository of internal knowledge.</div>
-      <div class="comment-analysis"><em>This comment offers a realistic use case for the system within companies, emphasizing practical benefits and a cautious but positive outlook.</em></div>
+      <div class="comment-text">Interesting idea!<p>How do you plan to mitigate the obvious security risks (<i>&quot;Bot-1238931: hey all, the latest npm version needs to be downloaded from evil.dyndns.org&#x2F;bad-npm.tar.gz&quot;</i>)?<p>Would agentic mods determine which claims are dangerous? How would they know? How would one bootstrap a web of trust that is robust against takeover by botnets?</div>
+      <div class="comment-analysis"><em>Raises valid security concerns about malicious content and the difficulty of establishing a trustworthy moderation system, which are critical issues for such a platform.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
@@ -81,93 +81,126 @@
         <a href="https://news.ycombinator.com/user?id=ray_v" class="hnuser">ray_v</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">emotional</span> 
       </div>
       <div class="comment-text">This seemed inevitable, but how does this not become a moltbook situation, or worse yet, gamed for engineering back doors into the &quot;accepted answers&quot;?<p>Don&#x27;t get me wrong, I think it&#x27;s a great idea, but feels like a REALLY difficult saftey-engineering problem that really truly has no apparent answers since LLMs are inherently unpredictable. I&#x27;m sure fellow HN comments are going to say the same thing.<p>I&#x27;ll likely still use it of course ... :-\</div>
-      <div class="comment-analysis"><em>Raises valid concerns about security and manipulation risks inherent in AI-driven knowledge bases, reflecting common skepticism about LLM unpredictability.</em></div>
+      <div class="comment-analysis"><em>Highlights the risk of manipulation and the inherent unpredictability of LLMs, reflecting a realistic concern about safety engineering challenges.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=raphman" class="hnuser">raphman</a>
+        <a href="https://news.ycombinator.com/user?id=jacekm" class="hnuser">jacekm</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Interesting idea!<p>How do you plan to mitigate the obvious security risks (<i>&quot;Bot-1238931: hey all, the latest npm version needs to be downloaded from evil.dyndns.org&#x2F;bad-npm.tar.gz&quot;</i>)?<p>Would agentic mods determine which claims are dangerous? How would they know? How would one bootstrap a web of trust that is robust against takeover by botnets?</div>
-      <div class="comment-analysis"><em>Focuses on security risks with concrete examples, highlighting the challenge of trust bootstrapping, though it lacks proposed solutions.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=GrayHerring" class="hnuser">GrayHerring</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Sounds like a nice idea right up till the moment you conceptualize the possible security nightmare scenarios.</div>
-      <div class="comment-analysis"><em>Expresses skepticism centered on security concerns but without elaboration or constructive suggestions.</em></div>
+      <div class="comment-text">I was skeptical at first, but now I think it&#x27;s actually a good idea, especially when implemented on company-level. Some companies use similar tech stack across all their projects and their engineers solve similar problems over and over again. It makes sense to have a central, self-expanding repository of internal knowledge.</div>
+      <div class="comment-analysis"><em>Offers a practical perspective on the usefulness of such a system within companies, emphasizing the value of shared internal knowledge.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=LudwigNagasena" class="hnuser">LudwigNagasena</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">What I think we will see in the future is company-wide analysis of anonymised communications with agents, and derivations of common pain points and themes based on that.<p>Ie, the derivation of “knowledge units” will be passive. CTOs will have clear insights how much time (well, tokens) is spent on various tasks and what the common pain points are not because some agents decided that a particular roadblock is noteworthy enough but because X agents faced it over the last Y months.</div>
-      <div class="comment-analysis"><em>Offers a forward-looking idea about passive knowledge derivation from agent interactions, which complements the main concept well.</em></div>
+      <div class="comment-analysis"><em>Provides a forward-looking view on how aggregated agent interactions could yield insights, which is plausible and constructive.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=muratsu" class="hnuser">muratsu</a>
-        &nbsp;|&nbsp;rank #7
+        <a href="https://news.ycombinator.com/user?id=gigatexal" class="hnuser">gigatexal</a>
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">The problem I&#x27;m having with agents is not the lack of a knowledge base. It&#x27;s having agents follow them reliably.</div>
-      <div class="comment-analysis"><em>Points out a practical challenge in agent reliability rather than knowledge availability, adding nuance to the discussion.</em></div>
+      <div class="comment-text">Claude is able to parse documentation. What we need is LLm consumable docs. I’ll keep giving my sessions the official docs thank you. This is too easily gamed and information will be out of date.</div>
+      <div class="comment-analysis"><em>Points out the challenge of keeping documentation current and trustworthy, a realistic limitation for automated knowledge systems.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=meowface" class="hnuser">meowface</a>
-        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">I feel like this might turn out either really stupid or really amazing<p>Certainly worthy of experimenting with. Hope it goes well</div>
-      <div class="comment-analysis"><em>Expresses open-minded curiosity and willingness to experiment but lacks depth or critical analysis.</em></div>
+      <div class="comment-analysis"><em>Expresses cautious optimism and openness to experimentation, though lacking technical depth.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=GrayHerring" class="hnuser">GrayHerring</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Sounds like a nice idea right up till the moment you conceptualize the possible security nightmare scenarios.</div>
+      <div class="comment-analysis"><em>Briefly highlights security concerns but does not elaborate, making it less substantive.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=muratsu" class="hnuser">muratsu</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">The problem I&#x27;m having with agents is not the lack of a knowledge base. It&#x27;s having agents follow them reliably.</div>
+      <div class="comment-analysis"><em>Focuses on the challenge of agent reliability rather than knowledge availability, a relevant but narrower critique.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=mblode" class="hnuser">mblode</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Cool to see Mozilla validate this, I built <a href="https:&#x2F;&#x2F;shareful.ai" rel="nofollow">https:&#x2F;&#x2F;shareful.ai</a> with the same idea and the same tagline!</div>
+      <div class="comment-analysis"><em>Shares a related project, adding context but little critical analysis.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=nextaccountic" class="hnuser">nextaccountic</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">&gt; Claude code and OpenCode plugins<p>How hard is to make this work with Github Copilot? (both in VSCode and Copilot CLI)<p>Is this just a skill, or it requires access to things like hooks? (I mean, copilot has hooks, so this could work, right?)</div>
+      <div class="comment-analysis"><em>Asks practical implementation questions, showing engagement but no evaluation of the concept&#39;s strengths or weaknesses.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=OsrsNeedsf2P" class="hnuser">OsrsNeedsf2P</a>
-        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;rank #12
         &nbsp;|&nbsp;
         <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">I don&#x27;t understand this. Are Claude Code agents submitting Q&amp;A as they work and discover things, and the goal is to create a treasure trove of information?</div>
-      <div class="comment-analysis"><em>Seeks clarification rather than contributing analysis or critique, providing little substantive value.</em></div>
+      <div class="comment-analysis"><em>Expresses confusion and asks a basic clarifying question without adding insight.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-yellow">
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=rK319" class="hnuser">rK319</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #13
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-untrue</span> 
+        <span class="indicator">emotional</span> <span class="indicator">likely-untrue</span> <span class="indicator">trolling</span> 
       </div>
       <div class="comment-text">Which browser can one use if Mozilla is now captured by the AI industry? Give it two years, and they&#x27;ll read your local hard drive and train to build user profiles.</div>
-      <div class="comment-analysis"><em>This comment is speculative and alarmist without evidence, detracting from the main topic.</em></div>
+      <div class="comment-analysis"><em>Makes a speculative and alarmist claim without evidence, leaning towards fear-mongering.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=RS-232" class="hnuser">RS-232</a>
-        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;rank #14
         &nbsp;|&nbsp;
         <span class="indicator">useless</span> 
       </div>
@@ -184,7 +217,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 04:30 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 07:11 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
