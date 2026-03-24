@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: curl &gt; /dev/sda: How I made a Linux distro that runs wget | dd | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://astrid.tech/2026/03/24/0/curl-to-dev-sda/" rel="noreferrer noopener">curl &gt; /dev/sda: How I made a Linux distro that runs wget | dd</a>
+        <span class="sitebit"> (astrid.tech)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">29 points</span>
+        by <a href="https://news.ycombinator.com/user?id=astralbijection" class="hnuser">astralbijection</a>
+        <span class="age">3 hours ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47500522.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47500522" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion revolves around the challenges and techniques of overwriting a running Linux system&#39;s disk, with users sharing experiences and technical insights on safely replacing or modifying disk images without causing corruption. Various approaches such as kexec, using RAM for the OS, and kernel configurations are debated.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=matja" class="hnuser">matja</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&gt; How do you unmount your OS’s disk while keeping the OS running to be able to overwrite itself?<p>I went down a similar rabbit-hole myself, with the goal of safely replacing the Linux installation on a disk that a machine is already running from (e.g. replace a VPS&#x27;s setup image with one of your own) without needing a KVM-style remote access tool to the console.<p>The problem there is if you directly modify the disk when a filesystem is mounted on that disk then all bets are off in terms of corruption of the filesystem that&#x27;s already on there and also the filesystem(s) you&#x27;re writing over the top.<p>My solution was to kexec into a new kernel+initramfs which has a DHCP client and cURL in it - that effectively stops any filesystem access while the image is being written over the disk, then to just reboot.</div>
+      <div class="comment-analysis"><em>This comment provides a practical and technically sound approach to safely overwrite a running system&#39;s disk by switching to a minimal environment, reducing risk of corruption.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=rwmj" class="hnuser">rwmj</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Unfortunately it&#x27;s not safe as the kernel can still write to (what it thinks is) the old filesystem on the device, which will introduce corruption to the new disk image.<p>However a fun fact is that you <i>can</i> (do not actually do this!) boot a qemu VM from &#x2F;dev&#x2F;sda.  You have to use an overlay (eg. qemu -drive snapshot=on flag) so that qemu won&#x27;t write through to &#x2F;dev&#x2F;sda.  I use this trick in supernested, a script I wrote that runs nested within nested within nested VMs ad infinitum until your hypervisor crashes.  <a href="http:&#x2F;&#x2F;git.annexia.org&#x2F;?p=supernested.git;a=blob;f=run-supernested.sh.in;h=ea227f0c62eddc0c6d2e394b938d1a920a48e794;hb=HEAD#l65" rel="nofollow">http:&#x2F;&#x2F;git.annexia.org&#x2F;?p=supernested.git;a=blob;f=run-super...</a></div>
+      <div class="comment-analysis"><em>This comment correctly points out the risks of corruption when overwriting a mounted filesystem and adds an interesting but risky workaround involving QEMU overlays.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=M95D" class="hnuser">M95D</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">From the article:<p>&gt; The OS may stop you from unmounting &#x2F;dev&#x2F;sda1, but it won’t stop you from writing to &#x2F;dev&#x2F;sda1 or &#x2F;dev&#x2F;sda even if there’s something mounted!<p>Not always true. There&#x27;s a kernel config option that allows it. CONFIG_BLK_DEV_WRITE_MOUNTED</div>
+      <div class="comment-analysis"><em>This comment adds valuable technical detail about kernel configuration that affects the ability to write to mounted devices, clarifying a point from the article.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=PunchyHamster" class="hnuser">PunchyHamster</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&gt; Well, what can we try instead?
+&gt; write to the mounted disk anyways. fuck you<p>Stupid penguin trick I learned: Add a file inside ramdisk (i use &#x2F;dev&#x2F;shm) as LVM PV.<p>pvmove off the hard drive<p>Boom, now your OS lives entirely in RAM<p>You can now even replace the hard disk, put a new one and migrate back.<p>Or migrate to network storage (nbd,iSCSI etc.), re-sequence disks into whatever RAID you need, and migrate back<p>Need to fix &#x2F;boot after that tho, and probably make sure to not have power failure in meantime</div>
+      <div class="comment-analysis"><em>This comment offers a creative and technically feasible method to migrate the OS into RAM to enable disk replacement, showing practical system administration knowledge.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=irishcoffee" class="hnuser">irishcoffee</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I&#x27;ve been dd-ing A&#x2F;B partitions for embedded yocto distributions for years and years. read-only-rootfs (&#x2F;var&#x2F;log is its own writable partition), dd the &quot;other partition&quot;, sed fstab, reboot.<p>The neat part was the whole process kicked off when you scp&#x27;d the rootfs and inotifywait kicked off the whole process.</div>
+      <div class="comment-analysis"><em>This comment shares a real-world workflow for updating embedded systems using partition swapping, which is a recognized and reliable technique.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dizhn" class="hnuser">dizhn</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Reminded me of how to install Alpine linux (which isn&#x27;t available) on Oracle cloud over an ubuntu install. It uses dd and has the advantage of having a console.<p>I had found it in a github gist when I used it but here&#x27;s a similar blog post.<p><a href="https:&#x2F;&#x2F;alextsang.net&#x2F;articles&#x2F;20191006-063049&#x2F;index.html" rel="nofollow">https:&#x2F;&#x2F;alextsang.net&#x2F;articles&#x2F;20191006-063049&#x2F;index.html</a></div>
+      <div class="comment-analysis"><em>This comment provides a relevant anecdote and reference to a similar use case, adding context but less technical depth than others.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=PunchyHamster" class="hnuser">PunchyHamster</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">and we&#x27;ve gone full circle, back in the day you installed os on diskettes like that!</div>
+      <div class="comment-analysis"><em>This comment is more of a nostalgic remark without technical contribution to the discussion.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-24 13:17 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">44 points</span>
+        <span class="score">56 points</span>
         by <a href="https://news.ycombinator.com/user?id=hasheddan" class="hnuser">hasheddan</a>
         <span class="age">3 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/21/47469744.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the Bao I/O co-processor&#39;s design, risks, and performance compared to other approaches like PIO. Commenters analyze technical details, potential supply chain risks, and architectural trade-offs, with some linking to external resources for deeper understanding.</p>
+      <p>The discussion centers on the Bao I/O co-processor&#39;s design, risks, and performance compared to PIO. Commenters analyze technical details, potential supply chain risks, and architectural trade-offs, with some referencing external resources for deeper insight.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -65,7 +65,7 @@
 Risks &amp; Challenges
 Global instability is the most significant risk to delivery. The design itself is vetted and working, and the supply chain is set up to pump out chips - just need to know how many to build. The following outcomes could greatly impact the timing of delivery:<p>* A world war, or a conflict in the East Asia region.<p>* Additional sanctions or tariffs on components originating from our suppliers.<p>* AI driving shortages in the supply chain. In particular, chip probe time is scarce; if AI providers preemptively buy out chip probe capacity, it could delay production schedules for months, even years.<p>* Natural disasters such as earthquakes hitting the fab cluster in Hsinchu<p>* A civil war in the United States would lead to unpredictable consequences in the supply chain<p>* A collapse of the US dollar between now and fulfillment would reduce the value of the funds raised, and thus make us unable to pay vendors and fulfill our obligations. In this case we would do a best-effort to fulfill the campaign but a devaluation event of greater than 25% on the USD within the intervening months would likely impact our ability to fill orders.
 &quot;&quot;&quot;</div>
-      <div class="comment-analysis"><em>This comment accurately summarizes the project&#39;s risk factors, reflecting realistic geopolitical and economic concerns that could impact production.</em></div>
+      <div class="comment-analysis"><em>This comment accurately summarizes the documented risks from the project update, reflecting realistic external factors that could impact production and delivery.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -73,33 +73,33 @@ Global instability is the most significant risk to delivery. The design itself i
         <a href="https://news.ycombinator.com/user?id=theamk" class="hnuser">theamk</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">It&#x27;s a very nice write-up, but this part makes me uneasy:<p>&gt; So long as all the computation in the loop finishes before the next quantum, the timing requirements [...] are met.<p>Seems like we are back to cycle counting then? but instead of having just 32 1-IPC instructions, we have up to 4K instructions with various latency, and there is C compiler too, so even if you had enough cycles in budget now, the things might break when compiler is upgraded.<p>I am wondering if the original PIO approach was still salvageable if the binary compatibility is not a goal. Because while co-processors are useful, people did some amazing things with PIO, like fully software DVI.</div>
-      <div class="comment-analysis"><em>The comment insightfully critiques the timing assumptions and raises valid concerns about maintainability and compatibility, showing technical understanding.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jauntywundrkind" class="hnuser">jauntywundrkind</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Really glad to get this write-up, adds a very nice broad picture &amp; does a good job introducing the queue too.<p>I&#x27;m an unranked unwashed neophyte at hardware design, but I did spend some time looking at BIO. One particular thing that caught my eye a while ago was Streaming Semantic Registers, which is an instruction set extension for risc-v where load and store are implicit, with data pointers that automatically walk on each instruction. This greatly increases code density, allowing for DSP like capabilities on risc-v.
-<a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;1911.08356" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;1911.08356</a><p>I forget how exactly I was convinced, but after spending a while chatting with the LLM, I became somewhat convinced that the FIFO queues here gave a lot of similar capabilities. With additional interesting use for decoupling multiple systems. Register mapped data arrays, that can be used without having to load&#x2F;store each word. I felt then and felt now that I still have a good bit to learn about how exactly each of the FIFO registers works, but it was cool to see, and I love this idea of code that can run without having to issue endless load&#x2F;stores all the time.</div>
-      <div class="comment-analysis"><em>Provides a knowledgeable perspective linking related RISC-V extensions to BIO&#39;s design, contributing useful context though somewhat speculative about full understanding.</em></div>
+      <div class="comment-analysis"><em>Raises a valid technical concern about timing predictability and compiler impact on performance, which is a well-known challenge in complex co-processor designs.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=rasz" class="hnuser">rasz</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">PIOs might be heavier on hardware resources<p>&gt;The BIO uses 14597 cells, while the PIO uses 39087 cells<p>and BIO might reach higher clock speeds<p>&gt; when ported to an ASIC flow, the clock rate achieved by the BIO is over 4x that of a PIO implemented in the same process node.<p>but BIO is ~15x less efficient per clock. RP2350 is capable of reading IOs at 400Mbps (<a href="https:&#x2F;&#x2F;github.com&#x2F;gusmanb&#x2F;logicanalyzer" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;gusmanb&#x2F;logicanalyzer</a>) and bitbanging at 800 Mbps (HSTX). From Bunnie writeup BIO needs 700MHz to do pedestrian 25Mhz SPI.</div>
-      <div class="comment-analysis"><em>Offers a balanced comparison with quantitative data, highlighting trade-offs between BIO and PIO implementations, supporting claims with external references.</em></div>
+      <div class="comment-analysis"><em>Provides a nuanced comparison of hardware resource usage and efficiency, supported by external references, highlighting trade-offs between BIO and PIO implementations.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jauntywundrkind" class="hnuser">jauntywundrkind</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Really glad to get this write-up, adds a very nice broad picture &amp; does a good job introducing the queue too.<p>I&#x27;m an unranked unwashed neophyte at hardware design, but I did spend some time looking at BIO. One particular thing that caught my eye a while ago was Streaming Semantic Registers, which is an instruction set extension for risc-v where load and store are implicit, with data pointers that automatically walk on each instruction. This greatly increases code density, allowing for DSP like capabilities on risc-v.
+<a href="https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;1911.08356" rel="nofollow">https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;1911.08356</a><p>I forget how exactly I was convinced, but after spending a while chatting with the LLM, I became somewhat convinced that the FIFO queues here gave a lot of similar capabilities. With additional interesting use for decoupling multiple systems. Register mapped data arrays, that can be used without having to load&#x2F;store each word. I felt then and felt now that I still have a good bit to learn about how exactly each of the FIFO registers works, but it was cool to see, and I love this idea of code that can run without having to issue endless load&#x2F;stores all the time.</div>
+      <div class="comment-analysis"><em>Offers an insightful analogy to related instruction set extensions, enhancing understanding of BIO&#39;s architectural concepts, though admits incomplete knowledge.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -111,7 +111,7 @@ Global instability is the most significant risk to delivery. The design itself i
       </div>
       <div class="comment-text">Bunnie also wrote up a post about it on his blog:
 <a href="https:&#x2F;&#x2F;www.bunniestudios.com&#x2F;blog&#x2F;2026&#x2F;bio-the-bao-i-o-coprocessor&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.bunniestudios.com&#x2F;blog&#x2F;2026&#x2F;bio-the-bao-i-o-copr...</a></div>
-      <div class="comment-analysis"><em>While not an analysis itself, this comment provides a useful resource link, aiding readers seeking more detailed information.</em></div>
+      <div class="comment-analysis"><em>Provides a useful resource link but adds little original analysis or critique.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
@@ -122,7 +122,7 @@ Global instability is the most significant risk to delivery. The design itself i
         <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">dupe of <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47459363">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47459363</a> ?</div>
-      <div class="comment-analysis"><em>This comment adds little substantive content or insight, merely questioning duplication without further discussion.</em></div>
+      <div class="comment-analysis"><em>Does not contribute substantive content or analysis relevant to the discussion.</em></div>
     </div>
     
 
@@ -134,7 +134,7 @@ Global instability is the most significant risk to delivery. The design itself i
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 11:03 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 13:17 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

@@ -1,0 +1,115 @@
+{
+  "story_id": 47500522,
+  "generated_at": "",
+  "critique": {
+    "summary": "The article explains how to install or replace a Linux operating system by downloading a disk image directly to a disk device using commands like curl or wget piped into /dev/sdX. It explores various methods to achieve this, including using rescue images and discusses the challenges of overwriting a running OS disk.",
+    "mainPoints": [
+      "You can install a new OS by downloading a disk image directly to a disk device file such as /dev/sda using curl or wget.",
+      "This method leverages the Unix concept that disks are accessible as files, allowing direct writes to the disk device.",
+      "Common tools like dd can be used to write disk images efficiently, but direct redirection (e.g., curl \u003e /dev/sda) also works.",
+      "Overwriting a running OS disk is problematic because the disk is mounted and in use, often causing crashes.",
+      "A practical solution is to boot into a rescue image or another OS where the target disk is unmounted before writing the new image.",
+      "The author automated parts of this process using NixOS and discusses potential further automation and alternative protocols for disk image transfer."
+    ],
+    "truthfulness": "The technical explanations and commands described in the article are accurate and consistent with standard Linux and Unix practices. Writing directly to disk device files like /dev/sda is a known method for installing disk images. The challenges of overwriting a mounted root filesystem and the use of rescue images are also well documented in Linux system administration. The article's claims about EFI firmware automatically discovering new EFI system partitions are generally true for many modern systems. However, the article is informal and anecdotal, lacking citations or references to official documentation or multiple perspectives, which would strengthen its reliability.",
+    "considerations": [
+      "Directly writing to /dev/sda without verifying the disk identifier can lead to data loss or system damage.",
+      "The article does not emphasize the importance of verifying disk image integrity (e.g., using sha256sum) before flashing.",
+      "Security risks exist when piping downloads directly to disk without validating the source or image authenticity.",
+      "The method is risky for inexperienced users and should be done with caution, preferably with backups.",
+      "The article does not discuss differences in behavior across various hardware or firmware implementations.",
+      "Potential issues with partition tables, bootloaders, and EFI configurations after flashing are not deeply explored."
+    ],
+    "rating": "needs citation"
+  },
+  "comments_critique": {
+    "summary": "The discussion revolves around the challenges and techniques of overwriting a running Linux system's disk, with users sharing experiences and technical insights on safely replacing or modifying disk images without causing corruption. Various approaches such as kexec, using RAM for the OS, and kernel configurations are debated.",
+    "comments": [
+      {
+        "id": 47501446,
+        "author": "matja",
+        "text": "\u0026gt; How do you unmount your OS’s disk while keeping the OS running to be able to overwrite itself?\u003cp\u003eI went down a similar rabbit-hole myself, with the goal of safely replacing the Linux installation on a disk that a machine is already running from (e.g. replace a VPS\u0026#x27;s setup image with one of your own) without needing a KVM-style remote access tool to the console.\u003cp\u003eThe problem there is if you directly modify the disk when a filesystem is mounted on that disk then all bets are off in terms of corruption of the filesystem that\u0026#x27;s already on there and also the filesystem(s) you\u0026#x27;re writing over the top.\u003cp\u003eMy solution was to kexec into a new kernel+initramfs which has a DHCP client and cURL in it - that effectively stops any filesystem access while the image is being written over the disk, then to just reboot.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a practical and technically sound approach to safely overwrite a running system's disk by switching to a minimal environment, reducing risk of corruption."
+      },
+      {
+        "id": 47501382,
+        "author": "rwmj",
+        "text": "Unfortunately it\u0026#x27;s not safe as the kernel can still write to (what it thinks is) the old filesystem on the device, which will introduce corruption to the new disk image.\u003cp\u003eHowever a fun fact is that you \u003ci\u003ecan\u003c/i\u003e (do not actually do this!) boot a qemu VM from \u0026#x2F;dev\u0026#x2F;sda.  You have to use an overlay (eg. qemu -drive snapshot=on flag) so that qemu won\u0026#x27;t write through to \u0026#x2F;dev\u0026#x2F;sda.  I use this trick in supernested, a script I wrote that runs nested within nested within nested VMs ad infinitum until your hypervisor crashes.  \u003ca href=\"http:\u0026#x2F;\u0026#x2F;git.annexia.org\u0026#x2F;?p=supernested.git;a=blob;f=run-supernested.sh.in;h=ea227f0c62eddc0c6d2e394b938d1a920a48e794;hb=HEAD#l65\" rel=\"nofollow\"\u003ehttp:\u0026#x2F;\u0026#x2F;git.annexia.org\u0026#x2F;?p=supernested.git;a=blob;f=run-super...\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment correctly points out the risks of corruption when overwriting a mounted filesystem and adds an interesting but risky workaround involving QEMU overlays."
+      },
+      {
+        "id": 47501312,
+        "author": "M95D",
+        "text": "From the article:\u003cp\u003e\u0026gt; The OS may stop you from unmounting \u0026#x2F;dev\u0026#x2F;sda1, but it won’t stop you from writing to \u0026#x2F;dev\u0026#x2F;sda1 or \u0026#x2F;dev\u0026#x2F;sda even if there’s something mounted!\u003cp\u003eNot always true. There\u0026#x27;s a kernel config option that allows it. CONFIG_BLK_DEV_WRITE_MOUNTED",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment adds valuable technical detail about kernel configuration that affects the ability to write to mounted devices, clarifying a point from the article."
+      },
+      {
+        "id": 47501842,
+        "author": "PunchyHamster",
+        "text": "\u0026gt; Well, what can we try instead?\n\u0026gt; write to the mounted disk anyways. fuck you\u003cp\u003eStupid penguin trick I learned: Add a file inside ramdisk (i use \u0026#x2F;dev\u0026#x2F;shm) as LVM PV.\u003cp\u003epvmove off the hard drive\u003cp\u003eBoom, now your OS lives entirely in RAM\u003cp\u003eYou can now even replace the hard disk, put a new one and migrate back.\u003cp\u003eOr migrate to network storage (nbd,iSCSI etc.), re-sequence disks into whatever RAID you need, and migrate back\u003cp\u003eNeed to fix \u0026#x2F;boot after that tho, and probably make sure to not have power failure in meantime",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This comment offers a creative and technically feasible method to migrate the OS into RAM to enable disk replacement, showing practical system administration knowledge."
+      },
+      {
+        "id": 47501712,
+        "author": "irishcoffee",
+        "text": "I\u0026#x27;ve been dd-ing A\u0026#x2F;B partitions for embedded yocto distributions for years and years. read-only-rootfs (\u0026#x2F;var\u0026#x2F;log is its own writable partition), dd the \u0026quot;other partition\u0026quot;, sed fstab, reboot.\u003cp\u003eThe neat part was the whole process kicked off when you scp\u0026#x27;d the rootfs and inotifywait kicked off the whole process.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment shares a real-world workflow for updating embedded systems using partition swapping, which is a recognized and reliable technique."
+      },
+      {
+        "id": 47501461,
+        "author": "dizhn",
+        "text": "Reminded me of how to install Alpine linux (which isn\u0026#x27;t available) on Oracle cloud over an ubuntu install. It uses dd and has the advantage of having a console.\u003cp\u003eI had found it in a github gist when I used it but here\u0026#x27;s a similar blog post.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;alextsang.net\u0026#x2F;articles\u0026#x2F;20191006-063049\u0026#x2F;index.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;alextsang.net\u0026#x2F;articles\u0026#x2F;20191006-063049\u0026#x2F;index.html\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "This comment provides a relevant anecdote and reference to a similar use case, adding context but less technical depth than others."
+      },
+      {
+        "id": 47501820,
+        "author": "PunchyHamster",
+        "text": "and we\u0026#x27;ve gone full circle, back in the day you installed os on diskettes like that!",
+        "indicators": [
+          "emotional",
+          "useless"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment is more of a nostalgic remark without technical contribution to the discussion."
+      }
+    ]
+  }
+}
