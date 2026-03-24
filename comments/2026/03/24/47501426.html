@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Tell HN: Litellm 1.82.7 and 1.82.8 on PyPI are compromised | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://github.com/BerriAI/litellm/issues/24512" rel="noreferrer noopener">Tell HN: Litellm 1.82.7 and 1.82.8 on PyPI are compromised</a>
+        <span class="sitebit"> (github.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">109 points</span>
+        by <a href="https://news.ycombinator.com/user?id=dot_treo" class="hnuser">dot_treo</a>
+        <span class="age">7 hours ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47501426.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47501426" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion centers on the recent compromise of the LiteLLM package versions 1.82.7 and 1.82.8 on PyPI, attributed to a security breach involving the TeamPCP threat actor. Commenters discuss the implications for supply chain security, the challenges of dependency trust, and potential mitigation strategies including sandboxing, static analysis, and multi-factor authentication for package releases.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+    <p class="no-critique">Only 10 of 40 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47501426" rel="noopener">View the full thread on HN</a>.</p>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=detente18" class="hnuser">detente18</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">LiteLLM maintainer here, this is still an evolving situation, but here&#x27;s what we know so far:<p>1. Looks like this originated from the trivvy used in our ci&#x2F;cd - <a href="https:&#x2F;&#x2F;github.com&#x2F;search?q=repo%3ABerriAI%2Flitellm%20trivy&amp;type=code" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;search?q=repo%3ABerriAI%2Flitellm%20trivy...</a>
+<a href="https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09" rel="nofollow">https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09</a><p>2. If you&#x27;re on the proxy docker, you were not impacted. We pin our versions in the requirements.txt<p>3. The package is in quarantine on pypi - this blocks all downloads.<p>We are investigating the issue, and seeing how we can harden things. I&#x27;m sorry for this.<p>- Krrish</div>
+      <div class="comment-analysis"><em>As the maintainer, this comment provides a credible and detailed update on the incident and current mitigation steps, making it highly accurate and informative.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=cedws" class="hnuser">cedws</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This looks like the same TeamPCP that compromised Trivy. Notice how the issue is full of bot replies. It was the same in Trivy’s case.<p>This threat actor seems to be very quickly capitalising on stolen credentials, wouldn’t be surprised if they’re leveraging LLMs to do the bulk of the work.</div>
+      <div class="comment-analysis"><em>This comment connects the current incident to previous attacks by the same actor and highlights the use of automation, which aligns with known patterns in supply chain attacks.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=syllogism" class="hnuser">syllogism</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Maintainers need to keep a wall between the package publishing and public repos. Currently what people are doing is configuring the public repo as a Trusted Publisher directly. This means you can trigger the package publication from the repo itself, and the public repo is a huge surface area.<p>Configure the CI to make a release with the artefacts attached. Then have an entirely private repo that can&#x27;t be triggered automatically as the publisher. The publisher repo fetches the artefacts and does the pypi&#x2F;npm&#x2F;whatever release.</div>
+      <div class="comment-analysis"><em>This comment offers a practical security recommendation to reduce risks in the publishing process, reflecting best practices in software supply chain security.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=f311a" class="hnuser">f311a</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Their previous release would be easily caught by static analysis. PTH is a novel technique.<p>Run all your new dependencies through static analysis and don&#x27;t install the latest versions.<p>I implemented static analysis for Python that detects close to 90% of such injections.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;rushter&#x2F;hexora" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;rushter&#x2F;hexora</a></div>
+      <div class="comment-analysis"><em>The suggestion to use static analysis to detect malicious code injections is valid and aligns with common security practices, though it may not catch all novel techniques.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=shay_ker" class="hnuser">shay_ker</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
+      </div>
+      <div class="comment-text">A general question - how do frontier AI companies handle scenarios like this in their training data? If they train their models naively, then training data injection seems very possible and could make models silently pwn people.<p>Do the labs label code versions with an associated CVE to label them as compromised (telling the model what NOT to do)? Do they do adversarial RL environments to teach what&#x27;s good&#x2F;bad? I&#x27;m very curious since it&#x27;s inevitable some pwned code ends up as training data no matter what.</div>
+      <div class="comment-analysis"><em>Raises a relevant and insightful question about the risks of poisoned training data in AI models, highlighting an important but less discussed aspect of supply chain security.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jFriedensreich" class="hnuser">jFriedensreich</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">We just can&#x27;t trust dependencies and dev setups. I wanted to say &quot;anymore&quot; but we never could. Dev containers were never good enough, too clumsy and too little isolation. We need to start working in full sandboxes with defence in depth that have real guardrails and UIs like vm isolation + container primitives and allow lists, egress filters, seccomp, gvisor and more but with much better usability. Its the same requirements we have for agent runtimes, lets use this momentum to make our dev environments safer! In such an environment the container would crash, we see the violations, delete it and dont&#x27; have to worry about it. We should treat this as an everyday possibility not as an isolated security incident.</div>
+      <div class="comment-analysis"><em>This comment provides a broader perspective on improving development environment security, emphasizing proactive containment strategies.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=smakosh" class="hnuser">smakosh</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Checkout LLM Gateway: <a href="https:&#x2F;&#x2F;llmgateway.io" rel="nofollow">https:&#x2F;&#x2F;llmgateway.io</a><p>Migration guide: <a href="https:&#x2F;&#x2F;llmgateway.io&#x2F;migration&#x2F;litellm" rel="nofollow">https:&#x2F;&#x2F;llmgateway.io&#x2F;migration&#x2F;litellm</a></div>
+      <div class="comment-analysis"><em>Offers a practical alternative for users affected by the compromise, though it is promotional in nature.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=westoque" class="hnuser">westoque</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">my takeaway from this is that it should now be MANDATORY to have an LLM do a scan on the entire codebase prior to release or artifact creation. do NOT use third party plugins for this. it&#x27;s so easy to create your own github action to digest the whole codebase and inspect third party code. it costs tokens yes but it&#x27;s also cached and should be negligible spend for the security it brings.</div>
+      <div class="comment-analysis"><em>Suggests an innovative approach to security using LLMs for code scanning, which could be effective but requires careful implementation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=hiciu" class="hnuser">hiciu</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Besides main issue here, and the owners account being possibly compromised as well, there&#x27;s like 170+ low quality spam comments in there.<p>I would expect better spam detection system from GitHub. This is hardly acceptable.</div>
+      <div class="comment-analysis"><em>Highlights the collateral issues in the incident such as spam and compromised accounts, reflecting common challenges in incident response.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ramimac" class="hnuser">ramimac</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This is tied to the TeamPCP activity over the last few weeks. I&#x27;ve been responding, and keeping an up to date timeline. I hope it might help folks catch up and contextualize this incident:<p><a href="https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09" rel="nofollow">https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09</a></div>
+      <div class="comment-analysis"><em>Provides useful context and tracking of the threat actor’s activities, aiding community understanding.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-24 19:13 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">26 points</span>
+        <span class="score">46 points</span>
         by <a href="https://news.ycombinator.com/user?id=tanelpoder" class="hnuser">tanelpoder</a>
-        <span class="age">4 hours ago</span>
+        <span class="age">6 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47502193.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47502193" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on a blog post comparing io_uring and libaio performance across Linux kernels, highlighting a surprising IOMMU-induced regression. Commenters ask for deeper technical details and question workload choices.</p>
+      <p>The discussion centers on performance benchmarks comparing libaio and io_uring across Linux kernel versions, highlighting a surprising performance regression linked to IOMMU being enabled by default. Commenters inquire about technical details such as interrupt handling overhead, workload choices, and security implications of IOMMU activation.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -62,7 +62,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Dear folks, I&#x27;m the author of that post.<p>A short summary below.<p>We ran fio benchmarks comparing libaio and io_uring across kernels (5.4 -&gt; 7.0-rc3). The most surprising part wasn’t io_uring gains (~2x), but a ~30% regression caused by IOMMU being enabled by default between releases.<p>Happy to share more details about setup or reproduce results.</div>
-      <div class="comment-analysis"><em>As the author of the original post, this comment provides a concise and accurate summary of the key findings, establishing credibility and context for the discussion.</em></div>
+      <div class="comment-analysis"><em>As the original author, this comment provides a concise and accurate summary of the benchmark results and the key finding regarding IOMMU impact.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -73,7 +73,7 @@
         <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">I understand that it&#x27;s the interrupt-based I&#x2F;O completion workloads that suffered from IOMMU overhead in your tests?<p>IOMMU may induce some interrupt remapping latency, I&#x27;d be interested in seeing:<p>1) interrupt counts (normalized to IOPS) from &#x2F;proc&#x2F;interrupts<p>2) &quot;hardirqs -d&quot; (bcc-tools) output for IRQ handling latency histograms<p>3) perf record -g output to see if something inside interrupt handling codepath takes longer (on bare metal you can see inside hardirq handler code too)<p>Would be interesting to see if with IOMMU each interrupt <i>handling</i> takes longer on CPU (or is the handling time roughly the same, but interrupt <i>delivery</i> takes longer). There may be some interrupt coalescing thing going on as well (don&#x27;t know exactly what else gets enabled with IOMMU).<p>Since interrupts are raised &quot;randomly&quot;, independently from whatever your app&#x2F;kernel code is running on CPUs, it&#x27;s a bit harder to visualize total interrupt overhead in something like flamegraphs, as the interrupt activity is all over the place in the chart. I used flamegraph search&#x2F;highlight feature to visually identify how much time the interrupt detours took during stress test execution.<p>Example here (scroll down a little):<p><a href="https:&#x2F;&#x2F;tanelpoder.com&#x2F;posts&#x2F;linux-hiding-interrupt-cpu-usage&#x2F;#how-to-measure-interrupt-cpu-overhead-when-irq-time-accounting-is-disabled" rel="nofollow">https:&#x2F;&#x2F;tanelpoder.com&#x2F;posts&#x2F;linux-hiding-interrupt-cpu-usag...</a></div>
-      <div class="comment-analysis"><em>This comment offers a detailed and technically sound request for further data to better understand the IOMMU overhead, reflecting expertise and constructive engagement.</em></div>
+      <div class="comment-analysis"><em>This comment offers a detailed and technically sound approach to further investigate the interrupt overhead caused by IOMMU, suggesting useful diagnostic tools.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -84,7 +84,18 @@
         <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Why was 4K random write chosen as the main workload, and would the conclusion change with sequential I&#x2F;O?</div>
-      <div class="comment-analysis"><em>A valid and relevant question about workload selection that could impact the generalizability of the results, encouraging broader evaluation.</em></div>
+      <div class="comment-analysis"><em>This comment raises a valid question about workload selection that could affect the generalizability of the benchmark results.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=skavi" class="hnuser">skavi</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">what was the security situation of whatever is now being protected by the IOMMU before it was enabled by default?</div>
+      <div class="comment-analysis"><em>This comment introduces an important security perspective regarding the implications of enabling IOMMU by default.</em></div>
     </div>
     
 
@@ -96,7 +107,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 17:12 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 19:13 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

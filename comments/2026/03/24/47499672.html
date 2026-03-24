@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Show HN: ProofShot – Give AI coding agents eyes to verify the UI they build | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://github.com/AmElmo/proofshot" rel="noreferrer noopener">Show HN: ProofShot – Give AI coding agents eyes to verify the UI they build</a>
+        <span class="sitebit"> (github.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">75 points</span>
+        by <a href="https://news.ycombinator.com/user?id=jberthom" class="hnuser">jberthom</a>
+        <span class="age">11 hours ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47499672.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47499672" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion centers around the utility of ProofShot in verifying UI correctness visually, distinguishing it from existing tools like Playwright that focus on structural checks. Commenters highlight the challenge AI agents face in truly understanding UI context and the value of combining visual validation with traditional testing approaches.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+    <p class="no-critique">Only 10 of 30 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47499672" rel="noopener">View the full thread on HN</a>.</p>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=mrothroc" class="hnuser">mrothroc</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Everyone is comparing this to Playwright but it&#x27;s solving a different problem. Playwright checks structural properties, like does element X exist, is it visible, etc. That&#x27;s useful but it can&#x27;t tell you whether the page actually <i>looks</i> right.<p>I built something similar that takes a screenshot and uses a multi-modal LLM to evaluate it against a design mock. It catches a completely different class of error. The DOM can be structurally perfect and still look nothing like what was intended. Colors wrong, layout shifted, spacing off, components overlapping. No amount of DOM assertions will catch that.<p>These are two different kinds of gates: structural which are fast and deterministic, and stochastic which are slow but catch things that are completely different. There is very little overlap between the issues, and you want to catch both.<p>That way I can invest a lot of time getting the mock just right, then let the agents &quot;make it so&quot;.</div>
+      <div class="comment-analysis"><em>This comment accurately distinguishes between structural testing and visual validation, emphasizing the unique value of tools like ProofShot for catching visual discrepancies that DOM checks miss.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=alkonaut" class="hnuser">alkonaut</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">This would be _extremely_ valuable for desktop dev when you don&#x27;t have a DOM, no &quot;accessibility&quot; layer to interrogate. Think e.g. a drawing application. You want to test that after the user starts the &quot;draw circle&quot; command and clicks two points, there is actually a circle on the screen. No matter how many abstractions you make over your domain model, rendering you can&#x27;t actually test that &quot;the user sees a circle&quot;. You can verify your drawing contains a circle object. You can verify your renderer was told to draw a circle. But fifty things can go wrong before the user actually agrees he saw a circle (the color was set to transparent, the layer was hidden, the transform was incorrect, the renderer didn&#x27;t swap buffers, ...).</div>
+      <div class="comment-analysis"><em>The comment insightfully points out the limitations of traditional testing in non-web contexts and the importance of visual verification in such cases.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=onion2k" class="hnuser">onion2k</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text"><i>I use AI agents to build UI features daily. The thing that kept annoying me: the agent writes code but never sees what it actually looks like in the browser. It can’t tell if the layout is broken or if the console is throwing errors.</i><p>I give agent either a simple browser or Playwright access to proper browsers to do this. It works quite well, to the point where I can ask Claude to debug GLSL shaders running in WebGL with it.</div>
+      <div class="comment-analysis"><em>This comment provides practical experience highlighting the gap AI agents have without visual feedback, supporting the need for tools like ProofShot.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=varispeed" class="hnuser">varispeed</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I built something like this for native application, so that I could get automated feedback loop for the agent instead of making screenshots manually etc. Problem I found is that AI agent understands nothing of the UI. If you tell it &quot;Make buttons evenly spaced&quot;, sure it will space them evenly, but without care for the context they are placed in. You have to describe the image yourself and still you&#x27;ll find it having hard time understanding what&#x27;s going on. I very much abandoned the idea of AI driven UI development as it is not there yet. I tried with GPT 5.2. Maybe newer models have improved.</div>
+      <div class="comment-analysis"><em>The comment offers a cautionary perspective based on experience, noting current AI limitations in understanding UI context despite automation efforts.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=sd9" class="hnuser">sd9</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I&#x27;ve always found screenshots on PRs incredibly helpful as a reviewer. Historically I&#x27;ve had mixed success getting my team to consistently add screenshots to PRs, so this tool would be helpful even for human code.<p>At work, we&#x27;ve integrated claude code with gitlab issues&#x2F;merge requests, and we get it to screenshot anything it&#x27;s done. We could use the same workflow to screenshot (or in this case, host a proofshot bundle of) _any_ open PR. You would just get the agent to check out any PR, get proofshot to play around with it, then add that as a comment. So not automated code reviews, which are tiresome, but more like a helpful comment with more context.<p>Going to try out proofshot this week, if it works like it does on the landing page it looks great.</div>
+      <div class="comment-analysis"><em>This comment highlights a practical use case for the tool in code review workflows, emphasizing its potential to improve communication and review quality.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jofzar" class="hnuser">jofzar</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I&#x27;m going the opposite of everyone else is saying.<p>This is sick OP based on what&#x27;s in the document, it looks really useful when you need to quickly fix something and need to validate the changes to make sure nothing has changed in the UI&#x2F;workflow except what you have asked.<p>Also looks useful for PR&#x27;s, have a before and after changed.</div>
+      <div class="comment-analysis"><em>The comment expresses enthusiasm and recognizes the tool&#39;s value for quick validation, though it is less detailed than others.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=xtiansimon" class="hnuser">xtiansimon</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">Slightly Off-topic of Agentic...<p>Anyone recommend browser-base instant preview site for web ui design with more artistic&#x2F;experimental preference?</div>
+      <div class="comment-analysis"><em>This comment is off-topic and does not contribute to the discussion about ProofShot or related tools.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=tjwebbnorfolk" class="hnuser">tjwebbnorfolk</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">likely-untrue</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">VSCode and Antigravity already do this. What am I missing?</div>
+      <div class="comment-analysis"><em>This comment questions the novelty without providing evidence or context, potentially misunderstanding the unique visual validation aspect.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=theshrike79" class="hnuser">theshrike79</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">What does this do that playwright-cli doesn&#x27;t?<p><a href="https:&#x2F;&#x2F;github.com&#x2F;microsoft&#x2F;playwright-cli" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;microsoft&#x2F;playwright-cli</a></div>
+      <div class="comment-analysis"><em>This comment is a basic question without elaboration, adding little value to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=dude250711" class="hnuser">dude250711</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">belligerent</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">That is not UI, that&#x27;s just some web pages with JS.</div>
+      <div class="comment-analysis"><em>This comment is dismissive and does not contribute constructively to the conversation.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-24 19:13 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

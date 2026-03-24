@@ -21,19 +21,20 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the utility and uniqueness of ProofShot for AI coding agents to visually verify UI changes, comparing it with existing tools like Playwright and MCP. Commenters highlight the importance of visual feedback for debugging and testing UI, and discuss potential extensions to mobile and desktop applications.",
+    "summary": "The discussion centers around the utility of ProofShot in verifying UI correctness visually, distinguishing it from existing tools like Playwright that focus on structural checks. Commenters highlight the challenge AI agents face in truly understanding UI context and the value of combining visual validation with traditional testing approaches.",
     "comments": [
       {
-        "id": 47500259,
-        "author": "onion2k",
-        "text": "\u003ci\u003eI use AI agents to build UI features daily. The thing that kept annoying me: the agent writes code but never sees what it actually looks like in the browser. It can’t tell if the layout is broken or if the console is throwing errors.\u003c/i\u003e\u003cp\u003eI give agent either a simple browser or Playwright access to proper browsers to do this. It works quite well, to the point where I can ask Claude to debug GLSL shaders running in WebGL with it.",
+        "id": 47504657,
+        "author": "mrothroc",
+        "text": "Everyone is comparing this to Playwright but it\u0026#x27;s solving a different problem. Playwright checks structural properties, like does element X exist, is it visible, etc. That\u0026#x27;s useful but it can\u0026#x27;t tell you whether the page actually \u003ci\u003elooks\u003c/i\u003e right.\u003cp\u003eI built something similar that takes a screenshot and uses a multi-modal LLM to evaluate it against a design mock. It catches a completely different class of error. The DOM can be structurally perfect and still look nothing like what was intended. Colors wrong, layout shifted, spacing off, components overlapping. No amount of DOM assertions will catch that.\u003cp\u003eThese are two different kinds of gates: structural which are fast and deterministic, and stochastic which are slow but catch things that are completely different. There is very little overlap between the issues, and you want to catch both.\u003cp\u003eThat way I can invest a lot of time getting the mock just right, then let the agents \u0026quot;make it so\u0026quot;.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately identifies a core problem in AI-assisted UI development and proposes a practical solution using browser access, which aligns with the purpose of ProofShot."
+        "analysis": "This comment accurately distinguishes between structural testing and visual validation, emphasizing the unique value of tools like ProofShot for catching visual discrepancies that DOM checks miss."
       },
       {
         "id": 47500311,
@@ -42,10 +43,37 @@
         "indicators": [
           "intelligent",
           "thoughtful",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment insightfully expands the discussion to desktop applications where visual verification is critical, emphasizing the limitations of traditional testing methods."
+        "analysis": "The comment insightfully points out the limitations of traditional testing in non-web contexts and the importance of visual verification in such cases."
+      },
+      {
+        "id": 47500259,
+        "author": "onion2k",
+        "text": "\u003ci\u003eI use AI agents to build UI features daily. The thing that kept annoying me: the agent writes code but never sees what it actually looks like in the browser. It can’t tell if the layout is broken or if the console is throwing errors.\u003c/i\u003e\u003cp\u003eI give agent either a simple browser or Playwright access to proper browsers to do this. It works quite well, to the point where I can ask Claude to debug GLSL shaders running in WebGL with it.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment provides practical experience highlighting the gap AI agents have without visual feedback, supporting the need for tools like ProofShot."
+      },
+      {
+        "id": 47507003,
+        "author": "varispeed",
+        "text": "I built something like this for native application, so that I could get automated feedback loop for the agent instead of making screenshots manually etc. Problem I found is that AI agent understands nothing of the UI. If you tell it \u0026quot;Make buttons evenly spaced\u0026quot;, sure it will space them evenly, but without care for the context they are placed in. You have to describe the image yourself and still you\u0026#x27;ll find it having hard time understanding what\u0026#x27;s going on. I very much abandoned the idea of AI driven UI development as it is not there yet. I tried with GPT 5.2. Maybe newer models have improved.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "The comment offers a cautionary perspective based on experience, noting current AI limitations in understanding UI context despite automation efforts."
       },
       {
         "id": 47500594,
@@ -56,44 +84,8 @@
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment provides a practical perspective on the usefulness of visual proof in code reviews and suggests integration possibilities, supporting the value proposition of ProofShot."
-      },
-      {
-        "id": 47500124,
-        "author": "z3t4",
-        "text": "I\u0026#x27;m currently experimenting with running a web app \u0026quot;headless\u0026quot; in Node.JS by implementing some of the DOM JS functions myself. Then write mocks for keyboard input, etc. Then have the code agent run the headless client which also starts the tests. In my experience the coding agents are very bad at detecting UX issues, they can however write the tests for me if I explain what\u0026#x27;s wrong. So I\u0026#x27;m the eye\u0026#x27;s and it\u0026#x27;s my taste, the agent writes the tests and the code.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "This comment shares a hands-on approach to testing UI with AI agents and highlights the agents' limitations in detecting UX issues, which aligns with the need for visual verification."
-      },
-      {
-        "id": 47500795,
-        "author": "nunodonato",
-        "text": "I\u0026#x27;ve been using playwright-cli (not mcp) for this same purpose. It lacks the video feature, I guess. But at least is local and without external dependencies on even more third parties (in your case, vercel). Perhaps you could allow to use a local solution as an alternative as well?",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 5,
-        "analysis": "This comment offers a relevant comparison with an existing tool, noting trade-offs between local operation and feature sets, which is useful for evaluating ProofShot."
-      },
-      {
-        "id": 47499977,
-        "author": "zkmon",
-        "text": "Taking screenshots and recording is not quite the same as \u0026quot;seeing\u0026quot;. A camera doesn\u0026#x27;t see things. If the tool can identify issues and improvements to make, by analyzing the screenshot, that\u0026#x27;s I think useful.",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment critically distinguishes between passive visual capture and active interpretation, emphasizing the importance of analysis beyond screenshots."
+        "analysis": "This comment highlights a practical use case for the tool in code review workflows, emphasizing its potential to improve communication and review quality."
       },
       {
         "id": 47500072,
@@ -104,43 +96,50 @@
           "constructive",
           "likely-true"
         ],
-        "accuracyRank": 7,
-        "analysis": "This positive endorsement highlights practical benefits of ProofShot for quick validation and PR workflows, though it is more subjective and less detailed than other comments."
+        "accuracyRank": 6,
+        "analysis": "The comment expresses enthusiasm and recognizes the tool's value for quick validation, though it is less detailed than others."
       },
       {
-        "id": 47500553,
-        "author": "dbdoskey",
-        "text": "This is really cool. Have you thought of maybe accessing the screen through accessibility APIs? For Android mobile devices I have a skill I created that accesses the screen xml dump as part of feature development and it seems to work much better than screenshots \u0026#x2F; videos. Is this scalable to other OS\u0026#x27;s?",
+        "id": 47501986,
+        "author": "xtiansimon",
+        "text": "Slightly Off-topic of Agentic...\u003cp\u003eAnyone recommend browser-base instant preview site for web ui design with more artistic\u0026#x2F;experimental preference?",
         "indicators": [
-          "thoughtful",
-          "constructive",
-          "likely-true"
+          "useless"
+        ],
+        "accuracyRank": 7,
+        "analysis": "This comment is off-topic and does not contribute to the discussion about ProofShot or related tools."
+      },
+      {
+        "id": 47507229,
+        "author": "tjwebbnorfolk",
+        "text": "VSCode and Antigravity already do this. What am I missing?",
+        "indicators": [
+          "likely-untrue",
+          "useless"
         ],
         "accuracyRank": 8,
-        "analysis": "This comment suggests a promising alternative approach using accessibility APIs, expanding the discussion to mobile and potentially improving scalability."
+        "analysis": "This comment questions the novelty without providing evidence or context, potentially misunderstanding the unique visual validation aspect."
       },
       {
         "id": 47499984,
         "author": "theshrike79",
         "text": "What does this do that playwright-cli doesn\u0026#x27;t?\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;microsoft\u0026#x2F;playwright-cli\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;microsoft\u0026#x2F;playwright-cli\u003c/a\u003e",
         "indicators": [
-          "constructive",
-          "likely-true"
+          "useless"
         ],
         "accuracyRank": 9,
-        "analysis": "A valid question that challenges the novelty of ProofShot by requesting a comparison with an existing tool, encouraging clarification of unique features."
+        "analysis": "This comment is a basic question without elaboration, adding little value to the discussion."
       },
       {
         "id": 47500786,
         "author": "dude250711",
         "text": "That is not UI, that\u0026#x27;s just some web pages with JS.",
         "indicators": [
-          "emotional",
           "belligerent",
-          "likely-untrue"
+          "useless"
         ],
         "accuracyRank": 10,
-        "analysis": "This dismissive comment misunderstands the scope of UI and the value of the tool, lacking constructive input or accuracy."
+        "analysis": "This comment is dismissive and does not contribute constructively to the conversation."
       }
     ]
   }
