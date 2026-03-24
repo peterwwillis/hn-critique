@@ -25,7 +25,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the inherent quadratic time complexity in finding all regex matches and explores various approaches and trade-offs to mitigate this, including restricted regex features, sandboxing, and alternative regex engines. Participants also debate the practicality of pathological cases and the feasibility of linear-time regex matching under certain constraints.",
+    "summary": "The discussion centers on the inherent quadratic complexity in finding all regex matches and various approaches to mitigate it, including restricting regex features, sandboxing, and alternative regex engines. Contributors debate practical implications, theoretical limits, and specific implementations that handle or avoid quadratic blowup.",
     "comments": [
       {
         "id": 47494694,
@@ -38,7 +38,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed and accurate explanation of how quadratic behavior can arise in regex searches, citing a credible source and giving practical examples, making it highly informative."
+        "analysis": "This comment provides a detailed, accurate explanation of how quadratic complexity arises in regex matching with concrete examples and references to authoritative sources, making it the most informative."
       },
       {
         "id": 47495045,
@@ -51,7 +51,19 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment correctly identifies the trade-offs in regex engine design and proposes sandboxing as a practical mitigation strategy, reflecting real-world best practices."
+        "analysis": "This comment correctly identifies trade-offs in regex engine design and advocates practical sandboxing strategies, reflecting real-world considerations and known implementations."
+      },
+      {
+        "id": 47496304,
+        "author": "conartist6",
+        "text": "@ievev Have you ever seen an implementation like @bablr\u0026#x2F;regex? \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bablr-lang\u0026#x2F;regex-vm\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bablr-lang\u0026#x2F;regex-vm\u003c/a\u003e It\u0026#x27;s an NFA system so it isn\u0026#x27;t going to be winning any awards for throughput, but in this particular case it does seem to completely avoid the complexity blowup. It \u003ci\u003ewill\u003c/i\u003e run your heap out of memory though on really big inputs.\u003cp\u003eThe strategy this engine uses is just to evolve the state as a function of time. A match can be successfully completed, yet not be emitted because some other longer match could still supercede it by being longer or more leftmost.\u003cp\u003eI tried the pattern \u0026#x2F;d+s+\u0026#x2F;g on 10,000,000 digits followed by no space. It took 4 seconds to return no results. I tried it on 20,000,000 digits followed by no space. It took 8 seconds to return no results. I tried on 100,000,000 and I ran out of heap space.\u003cp\u003eTest setup: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;conartist6\u0026#x2F;051838025af1e04d966e03aa95147b7e\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;conartist6\u0026#x2F;051838025af1e04d966e03aa9...\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "The comment shares empirical performance data and a specific implementation approach, adding valuable practical insight though limited by memory constraints."
       },
       {
         "id": 47494954,
@@ -63,20 +75,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment offers a pragmatic perspective on regex usage, emphasizing that many pathological cases are theoretical and uncommon in practice, which is a reasonable stance."
-      },
-      {
-        "id": 47496304,
-        "author": "conartist6",
-        "text": "@ievev Have you ever seen an implementation like @bablr\u0026#x2F;regex? \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bablr-lang\u0026#x2F;regex-vm\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bablr-lang\u0026#x2F;regex-vm\u003c/a\u003e It\u0026#x27;s an NFA system so it isn\u0026#x27;t going to be winning any awards for throughput, but in this particular case it does seem to completely avoid the complexity blowup. It \u003ci\u003ewill\u003c/i\u003e run your heap out of memory though on really big inputs.\u003cp\u003eThe strategy this engine uses is just to evolve the state as a function of time. A match can be successfully completed, yet not be emitted because some other longer match could still supercede it by being longer or more leftmost.\u003cp\u003eI tried the pattern \u0026#x2F;d+s+\u0026#x2F;g on 10,000,000 digits followed by no space. It took 4 seconds to return no results. I tried it on 20,000,000 digits followed by no space. It took 8 seconds to return no results. I tried on 100,000,000 and I ran out of heap space.\u003cp\u003eTest setup: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;conartist6\u0026#x2F;051838025af1e04d966e03aa95147b7e\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;conartist6\u0026#x2F;051838025af1e04d966e03aa9...\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "constructive"
-        ],
         "accuracyRank": 4,
-        "analysis": "This comment shares concrete experimental results and a specific regex engine approach, providing valuable insight into alternative implementations and their limitations."
+        "analysis": "This comment offers a nuanced perspective on practical regex usage and heuristics to avoid quadratic blowup, aligning well with common regex engineering practices."
       },
       {
         "id": 47499741,
@@ -85,33 +85,22 @@
         "indicators": [
           "intelligent",
           "likely-true",
-          "thoughtful"
+          "constructive"
         ],
         "accuracyRank": 5,
-        "analysis": "The comment correctly notes that finite automata can operate in linear time and acknowledges the complexity added by advanced regex features, showing a sound understanding."
+        "analysis": "The comment correctly states the theoretical linear complexity of finite automata and acknowledges practical complications from regex features, reflecting a solid understanding."
       },
       {
-        "id": 47497301,
-        "author": "ummonk",
-        "text": "Great stuff.\u003cp\u003eI would argue that hardened mode should be default though, similar to how siphash is the default hashing function in Rust hash maps. Faster mode should be opt in if the user is confident that the supplied data is nonmalicious and they need the speed up.",
+        "id": 47498985,
+        "author": "mjmas",
+        "text": "\u0026gt; no capture groups\n\u0026gt; [...]\n\u0026gt; no lazy quantifiers - .*?\u003cp\u003eHere\u0026#x27;s the caveats.\u003cp\u003eAnd so running a regex engine on the matches seems like it would get you back to O(regexlen * haystacklen * matchcount) or roughly O(mn²) again.",
         "indicators": [
-          "thoughtful",
-          "constructive",
-          "likely-true"
+          "intelligent",
+          "likely-true",
+          "constructive"
         ],
         "accuracyRank": 6,
-        "analysis": "This is a reasonable security-minded suggestion aligning with best practices in software design, though it is more of a policy opinion than a technical explanation."
-      },
-      {
-        "id": 47495808,
-        "author": "gpvos",
-        "text": "I find it weird to have the Perl innovation (?:...) be called \u0026quot;traditional regex\u0026quot;. Perl was rather innovative back then, even if it\u0026#x27;s more than 30 years ago now. Traditional regex is what came before it (grep -E being the most advanced form). I wonder what counts as nontraditional in the author\u0026#x27;s eyes.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment provides historical context clarifying terminology, which is helpful but less central to the main technical discussion."
+        "analysis": "This comment highlights important caveats about regex features that impact complexity, reinforcing the article's points about quadratic blowup."
       },
       {
         "id": 47496480,
@@ -121,43 +110,52 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment contributes a specific example of a regex engine achieving linear time, supporting the discussion with concrete evidence."
+        "accuracyRank": 7,
+        "analysis": "This comment provides a concrete example of an NFA-based regex engine achieving linear time in tests, supporting the discussion with empirical evidence."
       },
       {
-        "id": 47495514,
-        "author": "thaumasiotes",
-        "text": "\u0026gt; the problem we\u0026#x27;re talking about in this post (finding all longest matches without quadratic blowup)\u003cp\u003eWait, what? I thought this was about finding all matches. With a minor tweak to the opening example:\u003cp\u003e\u003ci\u003eWe want to match `(.*a | b)` against `bbbbbabbbbb`.\u003c/i\u003e\u003cp\u003eI want to detect each `b` individually, and I also want to detect `bbbbba`, `bbbba`, `bbba`, `bba`, `ba`, and `a`. That\u0026#x27;s what it means to find all matches.",
+        "id": 47497301,
+        "author": "ummonk",
+        "text": "Great stuff.\u003cp\u003eI would argue that hardened mode should be default though, similar to how siphash is the default hashing function in Rust hash maps. Faster mode should be opt in if the user is confident that the supplied data is nonmalicious and they need the speed up.",
         "indicators": [
           "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "The comment suggests a sensible default security posture for regex engines, drawing parallels to other software practices, though it is more opinion-based."
+      },
+      {
+        "id": 47495808,
+        "author": "gpvos",
+        "text": "I find it weird to have the Perl innovation (?:...) be called \u0026quot;traditional regex\u0026quot;. Perl was rather innovative back then, even if it\u0026#x27;s more than 30 years ago now. Traditional regex is what came before it (grep -E being the most advanced form). I wonder what counts as nontraditional in the author\u0026#x27;s eyes.",
+        "indicators": [
           "intelligent",
-          "likely-true"
+          "thoughtful"
         ],
         "accuracyRank": 9,
-        "analysis": "This comment clarifies an important conceptual distinction in regex matching semantics, enhancing understanding of the problem scope."
+        "analysis": "This comment provides historical context on regex terminology, clarifying a semantic point but less relevant to the core technical discussion."
+      },
+      {
+        "id": 47494359,
+        "author": "adzm",
+        "text": "Is there any reason that RE#\u0026#x27;s two-pass approach couldn\u0026#x27;t be adopted by other regex engines?\u003cp\u003eAh, there is a post with more detail about RE# and discussion here recently that I must have missed: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\u003c/a\u003e",
+        "indicators": [
+          "constructive",
+          "thoughtful"
+        ],
+        "accuracyRank": 10,
+        "analysis": "The comment raises a constructive question about adopting alternative approaches, contributing to the discussion on regex engine design."
       },
       {
         "id": 47499926,
         "author": "yxhuvud",
         "text": "Hmm. I kinda wonder how something like a regexp engine based on marpa would fall. It would probably be slower in the common well behaved cases, as well as preprocessing. But I wonder if there are any cases that couldn\u0026#x27;t be done in a O(n) way if you limit yourself to only one match (instead of finding all possible matches like it actually can do). Marpa definitely handles most degenerate regexp cases linearly (once you make the match generation not do overlapping entries), but there may be some regexp feature it can\u0026#x27;t handle?\u003cp\u003eBringing a fully general CFG parser to parse regexps would be like hunting mosquitos with a nuke though..",
         "indicators": [
-          "thoughtful",
           "intelligent",
-          "likely-true"
-        ],
-        "accuracyRank": 10,
-        "analysis": "This comment explores an interesting theoretical approach, showing curiosity and insight, though it is speculative and lacks concrete evidence."
-      },
-      {
-        "id": 47498985,
-        "author": "mjmas",
-        "text": "\u0026gt; no capture groups\n\u0026gt; [...]\n\u0026gt; no lazy quantifiers - .*?\u003cp\u003eHere\u0026#x27;s the caveats.\u003cp\u003eAnd so running a regex engine on the matches seems like it would get you back to O(regexlen * haystacklen * matchcount) or roughly O(mn²) again.",
-        "indicators": [
-          "intelligent",
-          "likely-true"
+          "thoughtful"
         ],
         "accuracyRank": 11,
-        "analysis": "This comment highlights important caveats about complexity in regex matching, reinforcing the article's points about limitations."
+        "analysis": "This comment explores the idea of using CFG parsers for regex, acknowledging trade-offs and theoretical possibilities, adding depth to the discussion."
       },
       {
         "id": 47496903,
@@ -168,18 +166,18 @@
           "likely-true"
         ],
         "accuracyRank": 12,
-        "analysis": "This comment provides a relevant resource link but lacks detailed analysis or critique, making it less substantive."
+        "analysis": "This comment provides a relevant resource link, contributing useful external information though without detailed analysis."
       },
       {
-        "id": 47494359,
-        "author": "adzm",
-        "text": "Is there any reason that RE#\u0026#x27;s two-pass approach couldn\u0026#x27;t be adopted by other regex engines?\u003cp\u003eAh, there is a post with more detail about RE# and discussion here recently that I must have missed: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\u003c/a\u003e",
+        "id": 47495514,
+        "author": "thaumasiotes",
+        "text": "\u0026gt; the problem we\u0026#x27;re talking about in this post (finding all longest matches without quadratic blowup)\u003cp\u003eWait, what? I thought this was about finding all matches. With a minor tweak to the opening example:\u003cp\u003e\u003ci\u003eWe want to match `(.*a | b)` against `bbbbbabbbbb`.\u003c/i\u003e\u003cp\u003eI want to detect each `b` individually, and I also want to detect `bbbbba`, `bbbba`, `bbba`, `bba`, `ba`, and `a`. That\u0026#x27;s what it means to find all matches.",
         "indicators": [
-          "constructive",
-          "thoughtful"
+          "thoughtful",
+          "intelligent"
         ],
         "accuracyRank": 13,
-        "analysis": "This comment raises a constructive question about applying a known approach more broadly, contributing to the discussion."
+        "analysis": "This comment clarifies the interpretation of 'finding all matches' with examples, enhancing understanding of the problem scope."
       },
       {
         "id": 47499671,
@@ -190,7 +188,7 @@
           "likely-true"
         ],
         "accuracyRank": 14,
-        "analysis": "This comment provides historical context and a modern machine learning perspective, though it is somewhat tangential to the main regex complexity discussion."
+        "analysis": "This comment adds historical context and humorously suggests modern ML approaches, though less directly relevant to regex complexity."
       }
     ]
   }

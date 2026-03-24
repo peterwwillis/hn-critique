@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">87 points</span>
+        <span class="score">95 points</span>
         by <a href="https://news.ycombinator.com/user?id=timbowhite" class="hnuser">timbowhite</a>
-        <span class="age">11 hours ago</span>
+        <span class="age">13 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/23/47495719.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47495719" rel="noopener">original on HN</a>
       </p>
@@ -47,12 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the Resolv hack, focusing on how the attacker compromised a private key via AWS to mint $25 million in ETH. Commenters debate the nature of the hack, the role of smart contract vulnerabilities, and the implications for crypto security and stablecoins.</p>
+      <p>The discussion revolves around the Resolv hack, focusing on how the attacker compromised the AWS infrastructure to steal $25 million by exploiting a private key used for minting. Commenters debate the nature of the hack, the security practices around key management, and the implications for crypto and stablecoins.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 8 of 19 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47495719" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 20 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47495719" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -64,7 +64,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Missing from the article - the hacker first compromised Resolv Lab&#x27;s AWS account, took a private key from KMS that was used to control minting, then managed to extract $25 million into ETH before all protocol functions were suspended.</div>
-      <div class="comment-analysis"><em>This comment provides a detailed and plausible technical explanation consistent with the reported hack details, adding important context about the AWS compromise and private key theft.</em></div>
+      <div class="comment-analysis"><em>Provides a clear and accurate summary of the hack&#39;s initial vector and impact, aligning with known details from the article.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -72,65 +72,65 @@
         <a href="https://news.ycombinator.com/user?id=Aurornis" class="hnuser">Aurornis</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">According to a writeup at <a href="https:&#x2F;&#x2F;www.chainalysis.com&#x2F;blog&#x2F;lessons-from-the-resolv-hack&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.chainalysis.com&#x2F;blog&#x2F;lessons-from-the-resolv-hac...</a> this started with a plain old hack that compromised their signing key.<p>They also had a smart contract which didn&#x27;t do some proper checks, but the hack was only possible with the stolen private key. Whoever held the private key was able to mint a lot of money, unchecked.<p>So there was a traditional hack at the core of this heist, not just a smart contract exploit.</div>
-      <div class="comment-analysis"><em>This comment accurately distinguishes between the traditional hack of the signing key and the smart contract&#39;s role, clarifying the root cause of the exploit.</em></div>
+      <div class="comment-analysis"><em>Accurately clarifies that the hack involved both a traditional key compromise and a smart contract vulnerability, reinforcing the complexity of the exploit.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=bob1029" class="hnuser">bob1029</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&gt; The attacker compromised Resolv’s cloud infrastructure to gain access to Resolv’s AWS Key Management Service (KMS) environment where the protocol’s privileged signing key was stored.<p>Ok, but how was the AWS infrastructure compromised? This appears to be the crux of the entire article.<p>AWS is very hard to break if you are using the IAM roles properly and avoiding manual secret management. If the only thing that can even <i>sign</i> a JWT is a very specific blessed EC2 instance that has exclusive access to KMS, your attack surface is nearly zero by comparison to a similar setup where administrators use email or Discord to communicate API credentials.<p><a href="https:&#x2F;&#x2F;docs.aws.amazon.com&#x2F;AWSEC2&#x2F;latest&#x2F;UserGuide&#x2F;iam-roles-for-amazon-ec2.html" rel="nofollow">https:&#x2F;&#x2F;docs.aws.amazon.com&#x2F;AWSEC2&#x2F;latest&#x2F;UserGuide&#x2F;iam-role...</a><p>The protocol around using an HSM is just as important as the machine itself. It seems like some of us are going to be speed running PCI-DSS the hard way.</div>
+      <div class="comment-analysis"><em>Raises a valid question about the attack vector and highlights best practices in AWS security, pointing out that the breach likely involved misconfiguration or poor secret management.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=cameldrv" class="hnuser">cameldrv</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">intelligent</span> 
-      </div>
-      <div class="comment-text">You shouldn&#x27;t have a key that controls millions&#x2F;billions of dollars on a cloud service.  It should be on an airgapped laptop that was purchased anonymously, has never been connected to the Internet, and only runs software that has been vetted and loaded onto it via a CD-ROM or some other comparable method.</div>
-      <div class="comment-analysis"><em>Offers a strong security best practice recommendation, highlighting the risks of cloud key management for high-value assets, which is relevant and accurate.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=RS-232" class="hnuser">RS-232</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-untrue</span> <span class="indicator">trolling</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">You shouldn&#x27;t have a key that controls millions&#x2F;billions of dollars on a cloud service.  It should be on an airgapped laptop that was purchased anonymously, has never been connected to the Internet, and only runs software that has been vetted and loaded onto it via a CD-ROM or some other comparable method.</div>
+      <div class="comment-analysis"><em>Provides a strong security recommendation consistent with best practices for protecting high-value cryptographic keys.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=RS-232" class="hnuser">RS-232</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-untrue</span> 
       </div>
       <div class="comment-text">Has to be an inside job. One doesn’t just simultaneously hack into an AWS account, know exactly which key is needed for coin minting, and know internal details necessary to exploit a smart contract. The nature of the hack practically reveals their identity.</div>
-      <div class="comment-analysis"><em>This comment speculates about an inside job without evidence, relying on assumptions that are not substantiated and thus less credible.</em></div>
+      <div class="comment-analysis"><em>Speculative and lacks evidence; while insider involvement is possible, the comment assumes facts not in evidence and overstates certainty.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=andai" class="hnuser">andai</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> 
       </div>
       <div class="comment-text">If the admins can &quot;lock all transactions&quot;, what&#x27;s the point of it being a crypto?</div>
-      <div class="comment-analysis"><em>Raises a valid philosophical question about decentralization and control in crypto projects, though it is more opinion-based than factual.</em></div>
+      <div class="comment-analysis"><em>Raises a philosophical and practical question about decentralization and control in crypto projects, reflecting common concerns about centralized controls.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=amarant" class="hnuser">amarant</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> 
       </div>
       <div class="comment-text">What is the point of stable coins? Like why does anyone buy them?<p>It seems to me that their initial value is 1usd per token (or some other fiat I guess) and that&#x27;s also the roof of their value: they kinda guarantee that they won&#x27;t become more valuable than that.<p>They are less usable than fiat: more businesses accept fiat than crypto, especially weird and small coins like all stable coins are.<p>There isn&#x27;t really a floor to their value, as demonstrated here.<p>I see plenty of downsides of owning one of these coins, but not a single upside?<p>Yet people apparently do buy them, so what is the upside? There must surely be something that&#x27;s good about them?</div>
-      <div class="comment-analysis"><em>Expresses skepticism about stablecoins, highlighting perceived downsides but missing some widely recognized benefits such as liquidity and hedging.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=tekla" class="hnuser">tekla</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">likely-untrue</span> <span class="indicator">trolling</span> 
-      </div>
-      <div class="comment-text">Hacker? The coins were minted with perfectly valid code.</div>
-      <div class="comment-analysis"><em>Oversimplifies the situation by ignoring the compromised private key aspect; technically valid code does not preclude a hack via stolen credentials.</em></div>
+      <div class="comment-analysis"><em>Expresses skepticism about stablecoins, highlighting perceived downsides but missing some benefits like liquidity and crypto ecosystem utility.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
@@ -141,7 +141,29 @@
         <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
       <div class="comment-text">&gt;&quot;However, the hacker was only able to siphon off $25 million; the rest was locked into the protocol after system admins got alerted.&quot;<p>&quot;Only&quot; ?!!! Poor thing.</div>
-      <div class="comment-analysis"><em>A sarcastic remark that adds little analytical value to the discussion.</em></div>
+      <div class="comment-analysis"><em>Dismissive comment that adds little substantive value to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=tekla" class="hnuser">tekla</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">trolling</span> <span class="indicator">emotional</span> 
+      </div>
+      <div class="comment-text">Hacker? The coins were minted with perfectly valid code.</div>
+      <div class="comment-analysis"><em>Appears to downplay the hack by focusing on code validity, ignoring the key compromise aspect, thus misleading.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=outside2344" class="hnuser">outside2344</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">How is this industry still an industry?</div>
+      <div class="comment-analysis"><em>Rhetorical and dismissive comment that does not contribute meaningful insight.</em></div>
     </div>
     
 
@@ -153,7 +175,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 08:56 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 11:03 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
