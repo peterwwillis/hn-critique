@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">78 points</span>
+        <span class="score">118 points</span>
         by <a href="https://news.ycombinator.com/user?id=javierhonduco" class="hnuser">javierhonduco</a>
-        <span class="age">5 hours ago</span>
+        <span class="age">7 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47500746.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47500746" rel="noopener">original on HN</a>
       </p>
@@ -47,10 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around the use and configuration of zswap and zram for swap management in Linux systems. Users debate the assumptions about SSD suitability for swap, ease of setup, and potential performance implications, with calls for more data and practical advice.</p>
+      <p>The discussion revolves around the use of zswap and zram for swap management in Linux systems, with users sharing their experiences and opinions on the effectiveness and configuration of both systems.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
+    
+    <p class="no-critique">Only 5 of 10 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47500746" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -59,21 +61,21 @@
         <a href="https://news.ycombinator.com/user?id=patrakov" class="hnuser">patrakov</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">User here, who also acts as a Level 2 support for storage.<p>The article contains some solid logic plus an assumption that I disagree with.<p>Solid logic: you should prefer zswap <i>if you have a device that can be used for swap</i>.<p>Solid logic: zram + other swap = bad due to LRU inversion (zram becomes a dead weight in memory).<p>Advice that matches my observations: zram works best when paired with a user-space OOM killer.<p>Bold assumption: everybody who has an SSD has a device that can be used for swap.<p>The assumption is simply false, and not due to the &quot;SSD wear&quot; argument. Many consumer SSDs, especially DRAMless ones (e.g., Apacer AS350 1TB, but also seen on Crucial SSDs), under synchronous writes, will regularly produce latency spikes of 10 seconds or more, due to the way they need to manage their cells. This is much worse than any HDD. If a DRAMless consumer SSD is all that you have, better use zram.</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced critique based on real-world hardware behavior, challenging a common assumption with specific examples, making it highly credible and insightful.</em></div>
+      <div class="comment-analysis"><em>This comment provides a well-reasoned critique of the article&#39;s assumptions, highlighting important considerations regarding SSDs and swap management.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=guenthert" class="hnuser">guenthert</a>
+        <a href="https://news.ycombinator.com/user?id=CoolGuySteve" class="hnuser">CoolGuySteve</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">So much polemic and no numbers?  If it is a performance issue, show me the numbers!</div>
-      <div class="comment-analysis"><em>This comment highlights the need for empirical data to support performance claims, encouraging a more rigorous approach to the discussion.</em></div>
+      <div class="comment-text">Would be nice if zswap could be configured to have no backing cache so it could completely replace zram. Having two slightly different systems is weird.<p>There&#x27;s not really any difference between swap on disk being full and swap in ram being full, either way something needs to get OOM killed.<p>Simplifying the configuration would probably also make it easier to enable by default in most distros. It&#x27;s kind of backwards that the most common Linux distros other than ChromeOS are behind Mac and Windows in this regard.</div>
+      <div class="comment-analysis"><em>The comment suggests a practical improvement to zswap, demonstrating a clear understanding of the issues at hand and proposing a solution.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -81,67 +83,34 @@
         <a href="https://news.ycombinator.com/user?id=prussian" class="hnuser">prussian</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">intelligent</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">With zram, I can just use zram-generator[0] and it does everything for me and I don&#x27;t even need to set anything up, other than installing the systemd generator, which on some distros, it&#x27;s installed by default.
 Is there anything equivalent for zswap?
 Otherwise, I&#x27;m not surprised most people are just using zram, even if sub-optimal.<p>[0]: <a href="https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;zram-generator" rel="nofollow">https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;zram-generator</a></div>
-      <div class="comment-analysis"><em>This comment points out practical usability differences between zram and zswap, which is relevant for adoption and user experience considerations.</em></div>
+      <div class="comment-analysis"><em>This comment raises a valid point about the ease of use of zram compared to zswap, reflecting on user experience and potential barriers to adoption.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=CoolGuySteve" class="hnuser">CoolGuySteve</a>
+        <a href="https://news.ycombinator.com/user?id=lproven" class="hnuser">lproven</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
       </div>
-      <div class="comment-text">Would be nice if zswap could be configured to have no backing cache so it could completely replace zram. Having two slightly different systems is weird.<p>There&#x27;s not really any difference between swap on disk being full and swap in ram being full, either way something needs to get OOM killed.<p>Simplifying the configuration would probably also make it easier to enable by default in most distros. It&#x27;s kind of backwards that the most common Linux distros other than ChromeOS are behind Mac and Windows in this regard.</div>
-      <div class="comment-analysis"><em>The comment suggests improvements to zswap to unify swap solutions and simplify configuration, reflecting a forward-looking and practical perspective.</em></div>
+      <div class="comment-text">I wrote about this recently too:<p><a href="https:&#x2F;&#x2F;www.theregister.com&#x2F;2026&#x2F;03&#x2F;13&#x2F;zram_vs_zswap&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.theregister.com&#x2F;2026&#x2F;03&#x2F;13&#x2F;zram_vs_zswap&#x2F;</a><p>I prefer zswap to zram and as I linked at the end of the piece, it&#x27;s not just me:<p><a href="https:&#x2F;&#x2F;linuxblog.io&#x2F;zswap-better-than-zram&#x2F;" rel="nofollow">https:&#x2F;&#x2F;linuxblog.io&#x2F;zswap-better-than-zram&#x2F;</a><p>Maybe I am overthinking but I am wondering if this piece about myths is in any way a response to my article?</div>
+      <div class="comment-analysis"><em>While the comment shares a personal preference, it also questions the article&#39;s intent, which adds depth to the discussion but lacks substantial technical critique.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=nephanth" class="hnuser">nephanth</a>
+        <a href="https://news.ycombinator.com/user?id=tonnydourado" class="hnuser">tonnydourado</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I used to put swap on zram when my laptop had one of those early ssds, that people would tell you <i>not</i> to put swap on for fear of wearing them out<p>Setup was <i>tedious</i></div>
-      <div class="comment-analysis"><em>This personal anecdote adds context about past user experience with early SSDs and zram, though it is less detailed and more subjective.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Mashimo" class="hnuser">Mashimo</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Is this advice also applicable to Desktops installations?</div>
-      <div class="comment-analysis"><em>A straightforward question seeking clarification on the applicability of the advice, indicating engagement but no direct contribution to accuracy.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=adgjlsfhk1" class="hnuser">adgjlsfhk1</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">can you make a follow-up here for the best way to setup swap to support full disk encryption+hybernation?</div>
-      <div class="comment-analysis"><em>This comment requests additional information on a specific use case, showing interest but not adding substantive analysis.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jitl" class="hnuser">jitl</a>
-        &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">thank goodness Kubernetes got support for swap; zswap has been a great boon for one of my workloads</div>
-      <div class="comment-analysis"><em>A brief endorsement of zswap&#39;s utility in a Kubernetes context, which is positive but lacks detailed explanation or evidence.</em></div>
+      <div class="comment-text">That&#x27;s a banger article, I don&#x27;t even like low level stuff and yet read the whole thing. Hopefully I will have opportunity to use some of it if I ever get around to switch my personal notebook back to linux</div>
+      <div class="comment-analysis"><em>This comment expresses enthusiasm for the article but does not contribute significantly to the technical discussion, making it less substantive.</em></div>
     </div>
     
 
@@ -153,7 +122,7 @@ Otherwise, I&#x27;m not surprised most people are just using zram, even if sub-o
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 15:14 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 17:12 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

@@ -1,0 +1,52 @@
+{
+  "story_id": 47502193,
+  "generated_at": "",
+  "critique": {
+    "summary": "Summary unavailable because the AI assessment could not be completed because the AI provider returned an error. The analysis may be retried on the next run.",
+    "mainPoints": null,
+    "truthfulness": "Truthfulness assessment unavailable because the AI assessment could not be completed because the AI provider returned an error. The analysis may be retried on the next run.",
+    "considerations": null,
+    "rating": "unavailable"
+  },
+  "comments_critique": {
+    "summary": "The discussion centers on a blog post comparing io_uring and libaio performance across Linux kernels, highlighting a surprising IOMMU-induced regression. Commenters ask for deeper technical details and question workload choices.",
+    "comments": [
+      {
+        "id": 47502288,
+        "author": "eivanov89",
+        "text": "Dear folks, I\u0026#x27;m the author of that post.\u003cp\u003eA short summary below.\u003cp\u003eWe ran fio benchmarks comparing libaio and io_uring across kernels (5.4 -\u0026gt; 7.0-rc3). The most surprising part wasn’t io_uring gains (~2x), but a ~30% regression caused by IOMMU being enabled by default between releases.\u003cp\u003eHappy to share more details about setup or reproduce results.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 1,
+        "analysis": "As the author of the original post, this comment provides a concise and accurate summary of the key findings, establishing credibility and context for the discussion."
+      },
+      {
+        "id": 47502882,
+        "author": "tanelpoder",
+        "text": "I understand that it\u0026#x27;s the interrupt-based I\u0026#x2F;O completion workloads that suffered from IOMMU overhead in your tests?\u003cp\u003eIOMMU may induce some interrupt remapping latency, I\u0026#x27;d be interested in seeing:\u003cp\u003e1) interrupt counts (normalized to IOPS) from \u0026#x2F;proc\u0026#x2F;interrupts\u003cp\u003e2) \u0026quot;hardirqs -d\u0026quot; (bcc-tools) output for IRQ handling latency histograms\u003cp\u003e3) perf record -g output to see if something inside interrupt handling codepath takes longer (on bare metal you can see inside hardirq handler code too)\u003cp\u003eWould be interesting to see if with IOMMU each interrupt \u003ci\u003ehandling\u003c/i\u003e takes longer on CPU (or is the handling time roughly the same, but interrupt \u003ci\u003edelivery\u003c/i\u003e takes longer). There may be some interrupt coalescing thing going on as well (don\u0026#x27;t know exactly what else gets enabled with IOMMU).\u003cp\u003eSince interrupts are raised \u0026quot;randomly\u0026quot;, independently from whatever your app\u0026#x2F;kernel code is running on CPUs, it\u0026#x27;s a bit harder to visualize total interrupt overhead in something like flamegraphs, as the interrupt activity is all over the place in the chart. I used flamegraph search\u0026#x2F;highlight feature to visually identify how much time the interrupt detours took during stress test execution.\u003cp\u003eExample here (scroll down a little):\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;tanelpoder.com\u0026#x2F;posts\u0026#x2F;linux-hiding-interrupt-cpu-usage\u0026#x2F;#how-to-measure-interrupt-cpu-overhead-when-irq-time-accounting-is-disabled\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;tanelpoder.com\u0026#x2F;posts\u0026#x2F;linux-hiding-interrupt-cpu-usag...\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment offers a detailed and technically sound request for further data to better understand the IOMMU overhead, reflecting expertise and constructive engagement."
+      },
+      {
+        "id": 47502430,
+        "author": "hcpp",
+        "text": "Why was 4K random write chosen as the main workload, and would the conclusion change with sequential I\u0026#x2F;O?",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "A valid and relevant question about workload selection that could impact the generalizability of the results, encouraging broader evaluation."
+      }
+    ]
+  }
+}

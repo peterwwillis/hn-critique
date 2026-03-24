@@ -23,7 +23,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers around the use and configuration of zswap and zram for swap management in Linux systems. Users debate the assumptions about SSD suitability for swap, ease of setup, and potential performance implications, with calls for more data and practical advice.",
+    "summary": "The discussion revolves around the use of zswap and zram for swap management in Linux systems, with users sharing their experiences and opinions on the effectiveness and configuration of both systems.",
     "comments": [
       {
         "id": 47501678,
@@ -31,33 +31,10 @@
         "text": "User here, who also acts as a Level 2 support for storage.\u003cp\u003eThe article contains some solid logic plus an assumption that I disagree with.\u003cp\u003eSolid logic: you should prefer zswap \u003ci\u003eif you have a device that can be used for swap\u003c/i\u003e.\u003cp\u003eSolid logic: zram + other swap = bad due to LRU inversion (zram becomes a dead weight in memory).\u003cp\u003eAdvice that matches my observations: zram works best when paired with a user-space OOM killer.\u003cp\u003eBold assumption: everybody who has an SSD has a device that can be used for swap.\u003cp\u003eThe assumption is simply false, and not due to the \u0026quot;SSD wear\u0026quot; argument. Many consumer SSDs, especially DRAMless ones (e.g., Apacer AS350 1TB, but also seen on Crucial SSDs), under synchronous writes, will regularly produce latency spikes of 10 seconds or more, due to the way they need to manage their cells. This is much worse than any HDD. If a DRAMless consumer SSD is all that you have, better use zram.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "likely-true"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a nuanced critique based on real-world hardware behavior, challenging a common assumption with specific examples, making it highly credible and insightful."
-      },
-      {
-        "id": 47502001,
-        "author": "guenthert",
-        "text": "So much polemic and no numbers?  If it is a performance issue, show me the numbers!",
-        "indicators": [
-          "constructive",
-          "thoughtful"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment highlights the need for empirical data to support performance claims, encouraging a more rigorous approach to the discussion."
-      },
-      {
-        "id": 47503120,
-        "author": "prussian",
-        "text": "With zram, I can just use zram-generator[0] and it does everything for me and I don\u0026#x27;t even need to set anything up, other than installing the systemd generator, which on some distros, it\u0026#x27;s installed by default.\nIs there anything equivalent for zswap?\nOtherwise, I\u0026#x27;m not surprised most people are just using zram, even if sub-optimal.\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;crates.io\u0026#x2F;crates\u0026#x2F;zram-generator\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;crates.io\u0026#x2F;crates\u0026#x2F;zram-generator\u003c/a\u003e",
-        "indicators": [
-          "constructive",
-          "intelligent"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment points out practical usability differences between zram and zswap, which is relevant for adoption and user experience considerations."
+        "analysis": "This comment provides a well-reasoned critique of the article's assumptions, highlighting important considerations regarding SSDs and swap management."
       },
       {
         "id": 47502956,
@@ -67,50 +44,41 @@
           "thoughtful",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "The comment suggests improvements to zswap to unify swap solutions and simplify configuration, reflecting a forward-looking and practical perspective."
+        "accuracyRank": 2,
+        "analysis": "The comment suggests a practical improvement to zswap, demonstrating a clear understanding of the issues at hand and proposing a solution."
       },
       {
-        "id": 47501475,
-        "author": "nephanth",
-        "text": "I used to put swap on zram when my laptop had one of those early ssds, that people would tell you \u003ci\u003enot\u003c/i\u003e to put swap on for fear of wearing them out\u003cp\u003eSetup was \u003ci\u003etedious\u003c/i\u003e",
+        "id": 47503120,
+        "author": "prussian",
+        "text": "With zram, I can just use zram-generator[0] and it does everything for me and I don\u0026#x27;t even need to set anything up, other than installing the systemd generator, which on some distros, it\u0026#x27;s installed by default.\nIs there anything equivalent for zswap?\nOtherwise, I\u0026#x27;m not surprised most people are just using zram, even if sub-optimal.\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;crates.io\u0026#x2F;crates\u0026#x2F;zram-generator\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;crates.io\u0026#x2F;crates\u0026#x2F;zram-generator\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment raises a valid point about the ease of use of zram compared to zswap, reflecting on user experience and potential barriers to adoption."
+      },
+      {
+        "id": 47503873,
+        "author": "lproven",
+        "text": "I wrote about this recently too:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.theregister.com\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;13\u0026#x2F;zram_vs_zswap\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.theregister.com\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;13\u0026#x2F;zram_vs_zswap\u0026#x2F;\u003c/a\u003e\u003cp\u003eI prefer zswap to zram and as I linked at the end of the piece, it\u0026#x27;s not just me:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;linuxblog.io\u0026#x2F;zswap-better-than-zram\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;linuxblog.io\u0026#x2F;zswap-better-than-zram\u0026#x2F;\u003c/a\u003e\u003cp\u003eMaybe I am overthinking but I am wondering if this piece about myths is in any way a response to my article?",
+        "indicators": [
+          "thoughtful",
+          "intelligent"
+        ],
+        "accuracyRank": 4,
+        "analysis": "While the comment shares a personal preference, it also questions the article's intent, which adds depth to the discussion but lacks substantial technical critique."
+      },
+      {
+        "id": 47503903,
+        "author": "tonnydourado",
+        "text": "That\u0026#x27;s a banger article, I don\u0026#x27;t even like low level stuff and yet read the whole thing. Hopefully I will have opportunity to use some of it if I ever get around to switch my personal notebook back to linux",
         "indicators": [
           "emotional",
-          "likely-true"
+          "constructive"
         ],
         "accuracyRank": 5,
-        "analysis": "This personal anecdote adds context about past user experience with early SSDs and zram, though it is less detailed and more subjective."
-      },
-      {
-        "id": 47502669,
-        "author": "Mashimo",
-        "text": "Is this advice also applicable to Desktops installations?",
-        "indicators": [
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "A straightforward question seeking clarification on the applicability of the advice, indicating engagement but no direct contribution to accuracy."
-      },
-      {
-        "id": 47501865,
-        "author": "adgjlsfhk1",
-        "text": "can you make a follow-up here for the best way to setup swap to support full disk encryption+hybernation?",
-        "indicators": [
-          "constructive"
-        ],
-        "accuracyRank": 7,
-        "analysis": "This comment requests additional information on a specific use case, showing interest but not adding substantive analysis."
-      },
-      {
-        "id": 47501697,
-        "author": "jitl",
-        "text": "thank goodness Kubernetes got support for swap; zswap has been a great boon for one of my workloads",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 8,
-        "analysis": "A brief endorsement of zswap's utility in a Kubernetes context, which is positive but lacks detailed explanation or evidence."
+        "analysis": "This comment expresses enthusiasm for the article but does not contribute significantly to the technical discussion, making it less substantive."
       }
     ]
   }

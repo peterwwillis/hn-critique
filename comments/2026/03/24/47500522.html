@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">85 points</span>
+        <span class="score">113 points</span>
         by <a href="https://news.ycombinator.com/user?id=astralbijection" class="hnuser">astralbijection</a>
-        <span class="age">5 hours ago</span>
+        <span class="age">7 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47500522.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47500522" rel="noopener">original on HN</a>
       </p>
@@ -47,10 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the technical challenges and methods of overwriting a running Linux system&#39;s disk, including netbooting, using initramfs, and kernel-level considerations to avoid filesystem corruption. Participants share practical experiences, potential pitfalls, and alternative approaches such as using qemu overlays or migrating the OS into RAM.</p>
+      <p>The discussion revolves around the technical challenges and methods of overwriting a running Linux system&#39;s disk image, with various users sharing experiences, solutions, and warnings about filesystem corruption and practical approaches like kexec and netbooting. Some comments highlight clever workarounds and real-world use cases, while others critique the approach as risky or impractical.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
+    
+    <p class="no-critique">Only 10 of 17 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47500522" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -59,10 +61,10 @@
         <a href="https://news.ycombinator.com/user?id=matja" class="hnuser">matja</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">&gt; How do you unmount your OS’s disk while keeping the OS running to be able to overwrite itself?<p>I went down a similar rabbit-hole myself, with the goal of safely replacing the Linux installation on a disk that a machine is already running from (e.g. replace a VPS&#x27;s setup image with one of your own) without needing a KVM-style remote access tool to the console.<p>The problem there is if you directly modify the disk when a filesystem is mounted on that disk then all bets are off in terms of corruption of the filesystem that&#x27;s already on there and also the filesystem(s) you&#x27;re writing over the top.<p>My solution was to kexec into a new kernel+initramfs which has a DHCP client and cURL in it - that effectively stops any filesystem access while the image is being written over the disk, then to just reboot.</div>
-      <div class="comment-analysis"><em>This comment accurately identifies the risk of corruption when modifying a mounted filesystem and suggests a practical, safe approach using kexec and a minimal environment.</em></div>
+      <div class="comment-analysis"><em>This comment provides a practical and technically sound solution to the problem of overwriting a running system&#39;s disk by using kexec to switch to a minimal environment, minimizing corruption risk.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -73,96 +75,96 @@
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Unfortunately it&#x27;s not safe as the kernel can still write to (what it thinks is) the old filesystem on the device, which will introduce corruption to the new disk image.<p>However a fun fact is that you <i>can</i> (do not actually do this!) boot a qemu VM from &#x2F;dev&#x2F;sda.  You have to use an overlay (eg. qemu -drive snapshot=on flag) so that qemu won&#x27;t write through to &#x2F;dev&#x2F;sda.  I use this trick in supernested, a script I wrote that runs nested within nested within nested VMs ad infinitum until your hypervisor crashes.  <a href="http:&#x2F;&#x2F;git.annexia.org&#x2F;?p=supernested.git;a=blob;f=run-supernested.sh.in;h=ea227f0c62eddc0c6d2e394b938d1a920a48e794;hb=HEAD#l65" rel="nofollow">http:&#x2F;&#x2F;git.annexia.org&#x2F;?p=supernested.git;a=blob;f=run-super...</a></div>
-      <div class="comment-analysis"><em>Provides a technically accurate warning about corruption risks and shares an advanced workaround involving qemu overlays, demonstrating deep technical knowledge.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=alexellisuk" class="hnuser">alexellisuk</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">This reminds me of netbooting workflows from things like MaaS, Tinkerbell, and Dan&#x27;s old Plunder tool.<p>They&#x27;d netboot.. not mount the disks, then download an ISO&#x2F;IMG and write it directly to the primary boot disk.<p>If netbooting is a heavy lift, why not boot into a custom initramfs you built, with i.e. dd&#x2F;curl installed, and flash the disk that way, without mounting &#x2F; at all? Then kexec&#x2F;chroot into it?<p>I&#x27;d much prefer this as a way to provision Raspberry Pis.</div>
-      <div class="comment-analysis"><em>Offers a relevant and practical alternative approach to provisioning devices safely without mounting the disk, aligning well with best practices.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=M95D" class="hnuser">M95D</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">From the article:<p>&gt; The OS may stop you from unmounting &#x2F;dev&#x2F;sda1, but it won’t stop you from writing to &#x2F;dev&#x2F;sda1 or &#x2F;dev&#x2F;sda even if there’s something mounted!<p>Not always true. There&#x27;s a kernel config option that allows it. CONFIG_BLK_DEV_WRITE_MOUNTED</div>
-      <div class="comment-analysis"><em>Correctly points out a kernel configuration option that affects write permissions on mounted devices, adding nuance to the article&#39;s claim.</em></div>
+      <div class="comment-analysis"><em>The comment correctly points out the risk of corruption due to kernel writes and shares a nuanced tip about using QEMU overlays to safely boot from a device, showing good understanding.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=pzmarzly" class="hnuser">pzmarzly</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">You will run into problems if destination drive has different sector size than your VM, as GPT header won&#x27;t be aligned.<p>QEMU defaults to 512B sectors, which isn&#x27;t true for many NVMe drives. There are some flags to change that. <a href="https:&#x2F;&#x2F;unix.stackexchange.com&#x2F;a&#x2F;722450" rel="nofollow">https:&#x2F;&#x2F;unix.stackexchange.com&#x2F;a&#x2F;722450</a><p>I think it should be possible to make an image with many headers at different locations, so that it works on all types of disks at once, but I don&#x27;t think any tools do it for you by default.</div>
-      <div class="comment-analysis"><em>Highlights an important technical detail about sector size mismatches that can cause issues, providing useful information for those using VM images.</em></div>
+      <div class="comment-analysis"><em>This comment highlights a subtle but important hardware compatibility issue that can affect disk imaging, providing useful technical insight and references.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=alexellisuk" class="hnuser">alexellisuk</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">This reminds me of netbooting workflows from things like MaaS, Tinkerbell, and Dan&#x27;s old Plunder tool.<p>They&#x27;d netboot.. not mount the disks, then download an ISO&#x2F;IMG and write it directly to the primary boot disk.<p>If netbooting is a heavy lift, why not boot into a custom initramfs you built, with i.e. dd&#x2F;curl installed, and flash the disk that way, without mounting &#x2F; at all? Then kexec&#x2F;chroot into it?<p>I&#x27;d much prefer this as a way to provision Raspberry Pis.</div>
+      <div class="comment-analysis"><em>The comment offers a practical alternative approach to the problem by leveraging netbooting or custom initramfs, showing familiarity with provisioning workflows.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=M95D" class="hnuser">M95D</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">From the article:<p>&gt; The OS may stop you from unmounting &#x2F;dev&#x2F;sda1, but it won’t stop you from writing to &#x2F;dev&#x2F;sda1 or &#x2F;dev&#x2F;sda even if there’s something mounted!<p>Not always true. There&#x27;s a kernel config option that allows it. CONFIG_BLK_DEV_WRITE_MOUNTED</div>
+      <div class="comment-analysis"><em>This comment corrects a generalization from the article by citing a specific kernel configuration option, adding accuracy and nuance to the discussion.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=megous" class="hnuser">megous</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">belligerent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Instead of applying some sense to the problem, and using a solution that actually allows you to kill all running processes of the original distro at runtime, incl. getting rid of the original init process, to be able to pivot_root somewhere else amd umount the original system&#x27;s filesystems and free the block device for re-installation, this ridiculous approach gets promoted to a front page, lol.</div>
+      <div class="comment-analysis"><em>While the comment is dismissive and emotional, it points out that more robust solutions exist that properly handle process termination and pivoting root, which is a valid critique.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=PunchyHamster" class="hnuser">PunchyHamster</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">&gt; Well, what can we try instead?
 &gt; write to the mounted disk anyways. fuck you<p>Stupid penguin trick I learned: Add a file inside ramdisk (i use &#x2F;dev&#x2F;shm) as LVM PV.<p>pvmove off the hard drive<p>Boom, now your OS lives entirely in RAM<p>You can now even replace the hard disk, put a new one and migrate back.<p>Or migrate to network storage (nbd,iSCSI etc.), re-sequence disks into whatever RAID you need, and migrate back<p>Need to fix &#x2F;boot after that tho, and probably make sure to not have power failure in meantime</div>
-      <div class="comment-analysis"><em>Shares an innovative method to migrate the OS into RAM to enable disk replacement, which is a clever and practical approach though somewhat advanced.</em></div>
+      <div class="comment-analysis"><em>This comment shares an advanced technique to migrate the running system into RAM to free the disk for replacement, demonstrating deep system knowledge.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=dizhn" class="hnuser">dizhn</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Reminded me of how to install Alpine linux (which isn&#x27;t available) on Oracle cloud over an ubuntu install. It uses dd and has the advantage of having a console.<p>I had found it in a github gist when I used it but here&#x27;s a similar blog post.<p><a href="https:&#x2F;&#x2F;alextsang.net&#x2F;articles&#x2F;20191006-063049&#x2F;index.html" rel="nofollow">https:&#x2F;&#x2F;alextsang.net&#x2F;articles&#x2F;20191006-063049&#x2F;index.html</a></div>
-      <div class="comment-analysis"><em>Provides a useful real-world example and resource related to the topic, adding practical context.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=irishcoffee" class="hnuser">irishcoffee</a>
+        <a href="https://news.ycombinator.com/user?id=SamWhited" class="hnuser">SamWhited</a>
         &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Reminds me of the first company I worked for out of school.<p>We had a big drive with the source of truth image used to boot all our machines on it, and we added rsync to the init image. When each machine booted init would rsync everything from the storage box to the local machine. We&#x27;d keep the storage machine up to date and when we wanted to update other machines in the fleet we&#x27;d just do a reboot and it would sync up the latest files (provisioning for whatever each machine was supposed to do happened later, can&#x27;t remember how that was handled now). The storage machine was running ZFS so we also took a snapshot before doing any rolling reboots, so if anything did go wrong you could just revert to the previous snapshot and reboot again as long as you didn&#x27;t break the init image.<p>Sounds jank saying it out loud, but I don&#x27;t remember it ever causing us any problems.</div>
+      <div class="comment-analysis"><em>This comment shares a real-world provisioning workflow involving rsync and ZFS snapshots, providing a practical example of managing fleet updates safely.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=zoobab" class="hnuser">zoobab</a>
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I&#x27;ve been dd-ing A&#x2F;B partitions for embedded yocto distributions for years and years. read-only-rootfs (&#x2F;var&#x2F;log is its own writable partition), dd the &quot;other partition&quot;, sed fstab, reboot.<p>The neat part was the whole process kicked off when you scp&#x27;d the rootfs and inotifywait kicked off the whole process.</div>
-      <div class="comment-analysis"><em>Shares a practical and tested workflow for updating embedded systems, contributing valuable experiential insight.</em></div>
+      <div class="comment-text">I used netcat and dd via the network to clone machines that has the same HDD:<p><a href="https:&#x2F;&#x2F;support.tools&#x2F;dd-over-netcat-clone-drive-remote-backup&#x2F;" rel="nofollow">https:&#x2F;&#x2F;support.tools&#x2F;dd-over-netcat-clone-drive-remote-back...</a><p>But I like the curl approach very much!</div>
+      <div class="comment-analysis"><em>The comment relates a practical cloning method using netcat and dd, expressing appreciation for the curl-based approach, adding a positive perspective.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=ma2kx" class="hnuser">ma2kx</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Why not just use netboot?</div>
-      <div class="comment-analysis"><em>Poses a simple, relevant question that points to a common alternative method, though without elaboration.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=PunchyHamster" class="hnuser">PunchyHamster</a>
+        <a href="https://news.ycombinator.com/user?id=creantum" class="hnuser">creantum</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> 
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
       </div>
-      <div class="comment-text">and we&#x27;ve gone full circle, back in the day you installed os on diskettes like that!</div>
-      <div class="comment-analysis"><em>A nostalgic comment that adds little technical value to the discussion.</em></div>
+      <div class="comment-text">Just because you can doesn’t mean you should.</div>
+      <div class="comment-analysis"><em>This brief comment expresses skepticism but lacks constructive detail or technical insight, making it less useful.</em></div>
     </div>
     
 
@@ -174,7 +176,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 15:14 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 17:12 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

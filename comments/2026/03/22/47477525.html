@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Testing the Swift C compatibility with Raylib (&#43;WASM) | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://carette.xyz/posts/swift_c_compatibility_with_raylib/" rel="noreferrer noopener">Testing the Swift C compatibility with Raylib (&#43;WASM)</a>
+        <span class="sitebit"> (carette.xyz)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">19 points</span>
+        by <a href="https://news.ycombinator.com/user?id=LucidLynx" class="hnuser">LucidLynx</a>
+        <span class="age">2 days ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/22/47477525.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47477525" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <p class="no-critique">Analysis could not be generated. Showing raw comments:</p>
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=enbugger" class="hnuser">enbugger</a>
+  </div>
+  <div class="comment-text">&gt; So, if you want to build games using raylib, why not learn learning or use Swift for that?<p>Never ever worked for me. Imagine, you actually learned basic Swift and Raylib, now you want &quot;advanced&quot; features in your game like navigation&#x2F;pathfinding, model loading, ImGui, skeletal animation (those are actually vital for gamedev). 
+You realize that<p>- Navigation is only ReCast which is pure C++ library,<p>- ImGui has C++ API as first-class citizen,<p>- Decent animation with compression is only open-sourced by OzzAnimation which is pure C++ project.<p>For gamedev interfacing with C is never enough, half of ecosystem is built heavily on C++. Even C++ interop is not enough (see Dlang). Without all those libraries you are bound to make boring 2d platformers.<p>Same for Zig, Odin, C3 etc.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=flohofwoe" class="hnuser">flohofwoe</a>
+  </div>
+  <div class="comment-text">&gt; ImGui has C++ API as first-class citizen<p>Dear ImGui via the C bindings is actually quite nice and not much less convenient than the C++ API (the only notable difference is that the C API has no overloads and default params).<p>E.g. here&#x27;s a control panel UI (from the below ozz-animation sample) with the &#x27;Dear Bindings&#x27; approach (using a custom &#x27;ig&#x27; prefix)):<p><a href="https:&#x2F;&#x2F;github.com&#x2F;floooh&#x2F;sokol-samples&#x2F;blob&#x2F;d8429d701eb7a8c6d3399b850f29d009618de7fc&#x2F;sapp&#x2F;shdfeatures-sapp.c#L664-L718" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;floooh&#x2F;sokol-samples&#x2F;blob&#x2F;d8429d701eb7a8c...</a><p>Dear ImGui is a bit of an outlier for C++ libraries though, since it is essentially a C API wrapped in a namespace.<p>OzzAnimation is also fairly trivial to wrap in an (abstracted) C API, for instance I use this in some of the sokol-samples:<p><a href="https:&#x2F;&#x2F;github.com&#x2F;floooh&#x2F;sokol-samples&#x2F;blob&#x2F;master&#x2F;libs&#x2F;ozzutil&#x2F;ozzutil.h" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;floooh&#x2F;sokol-samples&#x2F;blob&#x2F;master&#x2F;libs&#x2F;ozz...</a><p>Implementation: <a href="https:&#x2F;&#x2F;github.com&#x2F;floooh&#x2F;sokol-samples&#x2F;blob&#x2F;master&#x2F;libs&#x2F;ozzutil&#x2F;ozzutil.cc" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;floooh&#x2F;sokol-samples&#x2F;blob&#x2F;master&#x2F;libs&#x2F;ozz...</a><p>...used in this sample:<p><a href="https:&#x2F;&#x2F;github.com&#x2F;floooh&#x2F;sokol-samples&#x2F;blob&#x2F;master&#x2F;sapp&#x2F;shdfeatures-sapp.c" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;floooh&#x2F;sokol-samples&#x2F;blob&#x2F;master&#x2F;sapp&#x2F;shd...</a><p>...WASM live version:<p><a href="https:&#x2F;&#x2F;floooh.github.io&#x2F;sokol-html5&#x2F;shdfeatures-sapp.html" rel="nofollow">https:&#x2F;&#x2F;floooh.github.io&#x2F;sokol-html5&#x2F;shdfeatures-sapp.html</a><p>TL;DR: quite a few C++ libraries out of the game-dev world are actually quite easy to access from C or languages that can talk to C APIs, mainly because the game-dev world typically uses a very &#x27;orthodox&#x27; subset of C++ (no or very restricted C++ stdlib usage, no rtti, no exceptions, ideally no smart pointers in the public API).</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=flohofwoe" class="hnuser">flohofwoe</a>
+  </div>
+  <div class="comment-text">Raylib has a C API though, and this is &#x27;easy-mode&#x27; in any language (even without integrated bindings generation like Swift or Zig have - e.g. it&#x27;s fairly trivial to write a bindings generator that uses Clang&#x27;s ast-dump json file format as input and translates the API declarations into another language.<p>A more interesting question would be how well the C++ interoperability works that was added in Swift 5.9, does it work with all C++ headers, even headers that make extensive use of template code. Also how does Swift extract information needed for lifetime tracking, e.g. C++ APIs that return smart pointers and object lifetime ends on the caller&#x27;s side. Does this only work for C++ stdlib smart pointer types, or are custom types also supported.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Someone" class="hnuser">Someone</a>
+  </div>
+  <div class="comment-text">[delayed]</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=repelsteeltje" class="hnuser">repelsteeltje</a>
+  </div>
+  <div class="comment-text">For sure — <i>that&#x27;s</i> where it gets difficult.<p>Show me a <i>real</i> C++ interop example. Does function, constructor and operator overloading resolve correctly? How about C++26 reflection?</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=keldaris" class="hnuser">keldaris</a>
+  </div>
+  <div class="comment-text">Out of curiosity, how does the size and performance of the generated WASM compare to just compiling the same Raylib example from the equivalent C code via Emscripten? In other words, how much overhead does the choice to use Swift add here or in general?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=acarette" class="hnuser">acarette</a>
+  </div>
+  <div class="comment-text">Thanks for sharing it!<p>I might be interested on how to build the WASM build more easier with Swift tools.
+I guess some tools exist to facilitate the final builds, but did not found it...<p>Do not hesitate to comment if someone experienced this before.</div>
+  
+</div>
+
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-24 17:12 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+

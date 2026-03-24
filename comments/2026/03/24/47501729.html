@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">253 points</span>
+        <span class="score">545 points</span>
         by <a href="https://news.ycombinator.com/user?id=theanonymousone" class="hnuser">theanonymousone</a>
-        <span class="age">3 hours ago</span>
+        <span class="age">5 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47501729.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47501729" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around a recent supply-chain attack on the LiteLLM Python package, with multiple users analyzing the origin, impact, and mitigation strategies. Contributors highlight the compromised maintainer accounts, the complexity of Python environments, and the need for better sandboxing and multi-factor authentication in package releases.</p>
+      <p>The discussion centers on a supply-chain attack involving the LiteLLM Python package, with maintainers and community members sharing technical details, mitigation strategies, and broader concerns about dependency security. Several comments highlight the attack&#39;s origin, impact, and potential defenses, while others discuss ecosystem-wide implications and best practices.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -65,18 +65,18 @@
       </div>
       <div class="comment-text">LiteLLM maintainer here, this is still an evolving situation, but here&#x27;s what we know so far:<p>1. Looks like this originated from the trivvy used in our ci&#x2F;cd - <a href="https:&#x2F;&#x2F;github.com&#x2F;search?q=repo%3ABerriAI%2Flitellm%20trivy&amp;type=code" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;search?q=repo%3ABerriAI%2Flitellm%20trivy...</a>
 <a href="https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09" rel="nofollow">https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09</a><p>2. If you&#x27;re on the proxy docker, you were not impacted. We pin our versions in the requirements.txt<p>3. The package is in quarantine on pypi - this blocks all downloads.<p>We are investigating the issue, and seeing how we can harden things. I&#x27;m sorry for this.<p>- Krrish</div>
-      <div class="comment-analysis"><em>As the maintainer, this comment provides firsthand and detailed information about the incident, including mitigation steps and ongoing investigation, making it highly reliable.</em></div>
+      <div class="comment-analysis"><em>As the maintainer, this comment provides authoritative and accurate information about the incident status and mitigation steps.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=ramimac" class="hnuser">ramimac</a>
+        <a href="https://news.ycombinator.com/user?id=abhisek" class="hnuser">abhisek</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">This is tied to the TeamPCP activity over the last few weeks. I&#x27;ve been responding, and keeping an up to date timeline. I hope it might help folks catch up and contextualize this incident:<p><a href="https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09" rel="nofollow">https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09</a></div>
-      <div class="comment-analysis"><em>Provides contextual background and a timeline linking the LiteLLM compromise to a known threat actor, adding valuable insight into the broader attack campaign.</em></div>
+      <div class="comment-text">We just analysed the payload. Technical details here: <a href="https:&#x2F;&#x2F;safedep.io&#x2F;malicious-litellm-1-82-8-analysis&#x2F;" rel="nofollow">https:&#x2F;&#x2F;safedep.io&#x2F;malicious-litellm-1-82-8-analysis&#x2F;</a><p>We are looking at similar attack vectors (pth injection), signatures etc. in other PyPI packages that we know of.</div>
+      <div class="comment-analysis"><em>This comment offers a technical analysis of the payload and broader implications, adding valuable insight into the attack vector.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -87,29 +87,29 @@
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">This looks like the same TeamPCP that compromised Trivy. Notice how the issue is full of bot replies. It was the same in Trivy’s case.<p>This threat actor seems to be very quickly capitalising on stolen credentials, wouldn’t be surprised if they’re leveraging LLMs to do the bulk of the work.</div>
-      <div class="comment-analysis"><em>Connects the LiteLLM attack to previous incidents involving the same threat actor, providing a plausible explanation for the attack pattern.</em></div>
+      <div class="comment-analysis"><em>Connects this incident to a known threat actor and notes behavioral patterns, providing useful context.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=intothemild" class="hnuser">intothemild</a>
+        <a href="https://news.ycombinator.com/user?id=syllogism" class="hnuser">syllogism</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
       </div>
-      <div class="comment-text">I just installed Harbor, and it instantly pegged my cpu.. i was lucky to see my processes before the system hard locked.<p>Basically it forkbombed `grep -r rpcuser\rpcpassword` processes trying to find cryptowallets or something. I saw that they spawned from harness, and killed it.<p>Got lucky, no backdoor installed here from what i could make out of the binary</div>
-      <div class="comment-analysis"><em>Gives a firsthand account of the malicious behavior observed, describing the payload&#39;s activity and impact on system resources.</em></div>
+      <div class="comment-text">Maintainers need to keep a wall between the package publishing and public repos. Currently what people are doing is configuring the public repo as a Trusted Publisher directly. This means you can trigger the package publication from the repo itself, and the public repo is a huge surface area.<p>Configure the CI to make a release with the artefacts attached. Then have an entirely private repo that can&#x27;t be triggered automatically as the publisher. The publisher repo fetches the artefacts and does the pypi&#x2F;npm&#x2F;whatever release.</div>
+      <div class="comment-analysis"><em>Offers practical advice on securing the publishing process, highlighting a common security weakness.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=f311a" class="hnuser">f311a</a>
+        <a href="https://news.ycombinator.com/user?id=jFriedensreich" class="hnuser">jFriedensreich</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Their previous release would be easily caught by static analysis. PTH is a novel technique.<p>Run all your new dependencies through static analysis and don&#x27;t install the latest versions.<p>I implemented static analysis for Python that detects close to 90% of such injections.<p><a href="https:&#x2F;&#x2F;github.com&#x2F;rushter&#x2F;hexora" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;rushter&#x2F;hexora</a></div>
-      <div class="comment-analysis"><em>Offers a practical security recommendation to detect malicious code using static analysis, which is a valid approach to mitigate such attacks.</em></div>
+      <div class="comment-text">We just can&#x27;t trust dependencies and dev setups. I wanted to say &quot;anymore&quot; but we never could. Dev containers were never good enough, too clumsy and too little isolation. We need to start working in full sandboxes with defence in depth that have real guardrails and UIs like vm isolation + container primitives and allow lists, egress filters, seccomp, gvisor and more but with much better usability. Its the same requirements we have for agent runtimes, lets use this momentum to make our dev environments safer! In such an environment the container would crash, we see the violations, delete it and dont&#x27; have to worry about it. We should treat this as an everyday possibility not as an isolated security incident.</div>
+      <div class="comment-analysis"><em>Provides a thoughtful perspective on improving development environment security to mitigate such attacks.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -117,54 +117,54 @@
         <a href="https://news.ycombinator.com/user?id=dec0dedab0de" class="hnuser">dec0dedab0de</a>
         &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">intelligent</span> 
       </div>
       <div class="comment-text">github, pypi, npm, homebrew, cpan, etc etc. should adopt a multi-multi-factor authentication approach for releases.   Maybe have it kick in as a requirement after X amount of monthly downloads.<p>Basically, have all releases require multi-factor auth from more than one person before they go live.<p>A single person being compromised either technically, or by being hit on the head with a wrench, should not be able to release something malicious that effects so many people.</div>
-      <div class="comment-analysis"><em>Proposes a reasonable security improvement for package release processes to reduce risk from compromised accounts.</em></div>
+      <div class="comment-analysis"><em>Suggests a reasonable security improvement to reduce risk of malicious releases by compromised maintainers.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=jFriedensreich" class="hnuser">jFriedensreich</a>
+        <a href="https://news.ycombinator.com/user?id=ramimac" class="hnuser">ramimac</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">We just can&#x27;t trust dependencies and dev setups. I wanted to say &quot;anymore&quot; but we never could. Dev containers were never good enough, too clumsy and too little isolation. We need to start working in full sandboxes with defence in depth that have real guardrails and UIs like vm isolation + container primitives and allow lists, egress filters, seccomp, gvisor and more but with much better usability. Its the same requirements we have for agent runtimes, lets use this momentum to make our dev environments safer! In such an environment the container would crash, we see the violations, delete it and dont&#x27; have to worry about it. We should treat this as an everyday possibility not as an isolated security incident.</div>
-      <div class="comment-analysis"><em>Provides a broader perspective on the security challenges in development environments and advocates for stronger sandboxing and isolation.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=rdevilla" class="hnuser">rdevilla</a>
-        &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">It will only take one agent-led compromise to get some Claude-authored underhanded C into llvm or linux or something and then we will all finally need to reflect on trusting trust at last and forevermore.</div>
-      <div class="comment-analysis"><em>Raises a valid concern about the future risks of AI-assisted supply chain compromises, highlighting the need for vigilance.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=danielvaughn" class="hnuser">danielvaughn</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">I work with security researchers, so we&#x27;ve been on this since about an hour ago. One pain I&#x27;ve really come to feel is the complexity of Python environments. They&#x27;ve always been a pain, but in an incident like this, where you need to find whether an exact version of a package has ever been installed on your machine. All I can say is good luck.<p>The Python ecosystem provides too many nooks and crannies for malware to hide in.</div>
-      <div class="comment-analysis"><em>Accurately describes the challenges in tracking malicious package versions in complex Python environments, reflecting common security difficulties.</em></div>
+      <div class="comment-text">This is tied to the TeamPCP activity over the last few weeks. I&#x27;ve been responding, and keeping an up to date timeline. I hope it might help folks catch up and contextualize this incident:<p><a href="https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09" rel="nofollow">https:&#x2F;&#x2F;ramimac.me&#x2F;trivy-teampcp&#x2F;#phase-09</a></div>
+      <div class="comment-analysis"><em>Provides a timeline and context for the attack, helping others understand the broader threat landscape.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=6thbit" class="hnuser">6thbit</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
       </div>
       <div class="comment-text">title is bit misleading.<p>The package was directly compromised, not “by supply chain attack”.<p>If you use the compromised package, your supply chain is compromised.</div>
-      <div class="comment-analysis"><em>Clarifies the nature of the attack, emphasizing that the direct compromise of the package itself constitutes a supply chain compromise.</em></div>
+      <div class="comment-analysis"><em>Clarifies terminology to improve understanding of the nature of the compromise.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=saidnooneever" class="hnuser">saidnooneever</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">just wanna state this can litterally happen to anyone within this messy package ecosystem. maintainer seems to be doing his best<p>if you have tips i am sure they are welcome. snark remarks are useless. dont be a sourpuss. if you know better, help the remediation effort.</div>
+      <div class="comment-analysis"><em>Offers a supportive perspective emphasizing the systemic nature of such risks and encouraging constructive help.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=hmokiguess" class="hnuser">hmokiguess</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">What’s the best way to identify a compromised machine? Check uv, conda, pip, venv, etc across the filesystem? Any handy script around?<p>EDIT: here&#x27;s what I did, would appreciate some sanity checking from someone who&#x27;s more familiar with Python than I am, it&#x27;s not my language of choice.<p>find &#x2F; -name &quot;litellm_init.pth&quot; -type f 2&gt;&#x2F;dev&#x2F;null<p>find &#x2F; -path &#x27;<i>&#x2F;litellm-1.82.</i>.dist-info&#x2F;METADATA&#x27; -exec grep -l &#x27;Version: 1.82.[78]&#x27; {} \; 2&gt;&#x2F;dev&#x2F;null</div>
+      <div class="comment-analysis"><em>Seeks practical advice on detection, reflecting user concerns and encouraging community support.</em></div>
     </div>
     
 
@@ -176,7 +176,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 15:14 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 17:12 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

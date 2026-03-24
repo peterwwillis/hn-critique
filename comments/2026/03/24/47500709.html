@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">22 points</span>
+        <span class="score">61 points</span>
         by <a href="https://news.ycombinator.com/user?id=realberkeaslan" class="hnuser">realberkeaslan</a>
-        <span class="age">5 hours ago</span>
+        <span class="age">7 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47500709.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47500709" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the concept of universal language representations in neural networks and their implications for language learning and computing. Commenters draw parallels between neural network layers and wavelet transformations, speculate on practical applications, and inquire about implementation and reproducibility.</p>
+      <p>The discussion centers on a recent article about language-agnostic representations in large language models (LLMs), focusing on findings that mid-layer neural network representations converge across languages and content. Commenters explore the implications of these findings for model efficiency, universal language representation, and potential applications in smaller models and human learning.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -56,68 +56,112 @@
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=yodon" class="hnuser">yodon</a>
+        <a href="https://news.ycombinator.com/user?id=dnhkng" class="hnuser">dnhkng</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">If you look at convolutional neural nets used in image processing, it&#x27;s super common for the first layer or so to learn a family of wavelet basis functions. Later layers then do recognition in wavelet space, without that space ever being explained or communicated to the training algorithm.<p>This work here is obviously more complex than that, but suggests something similar is going on with early layers transforming to some sort of generalized basis functions defining a universal language representation.</div>
-      <div class="comment-analysis"><em>This comment accurately relates known neural network behavior in image processing to the article&#39;s discussion, providing a plausible analogy that helps understand the concept of universal language representations.</em></div>
+      <div class="comment-text">Author here. Another thing I want to highlight: the language-agnostic &quot;thinking space&quot; finding came from Evan Maunder, who read Part 1 and ran an elegant experiment — same sentence in English, Mandarin, and Base64, cosine similarity at every layer. The representations converge by the early layers, stay nearly identical through the mid-stack, then diverge again at the end as the model commits to an output format.<p>I extended this to a 2×2 design (two languages × two content types) and the result is even starker: by layer 10, cross-language same-content pairs are more similar than same-language different-content pairs. The model cares about what you&#x27;re saying, not what language you&#x27;re saying it in.<p>This is also what makes layer duplication work — those mid-stack layers operate in a space where input and output distributions match, so you can loop through them without breaking anything. The encoding and decoding boundaries are where the blue walls show up in the heatmaps.</div>
+      <div class="comment-analysis"><em>As the article author, this comment provides detailed experimental evidence supporting the core findings, making it highly accurate and insightful.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=saidnooneever" class="hnuser">saidnooneever</a>
+        <a href="https://news.ycombinator.com/user?id=dnhkng" class="hnuser">dnhkng</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Author here. The result that surprised me most: after evaluating 3,024 beam search candidates, training a surrogate model on ~4,600 measurements, and scoring 2 million configurations — the Pareto-optimal configs were all simple contiguous blocks. No exotic multi-block compositions, no sparse repeats. Just &quot;repeat layers 31–33&quot; and you&#x27;re on the efficiency frontier.<p>I think this says something interesting about how transformers organise computation internally. The mid-stack reasoning circuits are coherent enough that you can loop through them twice without distribution mismatch. The encoding&#x2F;decoding boundaries are not.</div>
+      <div class="comment-analysis"><em>This comment adds important empirical results about layer repetition efficiency, reinforcing the article&#39;s claims with quantitative backing.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=yodon" class="hnuser">yodon</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">If you look at convolutional neural nets used in image processing, it&#x27;s super common for the first layer or so to learn a family of wavelet basis functions. Later layers then do recognition in wavelet space, without that space ever being explained or communicated to the training algorithm.<p>This work here is obviously more complex than that, but suggests something similar is going on with early layers transforming to some sort of generalized basis functions defining a universal language representation.</div>
+      <div class="comment-analysis"><em>This comment draws a reasonable analogy between image processing and language models, providing a thoughtful perspective consistent with known neural network behaviors.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=big_toast" class="hnuser">big_toast</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">This was a little dense for me to grok. Are these well known results or is there an abstract-like summary?<p>The RYS (repeat yourself) hypothesis that duplicating (the right) layers is enough to improve performance (sorry for not reading closely enough, it&#x27;s really just stacking the relevant layers?).<p>The ERD (encoding, reasoning, decoding) layer structure is a relatively robust observation? That the middle layers of the NN will reason in universal space, and this is kinda evidenced by cosine similarities of the hidden states at each layer given similar or dissimilar inputs. And that similar inputs converges by layer 5 and you can kinda watch that happen in the cosine similarities?<p>This post is incredible and I&#x27;m afraid it&#x27;ll drop off the front page before people engage deeply with it.</div>
+      <div class="comment-analysis"><em>This comment reflects a genuine attempt to understand complex concepts and encourages deeper engagement, though it does not add new information.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=saidnooneever" class="hnuser">saidnooneever</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-untrue</span> 
       </div>
       <div class="comment-text">it sometimes makes me think of a video at some point of a guy (Daniel Tammet) who had some brain difference,which caused him to be extremely fast at language learning. He said all language carries the same patterns for him, which he sees through synestesia or whatever.<p>he learnt icelandic in week and had a fluent conversation on their national TV to prove it. (this is nuts, that language is extremely difficult to pickup with nasal sounds etc.)<p>ofcourse i guess its not even close to average to have such a abilities as a human, but i wonder if at some point LLMs and AI algorithms and models might shed light on such kind of abstractions (like some mentioned in comments also about image recognition algos)  that might help humans actually learn these things themselves, train on them and perhaps even get taught such a thing as a skill.</div>
-      <div class="comment-analysis"><em>The comment provides an interesting real-world example related to language learning and cognitive differences, drawing a thoughtful parallel to AI models, though it is more speculative and anecdotal.</em></div>
+      <div class="comment-analysis"><em>While an interesting analogy, this comment is speculative and anthropomorphizes LLM capabilities beyond current evidence.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=vibe42" class="hnuser">vibe42</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This is orthogonal to quantisation. Could have big impact on smaller models in the 4B-14B range where people often try specific quants and context sizes to fit into the VRAM of a laptop&#x2F;desktop GPU.</div>
+      <div class="comment-analysis"><em>This comment insightfully connects the research to practical implications for smaller model deployment, though it is brief.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=yodon" class="hnuser">yodon</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">Apologies if I missed this in the article (or in the first article in the series) - what happens if you add two copies of the layer set? Does performance improve over adding one copy of the layer set?</div>
+      <div class="comment-analysis"><em>A relevant clarifying question that could prompt deeper exploration but does not provide analysis or evidence itself.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=lostmsu" class="hnuser">lostmsu</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">intelligent</span> 
+        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">How&#x27;s the reproducibility of the results? Like avg score of 10 runs vs original.</div>
-      <div class="comment-analysis"><em>This comment raises a valid and important question about experimental reproducibility, which is crucial for validating the claims made in the article.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=yodon" class="hnuser">yodon</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Apologies if I missed this in the article (or in the first article in the series) - what happens if you add two copies of the layer set? Does performance improve over adding one copy of the layer set?</div>
-      <div class="comment-analysis"><em>This comment asks a technical question that could clarify the architecture&#39;s behavior, showing engagement with the material, though it does not provide information itself.</em></div>
+      <div class="comment-analysis"><em>A valid concern regarding experimental rigor, though no response or data is provided in the thread.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=JPLeRouzic" class="hnuser">JPLeRouzic</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">intelligent</span> 
+        <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">Has anyone started to implement this technique in Llama.cpp or similar inference tool?</div>
-      <div class="comment-analysis"><em>The comment is a practical inquiry about implementation, relevant to practitioners interested in applying the discussed techniques.</em></div>
+      <div class="comment-analysis"><em>A practical question about adoption and implementation, but without further context or evidence.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=_lex" class="hnuser">_lex</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-untrue</span> <span class="indicator">trolling</span> 
+        <span class="indicator">emotional</span> <span class="indicator">trolling</span> <span class="indicator">likely-untrue</span> 
       </div>
       <div class="comment-text">We&#x27;ve discovered the language. It changes the economics of computing.<p>As in, this entire cloud buildout is unnecessary because it becomes like using a calculator.<p>Reach out to chat.</div>
-      <div class="comment-analysis"><em>This comment is overly speculative and hyperbolic, lacking supporting evidence and potentially misleading about the impact of the findings.</em></div>
+      <div class="comment-analysis"><em>This comment is hyperbolic and speculative, lacking evidence and veering towards sensationalism.</em></div>
     </div>
     
 
@@ -129,7 +173,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 15:14 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 17:12 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
