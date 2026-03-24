@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">74 points</span>
+        <span class="score">122 points</span>
         by <a href="https://news.ycombinator.com/user?id=emschwartz" class="hnuser">emschwartz</a>
-        <span class="age">8 hours ago</span>
+        <span class="age">11 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/23/47490648.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47490648" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around Rust&#39;s coherence and orphan rules, with some commenters defending these rules for ecosystem quality, while others criticize them for limiting flexibility and complicating dependency management. There is also debate about workarounds like wrapper types and the broader implications of open source package maintenance.</p>
+      <p>The discussion centers on Rust&#39;s coherence and orphan rules, with participants debating their impact on the language&#39;s usability and ecosystem. Some express concern about Rust&#39;s complexity and rigidity compared to other languages like Scala, while others defend these rules as necessary for ecosystem quality and avoiding conflicts.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -66,13 +66,28 @@
 And you want to define a custom serialization. In this case, you can write:<p><pre><code>    pub struct TypeWithDifferentSerialization(TypeWithSomeSerialization)
 </code></pre>
 Then you just implement Serialize and Deserialize for  TypeWithDifferentSerialization.<p>This cover most occasional cases where you need to work around the orphan rule. And semantically, it&#x27;s pretty reasonable: If a type <i>behaves</i> differently, then it really isn&#x27;t the same type.<p>The alternative is to have a situation where you have library A define a data type, library B define an interface, and library C implement the interface from B for the type from A. Very few languages actually allow this, because you run into the problem where library D tries to do the same thing library C did, but does it differently. There are workarounds, but they add complexity and confusion, which may not be worth it.</div>
-      <div class="comment-analysis"><em>This comment accurately explains a common and practical technique to work around the orphan rule in Rust, providing a clear and thoughtful perspective.</em></div>
+      <div class="comment-analysis"><em>This comment accurately describes a common and practical workaround for Rust&#39;s orphan rule, providing a clear explanation of how to handle serialization conflicts.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=amluto" class="hnuser">amluto</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I’m not convinced that the problem is actually a problem. Suppose someone writes a type PairOfNumbers with a couple fields.  The author did not define a serialization. You use it in another type and want it to serialize it as:<p><pre><code>    { &quot;a&quot;: 1, &quot;b&quot;: 2 }
+</code></pre>
+I use it and want to serialize it as:<p><pre><code>    [ 1, 2 ]
+</code></pre>
+What we’re doing is fine. You should get your serialization and I should get mine. But if either of us declares, process-wide, that one of us has determined the One True Serialization of PairOfInts, I think we are <i>wrong</i>.<p>Sure, maybe current Rust and current serde make it awkward to declare non-global serializers, but that doesn’t mean that coherence is a mistake.</div>
+      <div class="comment-analysis"><em>The comment thoughtfully argues that global coherence in serialization is problematic, supporting the rationale behind Rust&#39;s coherence rules despite some awkwardness.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=Animats" class="hnuser">Animats</a>
-        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
       </div>
@@ -80,62 +95,137 @@ Then you just implement Serialize and Deserialize for  TypeWithDifferentSerializ
 The first approach means that there will be confrontations which must be resolved. The second means a proliferation of very similar packages.<p>This is part of the life cycle of an open source language. Early on, you don&#x27;t have enough packages to get anything done, and are grateful that someone took the time to code something.
 Then it becomes clear that the early packages lacked something, and additional packages appear. Over time, you&#x27;re drowning in cruft. In a previous posting, I mentioned ten years of getting a single standard ISO 8601 date parser adopted, instead of six packages with different bugs.
 Someone else went through the same exercise with Javascript.<p>Go tends to take the first approach, while Python takes the second. One of Go&#x27;s strengths is that most of the core packages are maintained and used internally by Google. So you know they&#x27;ve been well-exercised.<p>Between Github and AI, it&#x27;s all too easy to create minor variants of packages. Plus we now have package supply chain attacks. Curation has thus become more important. At this point in history, it&#x27;s probably good to push towards the first approach.</div>
-      <div class="comment-analysis"><em>Provides a nuanced view on the social and technical challenges in open source ecosystems, highlighting trade-offs relevant to Rust&#39;s package management.</em></div>
+      <div class="comment-analysis"><em>This comment insightfully frames the technical challenges as social issues in open source, highlighting the trade-offs between governance and technical workarounds.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=dathinab" class="hnuser">dathinab</a>
-        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">This isn&#x27;t a new discussion it was there around the early rust days too.<p>And IMHO coherence and orphan rules have majorly contributed to the quality of the eco system.</div>
-      <div class="comment-analysis"><em>Offers a valid historical perspective emphasizing the positive impact of these rules on Rust&#39;s ecosystem quality.</em></div>
+      <div class="comment-analysis"><em>The comment correctly notes the historical context and defends coherence and orphan rules as beneficial for ecosystem quality.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=mbo" class="hnuser">mbo</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I never understood why Rust couldn&#x27;t figure this shit out. Scala did.<p>&gt; If a crate doesn’t implement serde’s traits for its types then those types can’t be used with serde as downstream crates cannot implement serde’s traits for another crate’s types.<p>You are allowed to do this in Scala.<p>&gt; Worse yet, if someone publishes an alternative to serde (say, nextserde) then all crates which have added support for serde also need to add support for nextserde. Adding support for every new serialization library in existence is unrealistic and a lot of work for crate authors.<p>You can easily autoderive a new typeclass instance. With Scala 3, that would be:<p><pre><code>  trait Hash[A]:
+    extension (a: A) def hash: Int
+
+  trait PrettyPrint[A]:
+    extension (a: A) def pretty: String
+
+  &#x2F;&#x2F; If you have Hash for A, you automatically get PrettyPrint for A
+  given autoDerive[A](using h: Hash[A]): PrettyPrint[A] with
+    extension (a: A) def pretty: String = s&quot;&lt;#${a.hash.toHexString}&gt;&quot;
+</code></pre>
+&gt; Here we have two overlapping trait impls which specify different values for the associated type Assoc.<p><pre><code>  trait Trait[A]:
+    type Assoc
+
+  object A:
+    given instance: Trait[Unit] with
+      type Assoc = Long
+
+    def makeAssoc: instance.Assoc = 0L
+
+  object B:
+    given instance: Trait[Unit] with
+      type Assoc = String
+
+    def dropAssoc(a: instance.Assoc): Unit =
+      val s: String = a
+      println(s.length)
+
+  @main def entry(): Unit =
+    B.dropAssoc(A.makeAssoc) &#x2F;&#x2F; Found: Playground.A.instance.Assoc Required: Playground.B.instance².Assoc²
+
+</code></pre>
+Scala catches this too.</div>
+      <div class="comment-analysis"><em>The comment provides a comparative perspective with Scala, accurately describing Scala&#39;s more flexible typeclass system and the challenges Rust faces with multiple serialization libraries.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=kelnos" class="hnuser">kelnos</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This is one of the (several?) things that make me very worried about Rust long-term.  I love the language, and reach for it even when it sometimes isn&#x27;t the most appropriate thing.  But reading some of the made-up syntax in the &quot;Removing Coherence&quot; section makes my head hurt.<p>When I used to write Scala, I accepted the fact that I don&#x27;t have a background in type&#x2F;set&#x2F;etc. theory, and that there were some facets of the language that I&#x27;d probably never understand, and some code that others had written that I&#x27;d probably never understand.<p>With a language like Rust, I feel like we&#x27;re getting there.  Certain GAT syntxes sometimes take some time for me to wrap my head around when I encounter them.  Rust feels like it shouldn&#x27;t be a language where you need to have some serious credentials to be able to understand all its features and syntax.<p>On the other end we have Go, which was explicitly designed to be easy to learn (and, unrelatedly, I don&#x27;t like for quite a few reasons).  But I was hoping that we could have a middle ground here, and that Rust could be a fully-graspable systems-level language.<p>Then again, for more comparison, I haven&#x27;t used C++ since before they added lambdas.  I wonder if C++ has some hairy concepts and syntax today on par with Rust&#x27;s more difficult parts.</div>
+      <div class="comment-analysis"><em>The comment expresses a valid concern about Rust&#39;s complexity and accessibility, reflecting a common sentiment among users about the language&#39;s learning curve.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=mastax" class="hnuser">mastax</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Language changes could help for sure. There’s a library implementation we can use right now though: <a href="https:&#x2F;&#x2F;facet.rs&#x2F;" rel="nofollow">https:&#x2F;&#x2F;facet.rs&#x2F;</a> Basically a derive macro for reflection. Yeah it’s one (more) trait to derive on all your types but then users can use that to do reflection or pretty printing or diffing or whatever they want.</div>
+      <div class="comment-analysis"><em>This comment constructively suggests an existing tool to address some limitations, providing a practical resource for users.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=egorelik" class="hnuser">egorelik</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Similar but not exactly the same as named impls, I&#x27;d really like to see a language handle this by separating implementing a trait from making a particular existing implementation the implicit default. Orphan rules can apply to the latter, but can be overriden in a local scope by any choice of implementation.<p>This is largely based on a paper I read a long time ago on how one might build a typeclass&#x2F;trait system on top of an ML-style module system. But, I suspect such a setup can be beneficial even without the full module system.</div>
+      <div class="comment-analysis"><em>The comment proposes an interesting theoretical approach to trait coherence, though it remains speculative and not currently implemented in Rust.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=nmilo" class="hnuser">nmilo</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">belligerent</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">emotional</span> <span class="indicator">belligerent</span> 
       </div>
       <div class="comment-text">I will never stop hating on the orphan rule, a perfect summary of what’s behind a lot of rust decisions. Purism and perfectionism at the cost of making a useful language, no better way to torpedo your ecosystem and make adding dependencies really annoying for no reason. Like not even a —dangerously-disable-the-orphan-rule, just no concessions here.</div>
-      <div class="comment-analysis"><em>Expresses a strongly negative opinion that is common among some Rust users, though somewhat subjective and lacking constructive alternatives.</em></div>
+      <div class="comment-analysis"><em>While expressing a strong opinion against the orphan rule, the comment lacks nuance and constructive suggestions, reducing its analytical value.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=nixpulvis" class="hnuser">nixpulvis</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> 
       </div>
       <div class="comment-text">I don&#x27;t think explicit naming of impls is wise. They will regularly be TraitImpl or similar and add no real value. If you want to distinguish traits, perhaps force them to be within separate modules and use mod_a::mod_b::&lt;Trait for Type&gt; syntax.<p>&gt; An interesting outcome of removing coherence and having trait bound parameters is that there becomes a meaningful difference between having a trait bound on an impl or on a struct:<p>This seems unfortunate to me.</div>
-      <div class="comment-analysis"><em>Raises a reasonable design critique about trait implementation naming and coherence, though more technical detail would strengthen the argument.</em></div>
+      <div class="comment-analysis"><em>The comment offers a critical view on a proposed language feature, providing a reasonable argument about naming conventions and modular organization.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=faresahmed" class="hnuser">faresahmed</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Take a look at <a href="https:&#x2F;&#x2F;contextgeneric.dev" rel="nofollow">https:&#x2F;&#x2F;contextgeneric.dev</a>, it&#x27;s as close as one can get to solving this issue without modifying rustc.</div>
+      <div class="comment-analysis"><em>This comment provides a helpful pointer to a relevant project addressing the discussed problem, adding practical value.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=grougnax" class="hnuser">grougnax</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #12
         &nbsp;|&nbsp;
         <span class="indicator">belligerent</span> 
       </div>
       <div class="comment-text">If you think Rust has problems, it is that you&#x27;ve have not understood well Rust.</div>
-      <div class="comment-analysis"><em>Dismissive comment that adds little substantive value and does not engage with the discussion meaningfully.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=kelnos" class="hnuser">kelnos</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">useless</span> 
-      </div>
-      <div class="comment-text">[delayed]</div>
-      <div class="comment-analysis"><em>No content provided, thus no contribution to the discussion.</em></div>
+      <div class="comment-analysis"><em>This dismissive comment adds little constructive insight and comes across as confrontational rather than analytical.</em></div>
     </div>
     
 
@@ -147,7 +237,7 @@ Someone else went through the same exercise with Javascript.<p>Go tends to take 
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-23 22:44 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 02:00 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

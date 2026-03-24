@@ -25,33 +25,19 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the complexity of finding all regex matches, particularly the quadratic time behavior in pathological cases. Commenters debate practical implications, theoretical edge cases, and possible mitigations like restricting regex features or sandboxing execution.",
+    "summary": "The discussion revolves around the inherent quadratic time complexity in finding all regex matches, especially with overlapping matches and backtracking. Commenters share insights on different regex engine implementations, practical regex usage, and possible mitigations like sandboxing or restricting features.",
     "comments": [
-      {
-        "id": 47494694,
-        "author": "zahlman",
-        "text": "\u0026gt; search a document for a pattern and it takes a second. search one a hundred times larger and it doesn\u0026#x27;t take a hundred seconds - it can take almost three hours.\u003cp\u003eMost of this is about quadratic time find-all operations where a search operation is linear. But it\u0026#x27;s also still possible to get quadratic behaviour out of a single search without catastrophic backtracking, more easily than you might expect. In late January to early February, Tim Peters was talking about an example of this on the Python forums (see e.g. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;add-re-prefixmatch-deprecate-re-match\u0026#x2F;105927\u0026#x2F;9\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;add-re-prefixmatch-deprecate-re...\u003c/a\u003e) and also related the experience of trying to diagnose the issue with AI (see \u003ca href=\"https:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;claude-code-how-much-hype-how-much-true-wizardry\u0026#x2F;105985\u0026#x2F;28\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;claude-code-how-much-hype-how-m...\u003c/a\u003e and onward). Peters\u0026#x27; example was:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  \\d+\\s+\n\u003c/code\u003e\u003c/pre\u003e\non a string containing only digits, a prefix match takes O(n) time as it considers every possible end position for the digit, and immediately sees no following whitespace. But the search is quadratic because it has to repeat that O(n) work at every position; the regex engine can\u0026#x27;t track the fact that it\u0026#x27;s already examined the string and found no whitespace, so it re-tries each digit match length.\u003cp\u003e(This is arguably \u0026quot;backtracking\u0026quot; since it tries the longest match first, but clearly not in a catastrophic way; if you use `\\d+?` instead then of course it only searches forward but is still O(n). It actually is slower in my testing in the Python implementation; I don\u0026#x27;t exactly know why. As noted in the discussion, the possessive quantifier `\\d++` is considerably faster, and of course doesn\u0026#x27;t backtrack, but still causes O(n^2) searching. The repeated attempts to match `\\s+` aren\u0026#x27;t the problem; the problem is repeatedly looking for \u003ci\u003edigits\u003c/i\u003e in places where digits were already found and rejected.)\u003cp\u003eThe way to fix this proposed in the discussion is to use a negative lookbehind assertion before the digits: `(?\u0026lt;!\\d)\\d+\\s+`. This way, the regex engine can bail out early when it\u0026#x27;s in the middle of a digit string; if the previous character was a digit, then either `\\d+\\s+` doesn\u0026#x27;t match here, or it would have matched there.\u003cp\u003eA simpler idea is to just search for `\\d\\s+`, or even `\\d\\s` — since these will be present if and only if `\\d+\\s+` is. This way, though, you still need to do extra work with the partial match to identify the start and end of the full match. My first idea was to use \u003ci\u003epositive\u003c/i\u003e lookbehind for the digits, since the lookbehind match doesn\u0026#x27;t need to backtrack. In fact lookbehinds require a fixed-length pattern, so this is really just a more complicated way to do the `\\d\\s+` simplification.\u003cp\u003e----\u003cp\u003e\u0026gt; Hyperscan (and its fork Vectorscan) is a true linear-time all-matches regex engine. it achieves this by using \u0026quot;earliest match\u0026quot; semantics - reporting a match the moment the DFA enters a match state, instead of continuing to find the longest one.\u003cp\u003eIs this not just equivalent to forcing \u0026quot;reluctant\u0026quot; quantifiers (`\\d+?`) everywhere?",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment provides a detailed, accurate explanation of how quadratic behavior arises even without catastrophic backtracking, supported by real examples and proposed fixes."
-      },
       {
         "id": 47495045,
         "author": "10000truths",
         "text": "Restricting regex features to guarantee time complexity \u003ci\u003eworks\u003c/i\u003e, but it requires sacrificing potentially useful features like backtracking (or in the article\u0026#x27;s case, constraining oneself to fixed-upper-bound-length needles).\u003cp\u003eIn a real-world deployment where you want to run any arbitrary regex in an idiot\u0026#x2F;malice-proof manner, the best solution is the same solution you\u0026#x27;d use for running any other kind of untrusted code - sandbox it! A good regex API should limit its execution time and memory consumption and return a timeout error in case those limits are exceeded. Ideally, those parameters would be configurable at the API level. Unfortunately, the only regex libraries I know of that get this right are .NET\u0026#x27;s standard library Regex API and the third-party regex package in Python.",
         "indicators": [
-          "intelligent",
           "thoughtful",
-          "likely-true",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
-        "accuracyRank": 2,
-        "analysis": "This comment offers a practical approach to handling arbitrary regex safely by sandboxing, which is a well-known and effective strategy in real-world systems."
+        "accuracyRank": 1,
+        "analysis": "This comment accurately highlights the trade-offs between feature richness and guaranteed performance, and suggests a practical approach used in real-world systems."
       },
       {
         "id": 47494954,
@@ -60,24 +46,67 @@
         "indicators": [
           "intelligent",
           "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 2,
+        "analysis": "The comment provides a nuanced view that many real-world regexes avoid pathological cases by design, making the worst-case quadratic behavior less common in practice."
+      },
+      {
+        "id": 47496304,
+        "author": "conartist6",
+        "text": "@ievev Have you ever seen an implementation like @bablr\u0026#x2F;regex? \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bablr-lang\u0026#x2F;regex-vm\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;bablr-lang\u0026#x2F;regex-vm\u003c/a\u003e It\u0026#x27;s an NFA system so it isn\u0026#x27;t going to be winning any awards for throughput, but in this particular case it does seem to completely avoid the complexity blowup. It \u003ci\u003ewill\u003c/i\u003e run your heap out of memory though on really big inputs.\u003cp\u003eThe strategy this engine uses is just to evolve the state as a function of time. A match can be successfully completed, yet not be emitted because some other longer match could still supercede it by being longer or more leftmost.\u003cp\u003eI tried the pattern \u0026#x2F;d+s+\u0026#x2F;g on 10,000,000 digits followed by no space. It took 4 seconds to return no results. I tried it on 20,000,000 digits followed by no space. It took 8 seconds to return no results. I tried on 100,000,000 and I ran out of heap space.\u003cp\u003eTest setup: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;conartist6\u0026#x2F;051838025af1e04d966e03aa95147b7e\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;conartist6\u0026#x2F;051838025af1e04d966e03aa9...\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "This comment insightfully distinguishes practical regex usage from theoretical worst cases, emphasizing heuristics that avoid pathological performance."
+        "analysis": "This comment shares concrete experimental data and a specific engine implementation that partially addresses the problem, adding valuable practical insight."
       },
       {
-        "id": 47495586,
-        "author": "ogogmad",
-        "text": "Here\u0026#x27;s an NFA method that takes O(mn) time and (in the worst case) O(mn) memory:\u003cp\u003eBegin with the regex R. Form the NFA \u0026quot;A\u0026quot; of \u0026#x2F;.*R\u0026#x2F;. Run A over a string, marking the set of locations \u0026quot;MatchEnds\u0026quot; where any of A\u0026#x27;s states is accepting. Then form the NFA A\u0026#x27; of the regex which matches the REVERSE of any string matched by R. Now run A\u0026#x27; on the reversed string, but:\u003cp\u003e- A\u0026#x27; should start in an EMPTY SET OF STATES\u003cp\u003e- A\u0026#x27; should only go into its entry states every time it enters a location in MatchEnds.\u003cp\u003e- Furthermore, have each state of A\u0026#x27; house a subset of MatchEnds, which gets ferried along any state transition.\u003cp\u003e- For each accepting state of A\u0026#x27; and reversed string location i, make a record of which subset of MatchEnds is in the accepting state.",
+        "id": 47494694,
+        "author": "zahlman",
+        "text": "\u0026gt; search a document for a pattern and it takes a second. search one a hundred times larger and it doesn\u0026#x27;t take a hundred seconds - it can take almost three hours.\u003cp\u003eMost of this is about quadratic time find-all operations where a search operation is linear. But it\u0026#x27;s also still possible to get quadratic behaviour out of a single search without catastrophic backtracking, more easily than you might expect. In late January to early February, Tim Peters was talking about an example of this on the Python forums (see e.g. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;add-re-prefixmatch-deprecate-re-match\u0026#x2F;105927\u0026#x2F;9\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;add-re-prefixmatch-deprecate-re...\u003c/a\u003e) and also related the experience of trying to diagnose the issue with AI (see \u003ca href=\"https:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;claude-code-how-much-hype-how-much-true-wizardry\u0026#x2F;105985\u0026#x2F;28\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;discuss.python.org\u0026#x2F;t\u0026#x2F;claude-code-how-much-hype-how-m...\u003c/a\u003e and onward). Peters\u0026#x27; example was:\u003cp\u003e\u003cpre\u003e\u003ccode\u003e  \\d+\\s+\n\u003c/code\u003e\u003c/pre\u003e\non a string containing only digits, a prefix match takes O(n) time as it considers every possible end position for the digit, and immediately sees no following whitespace. But the search is quadratic because it has to repeat that O(n) work at every position; the regex engine can\u0026#x27;t track the fact that it\u0026#x27;s already examined the string and found no whitespace, so it re-tries each digit match length.\u003cp\u003e(This is arguably \u0026quot;backtracking\u0026quot; since it tries the longest match first, but clearly not in a catastrophic way; if you use `\\d+?` instead then of course it only searches forward but is still O(n). It actually is slower in my testing in the Python implementation; I don\u0026#x27;t exactly know why. As noted in the discussion, the possessive quantifier `\\d++` is considerably faster, and of course doesn\u0026#x27;t backtrack, but still causes O(n^2) searching. The repeated attempts to match `\\s+` aren\u0026#x27;t the problem; the problem is repeatedly looking for \u003ci\u003edigits\u003c/i\u003e in places where digits were already found and rejected.)\u003cp\u003eThe way to fix this proposed in the discussion is to use a negative lookbehind assertion before the digits: `(?\u0026lt;!\\d)\\d+\\s+`. This way, the regex engine can bail out early when it\u0026#x27;s in the middle of a digit string; if the previous character was a digit, then either `\\d+\\s+` doesn\u0026#x27;t match here, or it would have matched there.\u003cp\u003eA simpler idea is to just search for `\\d\\s+`, or even `\\d\\s` — since these will be present if and only if `\\d+\\s+` is. This way, though, you still need to do extra work with the partial match to identify the start and end of the full match. My first idea was to use \u003ci\u003epositive\u003c/i\u003e lookbehind for the digits, since the lookbehind match doesn\u0026#x27;t need to backtrack. In fact lookbehinds require a fixed-length pattern, so this is really just a more complicated way to do the `\\d\\s+` simplification.\u003cp\u003e----\u003cp\u003e\u0026gt; Hyperscan (and its fork Vectorscan) is a true linear-time all-matches regex engine. it achieves this by using \u0026quot;earliest match\u0026quot; semantics - reporting a match the moment the DFA enters a match state, instead of continuing to find the longest one.\u003cp\u003eIs this not just equivalent to forcing \u0026quot;reluctant\u0026quot; quantifiers (`\\d+?`) everywhere?",
         "indicators": [
           "intelligent",
           "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "The comment provides a detailed example and explanation of subtle sources of quadratic complexity, enhancing understanding of the problem's nuances."
+      },
+      {
+        "id": 47497176,
+        "author": "uwais12",
+        "text": "This is a great writeup. The fact that this has been hiding in plain sight for so long is wild. Most people assume regex engines are well-optimized at this point, but the overlapping match case is genuinely tricky to handle without quadratic behavior. The Thompson NFA approach mentioned at the end seems like the right direction but I can see why nobody\u0026#x27;s prioritized it when most real-world patterns don\u0026#x27;t hit this case.",
+        "indicators": [
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 5,
+        "analysis": "This comment acknowledges the difficulty of the problem and the promise of known theoretical approaches, reflecting a balanced perspective."
+      },
+      {
+        "id": 47497301,
+        "author": "ummonk",
+        "text": "Great stuff.\u003cp\u003eI would argue that hardened mode should be default though, similar to how siphash is the default hashing function in Rust hash maps. Faster mode should be opt in if the user is confident that the supplied data is nonmalicious and they need the speed up.",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "The suggestion to prioritize safety by default is reasonable and aligns with best practices in security-sensitive software design."
+      },
+      {
+        "id": 47496480,
+        "author": "nitely",
+        "text": "FWIW, nim-regex does achieve linear time in the rebar test[0], even if the regex includes capture groups. It\u0026#x27;s NFA based.\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;BurntSushi\u0026#x2F;rebar\u0026#x2F;pull\u0026#x2F;20#issuecomment-2562996491\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;BurntSushi\u0026#x2F;rebar\u0026#x2F;pull\u0026#x2F;20#issuecomment-256...\u003c/a\u003e",
+        "indicators": [
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment proposes a technical approach to improve regex matching efficiency, showing deep understanding though it is more complex and less accessible."
+        "accuracyRank": 7,
+        "analysis": "This comment provides a counterexample to the quadratic claim, though it lacks detailed explanation, making it less informative than others."
       },
       {
         "id": 47495514,
@@ -85,33 +114,40 @@
         "text": "\u0026gt; the problem we\u0026#x27;re talking about in this post (finding all longest matches without quadratic blowup)\u003cp\u003eWait, what? I thought this was about finding all matches. With a minor tweak to the opening example:\u003cp\u003e\u003ci\u003eWe want to match `(.*a | b)` against `bbbbbabbbbb`.\u003c/i\u003e\u003cp\u003eI want to detect each `b` individually, and I also want to detect `bbbbba`, `bbbba`, `bbba`, `bba`, `ba`, and `a`. That\u0026#x27;s what it means to find all matches.",
         "indicators": [
           "thoughtful",
-          "likely-true"
+          "intelligent"
         ],
-        "accuracyRank": 5,
-        "analysis": "This comment clarifies the scope of the problem discussed, emphasizing the difference between finding all matches versus longest matches, which is important for understanding the article."
-      },
-      {
-        "id": 47494359,
-        "author": "adzm",
-        "text": "Is there any reason that RE#\u0026#x27;s two-pass approach couldn\u0026#x27;t be adopted by other regex engines?\u003cp\u003eAh, there is a post with more detail about RE# and discussion here recently that I must have missed: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\u003c/a\u003e",
-        "indicators": [
-          "thoughtful",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment raises a constructive question about applying a known technique from one regex engine to others, encouraging further exploration."
+        "accuracyRank": 8,
+        "analysis": "This comment correctly points out the difference between finding all matches and longest matches, clarifying the problem scope."
       },
       {
         "id": 47495808,
         "author": "gpvos",
         "text": "I find it weird to have the Perl innovation (?:...) be called \u0026quot;traditional regex\u0026quot;. Perl was rather innovative back then, even if it\u0026#x27;s more than 30 years ago now. Traditional regex is what came before it (grep -E being the most advanced form). I wonder what counts as nontraditional in the author\u0026#x27;s eyes.",
         "indicators": [
-          "thoughtful",
-          "likely-true"
+          "intelligent"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment provides historical context on regex terminology, correcting a potential misconception about what 'traditional regex' means."
+        "accuracyRank": 9,
+        "analysis": "This is a minor historical correction that adds context but does not impact the main technical discussion."
+      },
+      {
+        "id": 47494359,
+        "author": "adzm",
+        "text": "Is there any reason that RE#\u0026#x27;s two-pass approach couldn\u0026#x27;t be adopted by other regex engines?\u003cp\u003eAh, there is a post with more detail about RE# and discussion here recently that I must have missed: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47206647\u003c/a\u003e",
+        "indicators": [
+          "constructive"
+        ],
+        "accuracyRank": 10,
+        "analysis": "This comment raises a relevant question and provides a resource, but does not provide direct analysis or evidence."
+      },
+      {
+        "id": 47496903,
+        "author": "babelfish",
+        "text": "Cursor just wrote a great blog post on this - \u0026quot;Fast regex search: indexing text for agent tools\u0026quot; \u003ca href=\"https:\u0026#x2F;\u0026#x2F;cursor.com\u0026#x2F;blog\u0026#x2F;fast-regex-search\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;cursor.com\u0026#x2F;blog\u0026#x2F;fast-regex-search\u003c/a\u003e",
+        "indicators": [
+          "constructive"
+        ],
+        "accuracyRank": 11,
+        "analysis": "This comment provides a useful reference but lacks substantive analysis or critique."
       }
     ]
   }
