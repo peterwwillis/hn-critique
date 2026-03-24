@@ -22,7 +22,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the practicality and performance implications of Hypura, an LLM inference scheduler for Apple Silicon, with users debating its speed, memory management strategies, and comparisons to existing solutions like OS paging and mmap. Some commenters highlight the potential benefits for batch processing despite slow token generation, while others question claims about model sizes and the effectiveness of prediction techniques.",
+    "summary": "The discussion centers on the Hypura project for LLM inference on Apple Silicon, focusing on model comparisons, NVMe bandwidth challenges, and the efficiency of memory management strategies like smart caching versus OS paging. Participants debate the practicality of running large models locally, the impact of MoE architectures on access patterns, and the trade-offs between throughput and latency.",
     "comments": [
       {
         "id": 47506170,
@@ -35,7 +35,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a detailed and technically sound explanation of why Hypura's approach outperforms default OS paging, emphasizing deterministic access patterns and domain-specific caching."
+        "analysis": "This comment provides a detailed and technically sound explanation of why Hypura's approach outperforms default OS paging by leveraging deterministic access patterns for prefetching."
       },
       {
         "id": 47506320,
@@ -48,32 +48,44 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment raises valid concerns about hardware limitations and access patterns affecting performance, providing realistic bandwidth figures and implications for interactive vs batch use."
+        "analysis": "This comment accurately highlights the critical bottleneck of NVMe bandwidth and the difference between sequential and random reads, which is central to Hypura's performance considerations."
       },
       {
-        "id": 47506283,
-        "author": "amelius",
-        "text": "This is \u0026lt;1 tok\u0026#x2F;s for the 40GB model.\u003cp\u003eCome on, \u0026quot;Run\u0026quot; is not the right word. \u0026quot;Crawl\u0026quot; is.\u003cp\u003eHeadlines like that are misleading.",
+        "id": 47508100,
+        "author": "shubhamintech",
+        "text": "The MoE point matters here ie sparse activation means you\u0026#x27;re not reading all 2TB per forward pass, but the access pattern flips from sequential to random which is exactly the worst case for NVMe. Been thinking about this a lot for agent inference workloads where you want consistent latency more than peak throughput.",
         "indicators": [
-          "emotional",
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "The comment critiques the marketing language used to describe performance, offering a realistic perspective on the slow token generation speed."
+        "analysis": "The comment correctly points out the trade-off in MoE models between reduced data read and increased random access, which negatively impacts NVMe throughput and latency."
+      },
+      {
+        "id": 47508390,
+        "author": "simonw",
+        "text": "Suggestion for the maintainers: the comparison table currently lists some pretty old models, Qwen 2.5 14B and Mixtral 8x7B and Llama 3.3 70B.\u003cp\u003eA lot of people are reporting incredible results with the Qwen 3.5 MoE models on Apple hardware right now (streaming experts - see \u003ca href=\"https:\u0026#x2F;\u0026#x2F;simonwillison.net\u0026#x2F;2026\u0026#x2F;Mar\u0026#x2F;24\u0026#x2F;streaming-experts\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;simonwillison.net\u0026#x2F;2026\u0026#x2F;Mar\u0026#x2F;24\u0026#x2F;streaming-experts\u0026#x2F;\u003c/a\u003e) - it would be great to get some of those models into that table.\u003cp\u003eMaybe the 1T parameter Kimi K2.5 too if you can get that to work, see \u003ca href=\"https:\u0026#x2F;\u0026#x2F;twitter.com\u0026#x2F;seikixtc\u0026#x2F;status\u0026#x2F;2036246162936910322\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;twitter.com\u0026#x2F;seikixtc\u0026#x2F;status\u0026#x2F;2036246162936910322\u003c/a\u003e and \u003ca href=\"https:\u0026#x2F;\u0026#x2F;twitter.com\u0026#x2F;danpacary\u0026#x2F;status\u0026#x2F;2036480556045836603\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;twitter.com\u0026#x2F;danpacary\u0026#x2F;status\u0026#x2F;2036480556045836603\u003c/a\u003e",
+        "indicators": [
+          "thoughtful",
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "This is a constructive suggestion to improve the project by including more recent and relevant models, enhancing the usefulness of the comparison table."
       },
       {
         "id": 47506212,
         "author": "EnPissant",
         "text": "You do not provide any comparison to llama.cpp with mmap.\u003cp\u003eYou do not explain how any kind of predictor can work for MoE experts.\u003cp\u003eYou do not explain how prediction can even be useful. I can predict the layers used in a dense model (all of them are used in order), but that doesn\u0026#x27;t help me much. It\u0026#x27;s still bottlenecked on bandwidth (hint: MoE doesn\u0026#x27;t change this).",
         "indicators": [
-          "intelligent",
           "thoughtful",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
-        "accuracyRank": 4,
-        "analysis": "This comment points out gaps in the original project's explanation, especially regarding prediction mechanisms and comparisons to existing mmap implementations, highlighting important technical considerations."
+        "accuracyRank": 5,
+        "analysis": "Raises valid points about missing comparisons and explanations, highlighting potential gaps in the project's documentation or approach."
       },
       {
         "id": 47505632,
@@ -84,42 +96,20 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 5,
-        "analysis": "The analogy to swap memory is apt, and the concern about NVMe wear is a practical consideration, making this a balanced and reasonable comment."
-      },
-      {
-        "id": 47505475,
-        "author": "marksully",
-        "text": "Where does \u0026quot;1T parameter model\u0026quot; come from? I can only see models with 70B params or less mentioned in the repo.",
-        "indicators": [
-          "intelligent",
-          "constructive",
-          "likely-true"
-        ],
         "accuracyRank": 6,
-        "analysis": "This comment questions a potentially inaccurate claim about model size, seeking clarification and pointing out inconsistencies."
+        "analysis": "Provides a reasonable analogy and raises a practical concern about hardware wear, which is relevant for real-world deployment."
       },
       {
-        "id": 47507259,
-        "author": "vanyaland",
-        "text": "For a lot of local workloads, sub-1 tok\u0026#x2F;s is useless in foreground and perfectly acceptable in background. If the choice is “this crashes” vs “this finishes overnight,” that’s still a meaningful capability jump.",
+        "id": 47506283,
+        "author": "amelius",
+        "text": "This is \u0026lt;1 tok\u0026#x2F;s for the 40GB model.\u003cp\u003eCome on, \u0026quot;Run\u0026quot; is not the right word. \u0026quot;Crawl\u0026quot; is.\u003cp\u003eHeadlines like that are misleading.",
         "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "The comment provides a pragmatic view on performance trade-offs, acknowledging slow speeds but recognizing value in batch processing scenarios."
-      },
-      {
-        "id": 47506073,
-        "author": "nullbyte",
-        "text": "I am curious how the TPS compares vs default OS virtual memory paging",
-        "indicators": [
-          "thoughtful",
+          "emotional",
+          "likely-true",
           "constructive"
         ],
-        "accuracyRank": 8,
-        "analysis": "Though brief, this comment raises a relevant question about comparative performance metrics, encouraging further analysis."
+        "accuracyRank": 7,
+        "analysis": "Critiques the marketing language used, emphasizing the slow speed of the system, which is a fair caution for realistic expectations."
       },
       {
         "id": 47505542,
@@ -127,10 +117,11 @@
         "text": "It will be interesting to compare this to \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47476422\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47476422\u003c/a\u003e and \u003ca href=\"https:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47490070\"\u003ehttps:\u0026#x2F;\u0026#x2F;news.ycombinator.com\u0026#x2F;item?id=47490070\u003c/a\u003e .  Very similar design except that this is apparently using mmap, which according to the earlier experiment incurs significant overhead.",
         "indicators": [
           "thoughtful",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
-        "accuracyRank": 9,
-        "analysis": "This comment suggests useful comparisons to related work, highlighting potential performance overheads from mmap usage."
+        "accuracyRank": 8,
+        "analysis": "Suggests useful comparative analysis with prior work, noting potential performance differences due to mmap overhead."
       },
       {
         "id": 47505910,
@@ -141,8 +132,8 @@
           "trolling",
           "useless"
         ],
-        "accuracyRank": 10,
-        "analysis": "This comment is a sarcastic remark with little constructive value or technical insight."
+        "accuracyRank": 9,
+        "analysis": "A humorous but uninformative comment that does not contribute meaningful insight to the discussion."
       }
     ]
   }

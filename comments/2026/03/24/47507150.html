@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">21 points</span>
+        <span class="score">248 points</span>
         by <a href="https://news.ycombinator.com/user?id=felineflock" class="hnuser">felineflock</a>
-        <span class="age">38 minutes ago</span>
+        <span class="age">2 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47507150.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47507150" rel="noopener">original on HN</a>
       </p>
@@ -47,22 +47,123 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the improvements in Wine 11, particularly the addition of proper NT synchronization support and WoW64 compatibility, which users believe will enhance the ability to run older Windows games on Linux with better performance.</p>
+      <p>The discussion centers on Wine 11&#39;s significant performance improvements in running Windows games on Linux, with some users expressing admiration for the project&#39;s complexity and others urging caution about the reported speed gains. There is also curiosity about technical implementation details and potential broader impacts on Linux gaming and software compatibility.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
+    <p class="no-critique">Only 10 of 14 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47507150" rel="noopener">View the full thread on HN</a>.</p>
+    
 
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=tombert" class="hnuser">tombert</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Wine is a project that I&#x27;ve grown a near-infinite level of respect for.<p>I don&#x27;t know for sure, but I suspect that a lot of the work for Wine is boring and thankless. Digging through and trying to get exact parity with both the documented and undocumented behavior of Windows for the past 30 years doesn&#x27;t sound fun, but it&#x27;s finding every little weird edge case that makes Wine a viable product.<p>The fact that Wine runs a lot of games better than Windows now (especially older games) shows a very strong attention to detail and a high tolerance for pain.  I commend them for it.</div>
+      <div class="comment-analysis"><em>This comment provides a well-informed and respectful perspective on the challenges Wine developers face, accurately highlighting the project&#39;s complexity and achievements.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=watashiato" class="hnuser">watashiato</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Before anyone gets too excited about ntsync, the performance gains are (with few exceptions) mild, usually in the lower single percentage range. These extreme gains are the result of benching against vanilla wine without fsync, anyone playing demanding games on linux would have been doing so using fsync. This is mentioned in the article but treated like a side note. I&#x27;ve been running benchmarks between both and while the performance increase is real, please temper your expectations. A few titles might also run slightly worse.</div>
+      <div class="comment-analysis"><em>This comment offers a critical and nuanced view, tempering expectations by clarifying that the most dramatic benchmarks compare against less optimized Wine versions.</em></div>
+    </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=kapija" class="hnuser">kapija</a>
-        &nbsp;|&nbsp;rank #1
+        <a href="https://news.ycombinator.com/user?id=hu3" class="hnuser">hu3</a>
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">awesome, finally wine is getting proper ntsync support... and i reckon wow64 will let me run so many old games...</div>
-      <div class="comment-analysis"><em>The comment accurately highlights key technical improvements in Wine 11 that are expected to improve compatibility and performance for running Windows games on Linux.</em></div>
+      <div class="comment-text">&gt; Dirt 3 went from 110.6 FPS to 860.7 FPS<p>&gt; Resident Evil 2 jumped from 26 FPS to 77 FPS<p>&gt; Call of Juarez went from 99.8 FPS to 224.1 FPS<p>&gt; Tiny Tina&#x27;s Wonderlands saw gains from 130 FPS to 360 FPS<p>Amazing. I don&#x27;t understand the low level details on how such a massive speed gain was ripe for the picking but I welcome!<p>I guess thanks Valve for pouring money into Proton.</div>
+      <div class="comment-analysis"><em>This comment enthusiastically cites impressive benchmark improvements but admits a lack of technical understanding, reflecting genuine excitement with some factual basis.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=lifis" class="hnuser">lifis</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">It seems like it would be possible to implement this in userspace using shared memory to store the data structures and using just one eventfd per thread to park&#x2F;unpark (or a futex if not waiting for anything else), which should be fully correct and have similar or faster performance, at the cost of not being secure or robust against process crashes (which isn&#x27;t a big problem for more Wine usage).<p>It seems that neither esync or fsync do this though - why?<p>Claude thinks that &quot;nobody was motivated enough to write and debug the complex shared-memory waiter-list logic when simpler (if less correct) approaches worked for 95% of games, and when correctness finally mattered enough, the kernel was the more natural place to put it&quot;. Is that true?</div>
+      <div class="comment-analysis"><em>This comment provides a detailed technical hypothesis about alternative implementation approaches, showing understanding of synchronization mechanisms and kernel vs userspace trade-offs.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ticulatedspline" class="hnuser">ticulatedspline</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Wine might be oddly self-defeating. Broad game support on Linux increases the viability of Linux as a desktop, which increases market share, which may result in developers creating Linux ports as a 1st class concern, which don&#x27;t need Wine to run.</div>
+      <div class="comment-analysis"><em>This comment insightfully discusses the potential long-term impact of Wine on Linux gaming and native development, a reasonable strategic observation.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=LetsGetTechnicl" class="hnuser">LetsGetTechnicl</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">This is such an amazing accomplishment! Absolutely wild to see Linux basically re-implement Windows and doing it better, while MS is dead set on making everything about their software worse.</div>
+      <div class="comment-analysis"><em>While enthusiastic and partly accurate about Wine&#39;s achievements, the comment includes an unsubstantiated negative opinion about Microsoft, reducing its objectivity.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Night_Thastus" class="hnuser">Night_Thastus</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I&#x27;ll be <i>very</i> interested to see how this plays out with final 3rd-party benchmarks.<p>Now if we can just get some decent Nvidia drivers......</div>
+      <div class="comment-analysis"><em>This comment expresses reasonable caution about benchmarks and highlights a known Linux issue with Nvidia drivers, reflecting common community concerns.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=freediddy" class="hnuser">freediddy</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-untrue</span> 
+      </div>
+      <div class="comment-text">i would love to know how much of these gains are due to help from AI. i have no problem with AI usage at all in coding but i would love to know if the dramatic gains are because of insights from ai usage.</div>
+      <div class="comment-analysis"><em>This comment speculates about AI involvement without evidence; while curiosity is valid, there is no indication AI contributed to these specific performance improvements.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=brightball" class="hnuser">brightball</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">If any Wine devs are reading this, I&#x27;d love to see a talk on this topic at the 2026 Carolina Code Conference. Call for Speakers is open until March 31st.</div>
+      <div class="comment-analysis"><em>This comment is a constructive suggestion but adds no substantive analysis or information about the topic.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=adelmotsjr" class="hnuser">adelmotsjr</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">Reading these posts always make me feel like an imposter. People are dealing with such low level things, while i&#x27;m outta here building simple CRUDs.</div>
+      <div class="comment-analysis"><em>This comment expresses a personal feeling unrelated to the technical discussion, contributing little to the conversation.</em></div>
     </div>
     
 
@@ -74,7 +175,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 19:13 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 20:53 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

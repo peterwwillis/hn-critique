@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">146 points</span>
+        <span class="score">159 points</span>
         by <a href="https://news.ycombinator.com/user?id=javierhonduco" class="hnuser">javierhonduco</a>
-        <span class="age">9 hours ago</span>
+        <span class="age">10 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47500746.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47500746" rel="noopener">original on HN</a>
       </p>
@@ -47,12 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the trade-offs between zswap and zram for swap management in Linux systems, with contributors highlighting performance, hardware compatibility, and configuration complexity. Some emphasize the importance of hardware characteristics like SSD type, while others discuss kernel features and compression algorithms influencing effectiveness.</p>
+      <p>The discussion centers on the trade-offs between zswap and zram swap mechanisms in Linux, with users sharing experiences, technical insights, and clarifications about performance, hardware compatibility, and configuration. There is consensus that zswap is generally preferable when a suitable backing device exists, while zram is useful in memory-constrained or SSD-limited scenarios. Some comments highlight kernel internals, compression algorithms, and practical setup advice.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 15 of 16 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47500746" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 18 of 19 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47500746" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -64,7 +64,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">User here, who also acts as a Level 2 support for storage.<p>The article contains some solid logic plus an assumption that I disagree with.<p>Solid logic: you should prefer zswap <i>if you have a device that can be used for swap</i>.<p>Solid logic: zram + other swap = bad due to LRU inversion (zram becomes a dead weight in memory).<p>Advice that matches my observations: zram works best when paired with a user-space OOM killer.<p>Bold assumption: everybody who has an SSD has a device that can be used for swap.<p>The assumption is simply false, and not due to the &quot;SSD wear&quot; argument. Many consumer SSDs, especially DRAMless ones (e.g., Apacer AS350 1TB, but also seen on Crucial SSDs), under synchronous writes, will regularly produce latency spikes of 10 seconds or more, due to the way they need to manage their cells. This is much worse than any HDD. If a DRAMless consumer SSD is all that you have, better use zram.</div>
-      <div class="comment-analysis"><em>This comment provides a nuanced critique based on real hardware behavior, challenging assumptions with concrete examples, making it highly credible and insightful.</em></div>
+      <div class="comment-analysis"><em>This comment provides a nuanced hardware perspective that challenges a key assumption in the article, supported by real-world SSD behavior, making it highly accurate and valuable.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -75,7 +75,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The interesting meta-point here is how a kernel mechanism turned into cargo-cult tuning advice.<p>&quot;Use zram, save your SSD&quot; made sense in the era of tiny eMMC, no TRIM, and mystery flash controllers. It also fit a very human bias: disk I&#x2F;O feels scary and finite, CPU cycles feel free and infinite. So zram became a kind of talisman you enable once and never think about again.<p>But the kernel isn&#x27;t optimizing for your feelings about SSD wear, it&#x27;s optimizing for global memory pressure. zswap fits into that feedback loop, zram mostly sits outside it. Once you see that, the behavior people complain about (&quot;my system thrashes and then dies mysteriously&quot;) stops being mysterious: they effectively built a second, opaque memory pool that the MM subsystem can&#x27;t reason about or reclaim from cleanly.<p>What&#x27;s funny is that on modern desktops and servers, the alleged downside of zswap (writing to disk sometimes) is the one thing the hardware is extremely good at, while the downside of zram (locking cold garbage in RAM and confusing reclaim&#x2F;oom) is exactly what you don&#x27;t want when the machine is under stress. The folk wisdom never updated, but the hardware and the kernel did.</div>
-      <div class="comment-analysis"><em>Offers a deep understanding of kernel memory management and explains why zswap is generally preferable on modern hardware, providing valuable context.</em></div>
+      <div class="comment-analysis"><em>Offers a deep understanding of kernel memory management and explains why zswap is generally better aligned with system memory pressure, accurately debunking common misconceptions.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -86,141 +86,174 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">One underappreciated aspect of zswap vs zram is the compression algorithm choice and its interaction with the data being compressed.<p>LZ4 (default in both) is optimized for speed at the expense of ratio — typically 2-2.5x on memory pages. zstd can push that to 3-3.5x but at significantly higher CPU cost per page fault.<p>The interesting tradeoff: memory pages are fundamentally different from files. They contain lots of pointer-sized values, stack frames, and heap metadata — data patterns where simple LZ variants actually perform surprisingly well relative to more complex algorithms. Going beyond zstd (e.g., BWT-based or context mixing) would give diminishing returns on memory pages while destroying latency.<p>So the real question isn&#x27;t just &quot;zswap vs zram&quot; but &quot;how much CPU are you willing to spend per compressed page, given your workload&#x27;s memory access patterns?&quot; For latency-sensitive workloads, LZ4 with zswap writeback is hard to beat.</div>
-      <div class="comment-analysis"><em>Provides a technical perspective on compression trade-offs relevant to zswap and zram, enhancing understanding of performance considerations.</em></div>
+      <div class="comment-analysis"><em>Provides detailed technical insight into compression trade-offs relevant to zswap and zram, enhancing understanding of performance impacts.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=garaetjjte" class="hnuser">garaetjjte</a>
+        <a href="https://news.ycombinator.com/user?id=rini17" class="hnuser">rini17</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">&gt;They size the zram device to 100% of your physical RAM, capped at 8GB. You may be wondering how that makes any sense at all – how can one have a swap device that&#x27;s potentially the entire size of one&#x27;s RAM?<p>zram size applies to uncompressed data, real usage is dynamically growing (plus static bookkeeping). Most memory compresses well, so you probably want to have zram device size even larger than physical RAM.</div>
-      <div class="comment-analysis"><em>Clarifies a common misunderstanding about zram sizing, contributing useful practical knowledge.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=astrobe_" class="hnuser">astrobe_</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">&gt; It only really makes sense for extremely memory-constrained embedded systems<p>Even &quot;mildly&quot; memory constrained embedded systems don&#x27;t use swap because their resources are tailored for their function. And they are typically not fans [1] of compression either because the compression rate is often unpredictable.<p>[1] Yes, they typically don&#x27;t need fans because overheating and using a motor for cooling is a double waste of energy.</div>
-      <div class="comment-analysis"><em>Accurately describes embedded system constraints, adding relevant context to the discussion about swap usage.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=seba_dos1" class="hnuser">seba_dos1</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">A simpler alternative to OOM daemons could be enabling MGLRU&#x27;s thrashing prevention: <a href="https:&#x2F;&#x2F;www.kernel.org&#x2F;doc&#x2F;html&#x2F;next&#x2F;admin-guide&#x2F;mm&#x2F;multigen_lru.html#thrashing-prevention" rel="nofollow">https:&#x2F;&#x2F;www.kernel.org&#x2F;doc&#x2F;html&#x2F;next&#x2F;admin-guide&#x2F;mm&#x2F;multigen...</a><p>I&#x27;m using it together with zram sized to 200% RAM size on a low RAM phone with no disk swap (plus some tuning like the mentioned clustering knob) and it works pretty well if you don&#x27;t mind some otherwise preventable kills, but I will happily switch to diskless zswap once it&#x27;s ready.</div>
-      <div class="comment-analysis"><em>Offers a practical kernel tuning tip that complements swap strategies, showing thoughtful system-level insight.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=CoolGuySteve" class="hnuser">CoolGuySteve</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">Would be nice if zswap could be configured to have no backing cache so it could completely replace zram. Having two slightly different systems is weird.<p>There&#x27;s not really any difference between swap on disk being full and swap in ram being full, either way something needs to get OOM killed.<p>Simplifying the configuration would probably also make it easier to enable by default in most distros. It&#x27;s kind of backwards that the most common Linux distros other than ChromeOS are behind Mac and Windows in this regard.</div>
-      <div class="comment-analysis"><em>Raises a valid usability and configuration concern, though more speculative about future features.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Szpadel" class="hnuser">Szpadel</a>
-        &nbsp;|&nbsp;rank #8
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">There is one more feature that zram can do: multiple compression levels. I use simple bash script to first use fast compression and after 1h recompress it using much stronger compression.<p>unfortunately you cannot chain it with any additional layer or offload to disk later on, because recompression breaks idle tracking by setting timestamp to 0 (so it&#x27;s 1970 again)<p><a href="https:&#x2F;&#x2F;gist.github.com&#x2F;Szpadel&#x2F;9a1960e52121e798a240a9b320ec13c8" rel="nofollow">https:&#x2F;&#x2F;gist.github.com&#x2F;Szpadel&#x2F;9a1960e52121e798a240a9b320ec...</a></div>
-      <div class="comment-analysis"><em>Shares a practical enhancement and limitation of zram, contributing useful technical detail.</em></div>
+      <div class="comment-text">You mean zswap part of cleancache? But that fell out of kernel completely, no? And zram gained support for backing device.<p>BTW most of zram tutorials get it wrong, you are supposed to manually mark idle pages and initiate writeback by periodically writing to &#x2F;sys&#x2F;block&#x2F;zramX&#x2F;idle and &#x2F;sys&#x2F;block&#x2F;zramX&#x2F;writeback . Otherwise zram will never ever write anything to backing device. It is documented in kernel docs, just that if you expect it to work automatically you might misread it.<p>And you can convert swap into such backing device, but then you don&#x27;t do swapon on it (just remove it from fstab) nor it&#x27;s necesary to format(mkswap) it.</div>
+      <div class="comment-analysis"><em>Clarifies kernel support status and configuration details for zram and zswap, correcting common misunderstandings about automatic writeback behavior.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=prussian" class="hnuser">prussian</a>
-        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">With zram, I can just use zram-generator[0] and it does everything for me and I don&#x27;t even need to set anything up, other than installing the systemd generator, which on some distros, it&#x27;s installed by default.
 Is there anything equivalent for zswap?
 Otherwise, I&#x27;m not surprised most people are just using zram, even if sub-optimal.<p>[0]: <a href="https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;zram-generator" rel="nofollow">https:&#x2F;&#x2F;crates.io&#x2F;crates&#x2F;zram-generator</a></div>
-      <div class="comment-analysis"><em>Highlights the importance of tooling and ease of configuration in user adoption, a relevant practical point.</em></div>
+      <div class="comment-analysis"><em>Highlights practical usability factors influencing user choices, pointing out tooling advantages that affect adoption beyond pure technical merits.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=CoolGuySteve" class="hnuser">CoolGuySteve</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Would be nice if zswap could be configured to have no backing cache so it could completely replace zram. Having two slightly different systems is weird.<p>There&#x27;s not really any difference between swap on disk being full and swap in ram being full, either way something needs to get OOM killed.<p>Simplifying the configuration would probably also make it easier to enable by default in most distros. It&#x27;s kind of backwards that the most common Linux distros other than ChromeOS are behind Mac and Windows in this regard.</div>
+      <div class="comment-analysis"><em>Suggests a potential improvement to unify swap mechanisms and reduce complexity, reflecting user experience concerns though speculative about feasibility.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=seba_dos1" class="hnuser">seba_dos1</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">A simpler alternative to OOM daemons could be enabling MGLRU&#x27;s thrashing prevention: <a href="https:&#x2F;&#x2F;www.kernel.org&#x2F;doc&#x2F;html&#x2F;next&#x2F;admin-guide&#x2F;mm&#x2F;multigen_lru.html#thrashing-prevention" rel="nofollow">https:&#x2F;&#x2F;www.kernel.org&#x2F;doc&#x2F;html&#x2F;next&#x2F;admin-guide&#x2F;mm&#x2F;multigen...</a><p>I&#x27;m using it together with zram sized to 200% RAM size on a low RAM phone with no disk swap (plus some tuning like the mentioned clustering knob) and it works pretty well if you don&#x27;t mind some otherwise preventable kills, but I will happily switch to diskless zswap once it&#x27;s ready.</div>
+      <div class="comment-analysis"><em>Shares practical tuning experience combining kernel features with zram, indicating real-world effectiveness and openness to newer solutions.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=MrDrMcCoy" class="hnuser">MrDrMcCoy</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Thank you for all your wonderful work, Chris! Just curious: is it feasible to eventually support sending the page clusters to backing swap in their compressed state to further reduce I&#x2F;O? It&#x27;s my understanding that the clusters get decompressed before getting sent to disk, which I presume is to simplify addressing.</div>
+      <div class="comment-analysis"><em>Poses a technically insightful question about optimization possibilities, showing understanding of current limitations and potential improvements.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=garaetjjte" class="hnuser">garaetjjte</a>
+        &nbsp;|&nbsp;rank #9
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&gt;They size the zram device to 100% of your physical RAM, capped at 8GB. You may be wondering how that makes any sense at all – how can one have a swap device that&#x27;s potentially the entire size of one&#x27;s RAM?<p>zram size applies to uncompressed data, real usage is dynamically growing (plus static bookkeeping). Most memory compresses well, so you probably want to have zram device size even larger than physical RAM.</div>
+      <div class="comment-analysis"><em>Explains zram sizing mechanics clearly, correcting misconceptions about device size relative to physical RAM.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=astrobe_" class="hnuser">astrobe_</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&gt; It only really makes sense for extremely memory-constrained embedded systems<p>Even &quot;mildly&quot; memory constrained embedded systems don&#x27;t use swap because their resources are tailored for their function. And they are typically not fans [1] of compression either because the compression rate is often unpredictable.<p>[1] Yes, they typically don&#x27;t need fans because overheating and using a motor for cooling is a double waste of energy.</div>
+      <div class="comment-analysis"><em>Provides context on embedded systems&#39; typical memory management practices, clarifying why swap and compression are less common there.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=nephanth" class="hnuser">nephanth</a>
+        &nbsp;|&nbsp;rank #11
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I used to put swap on zram when my laptop had one of those early ssds, that people would tell you <i>not</i> to put swap on for fear of wearing them out<p>Setup was <i>tedious</i></div>
+      <div class="comment-analysis"><em>Shares personal experience that aligns with historical caution about SSD wear but acknowledges practical challenges.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=tonnydourado" class="hnuser">tonnydourado</a>
+        &nbsp;|&nbsp;rank #12
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">That&#x27;s a banger article, I don&#x27;t even like low level stuff and yet read the whole thing. Hopefully I will have opportunity to use some of it if I ever get around to switch my personal notebook back to linux</div>
+      <div class="comment-analysis"><em>Expresses appreciation and motivation but adds little technical value to the discussion.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=guenthert" class="hnuser">guenthert</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #13
         &nbsp;|&nbsp;
         <span class="indicator">emotional</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">So much polemic and no numbers?  If it is a performance issue, show me the numbers!</div>
-      <div class="comment-analysis"><em>Calls for empirical data to support claims, emphasizing the need for evidence though expressed somewhat emotionally.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=tonnydourado" class="hnuser">tonnydourado</a>
-        &nbsp;|&nbsp;rank #11
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
-      </div>
-      <div class="comment-text">That&#x27;s a banger article, I don&#x27;t even like low level stuff and yet read the whole thing. Hopefully I will have opportunity to use some of it if I ever get around to switch my personal notebook back to linux</div>
-      <div class="comment-analysis"><em>Expresses appreciation but adds little analytical value to the technical discussion.</em></div>
+      <div class="comment-analysis"><em>Calls for empirical data to support claims, emphasizing the need for quantitative evidence in performance debates.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=nephanth" class="hnuser">nephanth</a>
-        &nbsp;|&nbsp;rank #12
+        <a href="https://news.ycombinator.com/user?id=Szpadel" class="hnuser">Szpadel</a>
+        &nbsp;|&nbsp;rank #14
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I used to put swap on zram when my laptop had one of those early ssds, that people would tell you <i>not</i> to put swap on for fear of wearing them out<p>Setup was <i>tedious</i></div>
-      <div class="comment-analysis"><em>Shares personal experience that aligns with historical concerns, though anecdotal and less analytical.</em></div>
+      <div class="comment-text">There is one more feature that zram can do: multiple compression levels. I use simple bash script to first use fast compression and after 1h recompress it using much stronger compression.<p>unfortunately you cannot chain it with any additional layer or offload to disk later on, because recompression breaks idle tracking by setting timestamp to 0 (so it&#x27;s 1970 again)<p><a href="https:&#x2F;&#x2F;gist.github.com&#x2F;Szpadel&#x2F;9a1960e52121e798a240a9b320ec13c8" rel="nofollow">https:&#x2F;&#x2F;gist.github.com&#x2F;Szpadel&#x2F;9a1960e52121e798a240a9b320ec...</a></div>
+      <div class="comment-analysis"><em>Describes an advanced zram usage technique with limitations, contributing practical knowledge about compression management.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jitl" class="hnuser">jitl</a>
-        &nbsp;|&nbsp;rank #13
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">thank goodness Kubernetes got support for swap; zswap has been a great boon for one of my workloads</div>
-      <div class="comment-analysis"><em>Brief endorsement of zswap in a specific context, adding limited technical detail.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Mashimo" class="hnuser">Mashimo</a>
-        &nbsp;|&nbsp;rank #14
-        &nbsp;|&nbsp;
-        <span class="indicator">useless</span> 
-      </div>
-      <div class="comment-text">Is this advice also applicable to Desktops installations?</div>
-      <div class="comment-analysis"><em>A question without elaboration or contribution to the discussion.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-red">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=adgjlsfhk1" class="hnuser">adgjlsfhk1</a>
         &nbsp;|&nbsp;rank #15
         &nbsp;|&nbsp;
-        <span class="indicator">useless</span> 
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">thank goodness Kubernetes got support for swap; zswap has been a great boon for one of my workloads</div>
+      <div class="comment-analysis"><em>Shares positive personal experience with zswap in a modern container environment, supporting its practical utility.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=lproven" class="hnuser">lproven</a>
+        &nbsp;|&nbsp;rank #16
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I wrote about this recently too:<p><a href="https:&#x2F;&#x2F;www.theregister.com&#x2F;2026&#x2F;03&#x2F;13&#x2F;zram_vs_zswap&#x2F;" rel="nofollow">https:&#x2F;&#x2F;www.theregister.com&#x2F;2026&#x2F;03&#x2F;13&#x2F;zram_vs_zswap&#x2F;</a><p>I prefer zswap to zram and as I linked at the end of the piece, it&#x27;s not just me:<p><a href="https:&#x2F;&#x2F;linuxblog.io&#x2F;zswap-better-than-zram&#x2F;" rel="nofollow">https:&#x2F;&#x2F;linuxblog.io&#x2F;zswap-better-than-zram&#x2F;</a><p>Maybe I am overthinking but I am wondering if this piece about myths is in any way a response to my article?</div>
+      <div class="comment-analysis"><em>Adds external references supporting zswap preference, though the comment is more reflective than analytical.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=Mashimo" class="hnuser">Mashimo</a>
+        &nbsp;|&nbsp;rank #17
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Is this advice also applicable to Desktops installations?</div>
+      <div class="comment-analysis"><em>Poses a relevant but simple question seeking clarification on applicability.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=adgjlsfhk1" class="hnuser">adgjlsfhk1</a>
+        &nbsp;|&nbsp;rank #18
+        &nbsp;|&nbsp;
+        <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">can you make a follow-up here for the best way to setup swap to support full disk encryption+hybernation?</div>
-      <div class="comment-analysis"><em>A request for further content rather than a substantive comment.</em></div>
+      <div class="comment-analysis"><em>Requests additional content on a specific use case, contributing little to current technical analysis.</em></div>
     </div>
     
 
@@ -232,7 +265,7 @@ Otherwise, I&#x27;m not surprised most people are just using zram, even if sub-o
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 19:13 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 20:53 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

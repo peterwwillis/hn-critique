@@ -23,7 +23,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the trade-offs between zswap and zram for swap management in Linux systems, with contributors highlighting performance, hardware compatibility, and configuration complexity. Some emphasize the importance of hardware characteristics like SSD type, while others discuss kernel features and compression algorithms influencing effectiveness.",
+    "summary": "The discussion centers on the trade-offs between zswap and zram swap mechanisms in Linux, with users sharing experiences, technical insights, and clarifications about performance, hardware compatibility, and configuration. There is consensus that zswap is generally preferable when a suitable backing device exists, while zram is useful in memory-constrained or SSD-limited scenarios. Some comments highlight kernel internals, compression algorithms, and practical setup advice.",
     "comments": [
       {
         "id": 47501678,
@@ -36,7 +36,7 @@
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a nuanced critique based on real hardware behavior, challenging assumptions with concrete examples, making it highly credible and insightful."
+        "analysis": "This comment provides a nuanced hardware perspective that challenges a key assumption in the article, supported by real-world SSD behavior, making it highly accurate and valuable."
       },
       {
         "id": 47503716,
@@ -49,7 +49,7 @@
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "Offers a deep understanding of kernel memory management and explains why zswap is generally preferable on modern hardware, providing valuable context."
+        "analysis": "Offers a deep understanding of kernel memory management and explains why zswap is generally better aligned with system memory pressure, accurately debunking common misconceptions."
       },
       {
         "id": 47504109,
@@ -62,7 +62,67 @@
           "constructive"
         ],
         "accuracyRank": 3,
-        "analysis": "Provides a technical perspective on compression trade-offs relevant to zswap and zram, enhancing understanding of performance considerations."
+        "analysis": "Provides detailed technical insight into compression trade-offs relevant to zswap and zram, enhancing understanding of performance impacts."
+      },
+      {
+        "id": 47508518,
+        "author": "rini17",
+        "text": "You mean zswap part of cleancache? But that fell out of kernel completely, no? And zram gained support for backing device.\u003cp\u003eBTW most of zram tutorials get it wrong, you are supposed to manually mark idle pages and initiate writeback by periodically writing to \u0026#x2F;sys\u0026#x2F;block\u0026#x2F;zramX\u0026#x2F;idle and \u0026#x2F;sys\u0026#x2F;block\u0026#x2F;zramX\u0026#x2F;writeback . Otherwise zram will never ever write anything to backing device. It is documented in kernel docs, just that if you expect it to work automatically you might misread it.\u003cp\u003eAnd you can convert swap into such backing device, but then you don\u0026#x27;t do swapon on it (just remove it from fstab) nor it\u0026#x27;s necesary to format(mkswap) it.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Clarifies kernel support status and configuration details for zram and zswap, correcting common misunderstandings about automatic writeback behavior."
+      },
+      {
+        "id": 47503120,
+        "author": "prussian",
+        "text": "With zram, I can just use zram-generator[0] and it does everything for me and I don\u0026#x27;t even need to set anything up, other than installing the systemd generator, which on some distros, it\u0026#x27;s installed by default.\nIs there anything equivalent for zswap?\nOtherwise, I\u0026#x27;m not surprised most people are just using zram, even if sub-optimal.\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;crates.io\u0026#x2F;crates\u0026#x2F;zram-generator\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;crates.io\u0026#x2F;crates\u0026#x2F;zram-generator\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 5,
+        "analysis": "Highlights practical usability factors influencing user choices, pointing out tooling advantages that affect adoption beyond pure technical merits."
+      },
+      {
+        "id": 47502956,
+        "author": "CoolGuySteve",
+        "text": "Would be nice if zswap could be configured to have no backing cache so it could completely replace zram. Having two slightly different systems is weird.\u003cp\u003eThere\u0026#x27;s not really any difference between swap on disk being full and swap in ram being full, either way something needs to get OOM killed.\u003cp\u003eSimplifying the configuration would probably also make it easier to enable by default in most distros. It\u0026#x27;s kind of backwards that the most common Linux distros other than ChromeOS are behind Mac and Windows in this regard.",
+        "indicators": [
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Suggests a potential improvement to unify swap mechanisms and reduce complexity, reflecting user experience concerns though speculative about feasibility."
+      },
+      {
+        "id": 47507149,
+        "author": "seba_dos1",
+        "text": "A simpler alternative to OOM daemons could be enabling MGLRU\u0026#x27;s thrashing prevention: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.kernel.org\u0026#x2F;doc\u0026#x2F;html\u0026#x2F;next\u0026#x2F;admin-guide\u0026#x2F;mm\u0026#x2F;multigen_lru.html#thrashing-prevention\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.kernel.org\u0026#x2F;doc\u0026#x2F;html\u0026#x2F;next\u0026#x2F;admin-guide\u0026#x2F;mm\u0026#x2F;multigen...\u003c/a\u003e\u003cp\u003eI\u0026#x27;m using it together with zram sized to 200% RAM size on a low RAM phone with no disk swap (plus some tuning like the mentioned clustering knob) and it works pretty well if you don\u0026#x27;t mind some otherwise preventable kills, but I will happily switch to diskless zswap once it\u0026#x27;s ready.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Shares practical tuning experience combining kernel features with zram, indicating real-world effectiveness and openness to newer solutions."
+      },
+      {
+        "id": 47507844,
+        "author": "MrDrMcCoy",
+        "text": "Thank you for all your wonderful work, Chris! Just curious: is it feasible to eventually support sending the page clusters to backing swap in their compressed state to further reduce I\u0026#x2F;O? It\u0026#x27;s my understanding that the clusters get decompressed before getting sent to disk, which I presume is to simplify addressing.",
+        "indicators": [
+          "intelligent",
+          "thoughtful",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Poses a technically insightful question about optimization possibilities, showing understanding of current limitations and potential improvements."
       },
       {
         "id": 47506022,
@@ -73,8 +133,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 4,
-        "analysis": "Clarifies a common misunderstanding about zram sizing, contributing useful practical knowledge."
+        "accuracyRank": 9,
+        "analysis": "Explains zram sizing mechanics clearly, correcting misconceptions about device size relative to physical RAM."
       },
       {
         "id": 47506891,
@@ -85,54 +145,31 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 5,
-        "analysis": "Accurately describes embedded system constraints, adding relevant context to the discussion about swap usage."
+        "accuracyRank": 10,
+        "analysis": "Provides context on embedded systems' typical memory management practices, clarifying why swap and compression are less common there."
       },
       {
-        "id": 47507149,
-        "author": "seba_dos1",
-        "text": "A simpler alternative to OOM daemons could be enabling MGLRU\u0026#x27;s thrashing prevention: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.kernel.org\u0026#x2F;doc\u0026#x2F;html\u0026#x2F;next\u0026#x2F;admin-guide\u0026#x2F;mm\u0026#x2F;multigen_lru.html#thrashing-prevention\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.kernel.org\u0026#x2F;doc\u0026#x2F;html\u0026#x2F;next\u0026#x2F;admin-guide\u0026#x2F;mm\u0026#x2F;multigen...\u003c/a\u003e\u003cp\u003eI\u0026#x27;m using it together with zram sized to 200% RAM size on a low RAM phone with no disk swap (plus some tuning like the mentioned clustering knob) and it works pretty well if you don\u0026#x27;t mind some otherwise preventable kills, but I will happily switch to diskless zswap once it\u0026#x27;s ready.",
+        "id": 47501475,
+        "author": "nephanth",
+        "text": "I used to put swap on zram when my laptop had one of those early ssds, that people would tell you \u003ci\u003enot\u003c/i\u003e to put swap on for fear of wearing them out\u003cp\u003eSetup was \u003ci\u003etedious\u003c/i\u003e",
         "indicators": [
-          "intelligent",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Offers a practical kernel tuning tip that complements swap strategies, showing thoughtful system-level insight."
-      },
-      {
-        "id": 47502956,
-        "author": "CoolGuySteve",
-        "text": "Would be nice if zswap could be configured to have no backing cache so it could completely replace zram. Having two slightly different systems is weird.\u003cp\u003eThere\u0026#x27;s not really any difference between swap on disk being full and swap in ram being full, either way something needs to get OOM killed.\u003cp\u003eSimplifying the configuration would probably also make it easier to enable by default in most distros. It\u0026#x27;s kind of backwards that the most common Linux distros other than ChromeOS are behind Mac and Windows in this regard.",
-        "indicators": [
-          "thoughtful",
+          "emotional",
+          "likely-true",
           "constructive"
         ],
-        "accuracyRank": 7,
-        "analysis": "Raises a valid usability and configuration concern, though more speculative about future features."
+        "accuracyRank": 11,
+        "analysis": "Shares personal experience that aligns with historical caution about SSD wear but acknowledges practical challenges."
       },
       {
-        "id": 47506874,
-        "author": "Szpadel",
-        "text": "There is one more feature that zram can do: multiple compression levels. I use simple bash script to first use fast compression and after 1h recompress it using much stronger compression.\u003cp\u003eunfortunately you cannot chain it with any additional layer or offload to disk later on, because recompression breaks idle tracking by setting timestamp to 0 (so it\u0026#x27;s 1970 again)\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;Szpadel\u0026#x2F;9a1960e52121e798a240a9b320ec13c8\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;Szpadel\u0026#x2F;9a1960e52121e798a240a9b320ec...\u003c/a\u003e",
+        "id": 47503903,
+        "author": "tonnydourado",
+        "text": "That\u0026#x27;s a banger article, I don\u0026#x27;t even like low level stuff and yet read the whole thing. Hopefully I will have opportunity to use some of it if I ever get around to switch my personal notebook back to linux",
         "indicators": [
-          "intelligent",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 8,
-        "analysis": "Shares a practical enhancement and limitation of zram, contributing useful technical detail."
-      },
-      {
-        "id": 47503120,
-        "author": "prussian",
-        "text": "With zram, I can just use zram-generator[0] and it does everything for me and I don\u0026#x27;t even need to set anything up, other than installing the systemd generator, which on some distros, it\u0026#x27;s installed by default.\nIs there anything equivalent for zswap?\nOtherwise, I\u0026#x27;m not surprised most people are just using zram, even if sub-optimal.\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;crates.io\u0026#x2F;crates\u0026#x2F;zram-generator\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;crates.io\u0026#x2F;crates\u0026#x2F;zram-generator\u003c/a\u003e",
-        "indicators": [
-          "thoughtful",
+          "emotional",
           "constructive"
         ],
-        "accuracyRank": 9,
-        "analysis": "Highlights the importance of tooling and ease of configuration in user adoption, a relevant practical point."
+        "accuracyRank": 12,
+        "analysis": "Expresses appreciation and motivation but adds little technical value to the discussion."
       },
       {
         "id": 47502001,
@@ -142,30 +179,20 @@
           "emotional",
           "constructive"
         ],
-        "accuracyRank": 10,
-        "analysis": "Calls for empirical data to support claims, emphasizing the need for evidence though expressed somewhat emotionally."
+        "accuracyRank": 13,
+        "analysis": "Calls for empirical data to support claims, emphasizing the need for quantitative evidence in performance debates."
       },
       {
-        "id": 47503903,
-        "author": "tonnydourado",
-        "text": "That\u0026#x27;s a banger article, I don\u0026#x27;t even like low level stuff and yet read the whole thing. Hopefully I will have opportunity to use some of it if I ever get around to switch my personal notebook back to linux",
+        "id": 47506874,
+        "author": "Szpadel",
+        "text": "There is one more feature that zram can do: multiple compression levels. I use simple bash script to first use fast compression and after 1h recompress it using much stronger compression.\u003cp\u003eunfortunately you cannot chain it with any additional layer or offload to disk later on, because recompression breaks idle tracking by setting timestamp to 0 (so it\u0026#x27;s 1970 again)\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;Szpadel\u0026#x2F;9a1960e52121e798a240a9b320ec13c8\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;gist.github.com\u0026#x2F;Szpadel\u0026#x2F;9a1960e52121e798a240a9b320ec...\u003c/a\u003e",
         "indicators": [
-          "emotional",
-          "useless"
+          "intelligent",
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 11,
-        "analysis": "Expresses appreciation but adds little analytical value to the technical discussion."
-      },
-      {
-        "id": 47501475,
-        "author": "nephanth",
-        "text": "I used to put swap on zram when my laptop had one of those early ssds, that people would tell you \u003ci\u003enot\u003c/i\u003e to put swap on for fear of wearing them out\u003cp\u003eSetup was \u003ci\u003etedious\u003c/i\u003e",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 12,
-        "analysis": "Shares personal experience that aligns with historical concerns, though anecdotal and less analytical."
+        "accuracyRank": 14,
+        "analysis": "Describes an advanced zram usage technique with limitations, contributing practical knowledge about compression management."
       },
       {
         "id": 47501697,
@@ -173,30 +200,43 @@
         "text": "thank goodness Kubernetes got support for swap; zswap has been a great boon for one of my workloads",
         "indicators": [
           "emotional",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 13,
-        "analysis": "Brief endorsement of zswap in a specific context, adding limited technical detail."
+        "accuracyRank": 15,
+        "analysis": "Shares positive personal experience with zswap in a modern container environment, supporting its practical utility."
+      },
+      {
+        "id": 47503873,
+        "author": "lproven",
+        "text": "I wrote about this recently too:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.theregister.com\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;13\u0026#x2F;zram_vs_zswap\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.theregister.com\u0026#x2F;2026\u0026#x2F;03\u0026#x2F;13\u0026#x2F;zram_vs_zswap\u0026#x2F;\u003c/a\u003e\u003cp\u003eI prefer zswap to zram and as I linked at the end of the piece, it\u0026#x27;s not just me:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;linuxblog.io\u0026#x2F;zswap-better-than-zram\u0026#x2F;\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;linuxblog.io\u0026#x2F;zswap-better-than-zram\u0026#x2F;\u003c/a\u003e\u003cp\u003eMaybe I am overthinking but I am wondering if this piece about myths is in any way a response to my article?",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 16,
+        "analysis": "Adds external references supporting zswap preference, though the comment is more reflective than analytical."
       },
       {
         "id": 47502669,
         "author": "Mashimo",
         "text": "Is this advice also applicable to Desktops installations?",
         "indicators": [
-          "useless"
+          "constructive"
         ],
-        "accuracyRank": 14,
-        "analysis": "A question without elaboration or contribution to the discussion."
+        "accuracyRank": 17,
+        "analysis": "Poses a relevant but simple question seeking clarification on applicability."
       },
       {
         "id": 47501865,
         "author": "adgjlsfhk1",
         "text": "can you make a follow-up here for the best way to setup swap to support full disk encryption+hybernation?",
         "indicators": [
-          "useless"
+          "constructive"
         ],
-        "accuracyRank": 15,
-        "analysis": "A request for further content rather than a substantive comment."
+        "accuracyRank": 18,
+        "analysis": "Requests additional content on a specific use case, contributing little to current technical analysis."
       }
     ]
   }
