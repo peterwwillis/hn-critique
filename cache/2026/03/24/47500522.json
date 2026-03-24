@@ -23,20 +23,20 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the challenges and techniques of overwriting a running Linux system's disk, with users sharing experiences and technical insights on safely replacing or modifying disk images without causing corruption. Various approaches such as kexec, using RAM for the OS, and kernel configurations are debated.",
+    "summary": "The discussion revolves around the technical challenges and methods of overwriting a running Linux system's disk, including netbooting, using initramfs, and kernel-level considerations to avoid filesystem corruption. Participants share practical experiences, potential pitfalls, and alternative approaches such as using qemu overlays or migrating the OS into RAM.",
     "comments": [
       {
         "id": 47501446,
         "author": "matja",
         "text": "\u0026gt; How do you unmount your OS’s disk while keeping the OS running to be able to overwrite itself?\u003cp\u003eI went down a similar rabbit-hole myself, with the goal of safely replacing the Linux installation on a disk that a machine is already running from (e.g. replace a VPS\u0026#x27;s setup image with one of your own) without needing a KVM-style remote access tool to the console.\u003cp\u003eThe problem there is if you directly modify the disk when a filesystem is mounted on that disk then all bets are off in terms of corruption of the filesystem that\u0026#x27;s already on there and also the filesystem(s) you\u0026#x27;re writing over the top.\u003cp\u003eMy solution was to kexec into a new kernel+initramfs which has a DHCP client and cURL in it - that effectively stops any filesystem access while the image is being written over the disk, then to just reboot.",
         "indicators": [
-          "intelligent",
           "thoughtful",
+          "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a practical and technically sound approach to safely overwrite a running system's disk by switching to a minimal environment, reducing risk of corruption."
+        "analysis": "This comment accurately identifies the risk of corruption when modifying a mounted filesystem and suggests a practical, safe approach using kexec and a minimal environment."
       },
       {
         "id": 47501382,
@@ -44,12 +44,23 @@
         "text": "Unfortunately it\u0026#x27;s not safe as the kernel can still write to (what it thinks is) the old filesystem on the device, which will introduce corruption to the new disk image.\u003cp\u003eHowever a fun fact is that you \u003ci\u003ecan\u003c/i\u003e (do not actually do this!) boot a qemu VM from \u0026#x2F;dev\u0026#x2F;sda.  You have to use an overlay (eg. qemu -drive snapshot=on flag) so that qemu won\u0026#x27;t write through to \u0026#x2F;dev\u0026#x2F;sda.  I use this trick in supernested, a script I wrote that runs nested within nested within nested VMs ad infinitum until your hypervisor crashes.  \u003ca href=\"http:\u0026#x2F;\u0026#x2F;git.annexia.org\u0026#x2F;?p=supernested.git;a=blob;f=run-supernested.sh.in;h=ea227f0c62eddc0c6d2e394b938d1a920a48e794;hb=HEAD#l65\" rel=\"nofollow\"\u003ehttp:\u0026#x2F;\u0026#x2F;git.annexia.org\u0026#x2F;?p=supernested.git;a=blob;f=run-super...\u003c/a\u003e",
         "indicators": [
           "intelligent",
-          "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 2,
-        "analysis": "This comment correctly points out the risks of corruption when overwriting a mounted filesystem and adds an interesting but risky workaround involving QEMU overlays."
+        "analysis": "Provides a technically accurate warning about corruption risks and shares an advanced workaround involving qemu overlays, demonstrating deep technical knowledge."
+      },
+      {
+        "id": 47503302,
+        "author": "alexellisuk",
+        "text": "This reminds me of netbooting workflows from things like MaaS, Tinkerbell, and Dan\u0026#x27;s old Plunder tool.\u003cp\u003eThey\u0026#x27;d netboot.. not mount the disks, then download an ISO\u0026#x2F;IMG and write it directly to the primary boot disk.\u003cp\u003eIf netbooting is a heavy lift, why not boot into a custom initramfs you built, with i.e. dd\u0026#x2F;curl installed, and flash the disk that way, without mounting \u0026#x2F; at all? Then kexec\u0026#x2F;chroot into it?\u003cp\u003eI\u0026#x27;d much prefer this as a way to provision Raspberry Pis.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "Offers a relevant and practical alternative approach to provisioning devices safely without mounting the disk, aligning well with best practices."
       },
       {
         "id": 47501312,
@@ -60,55 +71,75 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment adds valuable technical detail about kernel configuration that affects the ability to write to mounted devices, clarifying a point from the article."
-      },
-      {
-        "id": 47501842,
-        "author": "PunchyHamster",
-        "text": "\u0026gt; Well, what can we try instead?\n\u0026gt; write to the mounted disk anyways. fuck you\u003cp\u003eStupid penguin trick I learned: Add a file inside ramdisk (i use \u0026#x2F;dev\u0026#x2F;shm) as LVM PV.\u003cp\u003epvmove off the hard drive\u003cp\u003eBoom, now your OS lives entirely in RAM\u003cp\u003eYou can now even replace the hard disk, put a new one and migrate back.\u003cp\u003eOr migrate to network storage (nbd,iSCSI etc.), re-sequence disks into whatever RAID you need, and migrate back\u003cp\u003eNeed to fix \u0026#x2F;boot after that tho, and probably make sure to not have power failure in meantime",
-        "indicators": [
-          "intelligent",
-          "thoughtful",
-          "constructive"
-        ],
         "accuracyRank": 4,
-        "analysis": "This comment offers a creative and technically feasible method to migrate the OS into RAM to enable disk replacement, showing practical system administration knowledge."
+        "analysis": "Correctly points out a kernel configuration option that affects write permissions on mounted devices, adding nuance to the article's claim."
       },
       {
-        "id": 47501712,
-        "author": "irishcoffee",
-        "text": "I\u0026#x27;ve been dd-ing A\u0026#x2F;B partitions for embedded yocto distributions for years and years. read-only-rootfs (\u0026#x2F;var\u0026#x2F;log is its own writable partition), dd the \u0026quot;other partition\u0026quot;, sed fstab, reboot.\u003cp\u003eThe neat part was the whole process kicked off when you scp\u0026#x27;d the rootfs and inotifywait kicked off the whole process.",
+        "id": 47501976,
+        "author": "pzmarzly",
+        "text": "You will run into problems if destination drive has different sector size than your VM, as GPT header won\u0026#x27;t be aligned.\u003cp\u003eQEMU defaults to 512B sectors, which isn\u0026#x27;t true for many NVMe drives. There are some flags to change that. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;unix.stackexchange.com\u0026#x2F;a\u0026#x2F;722450\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;unix.stackexchange.com\u0026#x2F;a\u0026#x2F;722450\u003c/a\u003e\u003cp\u003eI think it should be possible to make an image with many headers at different locations, so that it works on all types of disks at once, but I don\u0026#x27;t think any tools do it for you by default.",
         "indicators": [
           "intelligent",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 5,
-        "analysis": "This comment shares a real-world workflow for updating embedded systems using partition swapping, which is a recognized and reliable technique."
+        "analysis": "Highlights an important technical detail about sector size mismatches that can cause issues, providing useful information for those using VM images."
+      },
+      {
+        "id": 47501842,
+        "author": "PunchyHamster",
+        "text": "\u0026gt; Well, what can we try instead?\n\u0026gt; write to the mounted disk anyways. fuck you\u003cp\u003eStupid penguin trick I learned: Add a file inside ramdisk (i use \u0026#x2F;dev\u0026#x2F;shm) as LVM PV.\u003cp\u003epvmove off the hard drive\u003cp\u003eBoom, now your OS lives entirely in RAM\u003cp\u003eYou can now even replace the hard disk, put a new one and migrate back.\u003cp\u003eOr migrate to network storage (nbd,iSCSI etc.), re-sequence disks into whatever RAID you need, and migrate back\u003cp\u003eNeed to fix \u0026#x2F;boot after that tho, and probably make sure to not have power failure in meantime",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Shares an innovative method to migrate the OS into RAM to enable disk replacement, which is a clever and practical approach though somewhat advanced."
       },
       {
         "id": 47501461,
         "author": "dizhn",
         "text": "Reminded me of how to install Alpine linux (which isn\u0026#x27;t available) on Oracle cloud over an ubuntu install. It uses dd and has the advantage of having a console.\u003cp\u003eI had found it in a github gist when I used it but here\u0026#x27;s a similar blog post.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;alextsang.net\u0026#x2F;articles\u0026#x2F;20191006-063049\u0026#x2F;index.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;alextsang.net\u0026#x2F;articles\u0026#x2F;20191006-063049\u0026#x2F;index.html\u003c/a\u003e",
         "indicators": [
+          "constructive",
+          "likely-true"
+        ],
+        "accuracyRank": 7,
+        "analysis": "Provides a useful real-world example and resource related to the topic, adding practical context."
+      },
+      {
+        "id": 47501712,
+        "author": "irishcoffee",
+        "text": "I\u0026#x27;ve been dd-ing A\u0026#x2F;B partitions for embedded yocto distributions for years and years. read-only-rootfs (\u0026#x2F;var\u0026#x2F;log is its own writable partition), dd the \u0026quot;other partition\u0026quot;, sed fstab, reboot.\u003cp\u003eThe neat part was the whole process kicked off when you scp\u0026#x27;d the rootfs and inotifywait kicked off the whole process.",
+        "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "This comment provides a relevant anecdote and reference to a similar use case, adding context but less technical depth than others."
+        "accuracyRank": 8,
+        "analysis": "Shares a practical and tested workflow for updating embedded systems, contributing valuable experiential insight."
+      },
+      {
+        "id": 47502563,
+        "author": "ma2kx",
+        "text": "Why not just use netboot?",
+        "indicators": [
+          "constructive"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Poses a simple, relevant question that points to a common alternative method, though without elaboration."
       },
       {
         "id": 47501820,
         "author": "PunchyHamster",
         "text": "and we\u0026#x27;ve gone full circle, back in the day you installed os on diskettes like that!",
         "indicators": [
-          "emotional",
-          "useless"
+          "emotional"
         ],
-        "accuracyRank": 7,
-        "analysis": "This comment is more of a nostalgic remark without technical contribution to the discussion."
+        "accuracyRank": 10,
+        "analysis": "A nostalgic comment that adds little technical value to the discussion."
       }
     ]
   }

@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">26 points</span>
+        <span class="score">38 points</span>
         by <a href="https://news.ycombinator.com/user?id=pjmlp" class="hnuser">pjmlp</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47455961.html">critique article</a>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion revolves around the practical challenges and realities of implementing microservices versus monoliths, with emphasis on complexity in inter-service communication, the role of event sourcing, and evolving asynchronous patterns. Some commenters share personal experiences and visions for future distributed system tooling.</p>
+      <p>The discussion revolves around the practical challenges and theoretical considerations of microservices versus monolithic architectures, with emphasis on complexity, efficiency, and evolving paradigms like async and event sourcing. Commenters share personal experiences and conceptual ideas about distributed systems and microservices design.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -62,62 +62,84 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">An anecdote I like to tell:<p>I once participated in implementing a system as a monolith, and later on handled the rewrite to microservices, to &#x27;future-proof&#x27; the system.<p>The nice thing is that I have the Jira tickets for both projects, and I have actual hard proof, the microservice version absolutely didn&#x27;t go smoother or take less time or dev hours.<p>You can really match up a lot of it feature-by-feature and it&#x27;ll be plainly visible that the microservice version of the feature took longer  and had more bugs.<p>And Imo this is the best case scenario for microservices. The &#x27;good thing&#x27; about microservices, is once you have the interfaces, you can start coding. This makes these projects look more productive at least initially.<p>But the issue is that, more often than not, the quality of the specs are not great to awful, I&#x27;ve seen projects where basically Team A and Team B coded their service against a wildly different interface, and it was only found in the final stretch that these two parts do not meet.</div>
-      <div class="comment-analysis"><em>This comment provides a firsthand account with concrete evidence (Jira tickets) comparing monolith and microservice implementations, highlighting real-world complexity and coordination issues.</em></div>
+      <div class="comment-analysis"><em>This comment provides a firsthand account with concrete evidence comparing monolith and microservices, highlighting common pitfalls like interface mismatches, making it highly credible and insightful.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=torginus" class="hnuser">torginus</a>
+        <a href="https://news.ycombinator.com/user?id=cmrdporcupine" class="hnuser">cmrdporcupine</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">&gt; While small microservices are certainly simpler to reason about, I worry that this pushes complexity into the interconnections between services<p>100% true in retrospect.</div>
-      <div class="comment-analysis"><em>This comment succinctly captures a well-known tradeoff in microservices architecture, emphasizing that distributed complexity often shifts rather than disappears.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=gethly" class="hnuser">gethly</a>
-        &nbsp;|&nbsp;rank #3
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">99% of systems out there are not truly microservices but SOA(fat services). A microservice is something that send emails, transforms images, encodes video and so on. Most real services are 100x bigger than that.<p>Secondly, if you are not doing event sourcing from the get go, doing distributed system is stupid beyond imagination.<p>When you do event sourcing, you can do CQRS and therefore have zero need for some humongous database that scales ad infinitum and costs and arm and a leg.</div>
-      <div class="comment-analysis"><em>The comment correctly distinguishes between true microservices and large SOA services and advocates event sourcing, which is a recognized pattern for managing distributed state, though the tone is somewhat extreme.</em></div>
+      <div class="comment-text"><i>&quot;The consequence of this difference is that your guidelines for APIs are different. In process calls can be fine-grained, if you want 100 product prices and availabilities, you can happily make 100 calls to your product price function and another 100 for the availabilities.&quot;</i><p>While this is true, in fact for efficiency reasons it&#x27;s often better to treat even local dispatch like it&#x27;s &quot;network&quot; -- chasing pointers and doing things one at a time in a loop is far less efficient on a modern architecture than doing things in bulk and vectorized.<p>Non uniform memory hierarchies, caches, branch predictors, SIMD, and now GPUs, etc. all tend to reward working with data in batches.<p>If I were to think of a &quot;pure&quot; model of computation that unified remote and local it would be to treat the entire machine in terms of the relational data model, not objects. To treat all data manipulation and decisions like a query.<p>And to ideally in fact have the same concept of a query optimizer &#x2F; planner that a DBMS has, which is able to make decisions on how to proceed based on the cost of the storage model, the indexes, etc. because it has a bigger picture of what the programmer is trying to accomplish.</div>
+      <div class="comment-analysis"><em>This comment offers a nuanced view on performance optimization that challenges simplistic assumptions about local calls, referencing modern hardware characteristics and proposing a relational data model approach.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jauntywundrkind" class="hnuser">jauntywundrkind</a>
-        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">A lot of this first law was specifically coupled to how these systems often hid that distributed objects were distributed. In the past 10 years, async has become far more common place, and it makes the distributed boundary much less like a secret special anomaly that you wouldn&#x27;t otherwise deal with and far more like just another type of async code.<p>I still thoroughly want to see capnproto or capnweb emerge the third party handoff, so we can do distributed systems where we tell microservice-b to use the results from microservice-a to run it&#x27;s compute, without needing to proxy those results through ourself. Oh to dream.</div>
-      <div class="comment-analysis"><em>This comment insightfully discusses the evolution of asynchronous programming in distributed systems and expresses interest in emerging technologies that could improve inter-service communication.</em></div>
+      <div class="comment-analysis"><em>This comment insightfully connects the rise of async programming with distributed system design, and suggests promising technologies, reflecting a forward-looking understanding of the field.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=torginus" class="hnuser">torginus</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">&gt; While small microservices are certainly simpler to reason about, I worry that this pushes complexity into the interconnections between services<p>100% true in retrospect.</div>
+      <div class="comment-analysis"><em>A concise and accurate observation about the trade-offs in microservice architectures, emphasizing that complexity often shifts rather than disappears.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=gethly" class="hnuser">gethly</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">99% of systems out there are not truly microservices but SOA(fat services). A microservice is something that send emails, transforms images, encodes video and so on. Most real services are 100x bigger than that.<p>Secondly, if you are not doing event sourcing from the get go, doing distributed system is stupid beyond imagination.<p>When you do event sourcing, you can do CQRS and therefore have zero need for some humongous database that scales ad infinitum and costs and arm and a leg.</div>
+      <div class="comment-analysis"><em>While somewhat opinionated and broad, this comment correctly identifies common misconceptions about microservices and highlights event sourcing as a valuable pattern in distributed systems.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=rednafi" class="hnuser">rednafi</a>
-        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">I dream of a SQL like engine for distributed systems where you can declaratively say &quot;svc A uses the results of B &amp; C where C depends on D.&quot;<p>Then the engine would find the best way to resolve the graph and fetch the results. You could still add your imperative logic on top of the fetched results, but you don&#x27;t concern yourself with the minutiae of resilience patterns and how to traverse the dependency graph.</div>
-      <div class="comment-analysis"><em>This visionary comment proposes a declarative approach to managing distributed service dependencies, which aligns with ongoing research and tooling trends, though it remains aspirational.</em></div>
+      <div class="comment-analysis"><em>This comment proposes an innovative and plausible approach to managing distributed system complexity, aligning with trends in declarative programming and dependency resolution.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=jFriedensreich" class="hnuser">jFriedensreich</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Its a weird notion of a distributed object, even in 2014, I think i would never consider calling the methods of a distributed object directly with something linke RPC but instead replicate the objects with a replication protocol and then use the replicas locally.</div>
+      <div class="comment-analysis"><em>This comment presents a valid alternative approach to distributed objects, emphasizing local replicas to avoid direct remote calls, which is a recognized pattern in distributed computing.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=Havoc" class="hnuser">Havoc</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">AI has also changed the dynamics around this. Splitting things into smaller components now has a dev advantage because the AI program better with smaller scope</div>
-      <div class="comment-analysis"><em>This comment highlights a novel perspective on AI-assisted development favoring smaller components, which is plausible but less substantiated compared to other comments.</em></div>
+      <div class="comment-analysis"><em>This comment introduces a contemporary factor—AI assistance—influencing microservice design, which is plausible though less elaborated or supported by examples.</em></div>
     </div>
     
 
@@ -129,7 +151,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 13:17 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 15:14 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

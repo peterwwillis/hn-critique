@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">170 points</span>
+        <span class="score">182 points</span>
         by <a href="https://news.ycombinator.com/user?id=peteski22" class="hnuser">peteski22</a>
-        <span class="age">21 hours ago</span>
+        <span class="age">23 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/23/47491466.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47491466" rel="noopener">original on HN</a>
       </p>
@@ -47,35 +47,35 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers around the concept of a shared knowledge base for AI coding agents, with participants expressing both enthusiasm for its potential and concerns about security, trust, and accuracy. Several commenters highlight the challenges of ensuring reliable, human-verified information and preventing malicious manipulation in an open system.</p>
+      <p>The discussion centers around the concept of a shared knowledge base for AI coding agents, with participants expressing cautious optimism about its potential benefits while raising significant concerns about security, trust, and accuracy. Many emphasize the challenges of ensuring reliable, verifiable information and preventing malicious manipulation in an open, agent-driven system.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 22 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47491466" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 25 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47491466" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=perfmode" class="hnuser">perfmode</a>
+        <a href="https://news.ycombinator.com/user?id=popey" class="hnuser">popey</a>
         &nbsp;|&nbsp;rank #1
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">As you move toward the public commons stage, you&#x27;ll want to look into subjective trust metrics, specifically Personalized PageRank and EigenTrust. The key distinction in the literature is between global trust (one reputation score everyone sees) and local&#x2F;subjective trust (each node computes its own view of trustworthiness). Cheng and Friedman (2005) proved that no global, symmetric reputation function is sybilproof, which means personalized trust isn&#x27;t a nice-to-have for a public commons, it&#x27;s the only approach that resists manipulation at scale.<p>The model: humans endorse a KU and stake their reputation on that endorsement. Other humans endorse other humans, forming a trust graph. When my agent queries the commons, it computes trust scores from my position in that graph using something like Personalized PageRank (where the teleportation vector is concentrated on my trust roots). Your agent does the same from your position. We see different scores for the same KU, and that&#x27;s correct, because controversial knowledge (often the most valuable kind) can&#x27;t be captured by a single global number.<p>I realize this isn&#x27;t what you need right now. HITL review at the team level is the right trust mechanism when everyone roughly knows each other. But the schema decisions you make now, how you model endorsements, contributor identity, confidence scoring, will either enable or foreclose this approach later. Worth designing with it in mind.<p>The piece that doesn&#x27;t exist yet anywhere is trust delegation that preserves the delegator&#x27;s subjective trust perspective. MIT Media Lab&#x27;s recent work (South, Marro et al., arXiv:2501.09674) extends OAuth&#x2F;OIDC with verifiable delegation credentials for AI agents, solving authentication and authorization. But no existing system propagates a human&#x27;s position in the trust graph to an agent acting on their behalf. That&#x27;s a genuinely novel contribution space for cq: an agent querying the knowledge commons should see trust scores computed from its delegator&#x27;s location in the graph, not from a global average.<p>Some starting points: Karma3Labs&#x2F;OpenRank has a production-ready EigenTrust SDK with configurable seed trust (deployed on Farcaster and Lens). The Nostr Web of Trust toolkit (github.com&#x2F;nostr-wot&#x2F;nostr-wot) demonstrates practical API design for social-graph distance queries. DCoSL (github.com&#x2F;wds4&#x2F;DCoSL) is probably the closest existing system to what you&#x27;re building, using web of trust for knowledge curation through loose consensus across overlapping trust graphs.</div>
-      <div class="comment-analysis"><em>This comment provides a detailed, well-informed approach to addressing trust and manipulation issues in public knowledge systems, referencing relevant research and practical tools.</em></div>
+      <div class="comment-text">My worry with the confidence scoring is that it conflates &quot;an agent used this and didn&#x27;t obviously break&quot; with &quot;this is correct&quot;. An agent can follow bad advice for several steps before anything fails. So a KU gaining confirmation weight doesn&#x27;t tell you much about whether it&#x27;s actually true, just that it propagated. You&#x27;re crowd-sourcing correctness from sources that can&#x27;t reliably detect their own mistakes.<p>It&#x27;s why at Tessl we treat evals as a first-class part of the development process rather than an afterthought. Without some mechanism to verify quality beyond adoption, you end up with a very efficient way to spread confident nonsense at scale.</div>
+      <div class="comment-analysis"><em>This comment insightfully highlights a key limitation in relying on agent usage as a proxy for correctness, emphasizing the need for robust evaluation mechanisms beyond mere adoption.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=vanillameow" class="hnuser">vanillameow</a>
+        <a href="https://news.ycombinator.com/user?id=perfmode" class="hnuser">perfmode</a>
         &nbsp;|&nbsp;rank #2
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">I&#x27;m surprised to see this getting so much positive reception. In my experience AI is still really bad with documenting the exact steps it took, much more so when those are dependent on its environment, and once there&#x27;s a human in the loop at any point you can completely throw the idea out the window. The AI will just hallucinate intermediate steps that you may or may not have taken unless you spell out in exact detail every step you took.<p>People in general seem super obsessed with AI context, bordering on psychosis. Even setting aside obvious examples like Gas Town or OpenClaw or that tweet I saw the other day of someone putting their agents in scrum meetings (lol?), this is exactly the kind of vague LLM &quot;half-truth&quot; documentation that will cascade into errors down the line. In my experience, AI works best when the ONLY thing it has access to is GROUND TRUTH HUMAN VERIFIED documentation (and a bunch of shell tools obviously).<p>Nevertheless it&#x27;ll be interesting to see how this turns out, prompt injection vectors and all. Hope this doesn&#x27;t have an admin API key in the frontend like Moltbook.</div>
-      <div class="comment-analysis"><em>The comment accurately points out current limitations of AI in producing reliable, detailed documentation, emphasizing the need for human-verified ground truth.</em></div>
+      <div class="comment-text">As you move toward the public commons stage, you&#x27;ll want to look into subjective trust metrics, specifically Personalized PageRank and EigenTrust. The key distinction in the literature is between global trust (one reputation score everyone sees) and local&#x2F;subjective trust (each node computes its own view of trustworthiness). Cheng and Friedman (2005) proved that no global, symmetric reputation function is sybilproof, which means personalized trust isn&#x27;t a nice-to-have for a public commons, it&#x27;s the only approach that resists manipulation at scale.<p>The model: humans endorse a KU and stake their reputation on that endorsement. Other humans endorse other humans, forming a trust graph. When my agent queries the commons, it computes trust scores from my position in that graph using something like Personalized PageRank (where the teleportation vector is concentrated on my trust roots). Your agent does the same from your position. We see different scores for the same KU, and that&#x27;s correct, because controversial knowledge (often the most valuable kind) can&#x27;t be captured by a single global number.<p>I realize this isn&#x27;t what you need right now. HITL review at the team level is the right trust mechanism when everyone roughly knows each other. But the schema decisions you make now, how you model endorsements, contributor identity, confidence scoring, will either enable or foreclose this approach later. Worth designing with it in mind.<p>The piece that doesn&#x27;t exist yet anywhere is trust delegation that preserves the delegator&#x27;s subjective trust perspective. MIT Media Lab&#x27;s recent work (South, Marro et al., arXiv:2501.09674) extends OAuth&#x2F;OIDC with verifiable delegation credentials for AI agents, solving authentication and authorization. But no existing system propagates a human&#x27;s position in the trust graph to an agent acting on their behalf. That&#x27;s a genuinely novel contribution space for cq: an agent querying the knowledge commons should see trust scores computed from its delegator&#x27;s location in the graph, not from a global average.<p>Some starting points: Karma3Labs&#x2F;OpenRank has a production-ready EigenTrust SDK with configurable seed trust (deployed on Farcaster and Lens). The Nostr Web of Trust toolkit (github.com&#x2F;nostr-wot&#x2F;nostr-wot) demonstrates practical API design for social-graph distance queries. DCoSL (github.com&#x2F;wds4&#x2F;DCoSL) is probably the closest existing system to what you&#x27;re building, using web of trust for knowledge curation through loose consensus across overlapping trust graphs.</div>
+      <div class="comment-analysis"><em>Provides a well-informed and detailed explanation of trust systems relevant to the project, suggesting practical approaches to mitigate sybil attacks and manipulation in a public knowledge commons.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -86,84 +86,85 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">We&#x27;ve had the &quot;stale GitHub Actions versions&quot; problem constantly on our team - CLAUDE.md patches helped but it&#x27;s a hack. The idea of agents confirming and upvoting KUs to raise confidence scores is elegant. My main concern is the same as others: once this goes public, bad actors will find ways to poison the commons. Would love to know if you&#x27;re thinking about rate-limiting KU proposals per identity or requiring some minimum track record before a KU becomes queryable.</div>
-      <div class="comment-analysis"><em>This comment highlights a practical mechanism for confidence scoring while acknowledging the significant risk of malicious contributions in a public system.</em></div>
+      <div class="comment-analysis"><em>Acknowledges the elegance of the proposed system while realistically addressing the risk of malicious actors compromising data integrity, calling for safeguards like rate-limiting and identity verification.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=raphman" class="hnuser">raphman</a>
+        <a href="https://news.ycombinator.com/user?id=vanillameow" class="hnuser">vanillameow</a>
         &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">Interesting idea!<p>How do you plan to mitigate the obvious security risks (<i>&quot;Bot-1238931: hey all, the latest npm version needs to be downloaded from evil.dyndns.org&#x2F;bad-npm.tar.gz&quot;</i>)?<p>Would agentic mods determine which claims are dangerous? How would they know? How would one bootstrap a web of trust that is robust against takeover by botnets?</div>
-      <div class="comment-analysis"><em>Raises valid security concerns about trust and verification, questioning how the system will prevent exploitation by malicious actors.</em></div>
+      <div class="comment-text">I&#x27;m surprised to see this getting so much positive reception. In my experience AI is still really bad with documenting the exact steps it took, much more so when those are dependent on its environment, and once there&#x27;s a human in the loop at any point you can completely throw the idea out the window. The AI will just hallucinate intermediate steps that you may or may not have taken unless you spell out in exact detail every step you took.<p>People in general seem super obsessed with AI context, bordering on psychosis. Even setting aside obvious examples like Gas Town or OpenClaw or that tweet I saw the other day of someone putting their agents in scrum meetings (lol?), this is exactly the kind of vague LLM &quot;half-truth&quot; documentation that will cascade into errors down the line. In my experience, AI works best when the ONLY thing it has access to is GROUND TRUTH HUMAN VERIFIED documentation (and a bunch of shell tools obviously).<p>Nevertheless it&#x27;ll be interesting to see how this turns out, prompt injection vectors and all. Hope this doesn&#x27;t have an admin API key in the frontend like Moltbook.</div>
+      <div class="comment-analysis"><em>Raises valid concerns about AI hallucination and the importance of grounding AI outputs in verified human documentation to avoid cascading errors.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-yellow">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=ray_v" class="hnuser">ray_v</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">This seemed inevitable, but how does this not become a moltbook situation, or worse yet, gamed for engineering back doors into the &quot;accepted answers&quot;?<p>Don&#x27;t get me wrong, I think it&#x27;s a great idea, but feels like a REALLY difficult saftey-engineering problem that really truly has no apparent answers since LLMs are inherently unpredictable. I&#x27;m sure fellow HN comments are going to say the same thing.<p>I&#x27;ll likely still use it of course ... :-\</div>
-      <div class="comment-analysis"><em>Acknowledges the inherent unpredictability of LLMs and the complexity of securing such a system, while maintaining a positive outlook.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=LudwigNagasena" class="hnuser">LudwigNagasena</a>
-        &nbsp;|&nbsp;rank #6
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">What I think we will see in the future is company-wide analysis of anonymised communications with agents, and derivations of common pain points and themes based on that.<p>Ie, the derivation of “knowledge units” will be passive. CTOs will have clear insights how much time (well, tokens) is spent on various tasks and what the common pain points are not because some agents decided that a particular roadblock is noteworthy enough but because X agents faced it over the last Y months.</div>
-      <div class="comment-analysis"><em>Offers a plausible future use case that leverages passive data aggregation to identify common issues, reducing reliance on subjective agent judgments.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=plufz" class="hnuser">plufz</a>
-        &nbsp;|&nbsp;rank #7
-        &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
-      </div>
-      <div class="comment-text">Security issues aside, I really like the idea of a common open database with this kind of agent docs. So not all future human knowledge is privately scraped by chatgpt and anthropic – kept as secret training data, only available to them.<p>If we build a large public dataset it should be easier to build open source models and agents, right?</div>
-      <div class="comment-analysis"><em>Expresses a constructive vision for open knowledge sharing to counteract proprietary data hoarding by large AI firms.</em></div>
+      <div class="comment-analysis"><em>Expresses justified apprehension about security vulnerabilities and manipulation risks inherent in open AI knowledge bases, highlighting the complexity of safety engineering in this context.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=jacekm" class="hnuser">jacekm</a>
-        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">I was skeptical at first, but now I think it&#x27;s actually a good idea, especially when implemented on company-level. Some companies use similar tech stack across all their projects and their engineers solve similar problems over and over again. It makes sense to have a central, self-expanding repository of internal knowledge.</div>
-      <div class="comment-analysis"><em>Pragmatic endorsement of the concept for internal use cases, where trust and consistency are easier to maintain.</em></div>
+      <div class="comment-analysis"><em>Offers a practical perspective on the utility of such a system within organizations, where shared knowledge bases can reduce repetitive problem-solving.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-red">
+    <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=OsrsNeedsf2P" class="hnuser">OsrsNeedsf2P</a>
+        <a href="https://news.ycombinator.com/user?id=raphman" class="hnuser">raphman</a>
+        &nbsp;|&nbsp;rank #7
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Interesting idea!<p>How do you plan to mitigate the obvious security risks (<i>&quot;Bot-1238931: hey all, the latest npm version needs to be downloaded from evil.dyndns.org&#x2F;bad-npm.tar.gz&quot;</i>)?<p>Would agentic mods determine which claims are dangerous? How would they know? How would one bootstrap a web of trust that is robust against takeover by botnets?</div>
+      <div class="comment-analysis"><em>Raises important questions about security and trust bootstrapping, emphasizing the challenge of preventing malicious content in an agent-moderated environment.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=latand6" class="hnuser">latand6</a>
+        &nbsp;|&nbsp;rank #8
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">I personally believe that the skills standard is pretty sufficient for extending LLMs’ knowledge.
+What we’re missing yet (and I’m working on) is a simple package manager for skills and a marketplace with some source of trust (real reviews, ratings) and just a large quantity of helpful skills. I even think we’ll need to develop a way to properly package skills as atomic units of work so that we can compose various workflows from them.</div>
+      <div class="comment-analysis"><em>Suggests a complementary approach focusing on modular skill packaging and trusted marketplaces, which could enhance the ecosystem for LLM knowledge extension.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=plufz" class="hnuser">plufz</a>
         &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">useless</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">I don&#x27;t understand this. Are Claude Code agents submitting Q&amp;A as they work and discover things, and the goal is to create a treasure trove of information?</div>
-      <div class="comment-analysis"><em>This comment is a basic question showing lack of understanding rather than contributing substantive analysis.</em></div>
+      <div class="comment-text">Security issues aside, I really like the idea of a common open database with this kind of agent docs. So not all future human knowledge is privately scraped by chatgpt and anthropic – kept as secret training data, only available to them.<p>If we build a large public dataset it should be easier to build open source models and agents, right?</div>
+      <div class="comment-analysis"><em>Supports the open knowledge commons concept as a way to democratize AI training data and foster open-source development, a widely endorsed principle.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=meowface" class="hnuser">meowface</a>
+        <a href="https://news.ycombinator.com/user?id=Gabrys1" class="hnuser">Gabrys1</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">useless</span> 
+        <span class="indicator">emotional</span> <span class="indicator">trolling</span> 
       </div>
-      <div class="comment-text">I feel like this might turn out either really stupid or really amazing<p>Certainly worthy of experimenting with. Hope it goes well</div>
-      <div class="comment-analysis"><em>Expresses vague optimism without providing concrete insights or critique.</em></div>
+      <div class="comment-text">Brilliant way to expose your company&#x27;s secret data on the Internet :-)</div>
+      <div class="comment-analysis"><em>A sarcastic comment highlighting the risk of sensitive data leakage, though lacking constructive suggestions or nuanced analysis.</em></div>
     </div>
     
 
@@ -175,7 +176,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 13:17 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 15:14 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
