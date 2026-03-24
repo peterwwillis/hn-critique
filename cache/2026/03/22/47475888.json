@@ -18,64 +18,40 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around a recent security breach involving Trivy and GitHub Actions, highlighting issues with credential compromises, the importance of immutable versioning, and the broader challenges in supply chain security. Commenters debate the effectiveness of current security practices, the role of GitHub's policies, and the implications for users relying on such tools.",
+    "summary": "The discussion revolves around recent security breaches involving Trivy and GitHub Actions, highlighting issues with credential management, supply chain security, and the effectiveness of current security practices. Participants express concern over persistent vulnerabilities and the need for better security measures.",
     "comments": [
-      {
-        "id": 47494269,
-        "author": "tkzed49",
-        "text": "\u0026quot;GitHub\u0026#x27;s own security guidance recommends pinning actions to full commit SHAs as the only truly immutable way to consume an action\u0026quot;\u003cp\u003eWhy doesn\u0026#x27;t GitHub just enforce  immutable versioning for actions? If you don\u0026#x27;t want immutable releases, you don\u0026#x27;t get to publish an Action. They could decide to enforce this and mitigate this class of issue.",
-        "indicators": [
-          "thoughtful",
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 1,
-        "analysis": "This comment accurately highlights a known best practice and suggests a reasonable policy change that could mitigate similar attacks."
-      },
       {
         "id": 47496428,
         "author": "woodruffw",
         "text": "This is a good wake-up call (or reminder) that many “supply chain security” products are no more secure or responsibly engineered than the stacks they’re intended to protect. This is a characteristic of security software in general, but the rise of these kinds of “run us everywhere” tools\u0026#x2F;products invite new and exciting ways for an attacker to compromise large numbers of users in a single campaign.",
         "indicators": [
           "thoughtful",
-          "intelligent",
+          "likely-true"
+        ],
+        "accuracyRank": 1,
+        "analysis": "This comment provides a nuanced critique of supply chain security tools, emphasizing that they are not infallible and may introduce vulnerabilities themselves."
+      },
+      {
+        "id": 47493607,
+        "author": "deathanatos",
+        "text": "My initial thought is that if this isn\u0026#x27;t a new compromise, Trivy must not have rotated the old credentials. They claim, however,\u003cp\u003e\u0026gt; \u003ci\u003eWe rotated secrets and tokens, but the process wasn\u0026#x27;t atomic and attackers may have been privy to refreshed tokens\u003c/i\u003e\u003cp\u003e… does anyone know what \u003ci\u003eexactly\u003c/i\u003e they\u0026#x27;re talking about, here? To my knowledge, GH does not divulge new tokens after they\u0026#x27;re issued, but it depends on the exact auth type we\u0026#x27;re talking about, and GH has an absurd number of different types of tokens\u0026#x2F;keys one can use.",
+        "indicators": [
+          "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 2,
-        "analysis": "The comment provides a broad but valid critique of supply chain security tools, emphasizing systemic risks inherent in such software."
+        "analysis": "This comment questions the effectiveness of credential rotation practices, highlighting potential gaps in security procedures."
       },
       {
-        "id": 47493539,
-        "author": "kevincloudsec",
-        "text": "second breach in a month from the same initial credential compromise. the first rotation didn\u0026#x27;t fully revoke access. the attacker walked right back in. no persistence needed.",
-        "indicators": [
-          "likely-true",
-          "thoughtful"
-        ],
-        "accuracyRank": 3,
-        "analysis": "This comment correctly identifies a common failure in incident response where incomplete credential revocation allows attackers to maintain access."
-      },
-      {
-        "id": 47492600,
-        "author": "xinayder",
-        "text": "Wasn\u0026#x27;t this discovered already last week, on Friday, that the threat actor had replaced the legit images with malware images? And republished 75 out of 76 tags?",
-        "indicators": [
-          "likely-true",
-          "thoughtful"
-        ],
-        "accuracyRank": 4,
-        "analysis": "This comment provides timely context about the scope of the compromise, consistent with public reports."
-      },
-      {
-        "id": 47493343,
-        "author": "huslage",
-        "text": "How the heck are credential compromises still a thing with 2FA and refresh tokens???",
+        "id": 47492405,
+        "author": "Shank",
+        "text": "\u0026gt; On March 22, 2026, a threat actor used compromised credentials to publish a malicious Trivy v0.69.5 and v0.69.6 DockerHub images. (\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;aquasecurity\u0026#x2F;trivy\u0026#x2F;security\u0026#x2F;advisories\u0026#x2F;GHSA-69fq-xp46-6x23\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;aquasecurity\u0026#x2F;trivy\u0026#x2F;security\u0026#x2F;advisories\u0026#x2F;GH...\u003c/a\u003e)\u003cp\u003eSo the first incident was on March 19th and the second incident is March 22nd —- evidently the attackers maintained persistence through maybe two separate credential rotation efforts.",
         "indicators": [
           "emotional",
-          "thoughtful"
+          "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "The comment expresses frustration but raises a valid question about how advanced security measures can still be circumvented."
+        "accuracyRank": 3,
+        "analysis": "Provides a factual recount of the incident timeline, emphasizing ongoing attacker persistence despite security measures."
       },
       {
         "id": 47496233,
@@ -83,44 +59,21 @@
         "text": "\u0026gt; This allowed the threat actor to perform authenticated operations, including force-updating tags\u003cp\u003eHey look, infrastructure underpinning the security of thousands of products, being compromised in a way a simple setting could have prevented (\u003ci\u003eDo not allow overriding tags\u003c/i\u003e is an old GH setting). Yet another reason we need a Software Building Code. I wonder how many more of these reasons we\u0026#x27;ll find in 2026.",
         "indicators": [
           "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 6,
-        "analysis": "This comment points out a specific GitHub setting that could mitigate such attacks, adding constructive criticism."
-      },
-      {
-        "id": 47492448,
-        "author": "progbits",
-        "text": "Friendly reminder that just because someone is building security software it doesn\u0026#x27;t mean they are competent and won\u0026#x27;t cause more harm than good.\u003cp\u003eEvery month the security team wants me to give full code or cloud access to some new scanner they want to trial. They love the fancy dashboards and lengthy reports but if I allowed just 10% of what they wanted we would be pwned on the regular...",
-        "indicators": [
-          "thoughtful",
-          "emotional"
-        ],
-        "accuracyRank": 7,
-        "analysis": "While somewhat emotional, this comment reflects a realistic caution about trusting security tools without scrutiny."
-      },
-      {
-        "id": 47499143,
-        "author": "apexalpha",
-        "text": "This post is from March 20 and update on 22! Not today!!!\u003cp\u003ePlease don’t scare people like this!",
-        "indicators": [
-          "emotional",
           "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment correctly clarifies the timing of the incident but is primarily emotional in tone."
+        "accuracyRank": 4,
+        "analysis": "Highlights a specific security misconfiguration that could have prevented some of the attack's impact."
       },
       {
-        "id": 47492405,
-        "author": "Shank",
-        "text": "\u0026gt; On March 22, 2026, a threat actor used compromised credentials to publish a malicious Trivy v0.69.5 and v0.69.6 DockerHub images. (\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;aquasecurity\u0026#x2F;trivy\u0026#x2F;security\u0026#x2F;advisories\u0026#x2F;GHSA-69fq-xp46-6x23\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;aquasecurity\u0026#x2F;trivy\u0026#x2F;security\u0026#x2F;advisories\u0026#x2F;GH...\u003c/a\u003e)\u003cp\u003eSo the first incident was on March 19th and the second incident is March 22nd —- evidently the attackers maintained persistence through maybe two separate credential rotation efforts.",
+        "id": 47493132,
+        "author": "PunchyHamster",
+        "text": "You\u0026#x27;re supposed to scan for vulnerabilities, not become one!",
         "indicators": [
-          "likely-true",
-          "thoughtful"
+          "belligerent",
+          "useless"
         ],
-        "accuracyRank": 9,
-        "analysis": "This comment provides a factual timeline and insight into the attacker's persistence, consistent with other reports."
+        "accuracyRank": 5,
+        "analysis": "Expresses frustration with security practices but lacks substantive analysis."
       },
       {
         "id": 47494309,
@@ -128,10 +81,21 @@
         "text": "People have been warning about giant security holes in GitHub Actions dependency but MS did nothing.",
         "indicators": [
           "emotional",
+          "likely-untrue"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Accuses Microsoft of inaction without providing detailed evidence, possibly oversimplifying the issue."
+      },
+      {
+        "id": 47492448,
+        "author": "progbits",
+        "text": "Friendly reminder that just because someone is building security software it doesn\u0026#x27;t mean they are competent and won\u0026#x27;t cause more harm than good.\u003cp\u003eEvery month the security team wants me to give full code or cloud access to some new scanner they want to trial. They love the fancy dashboards and lengthy reports but if I allowed just 10% of what they wanted we would be pwned on the regular...",
+        "indicators": [
+          "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 10,
-        "analysis": "This comment expresses frustration and assigns blame, which is plausible but lacks detailed evidence."
+        "accuracyRank": 7,
+        "analysis": "Raises a valid point about the limitations and potential risks of security software development."
       }
     ]
   }
