@@ -20,7 +20,7 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers around the recent compromise of the LiteLLM packages 1.82.7 and 1.82.8 on PyPI, linked to the TeamPCP threat actor and a compromised Trivy CI/CD tool. Commenters discuss the technical details, implications for supply chain security, and potential mitigations such as sandboxing and static analysis.",
+    "summary": "The discussion centers around the recent compromise of the LiteLLM package versions 1.82.7 and 1.82.8 on PyPI, linked to the TeamPCP threat actor and related to a previous Trivy compromise. Commenters debate the implications for supply chain security, dependency management, and sandboxing practices, while sharing resources and expressing concern about trust in open source dependencies.",
     "comments": [
       {
         "id": 47502858,
@@ -29,10 +29,49 @@
         "indicators": [
           "intelligent",
           "likely-true",
-          "constructive"
+          "constructive",
+          "thoughtful"
         ],
         "accuracyRank": 1,
-        "analysis": "As a maintainer, this comment provides authoritative and up-to-date information about the incident, clarifying the source and current status."
+        "analysis": "As the maintainer, this comment provides the most authoritative and accurate information about the incident and ongoing response."
+      },
+      {
+        "id": 47502920,
+        "author": "cedws",
+        "text": "This looks like the same TeamPCP that compromised Trivy. Notice how the issue is full of bot replies. It was the same in Trivy’s case.\u003cp\u003eThis threat actor seems to be very quickly capitalising on stolen credentials, wouldn’t be surprised if they’re leveraging LLMs to do the bulk of the work.",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "thoughtful"
+        ],
+        "accuracyRank": 2,
+        "analysis": "This comment correctly connects the LiteLLM compromise to the known TeamPCP actor and highlights the sophistication of the attack."
+      },
+      {
+        "id": 47507089,
+        "author": "ting0",
+        "text": "I\u0026#x27;ve been waiting for something like this to happen. It\u0026#x27;s just too easy to pull off. I\u0026#x27;ve been hard-pinning all of my versions of dependencies and using older versions in any new projects I set up for a little while, because they\u0026#x27;ve generally at least been around long enough to vet. But even that has its own set of risks (for example, what if I accidently pin a vulnerable version). Either that, or I fork everything, including all the deps, run LLMs over the codebase to vet everything.\u003cp\u003eEven still though, we can\u0026#x27;t really trust any open-source software any more that has third party dependencies, because the chains can be so complex and long it\u0026#x27;s impossible to vet everything.\u003cp\u003eIt\u0026#x27;s just too easy to spam out open-source software now, which also means it\u0026#x27;s too easy to create thousands of infected repos with sophisticated and clever supply chain attacks planted deeply inside them. Ones that can be surfaced at any time, too. LLMs have compounded this risk 100x.",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "This comment insightfully discusses the broader supply chain security challenges and practical mitigation strategies."
+      },
+      {
+        "id": 47504121,
+        "author": "syllogism",
+        "text": "Maintainers need to keep a wall between the package publishing and public repos. Currently what people are doing is configuring the public repo as a Trusted Publisher directly. This means you can trigger the package publication from the repo itself, and the public repo is a huge surface area.\u003cp\u003eConfigure the CI to make a release with the artefacts attached. Then have an entirely private repo that can\u0026#x27;t be triggered automatically as the publisher. The publisher repo fetches the artefacts and does the pypi\u0026#x2F;npm\u0026#x2F;whatever release.",
+        "indicators": [
+          "constructive",
+          "intelligent",
+          "thoughtful",
+          "likely-true"
+        ],
+        "accuracyRank": 4,
+        "analysis": "Provides a practical security recommendation to reduce risks in the publishing process, which is relevant and actionable."
       },
       {
         "id": 47503580,
@@ -43,8 +82,20 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 2,
-        "analysis": "Provides technical analysis and context on the attack vector, adding valuable insight into the nature of the compromise."
+        "accuracyRank": 5,
+        "analysis": "Technical analysis adds valuable context on the attack method and potential broader impact."
+      },
+      {
+        "id": 47502402,
+        "author": "ramimac",
+        "text": "This is tied to the TeamPCP activity over the last few weeks. I\u0026#x27;ve been responding, and keeping an up to date timeline. I hope it might help folks catch up and contextualize this incident:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;ramimac.me\u0026#x2F;trivy-teampcp\u0026#x2F;#phase-09\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;ramimac.me\u0026#x2F;trivy-teampcp\u0026#x2F;#phase-09\u003c/a\u003e",
+        "indicators": [
+          "intelligent",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "Provides useful external resource and timeline that supports understanding of the ongoing threat actor activity."
       },
       {
         "id": 47502785,
@@ -52,87 +103,78 @@
         "text": "We just can\u0026#x27;t trust dependencies and dev setups. I wanted to say \u0026quot;anymore\u0026quot; but we never could. Dev containers were never good enough, too clumsy and too little isolation. We need to start working in full sandboxes with defence in depth that have real guardrails and UIs like vm isolation + container primitives and allow lists, egress filters, seccomp, gvisor and more but with much better usability. Its the same requirements we have for agent runtimes, lets use this momentum to make our dev environments safer! In such an environment the container would crash, we see the violations, delete it and dont\u0026#x27; have to worry about it. We should treat this as an everyday possibility not as an isolated security incident.",
         "indicators": [
           "thoughtful",
-          "constructive"
+          "constructive",
+          "intelligent"
         ],
-        "accuracyRank": 3,
-        "analysis": "Offers a thoughtful perspective on the broader implications for development environments and security best practices."
+        "accuracyRank": 7,
+        "analysis": "Raises important points about improving development environment security but is more conceptual than specific to this incident."
       },
       {
-        "id": 47504121,
-        "author": "syllogism",
-        "text": "Maintainers need to keep a wall between the package publishing and public repos. Currently what people are doing is configuring the public repo as a Trusted Publisher directly. This means you can trigger the package publication from the repo itself, and the public repo is a huge surface area.\u003cp\u003eConfigure the CI to make a release with the artefacts attached. Then have an entirely private repo that can\u0026#x27;t be triggered automatically as the publisher. The publisher repo fetches the artefacts and does the pypi\u0026#x2F;npm\u0026#x2F;whatever release.",
+        "id": 47510350,
+        "author": "mathis-l",
+        "text": "CrewAI (uses litellm) pinned it to 1.82.6 (last good version) 5 hours ago but the commit message does not say anything about a potential compromise. This seems weird. Is it a coincidence? Shouldn’t users be warned about a potential compromise?\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;crewAIInc\u0026#x2F;crewAI\u0026#x2F;commit\u0026#x2F;8d1edd5d65c462c3daecbd890336a4e3a3d15874\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;crewAIInc\u0026#x2F;crewAI\u0026#x2F;commit\u0026#x2F;8d1edd5d65c462c3d...\u003c/a\u003e",
         "indicators": [
-          "intelligent",
-          "constructive"
-        ],
-        "accuracyRank": 4,
-        "analysis": "Suggests practical security improvements to the release process to reduce risk of compromise."
-      },
-      {
-        "id": 47502920,
-        "author": "cedws",
-        "text": "This looks like the same TeamPCP that compromised Trivy. Notice how the issue is full of bot replies. It was the same in Trivy’s case.\u003cp\u003eThis threat actor seems to be very quickly capitalising on stolen credentials, wouldn’t be surprised if they’re leveraging LLMs to do the bulk of the work.",
-        "indicators": [
-          "intelligent",
+          "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 5,
-        "analysis": "Connects this incident to a known threat actor and comments on the attacker's tactics, providing useful context."
+        "accuracyRank": 8,
+        "analysis": "Highlights a valid concern about communication transparency from downstream users but lacks full context."
       },
       {
-        "id": 47507836,
-        "author": "santiago-pl",
-        "text": "It looks like Trivy was compromised at least five days ago. \u003ca href=\"https:\u0026#x2F;\u0026#x2F;www.wiz.io\u0026#x2F;blog\u0026#x2F;trivy-compromised-teampcp-supply-chain-attack\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;www.wiz.io\u0026#x2F;blog\u0026#x2F;trivy-compromised-teampcp-supply-cha...\u003c/a\u003e",
+        "id": 47504118,
+        "author": "eoskx",
+        "text": "Also, not surprising that LiteLLM\u0026#x27;s SOC2 auditor was Delve. The story writes itself.",
         "indicators": [
-          "likely-true",
-          "constructive"
+          "emotional",
+          "trolling"
         ],
-        "accuracyRank": 6,
-        "analysis": "Provides corroborating evidence and external resources to understand the timeline and scope of the compromise."
+        "accuracyRank": 9,
+        "analysis": "This comment is speculative and somewhat sarcastic without providing constructive insight."
+      },
+      {
+        "id": 47508422,
+        "author": "Nayjest",
+        "text": "Use secure and minimalistic lm-proxy instead:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;Nayjest\u0026#x2F;lm-proxy\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;Nayjest\u0026#x2F;lm-proxy\u003c/a\u003e\u003cp\u003e```\npip install lm-proxy\n```\u003cp\u003eGuys, sorry, as the author of a competing opensource product, I couldn’t resist",
+        "indicators": [
+          "trolling",
+          "constructive",
+          "emotional"
+        ],
+        "accuracyRank": 10,
+        "analysis": "While promoting an alternative, the comment has a promotional and somewhat self-serving tone."
       },
       {
         "id": 47502085,
         "author": "hiciu",
         "text": "Besides main issue here, and the owners account being possibly compromised as well, there\u0026#x27;s like 170+ low quality spam comments in there.\u003cp\u003eI would expect better spam detection system from GitHub. This is hardly acceptable.",
         "indicators": [
-          "thoughtful",
+          "emotional",
           "likely-true"
         ],
-        "accuracyRank": 7,
-        "analysis": "Highlights secondary issues related to the incident such as account compromise and spam, which are relevant but less central."
+        "accuracyRank": 11,
+        "analysis": "Raises a valid concern about spam in the issue thread but is peripheral to the main security discussion."
       },
       {
-        "id": 47507089,
-        "author": "ting0",
-        "text": "I\u0026#x27;ve been waiting for something like this to happen. It\u0026#x27;s just too easy to pull off. I\u0026#x27;ve been hard-pinning all of my versions of dependencies and using older versions in any new projects I set up for a little while, because they\u0026#x27;ve generally at least been around long enough to vet. But even that has its own set of risks (for example, what if I accidently pin a vulnerable version). Either that, or I fork everything, including all the deps, run LLMs over the codebase to vet everything.\u003cp\u003eEven still though, we can\u0026#x27;t really trust any open-source software any more that has third party dependencies, because the chains can be so complex and long it\u0026#x27;s impossible to vet everything.\u003cp\u003eIt\u0026#x27;s just too easy to spam out open-source software now, which also means it\u0026#x27;s too easy to create thousands of infected repos with sophisticated and clever supply chain attacks planted deeply inside them. Ones that can be surfaced at any time, too. LLMs have compounded this risk 100x.",
+        "id": 47502769,
+        "author": "tom_alexander",
+        "text": "Only tangentially related: Is there some joke\u0026#x2F;meme I\u0026#x27;m not aware of? The github comment thread is flooded with identical comments like \u0026quot;Thanks, that helped!\u0026quot;, \u0026quot;Thanks for the tip!\u0026quot;, and \u0026quot;This was the answer I was looking for.\u0026quot;\u003cp\u003eSince they all seem positive, it doesn\u0026#x27;t seem like an attack but I thought the general etiquette for github issues was to use the emoji reactions to show support so the comment thread only contains substantive comments.",
         "indicators": [
           "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "Shares practical experience and concerns about dependency management and supply chain risks, reflecting common community sentiments."
-      },
-      {
-        "id": 47503114,
-        "author": "f311a",
-        "text": "Their previous release would be easily caught by static analysis. PTH is a novel technique.\u003cp\u003eRun all your new dependencies through static analysis and don\u0026#x27;t install the latest versions.\u003cp\u003eI implemented static analysis for Python that detects close to 90% of such injections.\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;rushter\u0026#x2F;hexora\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;rushter\u0026#x2F;hexora\u003c/a\u003e",
-        "indicators": [
-          "intelligent",
-          "constructive"
-        ],
-        "accuracyRank": 9,
-        "analysis": "Provides a concrete mitigation strategy by recommending static analysis to detect malicious code injections."
+        "accuracyRank": 12,
+        "analysis": "Observes unusual comment patterns that may indicate bot activity or poor community practices."
       },
       {
         "id": 47502346,
         "author": "6thbit",
         "text": "title is bit misleading.\u003cp\u003eThe package was directly compromised, not “by supply chain attack”.\u003cp\u003eIf you use the compromised package, your supply chain is compromised.",
         "indicators": [
-          "intelligent",
+          "thoughtful",
           "likely-true"
         ],
-        "accuracyRank": 10,
-        "analysis": "Clarifies terminology around the nature of the compromise, improving understanding of the incident."
+        "accuracyRank": 13,
+        "analysis": "Clarifies terminology around the nature of the compromise, which is a useful semantic distinction."
       }
     ]
   }

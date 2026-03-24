@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">142 points</span>
+        <span class="score">153 points</span>
         by <a href="https://news.ycombinator.com/user?id=syrusakbary" class="hnuser">syrusakbary</a>
-        <span class="age">9 hours ago</span>
+        <span class="age">11 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47501211.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47501211" rel="noopener">original on HN</a>
       </p>
@@ -47,7 +47,7 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on Nanobrew&#39;s compatibility with Homebrew, its speed advantages, and the challenges of migrating between Intel and Apple silicon Macs. Several users express skepticism about Nanobrew&#39;s true compatibility and usefulness, while others share migration tips and suggest improvements for Homebrew itself.</p>
+      <p>The discussion revolves around the Nanobrew project and its compatibility and performance relative to Homebrew. Commenters debate the feasibility of full compatibility without Ruby, the importance of speed versus compatibility, and share personal experiences with Homebrew&#39;s architecture and migration challenges.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
@@ -64,7 +64,7 @@
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">If it doesn’t ever execute Ruby: it cannot be compatible with Homebrew. “Compatible” is doing a bit of work here when it also means “implicitly relies on Homebrew’s CDN, CI, packaging infrastructure and maintainers who keep all this running”.<p>There’s a new vibe coded Homebrew frontend with partial compatibility and improved speed every few weeks.<p>Homebrew is working on an official Rust frontend that will actually have full compatibility. Hopefully this will help share effort across the wider ecosystem.</div>
-      <div class="comment-analysis"><em>This comment accurately points out that without Ruby execution, full Homebrew compatibility is unlikely, highlighting the implicit dependencies Nanobrew has on Homebrew infrastructure.</em></div>
+      <div class="comment-analysis"><em>This comment accurately highlights the technical dependency of Homebrew on Ruby and its infrastructure, providing a nuanced understanding of what compatibility entails.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -75,7 +75,7 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">OT: speaking of Homebrew, I made an incorrect assumption about it that eventually led to some problems. It was me being stupid, but I bet others have made the same mistake but not yet hit problems. Hence this comment.<p>My mistake was when I upgraded from my 2017 iMac (Intel processor) to an Apple silicon Mac at the start of 2024 and migrated via Time Machine I did not do anything extra specifically for Homebrew. I just assumed that as things got updated via the normal periodic Homebrew updates I run it would start grabbing the Apple silicon binaries for binary things it installed.<p>It turn out that is wrong. They made Apple silicon Homebrew kind of independent of Intel Homebrew. Intel Homebrew uses &#x2F;usr&#x2F;local and Apple silicon Homebrew uses &#x2F;opt&#x2F;homebrew. This allows having both native and Intel Homebrew installed at the same time if you need both.<p>The correct way to migrate from an Intel Mac to an Apple silicon Mac is to install Apple silicon Homebrew on the new Mac, and then install all the packages you want. Intel Homebrew works fine on Apple silicon Macs so you can use the Intel Homebrew that migrated via Time Machine to make the package list to use with Apple silicon Homebrew (or you can make it on the old Mac).<p>I only noticed this because I was trying to build something from source using some libraries that were installed via Homebrew and running into problems. An LLM was helping figure this out and it was telling me I might have to manually symlink those libraries from where they were in &#x2F;opt&#x2F;homebrew to where the build process for the thing I was building expected to find them and I didn&#x27;t have a &#x2F;opt&#x2F;homebrew. The libraries were somewhere in &#x2F;usr&#x2F;local. I then noticed those libraries were not for Apple silicon, checked other things installed view Homebrew and saw nothing was for Apple silicon, and realized I had the wrong Homebrew.</div>
-      <div class="comment-analysis"><em>This detailed personal experience correctly explains the distinction between Intel and Apple silicon Homebrew installations and the proper migration process.</em></div>
+      <div class="comment-analysis"><em>This detailed personal experience explains a common migration pitfall with Homebrew on Apple silicon Macs, providing useful practical advice.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -86,52 +86,51 @@
         <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">This feels like a solution looking for a problem. I have a couple hundred brew packages on my system and I’ve never sat there thinking “If this was only 2 seconds faster…” while doing an update. I’m sure the Homebrew folks could mine this for a few ideas of how to further optimize brew, but I don’t think I’ll be adopting it anytime soon. Compatibility is more important than speed in this case.</div>
-      <div class="comment-analysis"><em>The comment provides a practical perspective emphasizing that speed improvements may not justify sacrificing compatibility for many users.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=ryandrake" class="hnuser">ryandrake</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">What would be great is a Homebrew-compatible system that doesn&#x27;t cut off support for older machines. I have a 3.8 GHz Quad core i5 iMac that still crushes, yet Homebrew has determined that I&#x27;m just too old and icky[1] to work with anymore. I had to move over to MacPorts, which is surprisingly nice, but I still miss brew.<p>Yea, I know. It&#x27;s open source. They can do what they want. Still sucks.<p>1: <a href="https:&#x2F;&#x2F;docs.brew.sh&#x2F;Support-Tiers" rel="nofollow">https:&#x2F;&#x2F;docs.brew.sh&#x2F;Support-Tiers</a></div>
-      <div class="comment-analysis"><em>This comment highlights a valid concern about Homebrew dropping support for older hardware, which affects user experience and drives them to alternatives.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-yellow">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=themadsens" class="hnuser">themadsens</a>
-        &nbsp;|&nbsp;rank #5
-        &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">I naively assumed it would work on the <i>already</i> installed homebrew packages. No such luck.<p>After installing, &#x27;nb list&#x27; and thus eg. &#x27;nb outdated&#x27; will yield the empty list!
-I have absolutely no use for a competing homebrew installation that is <i>mostly</i> compatible ..</div>
-      <div class="comment-analysis"><em>The comment provides firsthand feedback that Nanobrew does not recognize existing Homebrew packages, indicating partial compatibility issues.</em></div>
+      <div class="comment-analysis"><em>The comment offers a pragmatic user perspective emphasizing compatibility over speed, which aligns with many users&#39; priorities in package management.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=chuckadams" class="hnuser">chuckadams</a>
-        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;rank #4
         &nbsp;|&nbsp;
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
       </div>
       <div class="comment-text">This might be a good thing for homebrew to adopt for the download&#x2F;install process, but if it doesn&#x27;t include a ruby interpreter, I have a hard time seeing how it&#x27;s going to be compatible with anything but searching and installing bottles.  I install most of my packages from a Brewfile, which itself is Ruby code.</div>
-      <div class="comment-analysis"><em>This comment correctly points out that without Ruby support, many Homebrew features, especially those relying on Ruby scripts, will not be compatible.</em></div>
+      <div class="comment-analysis"><em>This comment correctly points out the importance of Ruby in Homebrew&#39;s operation, especially for complex package management tasks involving Brewfiles.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=ryandrake" class="hnuser">ryandrake</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">thoughtful</span> 
+      </div>
+      <div class="comment-text">What would be great is a Homebrew-compatible system that doesn&#x27;t cut off support for older machines. I have a 3.8 GHz Quad core i5 iMac that still crushes, yet Homebrew has determined that I&#x27;m just too old and icky[1] to work with anymore. I had to move over to MacPorts, which is surprisingly nice, but I still miss brew.<p>Yea, I know. It&#x27;s open source. They can do what they want. Still sucks.<p>1: <a href="https:&#x2F;&#x2F;docs.brew.sh&#x2F;Support-Tiers" rel="nofollow">https:&#x2F;&#x2F;docs.brew.sh&#x2F;Support-Tiers</a></div>
+      <div class="comment-analysis"><em>The comment reflects a valid user concern about hardware support policies in Homebrew, providing context on alternative package managers.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=marksully" class="hnuser">marksully</a>
+        <a href="https://news.ycombinator.com/user?id=maxloh" class="hnuser">maxloh</a>
+        &nbsp;|&nbsp;rank #6
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">How does this work? AFAIK Homebrew formulae are written in Ruby [0].<p>Do they use some kind of Ruby parser to parse formulae?<p>[0]: <a href="https:&#x2F;&#x2F;github.com&#x2F;Homebrew&#x2F;homebrew-core&#x2F;blob&#x2F;26-tahoe&#x2F;Formula&#x2F;f&#x2F;ffmpeg.rb" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;Homebrew&#x2F;homebrew-core&#x2F;blob&#x2F;26-tahoe&#x2F;Form...</a></div>
+      <div class="comment-analysis"><em>This comment raises a relevant technical question about how Nanobrew might handle Ruby-based formulae, indicating curiosity about implementation details.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=alsetmusic" class="hnuser">alsetmusic</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">what happens if I test this tool by installing some packages and then remove (the tool)? will I still be able to use Homebrew to manage these new packages?</div>
-      <div class="comment-analysis"><em>This is a reasonable question about the interoperability and persistence of packages installed via Nanobrew versus Homebrew.</em></div>
+      <div class="comment-text">I&#x27;m not a Python dev, but I appreciate the motivation uv has inspired across other package managers. I tried another brew replacement called zerobrew last month. It installed packages to a different directory from homebrew, so I didn&#x27;t actually test drive after seeing that. Regardless, I look forward to the competition pushing mainstream tools to improve their performance.</div>
+      <div class="comment-analysis"><em>The comment provides comparative insight about similar tools and expresses optimism about competition driving performance improvements.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -142,29 +141,30 @@ I have absolutely no use for a competing homebrew installation that is <i>mostly
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">The current version of brew has a flaw where the installer can&#x27;t install isolated dependency trees in a sterile manner. If you have packages A, B, C, and D that all have updates, and assuming A,B,C depend on each other and come out to a total of say 1MB, and D is 1000MB, brew works in a MapReduce manner where it will attempt to finish downloading everything in parallel (even though the real bottleneck is D) before doing any installation.<p>Since the first 3 has no dependency on D, a better way would be to install them in parallel while D is still downloading.</div>
-      <div class="comment-analysis"><em>This comment insightfully critiques Homebrew’s installation process and suggests a more efficient approach to parallel installations.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=luizfelberti" class="hnuser">luizfelberti</a>
-        &nbsp;|&nbsp;rank #9
-        &nbsp;|&nbsp;
-        <span class="indicator">constructive</span> <span class="indicator">thoughtful</span> 
-      </div>
-      <div class="comment-text">It might be good to explain how this differs from zerobrew [0], which is trying to accomplish the same thing<p>[0] <a href="https:&#x2F;&#x2F;github.com&#x2F;lucasgelfond&#x2F;zerobrew" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;lucasgelfond&#x2F;zerobrew</a></div>
-      <div class="comment-analysis"><em>This comment calls for clarification on how Nanobrew differs from a similar project, which is a useful contribution to the discussion.</em></div>
+      <div class="comment-analysis"><em>This comment offers a thoughtful critique of Homebrew&#39;s update process, suggesting a more efficient installation strategy.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=kassadin" class="hnuser">kassadin</a>
-        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;rank #9
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
       <div class="comment-text">Do you choose compatibility or speed?<p>nb info --cask codex-app<p>nb: formula &#x27;--cask&#x27; not found<p>nb: formula &#x27;codex-app&#x27; not found</div>
-      <div class="comment-analysis"><em>This comment points out specific command failures suggesting incomplete feature support in Nanobrew, highlighting a tradeoff between speed and compatibility.</em></div>
+      <div class="comment-analysis"><em>This comment highlights practical compatibility issues with Nanobrew, illustrating limitations in handling certain formulae.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=themadsens" class="hnuser">themadsens</a>
+        &nbsp;|&nbsp;rank #10
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">I naively assumed it would work on the <i>already</i> installed homebrew packages. No such luck.<p>After installing, &#x27;nb list&#x27; and thus eg. &#x27;nb outdated&#x27; will yield the empty list!
+I have absolutely no use for a competing homebrew installation that is <i>mostly</i> compatible ..</div>
+      <div class="comment-analysis"><em>The comment expresses user frustration with Nanobrew&#39;s inability to recognize existing Homebrew packages, emphasizing the importance of full compatibility.</em></div>
     </div>
     
 
@@ -176,7 +176,7 @@ I have absolutely no use for a competing homebrew installation that is <i>mostly
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 20:53 UTC &nbsp;|&nbsp;
+    Generated 2026-03-24 22:38 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
