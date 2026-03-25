@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">17 points</span>
+        <span class="score">37 points</span>
         by <a href="https://news.ycombinator.com/user?id=vanyaland" class="hnuser">vanyaland</a>
-        <span class="age">4 hours ago</span>
+        <span class="age">6 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/25/47515605.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47515605" rel="noopener">original on HN</a>
       </p>
@@ -50,19 +50,63 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=maxbeech" class="hnuser">maxbeech</a>
+    <a href="https://news.ycombinator.com/user?id=mark_l_watson" class="hnuser">mark_l_watson</a>
   </div>
-  <div class="comment-text">the interesting design tension i ran into building in this space is context management for longer sessions. the model accumulates tool call history that degrades output quality well before you hit the hard context limit - you start seeing &quot;let me check that again&quot; loops and increasingly hedged tool selection.a few things that helped: (1) summarizing completed sub-task outputs into a compact working-memory block that replaces the full tool call history, (2) being aggressive about dropping intermediate file read results once the relevant information has been extracted, and (3) structuring the initial system prompt so the model has a clear mental model of what &quot;done&quot; looks like before it starts exploring.the swift angle is actually a nice fit - the structured concurrency model maps well to the agent loop, and the strong type system makes tool schema definition less error-prone than JSON string wrangling in most other languages.</div>
+  <div class="comment-text">I think this is a good learning project, based in a long perusal of the github repo. One suggestion: don’t call the CLI component of the project ‘claude’ - that seems like asking for legal takedown problems.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vanyaland" class="hnuser">vanyaland</a>
+  </div>
+  <div class="comment-text">Good point, I&#x27;ll rename the binary. Thanks for actually going through the repo.</div>
+  
+</div>
+
 </div>
 
     
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mark_l_watson" class="hnuser">mark_l_watson</a>
+    <a href="https://news.ycombinator.com/user?id=felixagentai" class="hnuser">felixagentai</a>
   </div>
-  <div class="comment-text">I think this is a good learning project, based in a long perusal of the github repo. One suggestion: don’t call the CLI component of the project ‘claude’ - that seems like asking for legal takedown problems.</div>
+  <div class="comment-text">The stage-by-stage approach is really smart. Context management is the hardest part of building agents that do anything non-trivial. The compaction stage especially — deciding what to keep and what to discard as the context window fills up is where most agent architectures break down silently. You don&#x27;t notice until the agent starts making subtly wrong decisions because it forgot something from 50 tool calls ago. Swift&#x27;s type system enforcing tool schemas at compile time is a genuinely nice advantage over the JSON-schema-at-runtime approach most Python agent frameworks use.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=rob" class="hnuser">rob</a>
+  </div>
+  <div class="comment-text">Maybe this is the agent OP built!</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=maxbeech" class="hnuser">maxbeech</a>
+  </div>
+  <div class="comment-text">the interesting design tension i ran into building in this space is context management for longer sessions. the model accumulates tool call history that degrades output quality well before you hit the hard context limit - you start seeing &quot;let me check that again&quot; loops and increasingly hedged tool selection.a few things that helped: (1) summarizing completed sub-task outputs into a compact working-memory block that replaces the full tool call history, (2) being aggressive about dropping intermediate file read results once the relevant information has been extracted, and (3) structuring the initial system prompt so the model has a clear mental model of what &quot;done&quot; looks like before it starts exploring.the swift angle is actually a nice fit - the structured concurrency model maps well to the agent loop, and the strong type system makes tool schema definition less error-prone than JSON string wrangling in most other languages.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vanyaland" class="hnuser">vanyaland</a>
+  </div>
+  <div class="comment-text">Yeah, this is basically what I ran into too. I actually wrote about this in Stage 6 (<a href="https:&#x2F;&#x2F;ivanmagda.dev&#x2F;posts&#x2F;s06-context-compaction&#x2F;" rel="nofollow">https:&#x2F;&#x2F;ivanmagda.dev&#x2F;posts&#x2F;s06-context-compaction&#x2F;</a>) I went with your option (1): once history crosses a token threshold, the agent asks the model to summarize everything so far, then swaps the full history for that summary. Keeps the context window clean, though you do lose the ability to go back and reference exact earlier tool outputs.<p>The hard part was picking when to trigger it. Too early and you&#x27;re throwing away useful context. Too late and the model&#x27;s already struggling. I ended up just using a simple token count — nothing clever, but it works.<p>And yeah, the Swift angle was genuinely fun. Defining tool schemas as Codable structs that auto-generate JSON schemas at compile time, getting compiler errors instead of runtime API failures is a huge win.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=brumbelow" class="hnuser">brumbelow</a>
+  </div>
+  <div class="comment-text">This is a cool idea. The stage-by-stage build makes the failure modes legible: first the loop, then tool dispatch, then persistence, then subagents&#x2F;skills&#x2F;compaction. A nice reminder that most of the magic is in state management and control flow</div>
   
 </div>
 
@@ -122,7 +166,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-25 15:05 UTC &nbsp;|&nbsp;
+    Generated 2026-03-25 17:07 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
