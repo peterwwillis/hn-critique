@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">64 points</span>
+        <span class="score">87 points</span>
         by <a href="https://news.ycombinator.com/user?id=ingve" class="hnuser">ingve</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/21/47472566.html">critique article</a>
@@ -68,6 +68,14 @@
   
 </div>
 
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=fluoridation" class="hnuser">fluoridation</a>
+  </div>
+  <div class="comment-text">I think what they meant is that that what it takes to add coroutines support to a C&#x2F;++ program. Adding it to, say, Java or C# is much more involved.</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -76,6 +84,14 @@
   </div>
   <div class="comment-text">Hmm. I&#x27;m <i>fairly</i> certain that most of that assembly code for saving&#x2F;restoring registers can be replaced with setjmp&#x2F;longjmp, and only control transfer itself would require actual assembly. But maybe not.<p>That&#x27;s the problem with register machines, I guess. Interestingly enough, BCPL, its main implementation being a p-code interpreter of sorts, has pretty trivially supported coroutines in its &quot;standard&quot; library since the late seventies — as you say, all you need to save is the current stack pointer and the code pointer.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=zabzonk" class="hnuser">zabzonk</a>
+  </div>
+  <div class="comment-text">You can do a lot of horrible things with setjmp and friends. I actually implemented some exception throw&#x2F;catch macros using them (which did work) for a compiler that didn&#x27;t support real C++ exceptions. Thank god we never used them in production code.<p>This would be about 32 years ago - I don&#x27;t like thinking about that ...</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=lelanthran" class="hnuser">lelanthran</a>
@@ -94,18 +110,42 @@
 
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=zabzonk" class="hnuser">zabzonk</a>
-  </div>
-  <div class="comment-text">You can do a lot of horrible things with setjmp and friends. I actually implemented some exception throw&#x2F;catch macros using them (which did work) for a compiler that didn&#x27;t support real C++ exceptions. Thank god we never used them in production code.<p>This would be about 32 years ago - I don&#x27;t like thinking about that ...</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=gpderetta" class="hnuser">gpderetta</a>
   </div>
   <div class="comment-text">setjmp + longjump + sigaltstack is indeed the old trick.</div>
   
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Sharlin" class="hnuser">Sharlin</a>
+  </div>
+  <div class="comment-text">C++ destructors and exception safety will likely wreak havoc with any &quot;simple&quot; assembly&#x2F;longjmp-based solution, unless severely constraining what types you can use within the coroutines.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=fluoridation" class="hnuser">fluoridation</a>
+  </div>
+  <div class="comment-text">Not really. I&#x27;ve done it years ago. The one restriction for code inside the coroutine is that it mustn&#x27;t catch (...). You solve destruction by distinguishing whether a couroutine is paused in the middle of execution or if it finished running. When the coroutine is about to be destructed you run it one last time and throw a special exception, triggering destruction of all RAII objects, which you catch at the coroutine entry point.<p>Passing uncaught exceptions from the coroutine up to the caller is also pretty easy, because it&#x27;s all synchronous. You just need to wrap it so it can safely travel across the gap. You can restrict the exception types however you want. I chose to support only subclasses of std::exception and handle anything else as an unknown exception.</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjc50" class="hnuser">pjc50</a>
+  </div>
+  <div class="comment-text">&gt; Passing uncaught exceptions from the coroutine up to the caller is also pretty easy, because it&#x27;s all synchronous. You just need to wrap it so it can safely travel across the gap<p>This is also how dotnet handles it, and you can choose whether to rethrow at the caller site, inspect the exception manually, or run a continuation on exception.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Sharlin" class="hnuser">Sharlin</a>
+  </div>
+  <div class="comment-text">Thanks, that&#x27;s interesting.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -126,36 +166,18 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mgaunard" class="hnuser">mgaunard</a>
-  </div>
-  <div class="comment-text">Coroutines is just a way to write continuations in an imperative style and with more overhead.<p>I never understood the value. Just use lambdas&#x2F;callbacks.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=usrnm" class="hnuser">usrnm</a>
-  </div>
-  <div class="comment-text">&gt; Just use lambdas&#x2F;callbacks<p>&quot;Just&quot; is doing a lot of work there. I&#x27;ve use callback-based async frameworks in C++ in the past, and it turns into pure hell very fast. Async programming is, basically, state machines all the way down, and doing it explicitly is not nice. And trying to debug the damn thing is a miserable experience</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=affenape" class="hnuser">affenape</a>
-  </div>
-  <div class="comment-text">Not necessarily. A coroutine encapsulates the entire state machine, which might pe a PITA to implement otherwise. Say, if I have a stateful network connection, that requires initialization and periodic encryption secret renewal, a coroutine implementation would be much slimmer than that of a state machine with explicit states.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=cherryteastain" class="hnuser">cherryteastain</a>
   </div>
   <div class="comment-text">Not an expert in game development, but I&#x27;d say the issue with C++ coroutines (and &#x27;colored&#x27; async functions in general) is that the whole call stack must be written to support that. From a practical perspective, that must in turn be backed by a multithreaded event loop to be useful, which is very difficult to write performantly and correctly. Hence, most people end up using coroutines with something like boost::asio, but you can do that only if your repo allows a &#x27;kitchen sink&#x27; library like Boost in the first place.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=spacechild1" class="hnuser">spacechild1</a>
+  </div>
+  <div class="comment-text">&gt; that must in turn be backed by a multithreaded event loop to be useful<p>Why? You can just as well execute all your coroutines on a single thread. Many networking applications are doing fine with just use a single ASIO thread.<p>Another example: you could write game behavior in C++ coroutines and schedule them on the thread that handles the game logic. If you want to wait for N seconds inside the coroutine, just yield it as a number. When the scheduler resumes a coroutine, it receives the delta time and then reschedules the coroutine accordingly. This is also a common technique in music programming languages to implement musical sequencing (e.g. SuperCollider)</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=pjc50" class="hnuser">pjc50</a>
@@ -176,10 +198,97 @@
   </div>
   <div class="comment-text">For anyone wondering; this isn&#x27;t a hack, that&#x27;s the same library, just as good, just without boost dependencies.</div>
   
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=spacechild1" class="hnuser">spacechild1</a>
+  </div>
+  <div class="comment-text">Thanks for pointing this out! This may not obvious not everybody.<p>Also, this is not some random GitHub Repo, Chris Kohlhoff is the developer of ASIO :)</div>
+  
 </div>
 
 </div>
 
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=inetknght" class="hnuser">inetknght</a>
+  </div>
+  <div class="comment-text">&gt; <i>From a practical perspective, that must in turn be backed by a multithreaded event loop to be useful</i><p>Multithreaded? Nope. You can do C++ coroutines just fine in a single-threaded context.<p>Event loop? Only if you&#x27;re wanting to do IO in your coroutines and not block other coroutines while waiting for that IO to finish.<p>&gt; <i>most people end up using coroutines with something like boost::asio</i><p>Sure. But you don&#x27;t have to. Asio is available without the kitchen sink: <a href="https:&#x2F;&#x2F;think-async.com&#x2F;Asio&#x2F;" rel="nofollow">https:&#x2F;&#x2F;think-async.com&#x2F;Asio&#x2F;</a><p>Coroutines are actually really approachable. You don&#x27;t <i>need</i> boost::asio, but it certainly makes it a lot easier.<p>I recommend watching Daniela Engert&#x27;s 2022 presentation, Contemporary C++ in Action: <a href="https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=yUIFdL3D0Vk" rel="nofollow">https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=yUIFdL3D0Vk</a></div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=abcde666777" class="hnuser">abcde666777</a>
+  </div>
+  <div class="comment-text">More broadly the dimension of time is always a problem in gamedev, where you&#x27;re partially inching everything forward each frame and having to keep it all coherent across them.<p>It can easily and often does lead to messy rube goldberg machines.<p>There was a game AI talk a while back, I forget the name unfortunately, but as I recall the guy was pointing out this friction and suggesting additions we could make at the programming language level to better support that kind of time spanning logic.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=manoDev" class="hnuser">manoDev</a>
+  </div>
+  <div class="comment-text">This is more evident in games&#x2F;simulations but the same problem arises more or less in any software: batch jobs and DAGs, distributed systems and transactions, etc.<p>This what Rich Hickey (Clojure author) has termed “place oriented programming”, when the focus is mutating memory addresses and having to synchronize everything, but failing to model time as a first class concept.<p>I’m not aware of any general purpose programming language that successfully models time explicitly, Verilog might be the closest to that.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=repelsteeltje" class="hnuser">repelsteeltje</a>
+  </div>
+  <div class="comment-text">&gt; There was a game AI talk a while back, I forget the name unfortunately, but as I recall the guy was pointing out this friction and suggesting additions we could make at the programming language level to better support that kind of time spanning logic.<p>Sounds interesting. If it&#x27;s not too much of an effort, could you dig up a reference?</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=abcde666777" class="hnuser">abcde666777</a>
+  </div>
+  <div class="comment-text">You&#x27;re in luck - it&#x27;s the first talk at this link, &quot;The Polling Problem&quot;: <a href="https:&#x2F;&#x2F;www.gdcvault.com&#x2F;play&#x2F;1018040&#x2F;Architecture-Tricks-Managing-Behaviors-in" rel="nofollow">https:&#x2F;&#x2F;www.gdcvault.com&#x2F;play&#x2F;1018040&#x2F;Architecture-Tricks-Ma...</a><p>Mind you my memory may have distorted it a little beyond what it was, but it&#x27;s loosely on the topic!</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=syncurrent" class="hnuser">syncurrent</a>
+  </div>
+  <div class="comment-text">This timing additions to a language is also at the core of imperative synchronous programming languages like Este rel, Céu or Blech.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bullen" class="hnuser">bullen</a>
+  </div>
+  <div class="comment-text">Coroutines generally imply some sort of magic to me.<p>I would just go straight to tbb and concurrent_unordered_map!<p>The challenge of parallelism does not come from how to make things parallel, but how you share memory:<p>How you avoid cache misses, make sure threads don&#x27;t trample each other and design the higher level abstraction so that all layers can benefit from the performance without suffering turnaround problems.<p>My challenge right now is how do I make the JVM fast on native memory:<p>1) Rewrite my own JVM.
+2) Use the buffer and offset structure Oracle still has but has deprecated and is encouraging people to not use.<p>We need Java&#x2F;C# (already has it but is terrible to write native&#x2F;VM code for?) with bottlenecks at native performance and one way or the other somebody is going to have to write it?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjc50" class="hnuser">pjc50</a>
+  </div>
+  <div class="comment-text">&gt; C# (already has it but is terrible to write native&#x2F;VM code for?)<p>What do you mean here? Do you mean hand-writing MSIL or native interop (pinvoke) or something else?</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=wiseowise" class="hnuser">wiseowise</a>
+  </div>
+  <div class="comment-text">Looking at C++ made me understand the point of Rust.</div>
+  
 </div>
 
     
@@ -192,6 +301,46 @@
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Deukhoofd" class="hnuser">Deukhoofd</a>
+  </div>
+  <div class="comment-text">Thankfully they are actively working towards upgrading, Unity 6.8 (they&#x27;re currently on 6.4) is supposed to move fully towards CoreCLR, and removing Mono. We&#x27;ll then finally be able to move to C# 14 (from C# 9, which came out in 2020), as well as use newer .NET functionality.<p><a href="https:&#x2F;&#x2F;discussions.unity.com&#x2F;t&#x2F;coreclr-scripting-and-ecs-status-update-march-2026&#x2F;1711852" rel="nofollow">https:&#x2F;&#x2F;discussions.unity.com&#x2F;t&#x2F;coreclr-scripting-and-ecs-st...</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjmlp" class="hnuser">pjmlp</a>
+  </div>
+  <div class="comment-text">For several years now, I wonder if it will ever happen.</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Deukhoofd" class="hnuser">Deukhoofd</a>
+  </div>
+  <div class="comment-text">Well, this is at least an update from earlier this month with a clear roadmap of how they&#x27;re going to get there. There&#x27;s hope!</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Rohansi" class="hnuser">Rohansi</a>
+  </div>
+  <div class="comment-text">One annoying piece of Unity&#x27;s CoreCLR plan is there is no plan to upgrade IL2CPP (Unity&#x27;s AOT compiler) to use a better garbage collector. It will continue to use Boehm GC, which is so much worse for games.</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjc50" class="hnuser">pjc50</a>
+  </div>
+  <div class="comment-text">Why wouldn&#x27;t they use the GC that comes with the dotnet AOT runtime?</div>
+  
+</div>
+
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=Philip-J-Fry" class="hnuser">Philip-J-Fry</a>
   </div>
   <div class="comment-text">&gt;The use of IEnumerable as a &quot;generator&quot; mechanic is quite a good hack though.<p>Is that a hack? Is that not just exactly what IEnumerable and IEnumerator were built to do?</div>
@@ -200,18 +349,10 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Deukhoofd" class="hnuser">Deukhoofd</a>
+    <a href="https://news.ycombinator.com/user?id=tyleo" class="hnuser">tyleo</a>
   </div>
-  <div class="comment-text">Thankfully they are actively working towards upgrading, Unity 6.8 (they&#x27;re currently on 6.4) is supposed to move fully towards CoreCLR, and removing Mono. We&#x27;ll then finally be able to move to C# 14 (from C# 9, which came out in 2020), as well as use newer .NET functionality.<p><a href="https:&#x2F;&#x2F;discussions.unity.com&#x2F;t&#x2F;coreclr-scripting-and-ecs-status-update-march-2026&#x2F;1711852" rel="nofollow">https:&#x2F;&#x2F;discussions.unity.com&#x2F;t&#x2F;coreclr-scripting-and-ecs-st...</a></div>
+  <div class="comment-text">Unity is currently on C# 9 and that IEnumerable trick is no longer needed in new codebases. async is properly supported.</div>
   
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Rohansi" class="hnuser">Rohansi</a>
-  </div>
-  <div class="comment-text">One annoying piece of Unity&#x27;s CoreCLR plan is there is no plan to upgrade IL2CPP (Unity&#x27;s AOT compiler) to use a better garbage collector. It will continue to use Boehm GC, which is so much worse for games.</div>
-  
-</div>
-
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -248,18 +389,18 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=tyleo" class="hnuser">tyleo</a>
-  </div>
-  <div class="comment-text">Unity is currently on C# 9 and that IEnumerable trick is no longer needed in new codebases. async is properly supported.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=ahoka" class="hnuser">ahoka</a>
   </div>
   <div class="comment-text">IIRC generators and co-routines are equivalent in a sense that you can implement one with the other.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Sharlin" class="hnuser">Sharlin</a>
+  </div>
+  <div class="comment-text">Generators are a subset of coroutines that only yield data in one direction. Full coroutines can also receive more input from the caller at every yield point.</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -276,6 +417,16 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjmlp" class="hnuser">pjmlp</a>
+  </div>
+  <div class="comment-text">As I mentioned on the Reddit thread,<p>This is quite understandable when you know the history behind how  C++ coroutines came to be.<p>They were initially proposed by Microsoft, based on a C++&#x2F;CX extension, that was inspired by .NET async&#x2F;await implementation, as the WinRT runtime was designed to only support asynchronous code.<p>Thus if one knows how the .NET compiler and runtime magic works, including custom awaitable types, there will be some common bridges to how C++ co-routines ended up looking like.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=twoodfin" class="hnuser">twoodfin</a>
   </div>
   <div class="comment-text">As the author lays out, the thing that made coroutines click for me was the isomorphism with state machine-driven control flow.<p>That’s similar to most of what makes C++ tick: There’s no deep magic, it’s “just” type-checked syntactic sugar for code patterns you could already implement in C.<p>(Occurs to me that the exceptions to this … like exceptions, overloads, and context-dependent lookup … are where C++ has struggled to manage its own complexity.)</div>
@@ -286,6 +437,96 @@
   </div>
   <div class="comment-text">If you need to implement an async state machine, couldn&#x27;t that just as easily be done with std::future? How do coroutines make this cleaner&#x2F;better?</div>
   
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mgaunard" class="hnuser">mgaunard</a>
+  </div>
+  <div class="comment-text">Coroutines is just a way to write continuations in an imperative style and with more overhead.<p>I never understood the value. Just use lambdas&#x2F;callbacks.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=usrnm" class="hnuser">usrnm</a>
+  </div>
+  <div class="comment-text">&gt; Just use lambdas&#x2F;callbacks<p>&quot;Just&quot; is doing a lot of work there. I&#x27;ve use callback-based async frameworks in C++ in the past, and it turns into pure hell very fast. Async programming is, basically, state machines all the way down, and doing it explicitly is not nice. And trying to debug the damn thing is a miserable experience</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mgaunard" class="hnuser">mgaunard</a>
+  </div>
+  <div class="comment-text">You can embed the state in your lambda context, it really isn&#x27;t as difficult as what people claim.<p>The author just chose to write it as a state machine, but you don&#x27;t have to. Write it in whatever style helps you reach correctness.</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Sharlin" class="hnuser">Sharlin</a>
+  </div>
+  <div class="comment-text">You still need the state and the dispatcher, even if the former is a little more hidden in the implicit closure type.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=affenape" class="hnuser">affenape</a>
+  </div>
+  <div class="comment-text">Not necessarily. A coroutine encapsulates the entire state machine, which might pe a PITA to implement otherwise. Say, if I have a stateful network connection, that requires initialization and periodic encryption secret renewal, a coroutine implementation would be much slimmer than that of a state machine with explicit states.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jayd16" class="hnuser">jayd16</a>
+  </div>
+  <div class="comment-text">You can structure coroutines with a context so the runtime has an idea when it can drop them or cancel them. Really nice if you have things like game objects with their own lifecycles.<p>For simple callback hell, not so much.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=spacechild1" class="hnuser">spacechild1</a>
+  </div>
+  <div class="comment-text">&gt; Just use lambdas&#x2F;callbacks.<p>Lol, no thanks. People are using coroutines exactly to avoid callback hell. I have rewritten my own C++ ASIO networking code from callback to coroutines (asio::awaitable) and the difference is night and day!</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Sharlin" class="hnuser">Sharlin</a>
+  </div>
+  <div class="comment-text">Did you read the article? As the author says, it becomes a state machine hell very quickly beyond very simple examples.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kccqzy" class="hnuser">kccqzy</a>
+  </div>
+  <div class="comment-text">I just don’t agree that it always becomes a state machine hell. I even did this in C++03 code before lambdas. And honestly, because it was easy to write careless spaghetti code, it required a lot more upfront thought into code organization than just creating lambdas willy-nilly. The resulting code is verbose, but then again C++ itself is a fairly verbose language.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=DonHopkins" class="hnuser">DonHopkins</a>
+  </div>
+  <div class="comment-text">The Unity editor does not let you examine the state hidden in your closures or coroutines. (And the Mono debugger is a steaming pile of shit.)<p>Just put your state in visible instance variables of your objects, and then you will actually be able to see and even edit what state your program is in. Stop doing things that make debugging difficult and frustratingly opaque.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jayd16" class="hnuser">jayd16</a>
+  </div>
+  <div class="comment-text">Use Rider or Visual Studio.  Debugging coroutines should be easy.  You just can&#x27;t step over any yield points so you need to break after execution is resumed.  It&#x27;s mildly tedious but far from impossible.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -326,8 +567,32 @@
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=DonHopkins" class="hnuser">DonHopkins</a>
   </div>
-  <div class="comment-text">...and then crash when the object it was using gets deleted while it&#x27;s still running, but there is no way to track down and stop all the co-routines holding on to it.<p>I&#x27;ve been a serious Unity developer for 16 years, and I avoid coroutines like the plague.<p>Unity coroutines are a huge pain in the ass, and a lazy way to sloppily do things that are perfectly trivial to do without them, using conventional portable programming techniques that make it possible to prevent edge conditions where things fall through the crack and get forgotten, like &quot;fire and forget&quot; coroutine foot-guns.<p>Coroutines are great -- right up until they aren’t.<p>They give you &quot;nice linear code&quot; by quietly turning control flow into a distributed state machine you no longer control. Then the object gets destroyed, the coroutine keeps running, and now you’re debugging a null ref 200 frames later with zero call stack and no ownership.<p>&quot;Just stop your coroutines&quot; sounds good until you realize there’s no coherent ownership model. Who owns it? The MonoBehaviour? The caller? The thing it captured three yields ago? The cure is worse than the disease.<p>Meanwhile: No static guarantees about lifetime. No structured cancellation. Hidden allocation&#x2F;GC from yield instructions. Execution split across frames with implicit state you can’t inspect.<p>Unity has a wonderful editor that lets you inspect and edit the state of the entire world: EXCEPT FOR COROUTINES!<p>All of this to avoid writing a small explicit state machine or update loop -- Unity ALREADY has an Update and FixedUpdate just for that: use it.<p>Coroutines aren’t &quot;cleaner&quot; -- they just defer the mess until it’s harder to reason about.<p>If you can&#x27;t handle state machines, you&#x27;re even less equipped to handle coroutines.</div>
+  <div class="comment-text">...and then crash when any object it was using gets deleted while it&#x27;s still running, like when the game changes scenes, but it becomes a manual, error-prone process to track down and stop all the coroutines holding on to references, that costs much more effort than it saves.<p>I&#x27;ve been a serious Unity developer for 16 years, and I avoid coroutines like the plague, just like other architectural mistakes like stringly typed SendMessage, or UnityScript.<p>Unity coroutines are a huge pain in the ass, and a lazy undisciplined way to do things that are easy to do without them, using conventional portable programming techniques that make it possible to prevent edge conditions where things fall through the cracks and get forgotten, where references outlive the objects they depend on (&quot;fire-and-forget&quot; gatling foot-guns).<p>Coroutines are great -- right up until they aren’t.<p>They give you &quot;nice linear code&quot; by quietly turning control flow into a distributed state machine you no longer control. Then the object gets destroyed, the coroutine keeps running, and now you’re debugging a null ref 200 frames later in a different scene with an obfuscated call stack and no ownership.<p>&quot;Just stop your coroutines&quot; sounds good until you realize there’s no coherent ownership model. Who owns it? The MonoBehaviour? The caller? The scene? Every object it has a reference to? The thing it captured three yields ago? The cure is so much worse than the disease.<p>Meanwhile: No static guarantees about lifetime. No structured cancellation. Hidden allocation&#x2F;GC from yield instructions. Execution split across frames with implicit state you can’t inspect.<p>Unity has a wonderful editor that lets you inspect and edit the state of the entire world: EXCEPT FOR COROUTINES! If you put your state into an object instead of local variables in a coroutine, you can actually see the state in the editor.<p>All of this to avoid writing a small explicit state machine or update loop -- Unity ALREADY has Update and FixedUpdate just for that: use those.<p>Coroutines aren’t &quot;cleaner&quot; -- they just defer the mess until it’s harder to reason about.<p>If you can&#x27;t handle state machines, then you&#x27;re even less equipped to handle coroutines.</div>
   
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kdheiwns" class="hnuser">kdheiwns</a>
+  </div>
+  <div class="comment-text">Never had a crash from that. When the GameObject is destroyed, the coroutine is gone. If you&#x27;re using a coroutine to manage something outside the scope of the GameObject itself, that&#x27;s a problem with your own design, not the coroutine itself.<p>It&#x27;d be like complaining about arrays being bad because if you pass a pointer to another object, nuke the original array, then try to access the data, it&#x27;ll cause an error. That&#x27;s kind of... your own fault? Got to manage your data better.<p>Unity&#x27;s own developers use them for engine code. To claim it&#x27;s just something for noobs is a bit of an interesting take, since, well, the engine developers are clearly using them and I doubt they&#x27;re Unity noobs. They made the engine.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Arch485" class="hnuser">Arch485</a>
+  </div>
+  <div class="comment-text">I dunno, I&#x27;ve worked on some pretty big projects that have used lots of coroutines, and it&#x27;s pretty easy to avoid all of the footguns.<p>I&#x27;m not advocating for the ubiquitous use of coroutines (there&#x27;s a time and place), but they&#x27;re like anything else: if you don&#x27;t know what you&#x27;re doing, you&#x27;ll misuse them and cause problems. If you RTFM and understand how they work, you won&#x27;t have any issues.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bob1029" class="hnuser">bob1029</a>
+  </div>
+  <div class="comment-text">&gt; Who owns it? The MonoBehaviour? The caller? The thing it captured three yields ago?<p>The monobehavior that invoked the routine owns it and is capable of cancelling it at typical lifecycle boundaries.<p>This is not a hill I would die on. There&#x27;s a lot of other battles to fight when shipping a game.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -338,40 +603,14 @@
   </div>
   <div class="comment-text">Just out of interest, how many serious unity devs have you talked to?</div>
   
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
+<div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=abcde666777" class="hnuser">abcde666777</a>
+    <a href="https://news.ycombinator.com/user?id=DonHopkins" class="hnuser">DonHopkins</a>
   </div>
-  <div class="comment-text">More broadly the dimension of time is always a problem in gamedev, where you&#x27;re partially inching everything forward each frame and having to keep it all coherent across them.<p>It can easily and often does lead to messy rube goldberg machines.<p>There was a game AI talk a while back, I forget the name unfortunately, but as I recall the guy was pointing out this friction and suggesting additions we could make at the programming language level to better support that kind of time spanning logic.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=manoDev" class="hnuser">manoDev</a>
-  </div>
-  <div class="comment-text">This is more evident in games&#x2F;simulations but the same problem arises more or less in any software: batch jobs and DAGs, distributed systems and transactions, etc.<p>This what Rich Hickey (Clojure author) has termed “place oriented programming”, when the focus is mutating memory addresses and having to synchronize everything, but failing to model time as a first class concept.<p>I’m not aware of any general purpose programming language that successfully models time explicitly, Verilog might be the closest to that.</div>
+  <div class="comment-text">I&#x27;ve talked to some non-serious unity devs, like Peter Molyneux...<p><a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47110605">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47110605</a><p>&gt;1h 48m 06s, with arms spread out like Jesus H Christ on a crucifix: &quot;Because we can dynamically put on ANY surface of the cube ANY image we like. So THAT&#x27;s how we&#x27;re going to surprise the world, is by giving clues about what&#x27;s in the middle later on.&quot;<p><a href="https:&#x2F;&#x2F;youtu.be&#x2F;24AY4fJ66xA?t=6486" rel="nofollow">https:&#x2F;&#x2F;youtu.be&#x2F;24AY4fJ66xA?t=6486</a><p>Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Click. Moo!<p><a href="https:&#x2F;&#x2F;www.gamedeveloper.com&#x2F;design&#x2F;the-i-curiosity-i-experiment-and-the-church-of-peter-molyneux" rel="nofollow">https:&#x2F;&#x2F;www.gamedeveloper.com&#x2F;design&#x2F;the-i-curiosity-i-exper...</a><p>&gt;&quot;I&#x27;m jealous that [Molyneux] made a more boring clicking game than I did.&quot; -Ian Bogost<p>&gt;&quot;I also think Curiosity was brilliant and inspired. But that doesn&#x27;t make it any less selfish or brazen. Curiosity was <i>not</i> an experiment. &#x27;Experiment&#x27; is a rhetorical ruse meant to distract you from the fact that it&#x27;s promotional.&quot; -Ian Bogost</div>
   
 </div>
 
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=syncurrent" class="hnuser">syncurrent</a>
-  </div>
-  <div class="comment-text">This timing additions to a language is also at the core of imperative synchronous programming languages like Este rel, Céu or Blech.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=repelsteeltje" class="hnuser">repelsteeltje</a>
-  </div>
-  <div class="comment-text">&gt; There was a game AI talk a while back, I forget the name unfortunately, but as I recall the guy was pointing out this friction and suggesting additions we could make at the programming language level to better support that kind of time spanning logic.<p>Sounds interesting. If it&#x27;s not too much of an effort, could you dig up a reference?</div>
-  
 </div>
 
 </div>
@@ -386,7 +625,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-25 13:07 UTC &nbsp;|&nbsp;
+    Generated 2026-03-25 15:05 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
