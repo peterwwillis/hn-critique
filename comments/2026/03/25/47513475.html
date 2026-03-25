@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">375 points</span>
+        <span class="score">411 points</span>
         by <a href="https://news.ycombinator.com/user?id=ray__" class="hnuser">ray__</a>
-        <span class="age">12 hours ago</span>
+        <span class="age">14 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/25/47513475.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47513475" rel="noopener">original on HN</a>
       </p>
@@ -76,6 +76,14 @@
 
 </div>
 
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tripplyons" class="hnuser">tripplyons</a>
+  </div>
+  <div class="comment-text">There are papers that try to quantize angles associated with weights because angles have a more uniform distribution. I haven&#x27;t read this specific paper, but it looks like it uses a similar trick at a glance.</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -89,6 +97,14 @@
     <a href="https://news.ycombinator.com/user?id=yorwba" class="hnuser">yorwba</a>
   </div>
   <div class="comment-text">Multi-Head Latent attention is a redesigned attention mechanism that produces lower-dimensional KV-cache entries. Vector quantization can store KV-cache entries using a small number of bits per dimension while ensuring that the resulting attention scores don&#x27;t change too much. So MLA needs to be part of the model from the beginning of training, whereas VQ can be retrofitted afterwards, and you could also combine the two.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tripplyons" class="hnuser">tripplyons</a>
+  </div>
+  <div class="comment-text">MLA makes it so the keys and values used are a function of a smaller latent vector you cache instead of a key and a value for each token. KV cache quantization reduces the size of the values in the cache by using less bits to store each value. These two approaches operate on different parts of the process so they can be used in combination. For example, you can quantize the latents that are stored for MLA.</div>
   
 </div>
 
@@ -181,10 +197,28 @@ How can a boolean value preserve all of the relational and positional informatio
   
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gavinray" class="hnuser">gavinray</a>
+  </div>
+  <div class="comment-text">From your second paper:<p><pre><code>  &gt; In particular, we can generate fixed random rotation matrices at initialization, and multiply them into the activations any time we read from or write to the residual stream. 
+</code></pre>
+I guess I was mistaken in assuming this part was part of the TurboQuant-specific innovations. Still an interesting concept though</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=Bolwin" class="hnuser">Bolwin</a>
   </div>
   <div class="comment-text">Do you know if this also applies to the muon optimizer? It seems to be replacing adamw</div>
   
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kingstnap" class="hnuser">kingstnap</a>
+  </div>
+  <div class="comment-text">My guess is that probably not for Muon. What I said about ADAM was partly based on this blogpost I read some time ago, should have cited it as well [0].<p>The thing about Muon is that it doesn&#x27;t have this specific feature of ADAM that causes it to &quot;move along the diagonal&quot;. Basically if you flatten weights as a huge vector of a few billion elements. SGD moves along the gradient, which isn&#x27;t biased. ADAM normalizes everything elementwise, so it sort of moves along a vector of +-1.<p>This isn&#x27;t a proof or anything, but what you can imagine might be happening is that if you move along +-1, then you find spikey solutions somehow. Not sure how to prove that. Muon doesn&#x27;t really do this, but it has its own sort of funky reshaping of the update (it moves along low rank directions).<p>[0] <a href="https:&#x2F;&#x2F;www.lesswrong.com&#x2F;posts&#x2F;yrhu6MeFddnGRSLtQ&#x2F;adam-optimizer-causes-privileged-basis-in-transformer" rel="nofollow">https:&#x2F;&#x2F;www.lesswrong.com&#x2F;posts&#x2F;yrhu6MeFddnGRSLtQ&#x2F;adam-optim...</a></div>
+  
+</div>
+
 </div>
 
 </div>
@@ -203,6 +237,22 @@ How can a boolean value preserve all of the relational and positional informatio
   </div>
   <div class="comment-text">The whole goal of quantisation is to put the data into &#x27;bins&#x27; so that it can easily be &#x27;packed&#x27; so that you can represent it using less bits (less information). You can think of it like rounding essentially (3.14159 -&gt; 3). Now, sometimes within data, the distribution will be non-ideal for separating it out into bins (let&#x27;s say that our rounding rules are simple -- we simply use a floor function so 2.45 maps to 2 and 6.4543 maps to 6 etc...) and our bins simply map to the floor -- if we had a set of numbers which look like this: [3.11, 4.43, 5.78, 12.33, 34.32], they would simply map to [3, 4, 5, 12, 34]. Now, we have one huge outlier in our data (34) so to create bins for those sets of numbers, we would need 6 bits of information (2 to the power of 6 = 64), but this is mostly due to the fact that we have one huge outlier (34.32). To get rid of this -- the algorithms applies a random rotation matrix which &#x27;distorts&#x27; the original data so that it is more evenly distributed among the possible bins which are assigned to the data set. In linear algebra, a rotation matrix is an orthogonal matrix. When you multiply your vector by this matrix, you aren&#x27;t changing the &quot;amount&quot; of data (the length of the vector remains the same), but you are recalculating every single number in that vector as a weighted sum of the originals. According to the Central Limit Theorem, when you sum up many random things, the result always starts looking like a bell curve. This is the magic TurboQuant relies on: they don&#x27;t know what your data looks like, but they know that after the rotation, the data must look like a Beta Distribution and they use this fact to transform the original data into a more &#x27;tightly packed&#x27; distribution which allows them to more efficiently pack (or quantise) the information. If most of the transformed data is huddled together into a predictable Bell curve shape, you can pack your bins tightly around that shape leading to much higher precision with fewer needed bits to store it. For example, after applying a rotation matrix, our original transform [3.11, 4.43, 5.78, 12.33, 34.32] might get mapped to something like [8.12, 8.65, 9.25, 10.53, 12.86] and we can crate bins which both are more accurate and need less bits in order to hold our original data set. To create the most optimal bins -- the Lloyd-Max algorithm is used. This algorithm is the gold standard for 1D quantisation. Its goal is to find the best places to put your &quot;boundaries&quot; (where you cut the data) and your &quot;reconstruction values&quot; (the number you store) to minimise the Mean Squared Error (MSE). After applying this, you have your &#x27;rounded&#x27; values (or quantized data), but there is still an error value which is missing from our data set: and this is where the residual bit comes in. That bit doesn&#x27;t represent the original data (or vector) - it simply represents our &#x27;bias&#x27; after we apply the above algorithms. It&#x27;s basically like a &#x27;1-bit note&#x27; which allows you to perfectly cancel out all the bias terms which our above quantisation algorithm produces to make the &#x27;interactions&#x27; (or inner products) when we multiply our values together extremely accurate again even after transforming our original data. Does this make sense?</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=nico" class="hnuser">nico</a>
+  </div>
+  <div class="comment-text">Amazing explanation! Thank you so much for taking the time to put it together. It makes a lot of sense. I’m not the one who asked the question, but I was impressed by such eloquent and clearly explained answer</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gavinray" class="hnuser">gavinray</a>
+  </div>
+  <div class="comment-text">I had to read this over a few times to piece it together, thanks for the thorough and digestable explanation!</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:40px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=rohansood15" class="hnuser">rohansood15</a>
@@ -241,14 +291,6 @@ How can a boolean value preserve all of the relational and positional informatio
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=vibe42" class="hnuser">vibe42</a>
-  </div>
-  <div class="comment-text">The pace of development in llama.cpp is really high, could see an implementation being merged in 4-6 weeks.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=cpburns2009" class="hnuser">cpburns2009</a>
   </div>
   <div class="comment-text">For some reason I thought the implementation would be way more complicated than that. I obviously lack the domain knowledge to tackle something like this, but it looks straight forward.</div>
@@ -261,6 +303,14 @@ How can a boolean value preserve all of the relational and positional informatio
   
 </div>
 
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=vibe42" class="hnuser">vibe42</a>
+  </div>
+  <div class="comment-text">The pace of development in llama.cpp is really high, could see an implementation being merged in 4-6 weeks.</div>
+  
 </div>
 
 </div>
@@ -304,6 +354,22 @@ How can a boolean value preserve all of the relational and positional informatio
     <a href="https://news.ycombinator.com/user?id=BenoitP" class="hnuser">BenoitP</a>
   </div>
   <div class="comment-text">It is AI generated. Or was written by someone a bit far from the technical advances IMHO. The Johnson-Lindenstrauss Lemma is a very specific and powerful concept, when in the article the QLJ explanation is vacuous. A knowledgeable human would not have left the reader wanting for how that relates to the Lemma.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hrmtst93837" class="hnuser">hrmtst93837</a>
+  </div>
+  <div class="comment-text">Honestly, the bigger miss is people treating JL as some silver bullet for &quot;extreme&quot; compression, as if preserving pairwise distances for a fixed point set somehow means you still keep the task-relevant structure once you&#x27;re dealing with modern models.<p>Try projecting embeddings this way and watch your recall crater the moment you need downstream task performance instead of nearest-neighbor retreival demos. If you&#x27;re optimizing for blog post vibes instead of anything measurable sure, call it a breakthrough.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=davesque" class="hnuser">davesque</a>
+  </div>
+  <div class="comment-text">Yeah, and some parts of the article are just bizarre:<p>&gt; Instead of looking at a memory vector using standard coordinates (i.e., X, Y, Z) that indicate the distance along each axis, PolarQuant converts the vector into polar coordinates using a Cartesian coordinate system. This is comparable to replacing &quot;Go 3 blocks East, 4 blocks North&quot; with &quot;Go 5 blocks total at a 37-degree angle”<p>Why bother explaining this? Were they targeting the high school and middle school student reader base??</div>
   
 </div>
 
@@ -397,97 +463,11 @@ How can a boolean value preserve all of the relational and positional informatio
   </div>
   <div class="comment-text">Compression research keeps producing surprisingly practical results. The interesting parallel in image formats — AVIF and JPEG XL both came from video codec research (AV1 and JPEG committee respectively), and the compression gains translated almost directly. Makes me wonder how much of the current AI quantization work will eventually land in production inference the same way.</div>
   
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mmastrac" class="hnuser">mmastrac</a>
-  </div>
-  <div class="comment-text">Is this a tradeoff between GPU-computation-expense vs accuracy? ie: you could quantize into segments or grids on the unit circle&#x2F;sphere&#x2F;etc, but that&#x27;s too expensive so it&#x27;s better to just quantize to a Cartesian grid because the GPU can decompress cheaper?</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=bilsbie" class="hnuser">bilsbie</a>
-  </div>
-  <div class="comment-text">It seems like most breakthroughs I see are for efficiency?  What are the most importsnt breakthroughs from the past two or three years for intelligence?</div>
-  
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Lerc" class="hnuser">Lerc</a>
+    <a href="https://news.ycombinator.com/user?id=computerbuster" class="hnuser">computerbuster</a>
   </div>
-  <div class="comment-text">If you think of it from the point of view of the universal approximation theorem, it&#x27;s all efficiency optimisation. We know that it works if we do it incredibly inefficiently.<p>Every architecture improvement is essentially a way to achieve the capability of a single fully-connected hidden layer network n wide.  With fewer parameters.<p>Given these architectures usually still contain fully connected layers, unless they&#x27;ve done something really wrong, they should still be able to do anything if you make the entire thing large enough.<p>That means a large enough [insert model architecture] will be able to approximate any function to arbitrary precision.  As long as the efficiency gains with the architecture are retained as the scale increases they should be able to get there quicker.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=ertgbnm" class="hnuser">ertgbnm</a>
-  </div>
-  <div class="comment-text">Most breakthroughs that are published are for efficiency because most breakthroughs that are published are for open source.&#x27;<p>All the foundation model breakthroughs are hoarded by the labs doing the pretraining. That being said, RL reasoning training is the obvious and largest breakthrough for intelligence in recent years.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=WarmWash" class="hnuser">WarmWash</a>
-  </div>
-  <div class="comment-text">With all the floating around of AI researchers though, I kind of wonder how &quot;secret&quot; all these secrets are. I&#x27;m sure they have internal siloing, but even still, big players seem to regularly defect to other labs. On top of this, all the labs seem to be pretty neck and neck, with no one clearly pulling ahead across the board.</div>
-  
-</div>
-
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=irthomasthomas" class="hnuser">irthomasthomas</a>
-  </div>
-  <div class="comment-text">Efficiency gains can be used to make existing models more profitable, or to make new larger and more intelligent models.</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=cubefox" class="hnuser">cubefox</a>
-  </div>
-  <div class="comment-text">Some yes, others no. Distillation and quantization can&#x27;t be used to make new base models since they require a preexisting one.</div>
-  
-</div>
-
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=cubefox" class="hnuser">cubefox</a>
-  </div>
-  <div class="comment-text">&gt;  What are the most importsnt breakthroughs from the past two or three years for intelligence?<p>The most important one in that timeframe was clearly reasoning&#x2F;RLVR (reinforcement learning with verifiable rewards), which was pioneered by OpenAI&#x27;s Q* aka Strawberry aka o1.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=iddan" class="hnuser">iddan</a>
-  </div>
-  <div class="comment-text">I am guessing as Google is vertically integrated and &quot;actually pays&quot; for AI infra (compared to OpenAI &amp; Anthropic that receives hardware as partnerships) they have a more urgent incentive to reduce model sizes. Also, Google and Apple will be the first to gain from running model on-device</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=skybrian" class="hnuser">skybrian</a>
-  </div>
-  <div class="comment-text">This seems to be an inference-time optimization and they are putting AI on every search result page. That seems like plenty of incentive to optimize.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=mrcwinn" class="hnuser">mrcwinn</a>
-  </div>
-  <div class="comment-text">I can assure you OpenAI and Anthropic pay for hardware. They don’t receive it for free.</div>
+  <div class="comment-text">JPEG XL is mainly based on unique image-specific research, but you&#x27;re right to say a lot of the techniques are compatible with videos in theory (the XYB color space comes to mind). AVIF is an AV1 OBU in an image-specific container, and required a lot of image-specific engineering to make AV1&#x27;s tools useful for images; see libaom&#x27;s tune &quot;iq&quot;, and the same in SVT-AV1. The compression gains translated when engineering effort went into creating bespoke implementations, and the same may happen for LLMs if I had to guess.</div>
   
 </div>
 
@@ -552,14 +532,6 @@ For the full technical explanation with equations, proofs, and PyTorch pseudocod
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Rapzid" class="hnuser">Rapzid</a>
-  </div>
-  <div class="comment-text">That overview is frustratingly high-level. I know what a vector is, a bit, and yet that compression description is crazy uninformative. And that PolarQuant visualization is.. Very abstract.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=mrugge" class="hnuser">mrugge</a>
   </div>
   <div class="comment-text">1. Efficient recursive transform of kv embeddings into polar coordinates
@@ -577,9 +549,150 @@ For the full technical explanation with equations, proofs, and PyTorch pseudocod
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Rapzid" class="hnuser">Rapzid</a>
+  </div>
+  <div class="comment-text">That overview is frustratingly high-level. I know what a vector is, a bit, and yet that compression description is crazy uninformative. And that PolarQuant visualization is.. Very abstract.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=viktorcode" class="hnuser">viktorcode</a>
   </div>
   <div class="comment-text">The way I understand it, it&#x27;s a way of compressing vectors by switching from their per-component representation to polar coordinates representation, where the nearby vectors are clumped together to a single line, allowing to describe them by different lengths</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bilsbie" class="hnuser">bilsbie</a>
+  </div>
+  <div class="comment-text">It seems like most breakthroughs I see are for efficiency?  What are the most importsnt breakthroughs from the past two or three years for intelligence?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Lerc" class="hnuser">Lerc</a>
+  </div>
+  <div class="comment-text">If you think of it from the point of view of the universal approximation theorem, it&#x27;s all efficiency optimisation. We know that it works if we do it incredibly inefficiently.<p>Every architecture improvement is essentially a way to achieve the capability of a single fully-connected hidden layer network n wide.  With fewer parameters.<p>Given these architectures usually still contain fully connected layers, unless they&#x27;ve done something really wrong, they should still be able to do anything if you make the entire thing large enough.<p>That means a large enough [insert model architecture] will be able to approximate any function to arbitrary precision.  As long as the efficiency gains with the architecture are retained as the scale increases they should be able to get there quicker.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ertgbnm" class="hnuser">ertgbnm</a>
+  </div>
+  <div class="comment-text">Most breakthroughs that are published are for efficiency because most breakthroughs that are published are for open source.&#x27;<p>All the foundation model breakthroughs are hoarded by the labs doing the pretraining. That being said, RL reasoning training is the obvious and largest breakthrough for intelligence in recent years.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=WarmWash" class="hnuser">WarmWash</a>
+  </div>
+  <div class="comment-text">With all the floating around of AI researchers though, I kind of wonder how &quot;secret&quot; all these secrets are. I&#x27;m sure they have internal siloing, but even still, big players seem to regularly defect to other labs. On top of this, all the labs seem to be pretty neck and neck, with no one clearly pulling ahead across the board.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=irthomasthomas" class="hnuser">irthomasthomas</a>
+  </div>
+  <div class="comment-text">Efficiency gains can be used to make existing models more profitable, or to make new larger and more intelligent models.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=cubefox" class="hnuser">cubefox</a>
+  </div>
+  <div class="comment-text">Some yes, others no. Distillation and quantization can&#x27;t be used to make new base models since they require a preexisting one.</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=irthomasthomas" class="hnuser">irthomasthomas</a>
+  </div>
+  <div class="comment-text">it enables models larger than was previously possible.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=cubefox" class="hnuser">cubefox</a>
+  </div>
+  <div class="comment-text">&gt;  What are the most importsnt breakthroughs from the past two or three years for intelligence?<p>The most important one in that timeframe was clearly reasoning&#x2F;RLVR (reinforcement learning with verifiable rewards), which was pioneered by OpenAI&#x27;s Q* aka Strawberry aka o1.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mmastrac" class="hnuser">mmastrac</a>
+  </div>
+  <div class="comment-text">Is this a tradeoff between GPU-computation-expense vs accuracy? ie: you could quantize into segments or grids on the unit circle&#x2F;sphere&#x2F;etc, but that&#x27;s too expensive so it&#x27;s better to just quantize to a Cartesian grid because the GPU can decompress cheaper?</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=iddan" class="hnuser">iddan</a>
+  </div>
+  <div class="comment-text">I am guessing as Google is vertically integrated and &quot;actually pays&quot; for AI infra (compared to OpenAI &amp; Anthropic that receives hardware as partnerships) they have a more urgent incentive to reduce model sizes. Also, Google and Apple will be the first to gain from running model on-device</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=skybrian" class="hnuser">skybrian</a>
+  </div>
+  <div class="comment-text">This seems to be an inference-time optimization and they are putting AI on every search result page. That seems like plenty of incentive to optimize.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mrcwinn" class="hnuser">mrcwinn</a>
+  </div>
+  <div class="comment-text">I can assure you OpenAI and Anthropic pay for hardware. They don’t receive it for free.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=zeeshana07x" class="hnuser">zeeshana07x</a>
+  </div>
+  <div class="comment-text">The gap between how this is described in the paper vs the blog post is pretty wide. Would be nice to see more accessible writing from research teams — not everyone reading is a ML engineer</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=om8" class="hnuser">om8</a>
+  </div>
+  <div class="comment-text">These are <i>very</i> different media types with <i>very</i> different goals.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dev_tools_lab" class="hnuser">dev_tools_lab</a>
+  </div>
+  <div class="comment-text">Agreed. The practical implications are often 
+more interesting than the math anyway — smaller 
+models running locally means you can afford to 
+run multiple models in parallel for cross-validation, 
+which changes how you approach tasks like code 
+analysis or bug detection.</div>
   
 </div>
 
@@ -598,37 +711,6 @@ For the full technical explanation with equations, proofs, and PyTorch pseudocod
     <a href="https://news.ycombinator.com/user?id=x_may" class="hnuser">x_may</a>
   </div>
   <div class="comment-text">KV cache compression, so how much memory the model needs to use for extending its context. Does not affect the weight size.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=zeeshana07x" class="hnuser">zeeshana07x</a>
-  </div>
-  <div class="comment-text">The gap between how this is described in the paper vs the blog post is pretty wide. Would be nice to see more accessible writing from research teams — not everyone reading is a ML engineer</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dev_tools_lab" class="hnuser">dev_tools_lab</a>
-  </div>
-  <div class="comment-text">Agreed. The practical implications are often 
-more interesting than the math anyway — smaller 
-models running locally means you can afford to 
-run multiple models in parallel for cross-validation, 
-which changes how you approach tasks like code 
-analysis or bug detection.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=om8" class="hnuser">om8</a>
-  </div>
-  <div class="comment-text">These are <i>very</i> different media types with <i>very</i> different goals.</div>
   
 </div>
 
@@ -868,7 +950,7 @@ analysis or bug detection.</div>
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-25 17:07 UTC &nbsp;|&nbsp;
+    Generated 2026-03-25 19:01 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

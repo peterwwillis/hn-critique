@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">105 points</span>
+        <span class="score">117 points</span>
         by <a href="https://news.ycombinator.com/user?id=ingve" class="hnuser">ingve</a>
         <span class="age">4 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/21/47472566.html">critique article</a>
@@ -50,16 +50,6 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=FpUser" class="hnuser">FpUser</a>
-  </div>
-  <div class="comment-text">I do not find so called &quot;green threads&quot; useful at all. In my opinion except some very esoteric cases they serve no purpose in &quot;native&quot; languages that have full access to all OS threading  and IO facilities. Useful only in &quot;deficient&quot; environments like inherently single threaded request handlers like NodeJS.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=Joker_vD" class="hnuser">Joker_vD</a>
   </div>
   <div class="comment-text">Simon Tatham, author of Putty, has quite a detailed blog post [0] on using the C++20&#x27;s coroutine system. And yep, it&#x27;s a <i>lot</i> to do on your own, C++26 really ought to give us some pre-built templates&#x2F;patterns&#x2F;scaffolds.<p>[0] <a href="https:&#x2F;&#x2F;web.archive.org&#x2F;web&#x2F;20260105235513&#x2F;https:&#x2F;&#x2F;www.chiark.greenend.org.uk&#x2F;~sgtatham&#x2F;quasiblog&#x2F;coroutines-c++20&#x2F;" rel="nofollow">https:&#x2F;&#x2F;web.archive.org&#x2F;web&#x2F;20260105235513&#x2F;https:&#x2F;&#x2F;www.chiar...</a></div>
@@ -70,6 +60,23 @@
   </div>
   <div class="comment-text">People love to complain about Rust async-await being too complicated, but somehow C++ manages to be even worse.  C++ never disappoints!</div>
   
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=matt_d" class="hnuser">matt_d</a>
+  </div>
+  <div class="comment-text">See also C++ coroutines resources (posts, research, software, talks):
+<a href="https:&#x2F;&#x2F;gist.github.com&#x2F;MattPD&#x2F;9b55db49537a90545a90447392ad3aeb" rel="nofollow">https:&#x2F;&#x2F;gist.github.com&#x2F;MattPD&#x2F;9b55db49537a90545a90447392ad3...</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ZoomZoomZoom" class="hnuser">ZoomZoomZoom</a>
+  </div>
+  <div class="comment-text">For a layperson it&#x27;s clear that it&#x27;s either &quot;Writings&quot; and &quot;Talks&quot;, or &quot;Readings&quot; and &quot;&#x27;Listenings&quot;, but CPP profeciency is in an inverse relation with being apt in taxonomy, it looks like.<p>Thanks for the list.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -94,6 +101,14 @@
   </div>
   <div class="comment-text">&gt; I&#x27;m not normally keen to &quot;well actually&quot; people with the C standard, but .. if you&#x27;re writing in assembly, you&#x27;re not writing in C.<p>These days on Linux&#x2F;BSD&#x2F;Solaris&#x2F;macOS you can use makecontext()&#x2F;swapcontext() from ucontext.h and it will turn out roughly the same performance on important architectures as what everyone used to do with custom assembly. And you already have fiber functions as part of the Windows API to trampoline.<p>I had to support a number of architectures in libdex for Debian. This is GNOME code of course, which isn&#x27;t everyone&#x27;s cup of C. (It also supports BSDs&#x2F;Linux&#x2F;macOS&#x2F;Solaris&#x2F;Windows).<p>* <a href="https:&#x2F;&#x2F;packages.debian.org&#x2F;sid&#x2F;libdex-1-1" rel="nofollow">https:&#x2F;&#x2F;packages.debian.org&#x2F;sid&#x2F;libdex-1-1</a><p>* <a href="https:&#x2F;&#x2F;gitlab.gnome.org&#x2F;GNOME&#x2F;libdex" rel="nofollow">https:&#x2F;&#x2F;gitlab.gnome.org&#x2F;GNOME&#x2F;libdex</a></div>
   
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gpderetta" class="hnuser">gpderetta</a>
+  </div>
+  <div class="comment-text">Unfortunately swap context requires  saving and restoring the signal mask, which, at least on Linux, requires a syscall so it is going to be at least a hundred times slower than an hand rolled implementation.<p>Also, although not likely to be removed anytime soon from existing systems, POSIX has declared the context API obsolescent a while ago (it might actually no longer be part of the standard).</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:40px">
@@ -126,6 +141,14 @@
   </div>
   <div class="comment-text">Looking at the repo, it falls back to Windows fibers on Windows&#x2F;ARM. If you&#x27;d like a coroutine with more backends, I&#x27;m a fan of libco: <a href="https:&#x2F;&#x2F;github.com&#x2F;higan-emu&#x2F;libco&#x2F;" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;higan-emu&#x2F;libco&#x2F;</a> which has assembly backends for x86, amd64, ppc, ppc-64, arm, and arm64 (and falls back to setjmp on POSIX platforms and fibers on Windows). Obviously the real solution would be for the C or C++ committees to add stackful coroutines to the standard, but unless that happens I would rather give up support for hppa or alpha or 8-bit AVR or whatever than not be able to use stackful corountines.</div>
   
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gpderetta" class="hnuser">gpderetta</a>
+  </div>
+  <div class="comment-text">A proposal to add stackfull coroutines has been around forever and gets updated at every single mailing. Unfortunately the authors don&#x27;t really have backing from any major company.</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:40px">
@@ -133,6 +156,22 @@
     <a href="https://news.ycombinator.com/user?id=fluoridation" class="hnuser">fluoridation</a>
   </div>
   <div class="comment-text">I think what they meant is that that what it takes to add coroutines support to a C&#x2F;++ program. Adding it to, say, Java or C# is much more involved.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=TuxSH" class="hnuser">TuxSH</a>
+  </div>
+  <div class="comment-text">&gt; every async &quot;function call&quot; heap allocates.<p>&gt; require the STL<p>That it <i>has to</i> heap-allocate if non-inlined is a misconception. This is only the default behavior.<p>One can define:<p>void *operator new(size_t sz, Foo &amp;foo)<p>in the coro&#x27;s promise type, and this:<p>- removes the implicitly-defined operator new<p>- forces the coro&#x27;s signature to be CoroType f(Foo &amp;foo), and forwards arguments to the &quot;operator new&quot; one defined<p>Therefore, it&#x27;s pretty trivial to support coroutines even when heap cannot be used, especially in the non-recursive case.<p>Yes, green threads (&quot;stackful coroutines&quot;) are more straightforward to use, however:<p>- they can&#x27;t be arbitrarily destroyed when suspended (this would require stack unwinding support and&#x2F;or active support from the green thread runtime)<p>- they are very ABI dependent. Among the &quot;few registers&quot; one has to save FPU registers. Which, in the case of older Arm architectures, and codegen options similar to -mgeneral-regs-only (for code that runs &quot;below&quot; userspace). Said FPU registers also take a lot of space in the stack frame, too<p>Really, stackless coros are just FSM generators (which is obvious if one looks at disasm)</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gpderetta" class="hnuser">gpderetta</a>
+  </div>
+  <div class="comment-text">A stackful coroutine implementation has to save exactly the same registers that a stackless one has to: the live ones at the suspension point.<p>A pure library implementation that uses on normal function call semantics obviously needs to conservatively save at least all callee-save registers, but that&#x27;s not the only possible implementation. An implementation with compiler help should be able to do significantly better.<p>Ideally the compiler would provide a built-in, but even, for example, an implementation using GCC inline ASM with proper clobbers can do significantly better.</div>
   
 </div>
 
@@ -166,6 +205,14 @@
   </div>
   <div class="comment-text">You can do a lot of horrible things with setjmp and friends. I actually implemented some exception throw&#x2F;catch macros using them (which did work) for a compiler that didn&#x27;t support real C++ exceptions. Thank god we never used them in production code.<p>This would be about 32 years ago - I don&#x27;t like thinking about that ...</div>
   
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gpderetta" class="hnuser">gpderetta</a>
+  </div>
+  <div class="comment-text">GCC still uses sj&#x2F;lj by default on some targets to implement exceptions.</div>
+  
+</div>
+
 </div>
 
 <div class="comment-row" style="margin-left:40px">
@@ -192,6 +239,14 @@
   
 <div class="comment-row" style="margin-left:60px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gpderetta" class="hnuser">gpderetta</a>
+  </div>
+  <div class="comment-text">&gt; mustn&#x27;t catch (...)<p>You could use the same trick used by glibc to implement unstoppable exceptions for POSIX cancellation: the exception rethrows itself from its destructor.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=pjc50" class="hnuser">pjc50</a>
   </div>
   <div class="comment-text">&gt; Passing uncaught exceptions from the coroutine up to the caller is also pretty easy, because it&#x27;s all synchronous. You just need to wrap it so it can safely travel across the gap<p>This is also how dotnet handles it, and you can choose whether to rethrow at the caller site, inspect the exception manually, or run a continuation on exception.</div>
@@ -212,6 +267,14 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=socalgal2" class="hnuser">socalgal2</a>
+  </div>
+  <div class="comment-text">As an x-gamedev, suspect&#x2F;resume&#x2F;stackful coroutines made them too heavy to have several thousand of them running during a game loop for our game. At the time we used GameMonkey Script:  <a href="https:&#x2F;&#x2F;github.com&#x2F;publicrepo&#x2F;gmscript" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;publicrepo&#x2F;gmscript</a><p>That was over 20 years ago. No idea what the current hotness is.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=MisterTea" class="hnuser">MisterTea</a>
   </div>
   <div class="comment-text">A much nicer code base to study is: <a href="https:&#x2F;&#x2F;swtch.com&#x2F;libtask&#x2F;" rel="nofollow">https:&#x2F;&#x2F;swtch.com&#x2F;libtask&#x2F;</a><p>The stack save&#x2F;restore happens in: <a href="https:&#x2F;&#x2F;swtch.com&#x2F;libtask&#x2F;asm.S" rel="nofollow">https:&#x2F;&#x2F;swtch.com&#x2F;libtask&#x2F;asm.S</a></div>
@@ -224,25 +287,31 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=sagebird" class="hnuser">sagebird</a>
-  </div>
-  <div class="comment-text">&gt;&gt; To misquote Kennedy, “we chose to focus coroutines on generator in C++23, not because it is hard, but because it is easy”.<p>Appreciate this humor -- absurd, tasteful.</div>
-  
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=cherryteastain" class="hnuser">cherryteastain</a>
   </div>
   <div class="comment-text">Not an expert in game development, but I&#x27;d say the issue with C++ coroutines (and &#x27;colored&#x27; async functions in general) is that the whole call stack must be written to support that. From a practical perspective, that must in turn be backed by a multithreaded event loop to be useful, which is very difficult to write performantly and correctly. Hence, most people end up using coroutines with something like boost::asio, but you can do that only if your repo allows a &#x27;kitchen sink&#x27; library like Boost in the first place.</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=hrmtst93837" class="hnuser">hrmtst93837</a>
+  </div>
+  <div class="comment-text">They don&#x27;t need a multithreaded event loop. Single-threaded schedulers cover plenty of game-style work without hauling in Boost, and the uglier part is that async colors the API surface and control flow in ways that make refactors annoying and big legacy codebases harder to reason about.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=spacechild1" class="hnuser">spacechild1</a>
   </div>
   <div class="comment-text">&gt; that must in turn be backed by a multithreaded event loop to be useful<p>Why? You can just as well execute all your coroutines on a single thread. Many networking applications are doing fine with just use a single ASIO thread.<p>Another example: you could write game behavior in C++ coroutines and schedule them on the thread that handles the game logic. If you want to wait for N seconds inside the coroutine, just yield it as a number. When the scheduler resumes a coroutine, it receives the delta time and then reschedules the coroutine accordingly. This is also a common technique in music programming languages to implement musical sequencing (e.g. SuperCollider)</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=nitwit005" class="hnuser">nitwit005</a>
+  </div>
+  <div class="comment-text">&gt; but I&#x27;d say the issue with C++ coroutines (and &#x27;colored&#x27; async functions in general) is that the whole call stack must be written to support that.<p>You can call a function that makes use of coroutines without worrying about it. That&#x27;s the core intent of the design.<p>That is, if you currently use some blocking socket library, we could replace the implementation of that with coroutine based sockets, and everything should still work without other code changes.</div>
   
 </div>
 
@@ -288,22 +357,12 @@
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=Davidbrcz" class="hnuser">Davidbrcz</a>
   </div>
-  <div class="comment-text">I use asio at work for coroutine. It&#x27;s one of the most opaque library I&#x27;ve ever used. The doc is awful and impenetrable.<p>The most helpful resource about it a guy on stackoverflow (sehe). No idea how to get help once SO will have closed</div>
+  <div class="comment-text">I use asio at work for coroutine. It&#x27;s one of the most opaque library I&#x27;ve ever used. The doc is awful and impenetrable.<p>The most helpful resource about it is a guy on stackoverflow (sehe). No idea how to get help once SO will have closed</div>
   
 </div>
 
 </div>
 
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=wiseowise" class="hnuser">wiseowise</a>
-  </div>
-  <div class="comment-text">Looking at C++ made me understand the point of Rust.</div>
-  
 </div>
 
     
@@ -324,6 +383,14 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=syncurrent" class="hnuser">syncurrent</a>
+  </div>
+  <div class="comment-text">This timing additions to a language is also at the core of imperative synchronous programming languages like Este rel, Céu or Blech.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=repelsteeltje" class="hnuser">repelsteeltje</a>
   </div>
   <div class="comment-text">&gt; There was a game AI talk a while back, I forget the name unfortunately, but as I recall the guy was pointing out this friction and suggesting additions we could make at the programming language level to better support that kind of time spanning logic.<p>Sounds interesting. If it&#x27;s not too much of an effort, could you dig up a reference?</div>
@@ -336,33 +403,6 @@
   
 </div>
 
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=syncurrent" class="hnuser">syncurrent</a>
-  </div>
-  <div class="comment-text">This timing additions to a language is also at the core of imperative synchronous programming languages like Este rel, Céu or Blech.</div>
-  
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=bullen" class="hnuser">bullen</a>
-  </div>
-  <div class="comment-text">Coroutines generally imply some sort of magic to me.<p>I would just go straight to tbb and concurrent_unordered_map!<p>The challenge of parallelism does not come from how to make things parallel, but how you share memory:<p>How you avoid cache misses, make sure threads don&#x27;t trample each other and design the higher level abstraction so that all layers can benefit from the performance without suffering turnaround problems.<p>My challenge right now is how do I make the JVM fast on native memory:<p>1) Rewrite my own JVM.
-2) Use the buffer and offset structure Oracle still has but has deprecated and is encouraging people to not use.<p>We need Java&#x2F;C# (already has it but is terrible to write native&#x2F;VM code for?) with bottlenecks at native performance and one way or the other somebody is going to have to write it?</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=pjc50" class="hnuser">pjc50</a>
-  </div>
-  <div class="comment-text">&gt; C# (already has it but is terrible to write native&#x2F;VM code for?)<p>What do you mean here? Do you mean hand-writing MSIL or native interop (pinvoke) or something else?</div>
-  
 </div>
 
 </div>
@@ -407,6 +447,61 @@
 
 </div>
 
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=wiseowise" class="hnuser">wiseowise</a>
+  </div>
+  <div class="comment-text">Looking at C++ made me understand the point of Rust.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bullen" class="hnuser">bullen</a>
+  </div>
+  <div class="comment-text">Coroutines generally imply some sort of magic to me.<p>I would just go straight to tbb and concurrent_unordered_map!<p>The challenge of parallelism does not come from how to make things parallel, but how you share memory:<p>How you avoid cache misses, make sure threads don&#x27;t trample each other and design the higher level abstraction so that all layers can benefit from the performance without suffering turnaround problems.<p>My challenge right now is how do I make the JVM fast on native memory:<p>1) Rewrite my own JVM.
+2) Use the buffer and offset structure Oracle still has but has deprecated and is encouraging people to not use.<p>We need Java&#x2F;C# (already has it but is terrible to write native&#x2F;VM code for?) with bottlenecks at native performance and one way or the other somebody is going to have to write it?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=themafia" class="hnuser">themafia</a>
+  </div>
+  <div class="comment-text">&gt; some sort of magic to me.<p>Your stack is on the heap and it contains an instruction pointer to jump to for resume.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjc50" class="hnuser">pjc50</a>
+  </div>
+  <div class="comment-text">&gt; C# (already has it but is terrible to write native&#x2F;VM code for?)<p>What do you mean here? Do you mean hand-writing MSIL or native interop (pinvoke) or something else?</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=bullen" class="hnuser">bullen</a>
+  </div>
+  <div class="comment-text">No I meant this but for C# is a whole lot more complex:<p><a href="http:&#x2F;&#x2F;move.rupy.se&#x2F;file&#x2F;jvm.txt" rel="nofollow">http:&#x2F;&#x2F;move.rupy.se&#x2F;file&#x2F;jvm.txt</a></div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sagebird" class="hnuser">sagebird</a>
+  </div>
+  <div class="comment-text">&gt;&gt; To misquote Kennedy, “we chose to focus coroutines on generator in C++23, not because it is hard, but because it is easy”.<p>Appreciate this humor -- absurd, tasteful.</div>
+  
 </div>
 
     
@@ -461,6 +556,52 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=socalgal2" class="hnuser">socalgal2</a>
+  </div>
+  <div class="comment-text">I&#x27;ll take the bait. Here&#x27;s a coroutine<p><pre><code>    waitFrames(5); &#x2F;&#x2F; wait 5 frames
+    fireProjectile();
+    waitFrames(15);
+    turnLeft(-30&#x2F;*deg*&#x2F;, 120); &#x2F;&#x2F; turn left over 120 frames
+    waitFrames(10);
+    fireProjectile();
+    &#x2F;&#x2F; spin and shoot
+    for (i of range(0, 360, 60)) {
+      turnRight(60, 90);  &#x2F;&#x2F; turn 60 degrees over 90 frames
+      fireProjectile();
+    }
+</code></pre>
+10 lines and I get behavior over time.  What would your non-coroutine solution look like?</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mgaunard" class="hnuser">mgaunard</a>
+  </div>
+  <div class="comment-text">Given a coroutine body<p>```
+int f()
+{
+    a;
+    co_yield r;
+    b;
+    co_return r2;
+}
+```<p>this transforms into<p>```
+auto f(auto then)
+{
+    a; 
+    return then(r, [&amp;]()
+    {
+        b;
+        return then(r2);
+    });
+};
+```<p>You can easily extend this to arbitrarily complex statements. The main thing is that obviously, you have to worry about the capture lifetime yourself (coroutines allocate a frame separate from the stack), and the syntax causes nesting for every statement (but you can avoid that using operator overloading, like C++26&#x2F;29 does for executors)</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=spacechild1" class="hnuser">spacechild1</a>
   </div>
   <div class="comment-text">&gt; Just use lambdas&#x2F;callbacks.<p>Lol, no thanks. People are using coroutines exactly to avoid callback hell. I have rewritten my own C++ ASIO networking code from callback to coroutines (asio::awaitable) and the difference is night and day!</div>
@@ -472,14 +613,6 @@
     <a href="https://news.ycombinator.com/user?id=jayd16" class="hnuser">jayd16</a>
   </div>
   <div class="comment-text">You can structure coroutines with a context so the runtime has an idea when it can drop them or cancel them. Really nice if you have things like game objects with their own lifecycles.<p>For simple callback hell, not so much.</div>
-  
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=duped" class="hnuser">duped</a>
-  </div>
-  <div class="comment-text">The value is fewer indirect function calls heap allocations (so less overhead than callbacks) and well defined tasks that you can select&#x2F;join&#x2F;cancel.</div>
   
 </div>
 
@@ -497,6 +630,14 @@
   
 </div>
 
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=duped" class="hnuser">duped</a>
+  </div>
+  <div class="comment-text">The value is fewer indirect function calls heap allocations (so less overhead than callbacks) and well defined tasks that you can select&#x2F;join&#x2F;cancel.</div>
+  
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -575,22 +716,6 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Philip-J-Fry" class="hnuser">Philip-J-Fry</a>
-  </div>
-  <div class="comment-text">&gt;The use of IEnumerable as a &quot;generator&quot; mechanic is quite a good hack though.<p>Is that a hack? Is that not just exactly what IEnumerable and IEnumerator were built to do?</div>
-  
-<div class="comment-row" style="margin-left:40px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jayd16" class="hnuser">jayd16</a>
-  </div>
-  <div class="comment-text">It feels hacky because you have to (had to?) use it as the async&#x2F;await tool and because of that the types you&#x27;re generating and how they are handled is a huge mess.<p>Really you&#x27;re generating the vague concept of a yield instruction but you can return other coroutines that are implicitly run and nest your execution...  Because of this you can&#x27;t wait less than a frame so things are often needlessly complicated and slow.<p>It&#x27;s like using a key to jam a door shut.  Sure a key is for keeping doors closed but...</div>
-  
-</div>
-
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=debugnik" class="hnuser">debugnik</a>
   </div>
   <div class="comment-text">Not <i>that</i> ancient, they just haven&#x27;t bothered to update their coroutine mechanism to async&#x2F;await. The Stride engine does it with their own scheduler, for example.<p>Edit: Nevermind, they eventually bothered.</div>
@@ -625,6 +750,22 @@
   
 </div>
 
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Philip-J-Fry" class="hnuser">Philip-J-Fry</a>
+  </div>
+  <div class="comment-text">&gt;The use of IEnumerable as a &quot;generator&quot; mechanic is quite a good hack though.<p>Is that a hack? Is that not just exactly what IEnumerable and IEnumerator were built to do?</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jayd16" class="hnuser">jayd16</a>
+  </div>
+  <div class="comment-text">It feels hacky because you have to (had to?) use it as the async&#x2F;await tool and because of that the types you&#x27;re generating and how they are handled is a huge mess.<p>Really you&#x27;re generating the vague concept of a yield instruction but you can return other coroutines that are implicitly run and nest your execution...  Because of this you can&#x27;t wait less than a frame so things are often needlessly complicated and slow.<p>It&#x27;s like using a key to jam a door shut.  Sure a key is for keeping doors closed but...</div>
+  
 </div>
 
 </div>
@@ -669,18 +810,20 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=FpUser" class="hnuser">FpUser</a>
+  </div>
+  <div class="comment-text">I do not find so called &quot;green threads&quot; useful at all. In my opinion except some very esoteric cases they serve no purpose in &quot;native&quot; languages that have full access to all OS threading  and IO facilities. Useful only in &quot;deficient&quot; environments like inherently single threaded request handlers like NodeJS.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=momocowcow" class="hnuser">momocowcow</a>
   </div>
   <div class="comment-text">No serious devs even uses Unity coroutines. Terrible control flow and perf. Fine for small projects on PC.</div>
   
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=kdheiwns" class="hnuser">kdheiwns</a>
-  </div>
-  <div class="comment-text">In all of my years of professional game dev, I can verify that this is not even remotely true. They&#x27;re used basically everywhere. They&#x27;re very common when you need something to update for a set period of time but managing the state outside a very local context would just make the code a mess.<p>Unity&#x27;s own documentation for changing scenes uses coroutines</div>
-  
-</div>
-
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=krajzeg" class="hnuser">krajzeg</a>
@@ -723,6 +866,14 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=kdheiwns" class="hnuser">kdheiwns</a>
+  </div>
+  <div class="comment-text">In all of my years of professional game dev, I can verify that this is not even remotely true. They&#x27;re used basically everywhere. They&#x27;re very common when you need something to update for a set period of time but managing the state outside a very local context would just make the code a mess.<p>Unity&#x27;s own documentation for changing scenes uses coroutines</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=voidUpdate" class="hnuser">voidUpdate</a>
   </div>
   <div class="comment-text">Just out of interest, how many serious unity devs have you talked to?</div>
@@ -757,7 +908,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-25 17:07 UTC &nbsp;|&nbsp;
+    Generated 2026-03-25 19:01 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
