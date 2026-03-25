@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">82 points</span>
+        <span class="score">100 points</span>
         by <a href="https://news.ycombinator.com/user?id=surprisetalk" class="hnuser">surprisetalk</a>
         <span class="age">5 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47453738.html">critique article</a>
@@ -74,6 +74,14 @@
   </div>
   <div class="comment-text">Neat, I&#x27;ve used lego (<a href="https:&#x2F;&#x2F;github.com&#x2F;go-acme&#x2F;lego" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;go-acme&#x2F;lego</a>) but will certainly have to give uacme a look, love me a simple ACME client.<p>acme.sh was too garish for my liking, even as a guy that likes his fair share of shell scripts. And obviously certbot is a non-starter because of snap.</div>
   
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=catlifeonmars" class="hnuser">catlifeonmars</a>
+  </div>
+  <div class="comment-text">Lego is solid. I use it with Route53 to do automatic renewal of LE certs for various endpoints before the certs expire.</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:60px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=adiabatichottub" class="hnuser">adiabatichottub</a>
@@ -116,6 +124,14 @@
   </div>
   <div class="comment-text">Can you give me an example where this is a problem? If someone can create a CNAME they can create a TXT (ignoring the possibility of an API being restricted to just one).<p>Without CNAME redirect I wouldn&#x27;t be able to automatically renew wildcard ssl for client domains with dns that has no API. Even if they do have an API, doing it this way stops me from needing to deal with two different APIs</div>
   
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=rdevilla" class="hnuser">rdevilla</a>
+  </div>
+  <div class="comment-text">GP comment is just vague distilled model AI slop.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -184,15 +200,15 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=tzury" class="hnuser">tzury</a>
+    <a href="https://news.ycombinator.com/user?id=dwedge" class="hnuser">dwedge</a>
   </div>
-  <div class="comment-text">Just remember, if you run your own DNS, and you do so for a mission critical platform, the platform is exposed to a udp DDoS that will be hard to detect let alone prevent.<p>Unless of course you will invest 5-6 figures worth of US dollars worth of equipment, which by then you can look back and ask yourself, was I better off with Google Cloud DNS, AWS Route 53 and the likes.</div>
+  <div class="comment-text">I&#x27;ve been tempted by this because I self host everything else, but &quot;adding an entry to postgres instead of using namecheap gui&quot; is overkill, just use a DNS with an API.<p>Last few days I&#x27;ve been migrating everything to luadns format, stored in github and then I have github actions triggering a script to convert it to octodns and apply it.<p>I could have just used either, but I like the luadns format but didn&#x27;t want to be stuck using them as a provider</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jcgl" class="hnuser">jcgl</a>
+    <a href="https://news.ycombinator.com/user?id=megous" class="hnuser">megous</a>
   </div>
-  <div class="comment-text">Not that I disagree with the fact that these risks exist, but how is that different than running any other service for a mission critical platform?<p>The main thing I can think of is DNS amplification attacks, but that&#x27;s more your DNS server being <i>used</i> as part of a DDoS attack rather than being <i>targeted</i> for one. Also (afaik) resolvers are more common targets for DNS amplification than authoritative.</div>
+  <div class="comment-text">DNS servers are manageable via standard utilities&#x2F;protocol, with tools like nsupdate, if you enable it.</div>
   
 </div>
 
@@ -221,9 +237,19 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dwedge" class="hnuser">dwedge</a>
+    <a href="https://news.ycombinator.com/user?id=bpbp-mango" class="hnuser">bpbp-mango</a>
   </div>
-  <div class="comment-text">I&#x27;ve been tempted by this because I self host everything else, but &quot;adding an entry to postgres instead of using namecheap gui&quot; is overkill, just use a DNS with an API.<p>Last few days I&#x27;ve been migrating everything to luadns format, stored in github and then I have github actions triggering a script to convert it to octodns and apply it.<p>I could have just used either, but I like the luadns format but didn&#x27;t want to be stuck using them as a provider</div>
+  <div class="comment-text">I run PowerDNS as both authoritative and recursing at my ISP job. Great piece of software.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=emithq" class="hnuser">emithq</a>
+  </div>
+  <div class="comment-text">One thing worth noting if you&#x27;re using your own DNS for Let&#x27;s Encrypt DNS-01 challenges: make sure your authoritative server supports the RFC 2136 dynamic update protocol, or you&#x27;ll end up writing custom API shims for every ACME client. PowerDNS has solid RFC 2136 support out of the box and pairs well with Certbot&#x27;s --preferred-challenges dns-01 flag. BIND works too but the ACL configuration for allowing dynamic updates from specific IPs is fiddly to get right the first time.</div>
   
 </div>
 
@@ -257,10 +283,42 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=emithq" class="hnuser">emithq</a>
+    <a href="https://news.ycombinator.com/user?id=tzury" class="hnuser">tzury</a>
   </div>
-  <div class="comment-text">One thing worth noting if you&#x27;re using your own DNS for Let&#x27;s Encrypt DNS-01 challenges: make sure your authoritative server supports the RFC 2136 dynamic update protocol, or you&#x27;ll end up writing custom API shims for every ACME client. PowerDNS has solid RFC 2136 support out of the box and pairs well with Certbot&#x27;s --preferred-challenges dns-01 flag. BIND works too but the ACL configuration for allowing dynamic updates from specific IPs is fiddly to get right the first time.</div>
+  <div class="comment-text">Just remember, if you run your own DNS, and you do so for a mission critical platform, the platform is exposed to a udp DDoS that will be hard to detect let alone prevent.<p>Unless of course you will invest 5-6 figures worth of US dollars worth of equipment, which by then you can look back and ask yourself, was I better off with Google Cloud DNS, AWS Route 53 and the likes.</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jcgl" class="hnuser">jcgl</a>
+  </div>
+  <div class="comment-text">Not that I disagree with the fact that these risks exist, but how is that different than running any other service for a mission critical platform?<p>The main thing I can think of is DNS amplification attacks, but that&#x27;s more your DNS server being <i>used</i> as part of a DDoS attack rather than being <i>targeted</i> for one. Also (afaik) resolvers are more common targets for DNS amplification than authoritative.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tzury" class="hnuser">tzury</a>
+  </div>
+  <div class="comment-text">Large scale dns vendors have a multi million dollars worth of network layer traffic filtering equipment pipelined in front of their DNS servers (or in house solutions such as Google).</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mlhpdx" class="hnuser">mlhpdx</a>
+  </div>
+  <div class="comment-text">Does that mean running your own DNS in the cloud is a better answer?  This is what I do.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=megous" class="hnuser">megous</a>
+  </div>
+  <div class="comment-text">Virtual private cloud services where you host the DNS server may also include DDoS protection.</div>
+  
+</div>
+
+</div>
+
+</div>
+
 </div>
 
     
@@ -273,17 +331,17 @@
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=albertgoeswoof" class="hnuser">albertgoeswoof</a>
+    <a href="https://news.ycombinator.com/user?id=mlhpdx" class="hnuser">mlhpdx</a>
   </div>
-  <div class="comment-text">It can’t be fully secure but you can use a domain or path with a uuid or similar such that no one could guess your dns endpoint, over dot or doh. In theory someone might log your dns query then replay it against your dns server though.<p>You could also add whitelisting on your dns server to known IPs, or at least ranges to limit exposure, add rate limiting &#x2F; detection of patterns you wouldn’t exhibit etc.<p>You could rotate your dns endpoint address every x minutes on some known algorithm implemented client and server side.<p>But in the end it’s mostly security through obscurity, unless you go via your own tailnet or similar</div>
+  <div class="comment-text">Run it over WireGuard? I have this setup — cloud hosted private DNS protected by NOISE&#x2F;ChaCha20. Only my devices can use it, because only they are configured as peers.</div>
   
 </div>
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Loeffelmaenn" class="hnuser">Loeffelmaenn</a>
+    <a href="https://news.ycombinator.com/user?id=albertgoeswoof" class="hnuser">albertgoeswoof</a>
   </div>
-  <div class="comment-text">I just use a VPN like tailscale or wireguard. You can normally also tell clients what DNS to use when on the VPN</div>
+  <div class="comment-text">It can’t be fully secure but you can use a domain or path with a uuid or similar such that no one could guess your dns endpoint, over dot or doh. In theory someone might log your dns query then replay it against your dns server though.<p>You could also add whitelisting on your dns server to known IPs, or at least ranges to limit exposure, add rate limiting &#x2F; detection of patterns you wouldn’t exhibit etc.<p>You could rotate your dns endpoint address every x minutes on some known algorithm implemented client and server side.<p>But in the end it’s mostly security through obscurity, unless you go via your own tailnet or similar</div>
   
 </div>
 
@@ -321,6 +379,14 @@
 
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Loeffelmaenn" class="hnuser">Loeffelmaenn</a>
+  </div>
+  <div class="comment-text">I just use a VPN like tailscale or wireguard. You can normally also tell clients what DNS to use when on the VPN</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=slow_typist" class="hnuser">slow_typist</a>
   </div>
   <div class="comment-text">SSH tunnels is a possibility.</div>
@@ -353,18 +419,20 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=karel-3d" class="hnuser">karel-3d</a>
+  </div>
+  <div class="comment-text">If you run powerdns auth, consider front-running it with dnsdist (also from powerdns).<p>(disclaimer: I contribute a tiny bit to dnsdist.)</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=deepsun" class="hnuser">deepsun</a>
   </div>
   <div class="comment-text">How to make it DNSSEC?</div>
   
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=jcgl" class="hnuser">jcgl</a>
-  </div>
-  <div class="comment-text">Knot (as suggested by others) is good. As are BIND and PowerDNS. These are the big authoritative resolvers I think of at least, and all of them allow for basically hands-free DNSSEC; just flip a switch and you&#x27;ll have it. I&#x27;ve run DNSSEC with all three and have no complaints.<p>And when using such turn-key DNSSEC support, I think there&#x27;s very little risk to enabling it. While other commenters pointing out its marginal utility are correct, turn-key DNSSEC support that Just Works™ de-risks it enough for me that the relatively marginal utility just isn&#x27;t a concern.<p>Plus, once you&#x27;ve got DNSSEC enabled, you can at the very least start to enjoy stuff like SSHFP records. DANE may not have any real-world traction, but who knows what the future may bring.</div>
-  
-</div>
-
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=gucci-on-fleek" class="hnuser">gucci-on-fleek</a>
@@ -379,6 +447,14 @@
   
 </div>
 
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jcgl" class="hnuser">jcgl</a>
+  </div>
+  <div class="comment-text">Knot (as suggested by others) is good. As are BIND and PowerDNS. These are the big authoritative resolvers I think of at least, and all of them allow for basically hands-free DNSSEC; just flip a switch and you&#x27;ll have it. I&#x27;ve run DNSSEC with all three and have no complaints.<p>And when using such turn-key DNSSEC support, I think there&#x27;s very little risk to enabling it. While other commenters pointing out its marginal utility are correct, turn-key DNSSEC support that Just Works™ de-risks it enough for me that the relatively marginal utility just isn&#x27;t a concern.<p>Plus, once you&#x27;ve got DNSSEC enabled, you can at the very least start to enjoy stuff like SSHFP records. DANE may not have any real-world traction, but who knows what the future may bring.</div>
+  
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -417,7 +493,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-25 10:52 UTC &nbsp;|&nbsp;
+    Generated 2026-03-25 13:07 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
