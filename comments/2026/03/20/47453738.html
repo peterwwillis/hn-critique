@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">12 points</span>
+        <span class="score">45 points</span>
         by <a href="https://news.ycombinator.com/user?id=surprisetalk" class="hnuser">surprisetalk</a>
         <span class="age">5 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47453738.html">critique article</a>
@@ -50,16 +50,144 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=WaitWaitWha" class="hnuser">WaitWaitWha</a>
+  </div>
+  <div class="comment-text">Running DNSMasq on an old RasPI &amp; USB SSD.  No problems no issues.  Just quietly runs in the background.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=gerdesj" class="hnuser">gerdesj</a>
   </div>
   <div class="comment-text">I&#x27;ve run DNS servers in the past - BIND and pdns.  I&#x27;ve now gone all in ... because ... well it started with ACME.<p>As the OP states you can get a registrar to host a domain for you and then you create a subdomain anywhere you fancy and that includes at home.  Do get the glue records right and do use dig to work out what is happening.<p>Now with a domain under your own control, you can use CNAME records in other zones to point at your zones and if you have dynamic DNS support on your zones (RFC 2136) then you can now support ACME ie Lets Encrypt and Zerossl and co.<p>Sadly certbot doesn&#x27;t do (or it didn&#x27;t) CNAME redirects for ACME.  However, acme.sh and simple-acme do and both are absolutely rock solid.  Both of those projects are used by a lot of people and well trod.<p>acme.sh is ideal for unix gear and if you follow this blokes method of installation: <a href="https:&#x2F;&#x2F;pieterbakker.com&#x2F;acme-sh-installation-guide-2025&#x2F;" rel="nofollow">https:&#x2F;&#x2F;pieterbakker.com&#x2F;acme-sh-installation-guide-2025&#x2F;</a> usefully centralised.<p>simple-acme is for Windows.  It has loads of add on scripts to deal with scenarios.  Those scripts seem to be deprecated but work rather well.  Quite a lot of magic here that an old school Linux sysadmin is glad of.<p>PowerDNS auth server supports dynamic DNS and you can filter access by IP and TSIG-KEY, per zone and&#x2F;or globally.<p>Join the dots.<p>[EDIT: Speling, conjunction switch]</div>
   
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ozim" class="hnuser">ozim</a>
+  </div>
+  <div class="comment-text">I think CNAME redirections being not supported is reasonable choice. Would make my life easier as well but it opens all kinds of bad possibilities that bad actors would definitely use.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=adiabatichottub" class="hnuser">adiabatichottub</a>
+  </div>
+  <div class="comment-text">I&#x27;m a fan of uACME:<p><a href="https:&#x2F;&#x2F;github.com&#x2F;ndilieto&#x2F;uacme" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;ndilieto&#x2F;uacme</a><p>Tiny, simple, reliable.  What more can you ask?</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=DaSHacka" class="hnuser">DaSHacka</a>
+  </div>
+  <div class="comment-text">Neat, I&#x27;ve used lego (<a href="https:&#x2F;&#x2F;github.com&#x2F;go-acme&#x2F;lego" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;go-acme&#x2F;lego</a>) but will certainly have to give uacme a look, love me a simple ACME client.<p>acme.sh was too garish for my liking, even as a guy that likes his fair share of shell scripts. And obviously certbot is a non-starter because of snap.</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=adiabatichottub" class="hnuser">adiabatichottub</a>
+  </div>
+  <div class="comment-text">Certbot has earned my ire on just about every occasion I&#x27;ve had to interact with it.  It is a terrible program and I can&#x27;t wait to finish replacing it everywhere.<p>The new setup is using uAcme and nsupdate to do DNS-01 challenges.  No more fiddling with any issues in the web server config for a particular virtual host, like some errant rewrite rule that prevents access to .well-known&#x2F;.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=9dev" class="hnuser">9dev</a>
   </div>
   <div class="comment-text">Seconded. Don’t use certbot; it’s an awful piece of user-hostile software, starting from snap being the only supported installation channel. Everything it does wrong, acme.sh does right.</div>
   
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tryauuum" class="hnuser">tryauuum</a>
+  </div>
+  <div class="comment-text">just installed yesterday the certbot on ubuntu 24.04, from the default repos, without any snaps</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mediumsmart" class="hnuser">mediumsmart</a>
+  </div>
+  <div class="comment-text">same on debian trixie. certbot works fine for me. Zone records in bind, generate the dnskey, cronjob to re-sign it daily and your off to the races. no problems no snaps.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=defanor" class="hnuser">defanor</a>
+  </div>
+  <div class="comment-text">I prefer and use the knot DNS server for authoritative DNS (and either knot-resolver or Unbound for caching DNS servers) myself: it is quite feature-rich, including DNSSEC, RFC 2136 support, an easy master-slave setup. Apparently it does support database-based configuration and zone definitions, too, but I find file-based storage to be simpler.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=adiabatichottub" class="hnuser">adiabatichottub</a>
+  </div>
+  <div class="comment-text">The database for configuration and zone data is strictly internal and not tied to an external relational database, like what&#x27;s shown in the article.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=emithq" class="hnuser">emithq</a>
+  </div>
+  <div class="comment-text">One thing worth noting if you&#x27;re using your own DNS for Let&#x27;s Encrypt DNS-01 challenges: make sure your authoritative server supports the RFC 2136 dynamic update protocol, or you&#x27;ll end up writing custom API shims for every ACME client. PowerDNS has solid RFC 2136 support out of the box and pairs well with Certbot&#x27;s --preferred-challenges dns-01 flag. BIND works too but the ACL configuration for allowing dynamic updates from specific IPs is fiddly to get right the first time.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=deepsun" class="hnuser">deepsun</a>
+  </div>
+  <div class="comment-text">How to make it DNSSEC?</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=gucci-on-fleek" class="hnuser">gucci-on-fleek</a>
+  </div>
+  <div class="comment-text">With Knot, you can just add ~8 lines to your config [0], copy the records to your registrar, and then you&#x27;re done.<p>[0]: <a href="https:&#x2F;&#x2F;www.knot-dns.cz&#x2F;docs&#x2F;3.5&#x2F;singlehtml&#x2F;index.html#automatic-zsk-management" rel="nofollow">https:&#x2F;&#x2F;www.knot-dns.cz&#x2F;docs&#x2F;3.5&#x2F;singlehtml&#x2F;index.html#autom...</a></div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=adiabatichottub" class="hnuser">adiabatichottub</a>
+  </div>
+  <div class="comment-text">Knot does make it quite easy.  Also, their devs are very responsive to support questions on their mailing list.  It is currently my favored DNS.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=adiabatichottub" class="hnuser">adiabatichottub</a>
+  </div>
+  <div class="comment-text">If you don&#x27;t absolutely have to, then don&#x27;t.<p>That is to say, if you misconfigure it, or try to turn it off, you will have an invalid domain until the TTL runs out, and it&#x27;s really just not worth the headache unless you have a real use case.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=deepsun" class="hnuser">deepsun</a>
+  </div>
+  <div class="comment-text">I consider it as basic security measure as SSL. Otherwise any MitM can easily redirect users to a phishing resource.<p>Did DNSSEC for company website, worked with zero maintenance for several years. On a cloud-provided DNS. Would want the same on self-hosted DNS too.</div>
+  
+</div>
+
 </div>
 
 </div>
@@ -74,7 +202,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-25 04:23 UTC &nbsp;|&nbsp;
+    Generated 2026-03-25 07:04 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
