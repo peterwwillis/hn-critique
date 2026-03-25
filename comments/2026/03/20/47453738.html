@@ -35,7 +35,7 @@
       </h2>
       
       <p class="meta">
-        <span class="score">65 points</span>
+        <span class="score">82 points</span>
         by <a href="https://news.ycombinator.com/user?id=surprisetalk" class="hnuser">surprisetalk</a>
         <span class="age">5 days ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/20/47453738.html">critique article</a>
@@ -46,16 +46,6 @@
     
 
     <p class="no-critique">Analysis could not be generated. Showing raw comments:</p>
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=BatteryMountain" class="hnuser">BatteryMountain</a>
-  </div>
-  <div class="comment-text">Get a mini-pc with 2x LAN ports + a mediatek Wifi 6&#x2F;7 module. Install Proxmox. Make 3 VM&#x27;s: OpenWrt (or router firmware of choice), unbound and adguard home. Plug your fibre into lan port, plug rest of network into other lan port. In proxmox, set pcie passthrough for one of the Lan ports and the wifi card. Setup openwrt to connect to your isp and points its dns to you adguard home server. Point your adguard home server to your unbound server as upstream. This is a good starting point if you want to get a feel for running your own router + dns. You don&#x27;t need to use off the shelf garbage routers; x86&#x2F;x64 routers are the best. On openwrt I configure a special traffic queue so that I don&#x27;t have buffer overflows, so my connection is super stable and low latency. Combined with the adguard + unbound dns setup, my internet connection is amazingly fast compared to traditional routers.</div>
-  
-</div>
-
     
     
 <div class="comment-row" style="margin-left:0px">
@@ -94,6 +84,24 @@
 
 </div>
 
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=rdevilla" class="hnuser">rdevilla</a>
+  </div>
+  <div class="comment-text">&gt; Sadly certbot doesn&#x27;t do (or it didn&#x27;t) CNAME redirects for ACME.<p>Are you certain? Not at a real machine at the moment so hard for me to dig into the details but CNAMEing the challenge response to another domain is absolutely supported via DNS-01 [0] and certbot is Let&#x27;s Encrypt&#x27;s recommended ACME client: [1]<p><pre><code>    Since Let’s Encrypt follows the DNS standards when
+    looking up TXT records for DNS-01 validation, you can
+    use CNAME records or NS records to delegate answering
+    the challenge to other DNS zones. This can be used to
+    delegate the _acme-challenge subdomain to a validation
+    specific server or zone.
+</code></pre>
+... which is a very common pattern I&#x27;ve seen hundreds (thousands?) of times.<p>The issue you may have run into is that CNAME records are NOT allowed at the zone apex, for RFC 1033 states:<p><pre><code>   The CNAME record is used for nicknames. [...] There must not be any other
+   RRs associated with a nickname of the same class.
+</code></pre>
+... of course making it impossible to enter NS, SOA, etc. records for the zone root when a CNAME exists there.<p>P.S. doing literally fucking anything on mobile is like pulling teeth encased in concrete. Since this is how the vast majority of the world interfaces with computing I am totally unsurprised that people are claiming 10x speedups with LLMs.<p>[0] <a href="https:&#x2F;&#x2F;letsencrypt.org&#x2F;docs&#x2F;challenge-types&#x2F;" rel="nofollow">https:&#x2F;&#x2F;letsencrypt.org&#x2F;docs&#x2F;challenge-types&#x2F;</a><p>[1] <a href="https:&#x2F;&#x2F;letsencrypt.org&#x2F;docs&#x2F;client-options&#x2F;" rel="nofollow">https:&#x2F;&#x2F;letsencrypt.org&#x2F;docs&#x2F;client-options&#x2F;</a></div>
+  
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -140,46 +148,16 @@
   </div>
   <div class="comment-text">&gt; starting from snap being the only supported installation channel.<p>This sounds like you are complaining about Ubuntu, not the software you wish to install in Ubuntu.</div>
   
-</div>
-
-</div>
-
-</div>
-
-    
-    
-<div class="comment-row" style="margin-left:0px">
+<div class="comment-row" style="margin-left:60px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=dwedge" class="hnuser">dwedge</a>
+    <a href="https://news.ycombinator.com/user?id=jcgl" class="hnuser">jcgl</a>
   </div>
-  <div class="comment-text">I&#x27;ve been tempted by this because I self host everything else, but &quot;adding an entry to postgres instead of using namecheap gui&quot; is overkill, just use a DNS with an API.<p>Last few days I&#x27;ve been migrating everything to luadns format, stored in github and then I have github actions triggering a script to convert it to octodns and apply it.<p>I could have just used either, but I like the luadns format but didn&#x27;t want to be stuck using them as a provider</div>
+  <div class="comment-text">Unfortunately, it&#x27;s more than that: the Linux installation instructions on the certbot website[0] give options for pip or snap. Distro packages are not mentioned.<p>[0] <a href="https:&#x2F;&#x2F;certbot.eff.org&#x2F;" rel="nofollow">https:&#x2F;&#x2F;certbot.eff.org&#x2F;</a></div>
   
 </div>
 
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=rmoriz" class="hnuser">rmoriz</a>
-  </div>
-  <div class="comment-text">Still running DNS without a database and immutable. Push-based deployment.</div>
-  
 </div>
 
-    
-    
-<div class="comment-row" style="margin-left:0px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=WaitWaitWha" class="hnuser">WaitWaitWha</a>
-  </div>
-  <div class="comment-text">Running DNSMasq on an old RasPI &amp; USB SSD.  No problems no issues.  Just quietly runs in the background.</div>
-  
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=henrebotha" class="hnuser">henrebotha</a>
-  </div>
-  <div class="comment-text">dnsmasq on an RPi Zero 2W is the backbone of my self-hosted setup. Combined with Tailscale, it gives me access from anywhere to arbitrary domains I define myself, with full HTTPS thanks to Caddy.</div>
-  
 </div>
 
 </div>
@@ -206,6 +184,89 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=tzury" class="hnuser">tzury</a>
+  </div>
+  <div class="comment-text">Just remember, if you run your own DNS, and you do so for a mission critical platform, the platform is exposed to a udp DDoS that will be hard to detect let alone prevent.<p>Unless of course you will invest 5-6 figures worth of US dollars worth of equipment, which by then you can look back and ask yourself, was I better off with Google Cloud DNS, AWS Route 53 and the likes.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jcgl" class="hnuser">jcgl</a>
+  </div>
+  <div class="comment-text">Not that I disagree with the fact that these risks exist, but how is that different than running any other service for a mission critical platform?<p>The main thing I can think of is DNS amplification attacks, but that&#x27;s more your DNS server being <i>used</i> as part of a DDoS attack rather than being <i>targeted</i> for one. Also (afaik) resolvers are more common targets for DNS amplification than authoritative.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=BatteryMountain" class="hnuser">BatteryMountain</a>
+  </div>
+  <div class="comment-text">Get a mini-pc with 2x LAN ports + a mediatek Wifi 6&#x2F;7 module. Install Proxmox. Make 3 VM&#x27;s: OpenWrt (or router firmware of choice), unbound and adguard home. Plug your fibre into lan port, plug rest of network into other lan port. In proxmox, set pcie passthrough for one of the Lan ports and the wifi card. Setup openwrt to connect to your isp and points its dns to you adguard home server. Point your adguard home server to your unbound server as upstream. This is a good starting point if you want to get a feel for running your own router + dns. You don&#x27;t need to use off the shelf garbage routers; x86&#x2F;x64 routers are the best. On openwrt I configure a special traffic queue so that I don&#x27;t have buffer overflows, so my connection is super stable and low latency. Combined with the adguard + unbound dns setup, my internet connection is amazingly fast compared to traditional routers.<p>Better yet, set up ssh to the proxmox server and ask claude code to set it up for you, works like a charm! claude can call ssh and dig and verify that your dns chains work, it can test your firewall and ports (basically running pen tests against yourself..), it can sort out almost any issue (I had intel wifi card and had firmware locks on broadcasting in 5GHZ spectrum in AP Mode - mediatek doesn&#x27;t - claude helped try to override firmware in kernel but intel firmware won&#x27;t budge). It can setup automatic nightly updates that are safe, it can help you setup recovery&#x2F;backup plans (which runs before updates), it can automate certain proxmox tasks (periodic snapshotting of vm&#x27;s) and best of all, it can document the entire infrastructure comprehensively each time I make changes to it.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ssl-3" class="hnuser">ssl-3</a>
+  </div>
+  <div class="comment-text">That seems like a lot of steps that could be reduced to:<p><pre><code>  1.  Run OpenWRT
+  2.  Use it for the DNS of one&#x27;s own choosing</code></pre></div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dwedge" class="hnuser">dwedge</a>
+  </div>
+  <div class="comment-text">I&#x27;ve been tempted by this because I self host everything else, but &quot;adding an entry to postgres instead of using namecheap gui&quot; is overkill, just use a DNS with an API.<p>Last few days I&#x27;ve been migrating everything to luadns format, stored in github and then I have github actions triggering a script to convert it to octodns and apply it.<p>I could have just used either, but I like the luadns format but didn&#x27;t want to be stuck using them as a provider</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=WaitWaitWha" class="hnuser">WaitWaitWha</a>
+  </div>
+  <div class="comment-text">Running DNSMasq on an old RasPI &amp; USB SSD.  No problems no issues.  Just quietly runs in the background.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=henrebotha" class="hnuser">henrebotha</a>
+  </div>
+  <div class="comment-text">dnsmasq on an RPi Zero 2W is the backbone of my self-hosted setup. Combined with Tailscale, it gives me access from anywhere to arbitrary domains I define myself, with full HTTPS thanks to Caddy.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ssl-3" class="hnuser">ssl-3</a>
+  </div>
+  <div class="comment-text">At home, I put all of my network infrastructure software in one basket because that seems like the right path towards maximizing availability[1]:  It provides one point of potential hardware failure instead of many.<p>For me, that means doing routing, DNS, VPN, and associated stuff with one box running OpenWRT.  It works.  It&#x27;s ridiculously stable.  And rather than having a number of things that could break the network when they die, I only have 1 thing that can do so.<p>That box currently happens to be a Raspberry Pi 4 that uses VLANs as Ethernet port expanders, but it is also stable AF with a [shock! horror!] USB NIC.  I picked that direction years ago mostly because I have a strong affinity towards  avoiding critical moving parts (like cooling fans) in infrastructure.<p>But those details don&#x27;t matter.  Any single box running OpenWRT, OPNsense, pfSense, Debian, FreeBSD, or whatever, can behave more-or-less similarly.<p>[1]:  Yeah, so about that.  If the real-world MTBF for a system that relies upon 1 box is 10 years, then the MTBF for a system relying on 2 boxes to both keep working is only 5 years.  Less is more.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=emithq" class="hnuser">emithq</a>
+  </div>
+  <div class="comment-text">One thing worth noting if you&#x27;re using your own DNS for Let&#x27;s Encrypt DNS-01 challenges: make sure your authoritative server supports the RFC 2136 dynamic update protocol, or you&#x27;ll end up writing custom API shims for every ACME client. PowerDNS has solid RFC 2136 support out of the box and pairs well with Certbot&#x27;s --preferred-challenges dns-01 flag. BIND works too but the ACL configuration for allowing dynamic updates from specific IPs is fiddly to get right the first time.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=micw" class="hnuser">micw</a>
   </div>
   <div class="comment-text">I&#x27;d like to run my personal DNS server for privacy reasons on a cheap VPS. But how can I make it available to me only? There&#x27;s no auth on DNS, right?</div>
@@ -215,6 +276,14 @@
     <a href="https://news.ycombinator.com/user?id=albertgoeswoof" class="hnuser">albertgoeswoof</a>
   </div>
   <div class="comment-text">It can’t be fully secure but you can use a domain or path with a uuid or similar such that no one could guess your dns endpoint, over dot or doh. In theory someone might log your dns query then replay it against your dns server though.<p>You could also add whitelisting on your dns server to known IPs, or at least ranges to limit exposure, add rate limiting &#x2F; detection of patterns you wouldn’t exhibit etc.<p>You could rotate your dns endpoint address every x minutes on some known algorithm implemented client and server side.<p>But in the end it’s mostly security through obscurity, unless you go via your own tailnet or similar</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Loeffelmaenn" class="hnuser">Loeffelmaenn</a>
+  </div>
+  <div class="comment-text">I just use a VPN like tailscale or wireguard. You can normally also tell clients what DNS to use when on the VPN</div>
   
 </div>
 
@@ -232,6 +301,14 @@
   
 <div class="comment-row" style="margin-left:60px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ssl-3" class="hnuser">ssl-3</a>
+  </div>
+  <div class="comment-text">Perhaps it seems obvious to some, but it&#x27;s not obvious to me so I need to ask:  What&#x27;s the advantage of a <i>selectively-available</i> DNS for kids playing Minecraft with Nintendo Switch instead of regular DNS [whether self-hosted or not]?<p>All I can think of is that it adds obscurity, in that it makes the address of the Minecraft server more difficult to discover or guess (and thus keeps everything a bit more private&#x2F;griefing-resistant while still letting kids play the game together).<p>And AXFR zone transfers are one way that DNS addresses leak.  (AXFR is a feature, not a bug.)<p>As a potential solution:<p>You can set up DNS that resolves the magic hardcoded Minecraft server name (whatever that is) to the address of your choosing, and that has AXFR disabled.  In this way, nobody will be able to discover the game server&#x27;s address unless they ask that particular DNS server for the address of that particular name.<p>It&#x27;s not airtight (obscurity never is), but it&#x27;s probably fine.  It increases the size of the haystack.<p>(Or...  Lacking VPN, you can whitelist only the networks that the kids use to play from.  But in my experience with whitelisting, the juice isn&#x27;t worth the squeeze in a world of uncontrollably-dynamic IP addresses.  All someone wants to do is play the game&#x2F;access the server&#x2F;whatever Right Now, but the WAN address has changed so that doesn&#x27;t work until they get someone&#x27;s attention and wait for them to make time to update the whitelist.  By the time this happens, Right Now is in the past.  Whitelisting generally seems antithetical towards getting things done in a casual fashion.)</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=albertgoeswoof" class="hnuser">albertgoeswoof</a>
   </div>
   <div class="comment-text">Why do you want to do this? What would you redirect &#x2F; override on this?</div>
@@ -240,14 +317,6 @@
 
 </div>
 
-</div>
-
-<div class="comment-row" style="margin-left:20px">
-  <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=Loeffelmaenn" class="hnuser">Loeffelmaenn</a>
-  </div>
-  <div class="comment-text">I just use a VPN like tailscale or wireguard. You can normally also tell clients what DNS to use when on the VPN</div>
-  
 </div>
 
 <div class="comment-row" style="margin-left:20px">
@@ -264,9 +333,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=kev009" class="hnuser">kev009</a>
+    <a href="https://news.ycombinator.com/user?id=rmoriz" class="hnuser">rmoriz</a>
   </div>
-  <div class="comment-text">unbound and nsd for me, always run my own recursor and authority.</div>
+  <div class="comment-text">Still running DNS without a database and immutable. Push-based deployment.</div>
   
 </div>
 
@@ -274,9 +343,9 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
-    <a href="https://news.ycombinator.com/user?id=emithq" class="hnuser">emithq</a>
+    <a href="https://news.ycombinator.com/user?id=kev009" class="hnuser">kev009</a>
   </div>
-  <div class="comment-text">One thing worth noting if you&#x27;re using your own DNS for Let&#x27;s Encrypt DNS-01 challenges: make sure your authoritative server supports the RFC 2136 dynamic update protocol, or you&#x27;ll end up writing custom API shims for every ACME client. PowerDNS has solid RFC 2136 support out of the box and pairs well with Certbot&#x27;s --preferred-challenges dns-01 flag. BIND works too but the ACL configuration for allowing dynamic updates from specific IPs is fiddly to get right the first time.</div>
+  <div class="comment-text">unbound and nsd for me, always run my own recursor and authority.</div>
   
 </div>
 
@@ -288,6 +357,14 @@
   </div>
   <div class="comment-text">How to make it DNSSEC?</div>
   
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jcgl" class="hnuser">jcgl</a>
+  </div>
+  <div class="comment-text">Knot (as suggested by others) is good. As are BIND and PowerDNS. These are the big authoritative resolvers I think of at least, and all of them allow for basically hands-free DNSSEC; just flip a switch and you&#x27;ll have it. I&#x27;ve run DNSSEC with all three and have no complaints.<p>And when using such turn-key DNSSEC support, I think there&#x27;s very little risk to enabling it. While other commenters pointing out its marginal utility are correct, turn-key DNSSEC support that Just Works™ de-risks it enough for me that the relatively marginal utility just isn&#x27;t a concern.<p>Plus, once you&#x27;ve got DNSSEC enabled, you can at the very least start to enjoy stuff like SSHFP records. DANE may not have any real-world traction, but who knows what the future may bring.</div>
+  
+</div>
+
 <div class="comment-row" style="margin-left:20px">
   <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=gucci-on-fleek" class="hnuser">gucci-on-fleek</a>
@@ -340,7 +417,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-25 08:51 UTC &nbsp;|&nbsp;
+    Generated 2026-03-25 10:52 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

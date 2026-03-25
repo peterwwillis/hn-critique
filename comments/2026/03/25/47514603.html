@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Comments Critique: I Forked Httpx | HN Critique</title>
+  <title>Comments Critique: Why I forked httpx | HN Critique</title>
   <link rel="stylesheet" href="../../../../style.css"/>
 </head>
 <body>
@@ -30,14 +30,14 @@
     <div class="story-header">
       <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
       
-      <h2><a href="https://tildeweb.nl/~michiel/httpxyz.html" rel="noreferrer noopener">I Forked Httpx</a>
+      <h2><a href="https://tildeweb.nl/~michiel/httpxyz.html" rel="noreferrer noopener">Why I forked httpx</a>
         <span class="sitebit"> (tildeweb.nl)</span>
       </h2>
       
       <p class="meta">
-        <span class="score">15 points</span>
+        <span class="score">95 points</span>
         by <a href="https://news.ycombinator.com/user?id=roywashere" class="hnuser">roywashere</a>
-        <span class="age">46 minutes ago</span>
+        <span class="age">3 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/25/47514603.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47514603" rel="noopener">original on HN</a>
       </p>
@@ -50,9 +50,464 @@
     
 <div class="comment-row" style="margin-left:0px">
   <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Kwpolska" class="hnuser">Kwpolska</a>
+  </div>
+  <div class="comment-text">What is it about Python that makes developers love fragmentation so much? Sending HTTP requests is a basic capability in the modern world, the standard library should include a friendly, fully-featured, battle-tested, async-ready client. But not in Python, stdlib only has the ugly urllib.request, and everyone is using third party stuff like requests or httpx, which aren&#x27;t always well maintained. (See also: packaging)</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=dirkc" class="hnuser">dirkc</a>
+  </div>
+  <div class="comment-text">You would think that sending HTTP requests is a basic capability, but I&#x27;ve had fun in many languages doing so. Long ago (2020, or not so long ago, depending on how you look at it) I was surprised that doing an HTTP request on node using no dependencies was a little awkward:<p>```
+const response = await new Promise( (resolve, reject) =&gt; {
+  const req = https.request(url, {
+  }, res =&gt; {
+    let body = &quot;&quot;;
+    res.on(&quot;data&quot;, data =&gt; {
+      body += data;
+    });
+    res.on(&#x27;end&#x27;, () =&gt; {
+      resolve(body);
+    });
+  });
+  req.end();
+});<p>```</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=wging" class="hnuser">wging</a>
+  </div>
+  <div class="comment-text">These days node supports the fetch API, which is much simpler. (It wasn&#x27;t there in 2020, it seems to have been added around 2022-2023.)</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ivanjermakov" class="hnuser">ivanjermakov</a>
+  </div>
+  <div class="comment-text">HTTP client is at the intersection of &quot;necessary software building block&quot; and &quot;RFC 2616 intricacies that are hard to implement&quot;. Has nothing to do with Python really.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=maccard" class="hnuser">maccard</a>
+  </div>
+  <div class="comment-text">&gt; Then I found out it was broken. I contributed a fix. The fix was ignored and there was never any release since November 2024.<p>This seems like a pretty good reason to fork to me.<p>&gt;  Sending HTTP requests is a basic capability in the modern world, the standard library should include a friendly, fully-featured, battle-tested, async-ready client. But not in Python,<p>Or Javascript (well node), or golang (http&#x2F;net is _worse_ than urllib IMO), Rust , Java (UrlRequest is the same as python&#x27;s), even dotnet&#x27;s HttpClient is... fine.<p>Honestly the thing that consistently surprises me is that requests hasn&#x27;t been standardised and brought into the standard library</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=pjc50" class="hnuser">pjc50</a>
+  </div>
+  <div class="comment-text">&gt; dotnet&#x27;s HttpClient is... fine.<p>Yes, and it&#x27;s in the standard library (System namespace). Being Microsoft they&#x27;ve if anything over-featured it.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=lenkite" class="hnuser">lenkite</a>
+  </div>
+  <div class="comment-text">Your java knowledge is outdated. Java&#x27;s JDK has a nice, modern HTTP Client <a href="https:&#x2F;&#x2F;docs.oracle.com&#x2F;en&#x2F;java&#x2F;javase&#x2F;11&#x2F;docs&#x2F;api&#x2F;java.net.http&#x2F;java&#x2F;net&#x2F;http&#x2F;HttpClient.html" rel="nofollow">https:&#x2F;&#x2F;docs.oracle.com&#x2F;en&#x2F;java&#x2F;javase&#x2F;11&#x2F;docs&#x2F;api&#x2F;java.net....</a></div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=francislavoie" class="hnuser">francislavoie</a>
+  </div>
+  <div class="comment-text">What, Go&#x27;s net&#x2F;http is fantastic. I don&#x27;t understand that take. Many servers are built on it because it&#x27;s so fully featured out of the box.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=localuser13" class="hnuser">localuser13</a>
+  </div>
+  <div class="comment-text">&gt;Honestly the thing that consistently surprises me is that requests hasn&#x27;t been standardised and brought into the standard library<p>Instead, official documentation seems comfortable with recommending a third party package: <a href="https:&#x2F;&#x2F;docs.python.org&#x2F;3&#x2F;library&#x2F;urllib.request.html#module-urllib.request" rel="nofollow">https:&#x2F;&#x2F;docs.python.org&#x2F;3&#x2F;library&#x2F;urllib.request.html#module...</a><p>&gt;The Requests package is recommended for a higher-level HTTP client interface.<p>Which was fine when requests were the de-facto-standard only player in town, but at some point modern problems (async, http2) required modern solutions (httpx) and thus ecosystem fragmentation began.</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Spivak" class="hnuser">Spivak</a>
+  </div>
+  <div class="comment-text">Well, the reason for all the fragmentation is because the Python stdlib doesn&#x27;t have the core building blocks for an  async http or http2 client in the way requests could build on urllib.<p>The h11, h2, httpcore stack is probably the closest thing to what the Python stdlib should look like to end the fragmentation but it would be a huge undertaking for the core devs.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=umvi" class="hnuser">umvi</a>
+  </div>
+  <div class="comment-text">What&#x27;s wrong with Go&#x27;s? I&#x27;ve never had any issues with it. Go has some of the best http batteries included of any language</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Kwpolska" class="hnuser">Kwpolska</a>
+  </div>
+  <div class="comment-text">Node now supports the Fetch API.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mesahm" class="hnuser">mesahm</a>
+  </div>
+  <div class="comment-text">the http landscape is rather scary lately in Python. instead of forking join forces... See Niquests <a href="https:&#x2F;&#x2F;github.com&#x2F;jawah&#x2F;niquests" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;jawah&#x2F;niquests</a><p>I am trying to resolve what you&#x27;ve seen. For years of hard work.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=roywashere" class="hnuser">roywashere</a>
+  </div>
+  <div class="comment-text">Thanks, I&#x27;ll link to your project</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=u_sama" class="hnuser">u_sama</a>
+  </div>
+  <div class="comment-text">It is indeed a shame that niquests isn&#x27;t used more, I think trying to use the (c&#x27;est Français) argument to in French will bring you many initial users needed for the inertia</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mesahm" class="hnuser">mesahm</a>
+  </div>
+  <div class="comment-text">ahah, &quot;en effet&quot;! je m&#x27;en souviendrai.<p>more seriously, all that is needed is our collective effort. I&#x27;ve done my part by scarifying a lot of personal time for it.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=duskdozer" class="hnuser">duskdozer</a>
+  </div>
+  <div class="comment-text">Is it knee-quests or nigh-quests?<p>I&#x27;ve started seeing these emoji-prefixed commits lately now too, peculiar</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=u_sama" class="hnuser">u_sama</a>
+  </div>
+  <div class="comment-text">There is a series of extensions for Vscode that add this functionality like <a href="https:&#x2F;&#x2F;github.com&#x2F;ugi-dev&#x2F;better-commits" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;ugi-dev&#x2F;better-commits</a></div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=duskdozer" class="hnuser">duskdozer</a>
+  </div>
+  <div class="comment-text">ah ok, I am familiar with and not exactly against (non-emoji) commit message prefixes</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mesahm" class="hnuser">mesahm</a>
+  </div>
+  <div class="comment-text">it&#x27;s the gitmoji thing, I really don&#x27;t like it, it was a mistake. Thinking to stop it soon. I was inspired by fastapi in the early days. I prefer conventionalcommits.org</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=croemer" class="hnuser">croemer</a>
+  </div>
+  <div class="comment-text">Please don&#x27;t be too much inspired by FastAPI - at least regarding maintainer bus factor and documentation (FastAPI docs are essentially tutorial only), and requiring dozens of hoops to jump through to even open an issue.</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mesahm" class="hnuser">mesahm</a>
+  </div>
+  <div class="comment-text">nee-quests, I am French native.</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=duskdozer" class="hnuser">duskdozer</a>
+  </div>
+  <div class="comment-text">I guess kind of obvious now noticing the rhyme</div>
+  
+</div>
+
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=greatgib" class="hnuser">greatgib</a>
+  </div>
+  <div class="comment-text">The basis of httpx is not very good at all.<p>I think that it owes its success to be first &quot;port&quot; of python requests to support async, that was a strong need.<p>But otherwise it is bad: API is not that great, performance is not that great, tweaking is not that great, and the maintainer mindset is not that great also.
+For the last point, few points were referenced in the article, but it can easily put your production project to suddenly break in a bad way without valid reason.<p>Without being perfect, I would advise everyone to switch to Aiohttp.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mesahm" class="hnuser">mesahm</a>
+  </div>
+  <div class="comment-text">aiohttp is an excellent library. very stable. I concurs, but!
+it&#x27;s too heavily tied to HTTP&#x2F;1, and well, I am not a fan of opening thousands of TCP conn just to keep up with HTTP&#x2F;2 onward. niquests easily beat aiohttp just using 10 conn and crush httpx  see <a href="https:&#x2F;&#x2F;gist.github.com&#x2F;Ousret&#x2F;9e99b07e66eec48ccea5811775ec116d" rel="nofollow">https:&#x2F;&#x2F;gist.github.com&#x2F;Ousret&#x2F;9e99b07e66eec48ccea5811775ec1...</a><p>fwiw, HTTP&#x2F;2 is twelve years old, just saying.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sammy2255" class="hnuser">sammy2255</a>
+  </div>
+  <div class="comment-text">aiohttp is for asynchronous contexts only</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Orelus" class="hnuser">Orelus</a>
+  </div>
+  <div class="comment-text">Can confirm, more features, a breeze to switch.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
     <a href="https://news.ycombinator.com/user?id=swiftcoder" class="hnuser">swiftcoder</a>
   </div>
   <div class="comment-text">Somehow I confused httpx with htmlx</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=g947o" class="hnuser">g947o</a>
+  </div>
+  <div class="comment-text">I guess you mean htmx. Same here. I read the article for a while, and was confused by &quot;HTTPX is a very popular HTTP client for Python.&quot; and wondering &quot;why is OpenAI using htmx&quot;, until I eventually realized what&#x27;s going on.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=eknkc" class="hnuser">eknkc</a>
+  </div>
+  <div class="comment-text">And also htmlx with htmx I guess?</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=jordiburgos" class="hnuser">jordiburgos</a>
+  </div>
+  <div class="comment-text">I&#x27;ve been reading the whole article wrong too.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=croemer" class="hnuser">croemer</a>
+  </div>
+  <div class="comment-text">Same! Only just realized it thanks to your comment.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ayhanfuat" class="hnuser">ayhanfuat</a>
+  </div>
+  <div class="comment-text">More related drama: The Slow Collapse of MkDocs (<a href="https:&#x2F;&#x2F;fpgmaas.com&#x2F;blog&#x2F;collapse-of-mkdocs&#x2F;" rel="nofollow">https:&#x2F;&#x2F;fpgmaas.com&#x2F;blog&#x2F;collapse-of-mkdocs&#x2F;</a>)</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=duskdozer" class="hnuser">duskdozer</a>
+  </div>
+  <div class="comment-text">&gt;thread to call out Read the Docs for profiting from MkDocs without contributing back.<p>&gt;They also point out that not opening up the source code goes against the principles of Open Source software development<p>I will never stop being amused when people have feelings like this and also choose licenses like BSD (this project). If you wanted a culture that discouraged those behaviors, why would you choose a license that explicitly allows them? Whether you can enforce it or not, the license is basically a type of CoC that states the type of community you want to have.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=znpy" class="hnuser">znpy</a>
+  </div>
+  <div class="comment-text">Oh i recognised one of the involved people immediately, drama person.<p>I still think that hijacking the mkdocs package was the wrong way to go though.<p>The foss landscape has become way too much fork-phobic.<p>Just fork mkdocs and go over your merry way.</div>
+  
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=rglullis" class="hnuser">rglullis</a>
+  </div>
+  <div class="comment-text">Drama around Starlette. Drama around httpx. Drama around MkDocs. I just hope that DRF is not next, I still have some projects that depend on it.</div>
+  
+<div class="comment-row" style="margin-left:60px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=forkerenok" class="hnuser">forkerenok</a>
+  </div>
+  <div class="comment-text">What&#x27;s the drama around starlette? (Can&#x27;t find anything)</div>
+  
+</div>
+
+</div>
+
+<div class="comment-row" style="margin-left:40px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=globular-toast" class="hnuser">globular-toast</a>
+  </div>
+  <div class="comment-text">Right, my suspicion was correct. When I interacted with them a few years ago they seemed perfectly nice and friendly, but seem to have gone off the rails more recently. It&#x27;s an uncomfortable situation and I&#x27;ve a feeling people are afraid to discuss this kind of thing but we really need to. People are a risk factor in software projects and we need to be resilient to changes they face. Forking is the right way, but places like GitHub have sold people on centralisation. We need to get back to decentralised dev.</div>
+  
+</div>
+
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=sdovan1" class="hnuser">sdovan1</a>
+  </div>
+  <div class="comment-text">I guess the Discussion on Hacker News href should be &quot;<a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47514603">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47514603</a>&quot; instead of &quot;news.ycombinator.com&#x2F;item?id=47514603&quot;</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=nathell" class="hnuser">nathell</a>
+  </div>
+  <div class="comment-text">Congratulations on forking!<p>Always remember that open-source is an author’s gift to the world, and the author doesn’t owe anything to anyone. Thus, if you need a feature that for whatever reason can’t or won’t go upstream, forking is just about the only viable option. Fingers crossed!</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=cachius" class="hnuser">cachius</a>
+  </div>
+  <div class="comment-text">This is not merely open-source, but taking part in a huge package ecosystem in a foundational role in an XKCD 2347 type of way for HTTP requests.<p>Put your side project on your personal homepage and walk away - fine.<p>Make it central infrastructure - respond to participants or extend or cede  maintainership.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=localuser13" class="hnuser">localuser13</a>
+  </div>
+  <div class="comment-text">I&#x27;m not a lawyer, but are there any potential trademark issues? AFAIK in general you HAVE to change the name to something clearly different. I consider it morally OK, and it&#x27;s probably fine, but HTTPXYZ is cutting it close. It&#x27;s too late for a rebrand, but IMO open-source people often ignore this topic a bit too much.</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=CorrectHorseBat" class="hnuser">CorrectHorseBat</a>
+  </div>
+  <div class="comment-text">Don&#x27;t you need to register and actively defend you trademark for it to apply?</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Gander5739" class="hnuser">Gander5739</a>
+  </div>
+  <div class="comment-text">Is httpx trademarked? I couldn&#x27;t find anything indicating it was.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=ahoka" class="hnuser">ahoka</a>
+  </div>
+  <div class="comment-text">I don&#x27;t think HTTPX is a registered trademark.</div>
+  
+</div>
+
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=IshKebab" class="hnuser">IshKebab</a>
+  </div>
+  <div class="comment-text">He would <i>probably</i> win in a legal case, but is he actually going to take it to court? I doubt it. Also I wouldn&#x27;t be too offended about the name if I were him and for users it&#x27;s better because it makes the link clearer.<p>I think if had named it HTTPX2 or HTTPY, that would be much worse because it asserts superiority without earning it. But he didn&#x27;t.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=glaucon" class="hnuser">glaucon</a>
+  </div>
+  <div class="comment-text">Good line from the blog post ...<p>&quot;So what is the plan now?&quot; - &quot;Move a little faster and not break things&quot;</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=zeeshana07x" class="hnuser">zeeshana07x</a>
+  </div>
+  <div class="comment-text">The lack of a well-maintained async HTTP client in Python&#x27;s stdlib has been a pain point for a while. Makes sense someone eventually took it into their own hands</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=mettamage" class="hnuser">mettamage</a>
+  </div>
+  <div class="comment-text">&gt; Visitor 4209 since we started counting<p>Loved that little detail, reminds me of the old interwebs :)</div>
+  
+<div class="comment-row" style="margin-left:20px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=croemer" class="hnuser">croemer</a>
+  </div>
+  <div class="comment-text">It&#x27;s gone from 45 when I looked at it an hour ago to 261 just now.</div>
+  
+</div>
+
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=cachius" class="hnuser">cachius</a>
+  </div>
+  <div class="comment-text">Another abandoned project hurting users: <a href="https:&#x2F;&#x2F;github.com&#x2F;benweet&#x2F;stackedit" rel="nofollow">https:&#x2F;&#x2F;github.com&#x2F;benweet&#x2F;stackedit</a></div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=Spivak" class="hnuser">Spivak</a>
+  </div>
+  <div class="comment-text">Do you see yourself taking over httpcore as well as it&#x27;s likely to have the same maintainership problem? It would certainly instill more confidence that this is a serious fork.<p>This certainly wouldn&#x27;t be the first time an author of a popular library got a little too distracted on the sequel to their library that the current users are left to languish a bit.</div>
+  
+</div>
+
+    
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=cies" class="hnuser">cies</a>
+  </div>
+  <div class="comment-text">Hi Michiel!<p>Just a small headsup: clicking on the Leiden Python link in your About Me page give not the expected results.<p>And a small nitpick: it&#x27;s &quot;Michiel&#x27;s&quot; in English (where it&#x27;s &quot;Michiels&quot; in Dutch).<p>Thanks for devoting time to opensource... &lt;3</div>
   
 </div>
 
@@ -67,6 +522,16 @@
 </div>
 
     
+    
+<div class="comment-row" style="margin-left:0px">
+  <div class="comment-meta">
+    <a href="https://news.ycombinator.com/user?id=eats_indigo" class="hnuser">eats_indigo</a>
+  </div>
+  <div class="comment-text">smells like supply chain attack</div>
+  
+</div>
+
+    
 
     
 
@@ -76,7 +541,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-25 08:51 UTC &nbsp;|&nbsp;
+    Generated 2026-03-25 10:52 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>
