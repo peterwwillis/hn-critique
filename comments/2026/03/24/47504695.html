@@ -35,9 +35,9 @@
       </h2>
       
       <p class="meta">
-        <span class="score">174 points</span>
+        <span class="score">191 points</span>
         by <a href="https://news.ycombinator.com/user?id=tatef" class="hnuser">tatef</a>
-        <span class="age">7 hours ago</span>
+        <span class="age">10 hours ago</span>
         &nbsp;|&nbsp;<a href="../../../../critique/2026/03/24/47504695.html">critique article</a>
         &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47504695" rel="noopener">original on HN</a>
       </p>
@@ -47,12 +47,12 @@
 
     <section class="discussion-summary">
       <h3>Discussion Overview</h3>
-      <p>The discussion centers on the Hypura project, which schedules LLM inference on Apple Silicon by managing memory and storage tiers. Commenters debate the practicality of running large models given hardware limitations, the impact of access patterns on NVMe throughput, and comparisons to existing methods like OS paging and mmap.</p>
+      <p>The discussion centers on the technical challenges and innovations of running large language models (LLMs) on Apple Silicon, focusing on memory bandwidth, model sizes, and inference speed. Commenters debate the practicality of current approaches, the impact of memory tiers, and the handling of sparse MoE models with respect to NVMe storage and OS paging.</p>
     </section>
 
     <h3>Comments (ranked by accuracy)</h3>
     
-    <p class="no-critique">Only 10 of 17 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47504695" rel="noopener">View the full thread on HN</a>.</p>
+    <p class="no-critique">Only 10 of 18 top-level comments were analyzed. <a href="https://news.ycombinator.com/item?id=47504695" rel="noopener">View the full thread on HN</a>.</p>
     
 
     
@@ -74,7 +74,7 @@
   For MoE it&#x27;s even more stark. The OS would page in all 8 experts on the first token that routes to each one,  
   then evict them under memory pressure with LRU, which has no idea that expert 3 fires 10x more often than
   expert 7. The neuron cache here is basically a domain-specific replacement policy.</code></pre></div>
-      <div class="comment-analysis"><em>This comment accurately explains why Hypura&#39;s approach outperforms default OS paging by leveraging deterministic model access patterns for prefetching, improving latency.</em></div>
+      <div class="comment-analysis"><em>This comment provides a detailed and accurate explanation of why the specialized caching and prefetching strategy outperforms default OS paging, especially for deterministic transformer layer access patterns.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -85,40 +85,40 @@
         <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">the practical question is whether the read pattern is sequential enough to actually saturate nvme bandwidth or if the attention layer access pattern ends up being random enough to kill throughput. sequential reads on a decent nvme get you 5-7 GB&#x2F;s, random reads drop to maybe 500 MB&#x2F;s depending on queue depth.<p>for a 1T model youd need to stream something like 2TB of weights per forward pass at fp16. even at peak sequential thats 300+ seconds per token which is... not great for interactive use but maybe fine for batch inference where you dont care about latency.<p>still a cool proof of concept though. the gap between &#x27;can run&#x27; and &#x27;runs usefully&#x27; is where things get interesting.</div>
-      <div class="comment-analysis"><em>This comment provides a realistic assessment of NVMe performance characteristics and highlights the challenge of random access patterns in large model inference.</em></div>
+      <div class="comment-analysis"><em>This comment correctly highlights the bandwidth bottleneck and the difference between sequential and random reads on NVMe, providing a realistic perspective on performance limitations.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=simonw" class="hnuser">simonw</a>
+        <a href="https://news.ycombinator.com/user?id=shubhamintech" class="hnuser">shubhamintech</a>
         &nbsp;|&nbsp;rank #3
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">Suggestion for the maintainers: the comparison table currently lists some pretty old models, Qwen 2.5 14B and Mixtral 8x7B and Llama 3.3 70B.<p>A lot of people are reporting incredible results with the Qwen 3.5 MoE models on Apple hardware right now (streaming experts - see <a href="https:&#x2F;&#x2F;simonwillison.net&#x2F;2026&#x2F;Mar&#x2F;24&#x2F;streaming-experts&#x2F;" rel="nofollow">https:&#x2F;&#x2F;simonwillison.net&#x2F;2026&#x2F;Mar&#x2F;24&#x2F;streaming-experts&#x2F;</a>) - it would be great to get some of those models into that table.<p>Maybe the 1T parameter Kimi K2.5 too if you can get that to work, see <a href="https:&#x2F;&#x2F;twitter.com&#x2F;seikixtc&#x2F;status&#x2F;2036246162936910322" rel="nofollow">https:&#x2F;&#x2F;twitter.com&#x2F;seikixtc&#x2F;status&#x2F;2036246162936910322</a> and <a href="https:&#x2F;&#x2F;twitter.com&#x2F;danpacary&#x2F;status&#x2F;2036480556045836603" rel="nofollow">https:&#x2F;&#x2F;twitter.com&#x2F;danpacary&#x2F;status&#x2F;2036480556045836603</a></div>
-      <div class="comment-analysis"><em>The comment constructively suggests updating benchmarks with newer models that reportedly perform well, which could improve the project&#39;s relevance.</em></div>
+      <div class="comment-text">The MoE point matters here ie sparse activation means you&#x27;re not reading all 2TB per forward pass, but the access pattern flips from sequential to random which is exactly the worst case for NVMe. Been thinking about this a lot for agent inference workloads where you want consistent latency more than peak throughput.</div>
+      <div class="comment-analysis"><em>The comment accurately notes the tradeoff in MoE models between reduced data volume and increased random access, which negatively impacts NVMe throughput.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=msbhogavi" class="hnuser">msbhogavi</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">&quot;As much memory as possible&quot; is right for model capacity but misses bandwidth. Apple Silicon has distinct tiers: M4 Pro at 273 GB&#x2F;s, M4 Max at 546 GB&#x2F;s, M4 Ultra at 819 GB&#x2F;s. Bandwidth determines tok&#x2F;s once the model fits in memory. An M4 Max gives you 2x the decode speed of an M4 Pro on the same model.<p>For what Hypura does, the Max is the sweet spot. 64GB loads a 70B at Q4 with room to spare, and double the bandwidth of the Pro means generation is actually usable instead of just technically possible.</div>
+      <div class="comment-analysis"><em>This comment correctly emphasizes the importance of memory bandwidth over just capacity in determining inference speed on Apple Silicon hardware.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
         <a href="https://news.ycombinator.com/user?id=EnPissant" class="hnuser">EnPissant</a>
-        &nbsp;|&nbsp;rank #4
-        &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
-      </div>
-      <div class="comment-text">You do not provide any comparison to llama.cpp with mmap.<p>You do not explain how any kind of predictor can work for MoE experts.<p>You do not explain how prediction can even be useful. I can predict the layers used in a dense model (all of them are used in order), but that doesn&#x27;t help me much. It&#x27;s still bottlenecked on bandwidth (hint: MoE doesn&#x27;t change this).</div>
-      <div class="comment-analysis"><em>Raises valid concerns about missing comparisons and the complexity of predicting MoE expert usage, highlighting potential limitations of the approach.</em></div>
-    </div>
-    
-    <div class="comment-row comment-highlight-green">
-      <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=Insanity" class="hnuser">Insanity</a>
         &nbsp;|&nbsp;rank #5
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">This is a pretty cool project! Essentially this is like using Swap memory to extend your RAM, but in a &#x27;smart&#x27; way so you don&#x27;t overload the NVMe unnecessarily.<p>I do wonder in practice how the &#x27;smarts&#x27; pan out, because putting a ton of stress on your NVMe during generation is probably not the best choice for it&#x27;s longevity.</div>
-      <div class="comment-analysis"><em>Provides a reasonable analogy and raises a practical concern about hardware wear that is relevant to real-world usage.</em></div>
+      <div class="comment-text">You do not provide any comparison to llama.cpp with mmap.<p>You do not explain how any kind of predictor can work for MoE experts.<p>You do not explain how prediction can even be useful. I can predict the layers used in a dense model (all of them are used in order), but that doesn&#x27;t help me much. It&#x27;s still bottlenecked on bandwidth (hint: MoE doesn&#x27;t change this).</div>
+      <div class="comment-analysis"><em>This comment raises valid points about missing comparisons and the limited benefit of prediction in overcoming bandwidth constraints, especially for MoE models.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-yellow">
@@ -126,32 +126,32 @@
         <a href="https://news.ycombinator.com/user?id=amelius" class="hnuser">amelius</a>
         &nbsp;|&nbsp;rank #6
         &nbsp;|&nbsp;
-        <span class="indicator">emotional</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">This is &lt;1 tok&#x2F;s for the 40GB model.<p>Come on, &quot;Run&quot; is not the right word. &quot;Crawl&quot; is.<p>Headlines like that are misleading.</div>
-      <div class="comment-analysis"><em>Critiques marketing language and sets realistic expectations about performance, which is important for user understanding.</em></div>
+      <div class="comment-analysis"><em>The comment provides a critical perspective on marketing language, accurately pointing out that very low token speeds do not constitute practical running.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=shubhamintech" class="hnuser">shubhamintech</a>
+        <a href="https://news.ycombinator.com/user?id=Insanity" class="hnuser">Insanity</a>
         &nbsp;|&nbsp;rank #7
         &nbsp;|&nbsp;
-        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
-      <div class="comment-text">The MoE point matters here ie sparse activation means you&#x27;re not reading all 2TB per forward pass, but the access pattern flips from sequential to random which is exactly the worst case for NVMe. Been thinking about this a lot for agent inference workloads where you want consistent latency more than peak throughput.</div>
-      <div class="comment-analysis"><em>Insightfully points out the tradeoff in MoE models where sparse activation reduces data volume but worsens access pattern, affecting throughput.</em></div>
+      <div class="comment-text">This is a pretty cool project! Essentially this is like using Swap memory to extend your RAM, but in a &#x27;smart&#x27; way so you don&#x27;t overload the NVMe unnecessarily.<p>I do wonder in practice how the &#x27;smarts&#x27; pan out, because putting a ton of stress on your NVMe during generation is probably not the best choice for it&#x27;s longevity.</div>
+      <div class="comment-analysis"><em>The comment thoughtfully considers the tradeoffs of the approach, including potential hardware wear from intensive NVMe usage.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=marksully" class="hnuser">marksully</a>
+        <a href="https://news.ycombinator.com/user?id=simonw" class="hnuser">simonw</a>
         &nbsp;|&nbsp;rank #8
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
       </div>
-      <div class="comment-text">Where does &quot;1T parameter model&quot; come from? I can only see models with 70B params or less mentioned in the repo.</div>
-      <div class="comment-analysis"><em>Questions the origin of the 1 trillion parameter claim, encouraging accuracy and clarity in the project&#39;s documentation.</em></div>
+      <div class="comment-text">Suggestion for the maintainers: the comparison table currently lists some pretty old models, Qwen 2.5 14B and Mixtral 8x7B and Llama 3.3 70B.<p>A lot of people are reporting incredible results with the Qwen 3.5 MoE models on Apple hardware right now (streaming experts - see <a href="https:&#x2F;&#x2F;simonwillison.net&#x2F;2026&#x2F;Mar&#x2F;24&#x2F;streaming-experts&#x2F;" rel="nofollow">https:&#x2F;&#x2F;simonwillison.net&#x2F;2026&#x2F;Mar&#x2F;24&#x2F;streaming-experts&#x2F;</a>) - it would be great to get some of those models into that table.<p>Maybe the 1T parameter Kimi K2.5 too if you can get that to work, see <a href="https:&#x2F;&#x2F;twitter.com&#x2F;seikixtc&#x2F;status&#x2F;2036246162936910322" rel="nofollow">https:&#x2F;&#x2F;twitter.com&#x2F;seikixtc&#x2F;status&#x2F;2036246162936910322</a> and <a href="https:&#x2F;&#x2F;twitter.com&#x2F;danpacary&#x2F;status&#x2F;2036480556045836603" rel="nofollow">https:&#x2F;&#x2F;twitter.com&#x2F;danpacary&#x2F;status&#x2F;2036480556045836603</a></div>
+      <div class="comment-analysis"><em>A constructive suggestion to improve the project&#39;s relevance by including newer and more capable models in benchmarks.</em></div>
     </div>
     
     <div class="comment-row comment-highlight-green">
@@ -162,18 +162,18 @@
         <span class="indicator">intelligent</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
       </div>
       <div class="comment-text">&gt; Consumer hardware (MacBook Pro, Mac Studio) ships with fast unified memory and NVMe storage, but limited capacity. A 32 GB M1 Max cannot naively load a 40 GB model — the OS will swap-thrash until the OOM killer intervenes.<p>macOS doesn&#x27;t have an &quot;OOM killer&quot; in that sense. (It has an out of swap space killer but it&#x27;s pretty weak.)<p>So what will happen is, either your memory wiring will fail, or else it will get really slow and panic.</div>
-      <div class="comment-analysis"><em>Corrects a common misconception about macOS memory management, providing useful context for understanding system behavior.</em></div>
+      <div class="comment-analysis"><em>This comment accurately clarifies macOS memory management behavior, correcting a common misconception.</em></div>
     </div>
     
-    <div class="comment-row comment-highlight-green">
+    <div class="comment-row comment-highlight-red">
       <div class="comment-meta">
-        <a href="https://news.ycombinator.com/user?id=zozbot234" class="hnuser">zozbot234</a>
+        <a href="https://news.ycombinator.com/user?id=baq" class="hnuser">baq</a>
         &nbsp;|&nbsp;rank #10
         &nbsp;|&nbsp;
-        <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> 
+        <span class="indicator">emotional</span> <span class="indicator">trolling</span> <span class="indicator">useless</span> 
       </div>
-      <div class="comment-text">It will be interesting to compare this to <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47476422">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47476422</a> and <a href="https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47490070">https:&#x2F;&#x2F;news.ycombinator.com&#x2F;item?id=47490070</a> .  Very similar design except that this is apparently using mmap, which according to the earlier experiment incurs significant overhead.</div>
-      <div class="comment-analysis"><em>Suggests benchmarking against similar mmap-based approaches to better understand Hypura&#39;s performance benefits.</em></div>
+      <div class="comment-text">Intel Optane rolling in its grave.</div>
+      <div class="comment-analysis"><em>A humorous but uninformative comment that does not contribute meaningful technical insight.</em></div>
     </div>
     
 
@@ -185,7 +185,7 @@
 <br/>
 <center>
   <span class="yclinks">
-    Generated 2026-03-24 22:38 UTC &nbsp;|&nbsp;
+    Generated 2026-03-25 02:06 UTC &nbsp;|&nbsp;
     <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
   </span>
   <br/>

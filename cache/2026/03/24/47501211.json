@@ -23,7 +23,7 @@
     "rating": "needs citation"
   },
   "comments_critique": {
-    "summary": "The discussion revolves around the Nanobrew project and its compatibility and performance relative to Homebrew. Commenters debate the feasibility of full compatibility without Ruby, the importance of speed versus compatibility, and share personal experiences with Homebrew's architecture and migration challenges.",
+    "summary": "The discussion centers on Nanobrew's compatibility and speed claims compared to Homebrew, with users debating the importance of compatibility versus performance. Several comments highlight technical limitations, user experiences, and migration challenges between architectures.",
     "comments": [
       {
         "id": 47502863,
@@ -32,23 +32,10 @@
         "indicators": [
           "intelligent",
           "likely-true",
-          "thoughtful",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment accurately highlights the technical dependency of Homebrew on Ruby and its infrastructure, providing a nuanced understanding of what compatibility entails."
-      },
-      {
-        "id": 47508638,
-        "author": "tzs",
-        "text": "OT: speaking of Homebrew, I made an incorrect assumption about it that eventually led to some problems. It was me being stupid, but I bet others have made the same mistake but not yet hit problems. Hence this comment.\u003cp\u003eMy mistake was when I upgraded from my 2017 iMac (Intel processor) to an Apple silicon Mac at the start of 2024 and migrated via Time Machine I did not do anything extra specifically for Homebrew. I just assumed that as things got updated via the normal periodic Homebrew updates I run it would start grabbing the Apple silicon binaries for binary things it installed.\u003cp\u003eIt turn out that is wrong. They made Apple silicon Homebrew kind of independent of Intel Homebrew. Intel Homebrew uses \u0026#x2F;usr\u0026#x2F;local and Apple silicon Homebrew uses \u0026#x2F;opt\u0026#x2F;homebrew. This allows having both native and Intel Homebrew installed at the same time if you need both.\u003cp\u003eThe correct way to migrate from an Intel Mac to an Apple silicon Mac is to install Apple silicon Homebrew on the new Mac, and then install all the packages you want. Intel Homebrew works fine on Apple silicon Macs so you can use the Intel Homebrew that migrated via Time Machine to make the package list to use with Apple silicon Homebrew (or you can make it on the old Mac).\u003cp\u003eI only noticed this because I was trying to build something from source using some libraries that were installed via Homebrew and running into problems. An LLM was helping figure this out and it was telling me I might have to manually symlink those libraries from where they were in \u0026#x2F;opt\u0026#x2F;homebrew to where the build process for the thing I was building expected to find them and I didn\u0026#x27;t have a \u0026#x2F;opt\u0026#x2F;homebrew. The libraries were somewhere in \u0026#x2F;usr\u0026#x2F;local. I then noticed those libraries were not for Apple silicon, checked other things installed view Homebrew and saw nothing was for Apple silicon, and realized I had the wrong Homebrew.",
-        "indicators": [
-          "thoughtful",
-          "likely-true",
-          "constructive"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This detailed personal experience explains a common migration pitfall with Homebrew on Apple silicon Macs, providing useful practical advice."
+        "analysis": "This comment accurately points out that without Ruby execution, full compatibility with Homebrew is unlikely, highlighting the dependency on Homebrew's infrastructure."
       },
       {
         "id": 47503061,
@@ -59,20 +46,8 @@
           "likely-true",
           "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "The comment offers a pragmatic user perspective emphasizing compatibility over speed, which aligns with many users' priorities in package management."
-      },
-      {
-        "id": 47502793,
-        "author": "chuckadams",
-        "text": "This might be a good thing for homebrew to adopt for the download\u0026#x2F;install process, but if it doesn\u0026#x27;t include a ruby interpreter, I have a hard time seeing how it\u0026#x27;s going to be compatible with anything but searching and installing bottles.  I install most of my packages from a Brewfile, which itself is Ruby code.",
-        "indicators": [
-          "intelligent",
-          "likely-true",
-          "thoughtful"
-        ],
-        "accuracyRank": 4,
-        "analysis": "This comment correctly points out the importance of Ruby in Homebrew's operation, especially for complex package management tasks involving Brewfiles."
+        "accuracyRank": 2,
+        "analysis": "The comment provides a practical perspective emphasizing that speed improvements may not justify sacrificing compatibility, which aligns with common user priorities."
       },
       {
         "id": 47503970,
@@ -83,31 +58,67 @@
           "likely-true",
           "thoughtful"
         ],
-        "accuracyRank": 5,
-        "analysis": "The comment reflects a valid user concern about hardware support policies in Homebrew, providing context on alternative package managers."
+        "accuracyRank": 3,
+        "analysis": "This comment highlights real user frustrations with Homebrew's hardware support policies, adding valuable context about ecosystem limitations."
       },
       {
-        "id": 47504971,
-        "author": "maxloh",
-        "text": "How does this work? AFAIK Homebrew formulae are written in Ruby [0].\u003cp\u003eDo they use some kind of Ruby parser to parse formulae?\u003cp\u003e[0]: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;Homebrew\u0026#x2F;homebrew-core\u0026#x2F;blob\u0026#x2F;26-tahoe\u0026#x2F;Formula\u0026#x2F;f\u0026#x2F;ffmpeg.rb\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;Homebrew\u0026#x2F;homebrew-core\u0026#x2F;blob\u0026#x2F;26-tahoe\u0026#x2F;Form...\u003c/a\u003e",
+        "id": 47502793,
+        "author": "chuckadams",
+        "text": "This might be a good thing for homebrew to adopt for the download\u0026#x2F;install process, but if it doesn\u0026#x27;t include a ruby interpreter, I have a hard time seeing how it\u0026#x27;s going to be compatible with anything but searching and installing bottles.  I install most of my packages from a Brewfile, which itself is Ruby code.",
         "indicators": [
           "intelligent",
+          "likely-true",
           "constructive"
         ],
-        "accuracyRank": 6,
-        "analysis": "This comment raises a relevant technical question about how Nanobrew might handle Ruby-based formulae, indicating curiosity about implementation details."
+        "accuracyRank": 4,
+        "analysis": "The comment correctly notes that Ruby is essential for processing Brewfiles and formulae, limiting Nanobrew’s compatibility without it."
       },
       {
-        "id": 47503544,
-        "author": "alsetmusic",
-        "text": "I\u0026#x27;m not a Python dev, but I appreciate the motivation uv has inspired across other package managers. I tried another brew replacement called zerobrew last month. It installed packages to a different directory from homebrew, so I didn\u0026#x27;t actually test drive after seeing that. Regardless, I look forward to the competition pushing mainstream tools to improve their performance.",
+        "id": 47508638,
+        "author": "tzs",
+        "text": "OT: speaking of Homebrew, I made an incorrect assumption about it that eventually led to some problems. It was me being stupid, but I bet others have made the same mistake but not yet hit problems. Hence this comment.\u003cp\u003eMy mistake was when I upgraded from my 2017 iMac (Intel processor) to an Apple silicon Mac at the start of 2024 and migrated via Time Machine I did not do anything extra specifically for Homebrew. I just assumed that as things got updated via the normal periodic Homebrew updates I run it would start grabbing the Apple silicon binaries for binary things it installed.\u003cp\u003eIt turn out that is wrong. They made Apple silicon Homebrew kind of independent of Intel Homebrew. Intel Homebrew uses \u0026#x2F;usr\u0026#x2F;local and Apple silicon Homebrew uses \u0026#x2F;opt\u0026#x2F;homebrew. This allows having both native and Intel Homebrew installed at the same time if you need both.\u003cp\u003eThe correct way to migrate from an Intel Mac to an Apple silicon Mac is to install Apple silicon Homebrew on the new Mac, and then install all the packages you want. Intel Homebrew works fine on Apple silicon Macs so you can use the Intel Homebrew that migrated via Time Machine to make the package list to use with Apple silicon Homebrew (or you can make it on the old Mac).\u003cp\u003eI only noticed this because I was trying to build something from source using some libraries that were installed via Homebrew and running into problems. An LLM was helping figure this out and it was telling me I might have to manually symlink those libraries from where they were in \u0026#x2F;opt\u0026#x2F;homebrew to where the build process for the thing I was building expected to find them and I didn\u0026#x27;t have a \u0026#x2F;opt\u0026#x2F;homebrew. The libraries were somewhere in \u0026#x2F;usr\u0026#x2F;local. I then noticed those libraries were not for Apple silicon, checked other things installed view Homebrew and saw nothing was for Apple silicon, and realized I had the wrong Homebrew.",
         "indicators": [
           "thoughtful",
           "likely-true",
           "constructive"
         ],
+        "accuracyRank": 5,
+        "analysis": "This detailed explanation about Homebrew architecture differences between Intel and Apple silicon Macs is accurate and helpful for users facing migration issues."
+      },
+      {
+        "id": 47506902,
+        "author": "themadsens",
+        "text": "I naively assumed it would work on the \u003ci\u003ealready\u003c/i\u003e installed homebrew packages. No such luck.\u003cp\u003eAfter installing, \u0026#x27;nb list\u0026#x27; and thus eg. \u0026#x27;nb outdated\u0026#x27; will yield the empty list!\nI have absolutely no use for a competing homebrew installation that is \u003ci\u003emostly\u003c/i\u003e compatible ..",
+        "indicators": [
+          "thoughtful",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 6,
+        "analysis": "The comment provides a practical user experience indicating that partial compatibility limits Nanobrew’s usefulness."
+      },
+      {
+        "id": 47511362,
+        "author": "denkmoon",
+        "text": "Brew is a leaky piece of crap. nix 4 lyf. Seriously, I used to hate any time I needed to install something with brew not knowing if it was going to break everything else, since using nixpkgs for my macos dev requirements it\u0026#x27;s been so much nicer.",
+        "indicators": [
+          "emotional",
+          "likely-true",
+          "constructive"
+        ],
         "accuracyRank": 7,
-        "analysis": "The comment provides comparative insight about similar tools and expresses optimism about competition driving performance improvements."
+        "analysis": "While emotional, the comment reflects a valid preference for Nix over Homebrew due to stability and isolation benefits."
+      },
+      {
+        "id": 47511357,
+        "author": "coldtea",
+        "text": "Tried to install a package with it, it failed.\u003cp\u003eTried the same package with brew. Worked like a charm.\u003cp\u003eUninstalled nanobrew.",
+        "indicators": [
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 8,
+        "analysis": "This direct user experience suggests Nanobrew may have compatibility or stability issues compared to Homebrew."
       },
       {
         "id": 47505150,
@@ -115,33 +126,22 @@
         "text": "The current version of brew has a flaw where the installer can\u0026#x27;t install isolated dependency trees in a sterile manner. If you have packages A, B, C, and D that all have updates, and assuming A,B,C depend on each other and come out to a total of say 1MB, and D is 1000MB, brew works in a MapReduce manner where it will attempt to finish downloading everything in parallel (even though the real bottleneck is D) before doing any installation.\u003cp\u003eSince the first 3 has no dependency on D, a better way would be to install them in parallel while D is still downloading.",
         "indicators": [
           "intelligent",
-          "likely-true",
-          "constructive"
+          "constructive",
+          "likely-true"
         ],
-        "accuracyRank": 8,
-        "analysis": "This comment offers a thoughtful critique of Homebrew's update process, suggesting a more efficient installation strategy."
+        "accuracyRank": 9,
+        "analysis": "This comment offers a thoughtful critique of Homebrew’s update process with a plausible suggestion for optimization."
       },
       {
         "id": 47503229,
         "author": "kassadin",
         "text": "Do you choose compatibility or speed?\u003cp\u003enb info --cask codex-app\u003cp\u003enb: formula \u0026#x27;--cask\u0026#x27; not found\u003cp\u003enb: formula \u0026#x27;codex-app\u0026#x27; not found",
         "indicators": [
-          "constructive",
-          "likely-true"
-        ],
-        "accuracyRank": 9,
-        "analysis": "This comment highlights practical compatibility issues with Nanobrew, illustrating limitations in handling certain formulae."
-      },
-      {
-        "id": 47506902,
-        "author": "themadsens",
-        "text": "I naively assumed it would work on the \u003ci\u003ealready\u003c/i\u003e installed homebrew packages. No such luck.\u003cp\u003eAfter installing, \u0026#x27;nb list\u0026#x27; and thus eg. \u0026#x27;nb outdated\u0026#x27; will yield the empty list!\nI have absolutely no use for a competing homebrew installation that is \u003ci\u003emostly\u003c/i\u003e compatible ..",
-        "indicators": [
-          "emotional",
+          "thoughtful",
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "The comment expresses user frustration with Nanobrew's inability to recognize existing Homebrew packages, emphasizing the importance of full compatibility."
+        "analysis": "The comment highlights concrete compatibility issues with Nanobrew, reinforcing the tradeoff between speed and compatibility."
       }
     ]
   }

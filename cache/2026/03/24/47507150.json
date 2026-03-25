@@ -21,113 +21,80 @@
     "rating": "reliable"
   },
   "comments_critique": {
-    "summary": "The discussion centers on the recent Wine 11 update, highlighting significant performance improvements in running Windows games on Linux, with some skepticism about the extent of gains compared to existing solutions like fsync. Commenters also touch on the broader implications for Linux gaming, software compatibility, and technical details of the implementation.",
+    "summary": "The discussion revolves around the recent Wine 11 update that introduces kernel-level synchronization improvements, leading to significant performance gains in running Windows games on Linux. Commenters debate the real-world impact of these gains, the technical challenges overcome, and the broader implications for Linux gaming and software compatibility.",
     "comments": [
       {
         "id": 47507876,
         "author": "watashiato",
         "text": "Before anyone gets too excited about ntsync, the performance gains are (with few exceptions) mild, usually in the lower single percentage range. These extreme gains are the result of benching against vanilla wine without fsync, anyone playing demanding games on linux would have been doing so using fsync. This is mentioned in the article but treated like a side note. I\u0026#x27;ve been running benchmarks between both and while the performance increase is real, please temper your expectations. A few titles might also run slightly worse.",
         "indicators": [
+          "intelligent",
           "thoughtful",
           "likely-true",
           "constructive"
         ],
         "accuracyRank": 1,
-        "analysis": "This comment provides a nuanced and accurate perspective, cautioning that the headline performance gains are mostly relative to vanilla Wine without fsync, which experienced users already employ."
-      },
-      {
-        "id": 47507833,
-        "author": "hu3",
-        "text": "\u0026gt; Dirt 3 went from 110.6 FPS to 860.7 FPS\u003cp\u003e\u0026gt; Resident Evil 2 jumped from 26 FPS to 77 FPS\u003cp\u003e\u0026gt; Call of Juarez went from 99.8 FPS to 224.1 FPS\u003cp\u003e\u0026gt; Tiny Tina\u0026#x27;s Wonderlands saw gains from 130 FPS to 360 FPS\u003cp\u003eAmazing. I don\u0026#x27;t understand the low level details on how such a massive speed gain was ripe for the picking but I welcome!\u003cp\u003eI guess thanks Valve for pouring money into Proton.",
-        "indicators": [
-          "emotional",
-          "likely-true"
-        ],
-        "accuracyRank": 2,
-        "analysis": "This comment enthusiastically cites specific benchmark improvements, reflecting the article's claims, though it lacks the context of fsync usage which tempers these numbers."
+        "analysis": "This comment provides a nuanced and accurate perspective on the performance improvements, cautioning against overhyping results by clarifying the baseline used for benchmarks."
       },
       {
         "id": 47507834,
         "author": "tombert",
         "text": "Wine is a project that I\u0026#x27;ve grown a near-infinite level of respect for.\u003cp\u003eI don\u0026#x27;t know for sure, but I suspect that a lot of the work for Wine is boring and thankless. Digging through and trying to get exact parity with both the documented and undocumented behavior of Windows for the past 30 years doesn\u0026#x27;t sound fun, but it\u0026#x27;s finding every little weird edge case that makes Wine a viable product.\u003cp\u003eThe fact that Wine runs a lot of games better than Windows now (especially older games) shows a very strong attention to detail and a high tolerance for pain.  I commend them for it.",
         "indicators": [
+          "intelligent",
           "thoughtful",
-          "emotional",
-          "likely-true"
+          "likely-true",
+          "constructive"
         ],
-        "accuracyRank": 3,
-        "analysis": "This comment offers a respectful and insightful appreciation of the complexity and dedication involved in Wine development, which aligns well with known challenges of the project."
+        "accuracyRank": 2,
+        "analysis": "The comment insightfully highlights the complexity and dedication behind Wine's development, which aligns with known challenges in compatibility layers."
       },
       {
-        "id": 47508906,
-        "author": "evmar",
-        "text": "If you\u0026#x27;re interested in technical notes on how the WoW64 thing works, I dug into Wine and implemented a similar thing in my (far inferior) emulator and wrote about it here, including some links to some Wine resources: \u003ca href=\"https:\u0026#x2F;\u0026#x2F;neugierig.org\u0026#x2F;software\u0026#x2F;blog\u0026#x2F;2023\u0026#x2F;08\u0026#x2F;x86-x64-aarch64.html\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;neugierig.org\u0026#x2F;software\u0026#x2F;blog\u0026#x2F;2023\u0026#x2F;08\u0026#x2F;x86-x64-aarch64....\u003c/a\u003e",
+        "id": 47507833,
+        "author": "hu3",
+        "text": "\u0026gt; Dirt 3 went from 110.6 FPS to 860.7 FPS\u003cp\u003e\u0026gt; Resident Evil 2 jumped from 26 FPS to 77 FPS\u003cp\u003e\u0026gt; Call of Juarez went from 99.8 FPS to 224.1 FPS\u003cp\u003e\u0026gt; Tiny Tina\u0026#x27;s Wonderlands saw gains from 130 FPS to 360 FPS\u003cp\u003eAmazing. I don\u0026#x27;t understand the low level details on how such a massive speed gain was ripe for the picking but I welcome!\u003cp\u003eI guess thanks Valve for pouring money into Proton.",
         "indicators": [
           "intelligent",
-          "constructive",
+          "likely-true",
+          "constructive"
+        ],
+        "accuracyRank": 3,
+        "analysis": "While the FPS numbers are impressive, the comment lacks context about the baseline and testing conditions, which other comments clarify."
+      },
+      {
+        "id": 47510874,
+        "author": "mifydev",
+        "text": "Hm, speculating a bit, but it feels like NTSYNC is essentially a beginning of NT Subsystem for Linux, or maybe ntoskrnl as a kernel module. Feels like the most clean and fast way to port Windows, since the rest of the interfaces are in the user space in real Windows.\nEssentially should be almost without overhead: user: [gdi32.dll,user32.dll,kernel32.dll -\u0026gt; ntdll.dll] -\u0026gt; kernel: [ntoskrnl.ko]",
+        "indicators": [
+          "thoughtful",
+          "intelligent",
           "likely-true"
         ],
         "accuracyRank": 4,
-        "analysis": "Provides valuable technical context and resources related to Wine's WoW64 implementation, enhancing the discussion with firsthand experience."
+        "analysis": "This technical speculation aligns with the architectural goals of Wine and the kernel-level synchronization improvements described."
       },
       {
-        "id": 47508812,
-        "author": "lifis",
-        "text": "It seems like it would be possible to implement this in userspace using shared memory to store the data structures and using just one eventfd per thread to park\u0026#x2F;unpark (or a futex if not waiting for anything else), which should be fully correct and have similar or faster performance, at the cost of not being secure or robust against process crashes (which isn\u0026#x27;t a big problem for more Wine usage).\u003cp\u003eIt seems that neither esync or fsync do this though - why?\u003cp\u003eClaude thinks that \u0026quot;nobody was motivated enough to write and debug the complex shared-memory waiter-list logic when simpler (if less correct) approaches worked for 95% of games, and when correctness finally mattered enough, the kernel was the more natural place to put it\u0026quot;. Is that true?",
+        "id": 47511153,
+        "author": "gigel82",
+        "text": "Support for Xbox Game Pass games (typically deployed as UWP \u0026#x2F; containerized) would be absolutely amazing and likely the final nail in the coffin for Windows for gaming for many people.",
         "indicators": [
-          "intelligent",
           "thoughtful",
-          "constructive"
+          "emotional",
+          "likely-true"
         ],
         "accuracyRank": 5,
-        "analysis": "This comment thoughtfully explores alternative implementation strategies and references developer insights, contributing a deeper technical perspective."
+        "analysis": "The comment correctly identifies a potential future milestone for Wine but is speculative about its impact on Windows market share."
       },
       {
-        "id": 47507752,
-        "author": "ticulatedspline",
-        "text": "Wine might be oddly self-defeating. Broad game support on Linux increases the viability of Linux as a desktop, which increases market share, which may result in developers creating Linux ports as a 1st class concern, which don\u0026#x27;t need Wine to run.",
+        "id": 47511968,
+        "author": "igravious",
+        "text": "“And because Proton, SteamOS, and every downstream project builds on top of Wine, those gains trickle down to everyone.”\u003cp\u003ethe gains would trickle up, no?",
         "indicators": [
-          "thoughtful",
           "intelligent",
-          "likely-true"
-        ],
-        "accuracyRank": 6,
-        "analysis": "Raises a valid strategic point about Wine's impact on Linux adoption and native game development, reflecting a common industry observation."
-      },
-      {
-        "id": 47510243,
-        "author": "mft_",
-        "text": "This is great.\u003cp\u003eNot to sound snarky, but now please get it to run Microsoft Office.  I\u0026#x27;d argue that this is the last barrier to many, many people being able to use Linux full-time for business purposes.",
-        "indicators": [
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 7,
-        "analysis": "Highlights a practical limitation of Wine for business users, emphasizing the importance of Microsoft Office compatibility for wider Linux adoption."
-      },
-      {
-        "id": 47507819,
-        "author": "freediddy",
-        "text": "i would love to know how much of these gains are due to help from AI. i have no problem with AI usage at all in coding but i would love to know if the dramatic gains are because of insights from ai usage.",
-        "indicators": [
-          "thoughtful",
-          "emotional",
           "likely-untrue"
         ],
-        "accuracyRank": 8,
-        "analysis": "Speculates about AI involvement in the development gains without evidence; while interesting, this is likely inaccurate given typical Wine development practices."
-      },
-      {
-        "id": 47508881,
-        "author": "sph",
-        "text": "I am glad that a portion of the thousands of dollars I\u0026#x27;ve given to Valve Corporation over the years has been gone to improve Wine for everybody. I wonder how many developers and contractors on the project are paid by Valve.",
-        "indicators": [
-          "emotional",
-          "thoughtful",
-          "likely-true"
-        ],
-        "accuracyRank": 9,
-        "analysis": "Expresses gratitude and curiosity about Valve's financial support for Wine development, which is consistent with Valve's known involvement in Proton and Wine."
+        "accuracyRank": 6,
+        "analysis": "This reverses the usual dependency flow; typically, improvements in Wine propagate downstream to Proton and others, so the comment is inaccurate."
       },
       {
         "id": 47507961,
@@ -135,10 +102,44 @@
         "text": "I\u0026#x27;ll be \u003ci\u003every\u003c/i\u003e interested to see how this plays out with final 3rd-party benchmarks.\u003cp\u003eNow if we can just get some decent Nvidia drivers......",
         "indicators": [
           "thoughtful",
+          "emotional",
+          "constructive"
+        ],
+        "accuracyRank": 7,
+        "analysis": "A reasonable comment emphasizing the importance of independent validation and complementary hardware support."
+      },
+      {
+        "id": 47508900,
+        "author": "ptx",
+        "text": "Is the difference between the NT-style and POSIX-style semaphores essentially just that NT (and now this new API in Linux) supports setting a max value? Why don\u0026#x27;t POSIX semaphores support this?",
+        "indicators": [
+          "intelligent",
+          "thoughtful"
+        ],
+        "accuracyRank": 8,
+        "analysis": "Raises a valid technical question about semaphore differences, reflecting curiosity and understanding of synchronization primitives."
+      },
+      {
+        "id": 47511934,
+        "author": "sourcegrift",
+        "text": "I\u0026#x27;d rather they focus on productivity apps than games. Linux has enough toxic users as it is. I\u0026#x27;ll praise wine when I can install 12yo office 2014",
+        "indicators": [
+          "emotional",
+          "thoughtful"
+        ],
+        "accuracyRank": 9,
+        "analysis": "Expresses a subjective viewpoint on Wine's priorities and Linux community dynamics, which is valid but less technical."
+      },
+      {
+        "id": 47507634,
+        "author": "dinkblam",
+        "text": "it seems if you want the same on macOS, this is the place to contribute:\u003cp\u003e\u003ca href=\"https:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;Alien4042x\u0026#x2F;Wine-NTsync-Userspace-macOS-backend\" rel=\"nofollow\"\u003ehttps:\u0026#x2F;\u0026#x2F;github.com\u0026#x2F;Alien4042x\u0026#x2F;Wine-NTsync-Userspace-macOS-ba...\u003c/a\u003e",
+        "indicators": [
+          "constructive",
           "likely-true"
         ],
         "accuracyRank": 10,
-        "analysis": "Shows reasonable anticipation for independent validation of performance claims and highlights ongoing issues with Nvidia drivers on Linux."
+        "analysis": "Offers a useful resource for macOS users interested in similar synchronization improvements, adding practical value."
       }
     ]
   }

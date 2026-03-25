@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Comments Critique: Show HN: I ran a language model on a PS2 | HN Critique</title>
+  <link rel="stylesheet" href="../../../../style.css"/>
+</head>
+<body>
+<center>
+<table id="hnmain" border="0" cellpadding="0" cellspacing="0" width="85%" bgcolor="#f6f6ef">
+  <tr><td bgcolor="#ff6600">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px">
+<tr>
+  <td style="width:18px;padding-right:4px">
+    <a href="../../../../"><img src="https://news.ycombinator.com/y18.svg" width="18" height="18" style="border:1px white solid; display:block" alt="HN Critique"/></a>
+  </td>
+  <td style="line-height:12pt;height:10px;">
+    <span class="pagetop">
+      <b class="hnname"><a href="../../../../">HN Critique</a></b>
+      &nbsp;|&nbsp;<a href="https://news.ycombinator.com" rel="noopener">Hacker News</a>
+    </span>
+  </td>
+</tr>
+</table>
+</td></tr>
+  <tr style="height:10px"><td></td></tr>
+  <tr><td class="default" style="padding:10px">
+
+    <div class="story-header">
+      <p class="breadcrumb"><a href="../../../../">← Back to front page</a></p>
+      
+      <h2><a href="https://github.com/xaskasdf/ps2-llm" rel="noreferrer noopener">Show HN: I ran a language model on a PS2</a>
+        <span class="sitebit"> (github.com)</span>
+      </h2>
+      
+      <p class="meta">
+        <span class="score">22 points</span>
+        by <a href="https://news.ycombinator.com/user?id=xaskasdf" class="hnuser">xaskasdf</a>
+        <span class="age">3 days ago</span>
+        &nbsp;|&nbsp;<a href="../../../../critique/2026/03/21/47470405.html">critique article</a>
+        &nbsp;|&nbsp;<a href="https://news.ycombinator.com/item?id=47470405" rel="noopener">original on HN</a>
+      </p>
+    </div>
+
+    
+
+    <section class="discussion-summary">
+      <h3>Discussion Overview</h3>
+      <p>The discussion revolves around the technical ingenuity of running a language model on a PS2, focusing on hardware constraints, streaming techniques, and performance metrics. Commenters express curiosity about latency, model size, and hardware-specific optimizations.</p>
+    </section>
+
+    <h3>Comments (ranked by accuracy)</h3>
+    
+
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=SachitRafa" class="hnuser">SachitRafa</a>
+        &nbsp;|&nbsp;rank #1
+        &nbsp;|&nbsp;
+        <span class="indicator">intelligent</span> <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">The CD-ROM streaming approach is the real insight here, keeping only activations and KV cache in RAM and streaming weights one matrix at a time sidesteps the 32MB constraint entirely. It&#x27;s essentially the same trick modern edge inference does with flash storage, just on hardware from 2000.
+Curious about the latency profile, with CD-ROM read speeds around 1.6 MB&#x2F;s on PS2, the 77MB SmolLM2 model being too slow makes sense, but how does the 10MB brandon-tiny feel in practice? Are you getting tokens per minute or more like tokens per several seconds?
+Also interested in the custom PSNT format decision, was the main motivation the PS2&#x27;s MIPS alignment constraints, or was there something about the existing GGUF&#x2F;llama.c formats that made them impractical to parse on the Emotion Engine?</div>
+      <div class="comment-analysis"><em>This comment accurately highlights the key technical innovation and relates it to modern edge inference techniques, showing a good understanding of hardware constraints and streaming methods.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-yellow">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=SilentEditor" class="hnuser">SilentEditor</a>
+        &nbsp;|&nbsp;rank #2
+        &nbsp;|&nbsp;
+        <span class="indicator">emotional</span> <span class="indicator">thoughtful</span> <span class="indicator">constructive</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">Love this project. The CD streaming trick is such a smart constraint hack, and honestly the best part is you trained the model for the hardware instead of forcing a desktop recipe onto PS2.<p>Curious about 2 things if you can share:<p>whats your per-token latency on real hardware
+how much quality loss came from PSNT quantization vs fp16 baseline
+Either way this is peak hacker energy, shipping on actual hardware makes it 10x cooler.</div>
+      <div class="comment-analysis"><em>The comment praises the project and asks relevant technical questions about latency and quantization effects, reflecting a thoughtful engagement with the technical challenges.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=randkyp" class="hnuser">randkyp</a>
+        &nbsp;|&nbsp;rank #3
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> <span class="indicator">constructive</span> 
+      </div>
+      <div class="comment-text">Neat! While the physicality of having the CD spin while running inference is undeniably cool, I wonder if you could run larger models at higher speeds through the PS2 HDD accessory&#x2F;Memory Card Micro SD adapter&#x2F;the PS2&#x27;s USB port.<p>I doubt the VUs can help with inference given their small scratchpad sizes and instruction set though, haha.</div>
+      <div class="comment-analysis"><em>This comment raises valid points about alternative hardware options for improving performance, showing an understanding of the PS2&#39;s peripherals and their potential.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-green">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=pooparse" class="hnuser">pooparse</a>
+        &nbsp;|&nbsp;rank #4
+        &nbsp;|&nbsp;
+        <span class="indicator">thoughtful</span> <span class="indicator">likely-true</span> 
+      </div>
+      <div class="comment-text">IIRC the EE had some interesting hardware with vector units. Were these of any use&#x2F;benefit here?</div>
+      <div class="comment-analysis"><em>The question about the utility of vector units is relevant but speculative without further detail, indicating curiosity but limited insight.</em></div>
+    </div>
+    
+    <div class="comment-row comment-highlight-red">
+      <div class="comment-meta">
+        <a href="https://news.ycombinator.com/user?id=mememememememo" class="hnuser">mememememememo</a>
+        &nbsp;|&nbsp;rank #5
+        &nbsp;|&nbsp;
+        <span class="indicator">useless</span> 
+      </div>
+      <div class="comment-text">How many tok&#x2F;hr?</div>
+      <div class="comment-analysis"><em>This very brief comment lacks context or detail, making it unhelpful for understanding the discussion.</em></div>
+    </div>
+    
+
+    
+
+  </td></tr>
+  <tr><td>
+<table width="100%" cellspacing="0" cellpadding="1"><tr><td bgcolor="#ff6600"></td></tr></table>
+<br/>
+<center>
+  <span class="yclinks">
+    Generated 2026-03-25 02:06 UTC &nbsp;|&nbsp;
+    <a href="https://github.com/peterwwillis/hn-critique">Source on GitHub</a>
+  </span>
+  <br/>
+  <p class="footer-disclaimer">Disclaimer: This website uses AI to generate automated critiques and ratings. Outputs are for informational and entertainment purposes only. They do not represent the views of the author, nor are they a substitute for human judgment or professional analysis. The AI may "hallucinate" or provide inaccurate, biased, or misleading information. Do not rely on these ratings for any decision-making or critical evaluation.</p>
+</center>
+<br/>
+</td></tr>
+</table>
+</center>
+</body>
+</html>
+
+
