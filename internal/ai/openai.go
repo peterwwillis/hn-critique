@@ -123,21 +123,23 @@ func (p *openAIProvider) AnalyzeArticle(title, articleURL, content string) (*gen
 
 func (p *openAIProvider) analyzeArticleWithModel(model string, settings config.ModelConfig, title, articleURL, content string) (*generator.ArticleCritique, error) {
 	apiModel := openAIModelID(model)
+	chatPrompt := articlePrompt(title, articleURL, content, settings.Limits.ArticlePromptBytes)
+	var searchPrompt string
+	if p.useResponsesAPI {
+		searchPrompt = articlePrompt(title, articleURL, content, p.searchSettings.Limits.ArticlePromptBytes)
+	}
 	for attempt := 1; attempt <= maxOutputAttempts; attempt++ {
 		var text string
 		var err error
 
 		if p.useResponsesAPI {
-			prompt := articlePrompt(title, articleURL, content, p.searchSettings.Limits.ArticlePromptBytes)
-			text, err = p.callResponsesAPI(prompt, p.searchSettings.Inference)
+			text, err = p.callResponsesAPI(searchPrompt, p.searchSettings.Inference)
 			if err != nil {
 				// Fall back to Chat Completions when the Responses API is unavailable.
-				prompt = articlePrompt(title, articleURL, content, settings.Limits.ArticlePromptBytes)
-				text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), apiModel, prompt, true, settings.Inference)
+				text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), apiModel, chatPrompt, true, settings.Inference)
 			}
 		} else {
-			prompt := articlePrompt(title, articleURL, content, settings.Limits.ArticlePromptBytes)
-			text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), apiModel, prompt, true, settings.Inference)
+			text, err = callChatCompletions(p.http, p.chatEndpoint, bearerHeader(p.apiKey), apiModel, chatPrompt, true, settings.Inference)
 		}
 		if err != nil {
 			return nil, fmt.Errorf("openai article analysis: %w", err)
@@ -150,6 +152,8 @@ func (p *openAIProvider) analyzeArticleWithModel(model string, settings config.M
 		if attempt == maxOutputAttempts {
 			return nil, fmt.Errorf("openai: invalid article critique output: %w", err)
 		}
+		searchPrompt = articleRetryPrompt(searchPrompt, err)
+		chatPrompt = articleRetryPrompt(chatPrompt, err)
 	}
 	return nil, fmt.Errorf("openai: article critique unavailable after retries")
 }

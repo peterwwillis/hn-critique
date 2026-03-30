@@ -84,6 +84,7 @@ func (p *githubProvider) tryArticleModel(model string, settings config.ModelConf
 		if attempt == maxOutputAttempts {
 			return nil, fmt.Errorf("github models: invalid article critique output: %w", err)
 		}
+		prompt = articleRetryPrompt(prompt, err)
 	}
 	return nil, fmt.Errorf("github models: article critique unavailable after retries")
 }
